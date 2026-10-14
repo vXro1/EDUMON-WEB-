@@ -348,6 +348,9 @@ export function normalizeTarea(tarea) {
       tarea.totalCalificadas ??
       0,
 
+    // tema de escuela de padres que Edumon recomienda en el chat (null = no se recomienda)
+    escuelaPadres: tarea.escuelaPadres ?? null,
+
     // Etiquetas: Array<String> real en el backend. Nunca se hace
     // JSON.parse/JSON.stringify aquí — si tarea.etiquetas ya es un array,
     // se usa tal cual; si no, se cae a [] en vez de intentar "adivinar"

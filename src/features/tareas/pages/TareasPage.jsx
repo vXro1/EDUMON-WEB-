@@ -15,6 +15,9 @@ import { useSearch } from "@/context/SearchContext";
 // Utils
 import { normalizeCurso } from "@/lib/normalizers/curso";
 import { normalizeTarea } from "@/lib/normalizers/tarea";
+import EdumonRetoAsistente from "@/features/edumon/components/EdumonRetoAsistente";
+import edumonLogo from "@/assets/img/edumon/edumon-ia-logo.webp";
+import RecomendarConEdumon, { camposEscuelaPadres } from "@/features/edumon/components/RecomendarConEdumon";
 import { humanizeError } from "@/utils/humanizeError";
 import { sanitizeRichText, isRichTextEmpty } from "@/utils/richText";
 
@@ -149,6 +152,7 @@ const TIPO_ENTREGA_OPTS = [
 const INIT_FORM = {
   titulo: "", descripcion: "", criterios: "", cursoId: "", moduloId: "",
   fechaEntrega: "", asignacionTipo: "todos", tipoEntrega: "archivo",
+  escuelaPadres: null,
 };
 
 // Fila vacía por defecto para el editor de enlaces de referencia
@@ -171,6 +175,8 @@ export default function TareasPage() {
   const [tareas,        setTareas]        = useState([]);
   const [cursos,        setCursos]        = useState([]);
   const [modulos,       setModulos]       = useState([]);
+  // el modal de crear se abrió desde "Crear reto con Edumon IA": asistente desplegado
+  const [conEdumon,     setConEdumon]     = useState(false);
   const [participantes, setParticipantes] = useState([]);
   const [loading,       setLoading]       = useState(true);
   const [search,        setSearch]        = useState("");
@@ -372,6 +378,10 @@ export default function TareasPage() {
         fd.append("enlaces", JSON.stringify(enlacesValidos));
       }
 
+      // reto de escuela de padres: tema que Edumon recomienda en el chat
+      Object.entries(camposEscuelaPadres(form.escuelaPadres)).forEach(([k, v]) => fd.append(k, v));
+      if (form.escuelaPadres) fd.append("etiquetas[]", "escuela-de-padres");
+
       await tareasCreate(fd);
       notify("Reto creado correctamente");
       setShowCreate(false);
@@ -402,6 +412,7 @@ export default function TareasPage() {
       asignacionTipo:  t.asignacionTipo ?? "todos",
       tipoEntrega:     t.tipoEntrega ?? "archivo",
       estado:          t.estado ?? "activa",
+      escuelaPadres:   t.escuelaPadres ?? null,
     });
 
     const seleccionadosIds = (t.participantesSeleccionados ?? [])
@@ -478,6 +489,8 @@ export default function TareasPage() {
       }
 
       editArchivosNuevos.forEach(file => fd.append("archivos", file));
+
+      Object.entries(camposEscuelaPadres(editForm.escuelaPadres)).forEach(([k, v]) => fd.append(k, v));
 
       await tareasUpdate(editingId, fd);
       notify("Reto actualizado correctamente");
@@ -558,11 +571,27 @@ export default function TareasPage() {
           </Button>
           <Button
             size="sm"
+            variant="outline"
             onClick={() => {
               setForm(INIT_FORM);
               setArchivos([]);
               setEnlaces([]);
               setParticipantesSeleccionados([]);
+              setConEdumon(true);
+              setShowCreate(true);
+            }}
+            leftIcon={<img src={edumonLogo} alt="" style={{ width: 20, height: 20, objectFit: "contain" }} />}
+          >
+            Crear reto con Edumon IA
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => {
+              setForm(INIT_FORM);
+              setArchivos([]);
+              setEnlaces([]);
+              setParticipantesSeleccionados([]);
+              setConEdumon(false);
               setShowCreate(true);
             }}
           >
@@ -675,13 +704,36 @@ export default function TareasPage() {
           <form id="tareas-page-form" onSubmit={handleCreate}>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
 
+              {/* Edumon diseña retos de escuela de padres */}
+              <div style={{ gridColumn: "1 / -1" }}>
+                <EdumonRetoAsistente
+                  key={conEdumon ? "edumon" : "manual"}
+                  abiertoInicial={conEdumon}
+                  cursoId={form.cursoId}
+                  moduloId={form.moduloId}
+                  contexto={[
+                    cursos.find(c => c._id === form.cursoId)?.nombre,
+                    modulos.find(m => m._id === form.moduloId)?.titulo,
+                  ].filter(Boolean).join(" · ")}
+                  onAplicar={(b) => setForm(p => ({
+                    ...p,
+                    titulo: b.titulo,
+                    descripcion: b.descripcionHtml,
+                    criterios: b.criteriosHtml,
+                    escuelaPadres: { eje: b.eje, subtema: b.subtema, tema: b.tema },
+                    // la familia entrega una reflexión escrita
+                    tipoEntrega: "texto",
+                  }))}
+                />
+              </div>
+
               {/* Título */}
               <div style={{ gridColumn: "1 / -1" }}>
                 <Field label="Título *">
                   <Input
                     value={form.titulo}
                     onChange={f("titulo")}
-                    placeholder="Ej: Reto de fracciones"
+                    placeholder="Ej: Reto de crianza respetuosa"
                     required
                   />
                 </Field>
@@ -706,6 +758,14 @@ export default function TareasPage() {
                   onChange={fRich("criterios")}
                   minHeight={90}
                   placeholder="Cómo se evaluará este reto..."
+                />
+              </div>
+
+              <div style={{ gridColumn: "1 / -1" }}>
+                <RecomendarConEdumon
+                  que="este reto"
+                  value={form.escuelaPadres}
+                  onChange={(v) => setForm(p => ({ ...p, escuelaPadres: v }))}
                 />
               </div>
 
@@ -952,6 +1012,14 @@ export default function TareasPage() {
                   value={editForm.criterios}
                   onChange={efRich("criterios")}
                   minHeight={90}
+                />
+              </div>
+
+              <div style={{ gridColumn: "1 / -1" }}>
+                <RecomendarConEdumon
+                  que="este reto"
+                  value={editForm.escuelaPadres ?? null}
+                  onChange={(v) => setEditForm(p => ({ ...p, escuelaPadres: v }))}
                 />
               </div>
 
