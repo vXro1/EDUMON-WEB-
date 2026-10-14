@@ -4,6 +4,9 @@ import { useUser } from "@/features/auth/hooks/useAuth";
 import useUserPresence from "@/hooks/useUserPresence";
 import { Sidebar } from "./Sidebar";
 import { Navbar }  from "./Navbar";
+import EdumonLauncher from "@/features/edumon/components/EdumonLauncher";
+// garantiza las animaciones del launcher aunque el chat no se haya abierto aún
+import "@/features/edumon/components/EdumonMascota";
 
 export const MainLayout = () => {
   const { user, logout } = useUser();
@@ -56,6 +59,7 @@ export const MainLayout = () => {
         </main>
       </div>
 
+      <EdumonLauncher rol={user?.rol} />
     </div>
   );
 };

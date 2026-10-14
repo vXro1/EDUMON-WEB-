@@ -1,8 +1,17 @@
 import {
   Home, BookOpen, Bell, Calendar, Building2, Layers,
   GraduationCap, ClipboardList, MessageCircle, Users, FileText,
-  Smartphone,
+  Smartphone, Sparkles, ShieldAlert,
 } from "lucide-react";
+import { createElement } from "react";
+import edumonLogo from "@/assets/img/edumon/edumon-ia-logo.webp";
+
+// logo de Edumon IA con la misma firma que los íconos de lucide (size)
+const EdumonIA = ({ size = 17 }) => createElement("img", {
+  src: edumonLogo,
+  alt: "",
+  style: { width: size + 7, height: size + 7, objectFit: "contain", margin: -3 },
+});
 
 export const ICONS = {
   home:                 Home,
@@ -19,6 +28,9 @@ export const ICONS = {
   users:                Users,
   "file-text":          FileText,
   smartphone:           Smartphone,
+  sparkles:             Sparkles,
+  "edumon-ia":          EdumonIA,
+  "shield-alert":       ShieldAlert,
 };
 
 export const ROLE_LABELS = {
@@ -66,8 +78,17 @@ export const NAV_GROUPS = {
       ],
     },
     {
+      group: "Escuela de padres",
+      items: [
+        { label: "Lineamientos y seguimiento", path: "/escuela-padres/lineamientos", icon: "edumon-ia" },
+      ],
+    },
+    {
       group: "Comunicacion",
-      items: [{ label: "Notificaciones", path: "/notificaciones", icon: "bell" }],
+      items: [
+        { label: "Notificaciones",        path: "/notificaciones",      icon: "bell" },
+        { label: "Alertas convivencia",   path: "/convivencia/alertas", icon: "shield-alert" },
+      ],
     },
   ],
 
@@ -83,18 +104,25 @@ export const NAV_GROUPS = {
         { label: "Retos",       path: "/tareas",      icon: "clipboard" },
         { label: "Foros",       path: "/foros",       icon: "message-circle" },
         { label: "Calendario",  path: "/calendario",  icon: "calendar" },
+        { label: "Lineamientos escuela de padres", path: "/escuela-padres/lineamientos", icon: "edumon-ia" },
       ],
     },
     {
       group: "Comunicacion",
-      items: [{ label: "Notificaciones", path: "/notificaciones", icon: "bell" }],
+      items: [
+        { label: "Notificaciones",        path: "/notificaciones",      icon: "bell" },
+        { label: "Alertas convivencia",   path: "/convivencia/alertas", icon: "shield-alert" },
+      ],
     },
   ],
 
   padre: [
     {
       group: "Principal",
-      items: [{ label: "Inicio", path: "/padre", icon: "home", exact: true }],
+      items: [
+        { label: "Inicio", path: "/padre",          icon: "home", exact: true },
+        { label: "Edumon IA", path: "/familia/edumon", icon: "edumon-ia" },
+      ],
     },
     {
       group: "Mis hijos",
