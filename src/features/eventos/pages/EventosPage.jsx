@@ -11,7 +11,9 @@ import {
   X,
   Image,
   Paperclip,
+  UserCheck,
 } from "lucide-react";
+import AsistenciaEncuentroModal from "@/features/edumon/components/AsistenciaEncuentroModal";
 
 import { cursosGetVisibles } from "@/features/cursos/services/cursosService";
 import { useAuth } from "@/features/auth/hooks/useAuth";
@@ -22,6 +24,7 @@ import { IconBtn } from "@/features/cursos/components/shared/ui";
 
 import { normalizeCurso }from "@/lib/normalizers";
 import { humanizeError } from "@/utils/humanizeError";
+import RecomendarConEdumon, { camposEscuelaPadres } from "@/features/edumon/components/RecomendarConEdumon";
 import { parseValidationErrors, summarizeValidationErrors } from "@/utils/parseValidationErrors";
 
 const CATEGORIA_CFG = {
@@ -73,6 +76,8 @@ export default function EventosPage() {
   const [editTarget,     setEditTarget]     = useState(null);
   const [form,           setForm]           = useState(INIT_FORM);
   const [cursosIds,      setCursosIds]      = useState([]);
+  // aparte de "form": el FormData se arma recorriendo form y esto es un objeto
+  const [escuelaPadres,  setEscuelaPadres]  = useState(null);
   const [imagenPortada,  setImagenPortada]  = useState(null);
   const [adjunto,        setAdjunto]        = useState(null);
   const [saving,         setSaving]         = useState(false);
@@ -82,6 +87,8 @@ export default function EventosPage() {
   const adjuntoRef = useRef(null);
 
   const [showDelete,  setShowDelete]  = useState(false);
+  // encuentro de escuela de padres cuya asistencia se está marcando
+  const [asistenciaDe, setAsistenciaDe] = useState(null);
   const [deletingId,  setDeletingId]  = useState(null);
   const [deleting,    setDeleting]    = useState(false);
 
@@ -131,6 +138,7 @@ export default function EventosPage() {
   const openCreate = () => {
     setEditTarget(null);
     setForm(INIT_FORM);
+    setEscuelaPadres(null);
     setCursosIds(cursos.length === 1 ? [cursos[0]._id] : []);
     setImagenPortada(null);
     setAdjunto(null);
@@ -151,6 +159,7 @@ export default function EventosPage() {
     });
     const ids = (ev.cursosIds ?? ev.cursos ?? []).map(c => c._id ?? c);
     setCursosIds(ids);
+    setEscuelaPadres(ev.escuelaPadres ?? null);
     setImagenPortada(null);
     setAdjunto(null);
     setErrors({});
@@ -175,6 +184,7 @@ export default function EventosPage() {
       const fd = new FormData();
       Object.entries(form).forEach(([k, v]) => { if (v) fd.append(k, v); });
       cursosIds.forEach(id => fd.append("cursosIds[]", id));
+      Object.entries(camposEscuelaPadres(escuelaPadres)).forEach(([k, v]) => fd.append(k, v));
       if (imagenPortada) fd.append("imagenPortada", imagenPortada);
       if (adjunto)       fd.append("adjunto", adjunto);
 
@@ -305,6 +315,11 @@ export default function EventosPage() {
                   </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "0 14px", flexShrink: 0 }}>
+                  {ev.categoria === "escuela_padres" && new Date(ev.fechaInicio) <= new Date() && ev.estado !== "cancelado" && (
+                    <Button variant="outline" size="sm" onClick={() => setAsistenciaDe(ev._id)}>
+                      <UserCheck size={14} /> Asistencia
+                    </Button>
+                  )}
                   <Button variant="outline" size="sm" onClick={() => openEdit(ev)}>
                     <Edit2 size={14} /> Editar
                   </Button>
@@ -390,6 +405,8 @@ export default function EventosPage() {
             />
             <FieldError message={errors.ubicacion} />
           </div>
+
+          <RecomendarConEdumon value={escuelaPadres} onChange={setEscuelaPadres} />
 
           <div>
             <Select
@@ -532,6 +549,13 @@ export default function EventosPage() {
           Eliminar
         </Button>
       </Modal>
+
+      <AsistenciaEncuentroModal
+        eventoId={asistenciaDe}
+        isOpen={Boolean(asistenciaDe)}
+        onClose={() => setAsistenciaDe(null)}
+        onGuardado={({ asistieron, familias }) => notify(`Asistencia guardada: ${asistieron} de ${familias} familias`)}
+      />
     </div>
   );
 }
