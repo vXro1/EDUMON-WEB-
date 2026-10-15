@@ -226,16 +226,13 @@ export default function PadreHomePage() {
             icon={BookOpen} label="Ver cursos"          desc="Cursos de tus hijos"
             colorClass="stat-icon-cyan"   onClick={() => navigate("/familia/cursos")}
           />
-          {/* Antes "Ver entregas" apuntaba a una lista separada
-              (/familia/entregas) que duplicaba esta misma lista de retos —
-              cada reto ya lleva directo a su entrega individual. */}
           <QuickActionCard
             icon={ClipboardList} label="Retos"        desc="Retos de tus hijos y sus entregas"
             colorClass="stat-icon-green"  onClick={() => navigate("/familia/tareas")}
           />
           <QuickActionCard
             icon={Calendar} label="Calendario"          desc="Eventos y actividades"
-            colorClass="stat-icon-yellow" onClick={() => navigate("/familia/calendario")}
+            colorClass="stat-icon-yellow" onClick={() => navigate("/calendario")}
           />
         </div>
       </section>
@@ -279,7 +276,7 @@ export default function PadreHomePage() {
         <SectionHeader
           title="Eventos de hoy"
           actionLabel="Ver calendario"
-          onAction={() => navigate("/familia/calendario")}
+          onAction={() => navigate("/calendario")}
         />
         <div className="list-card">
           {loading ? (

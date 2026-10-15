@@ -4,18 +4,17 @@
 // panel de formulario (blanco). El corte diagonal entre ambos es el
 // elemento de firma del rediseño — en móvil se desactiva y el panel de
 // marca se aplana a una franja horizontal compacta arriba.
-import logo from "@/assets/icons/logo.svg";
+import { Link } from "react-router-dom";
+import { Home } from "lucide-react";
+import logo from "@/assets/icons/edumon-logo.svg";
 import circulo1 from "@/assets/img/circulos/circulo1.svg";
-import circulo5 from "@/assets/img/circulos/circulo5.svg";
-import circulo9 from "@/assets/img/circulos/circulo9.svg";
+import circulo2 from "@/assets/img/circulos/circulo2.svg";
+import circulo3 from "@/assets/img/circulos/circulo3.svg";
 
-// Solo 3 acentos decorativos (antes 12 disponibles / 8 en uso): dos anclas
-// grandes recortadas por el borde y un satélite pequeño. Menos elementos,
-// más aire — para que el logo sea lo único que compite por la atención.
 const AUTH_BUBBLES = [
-  { src: circulo1, top: "-16%", left: "-14%", size: 240, opacity: 0.28 },
-  { src: circulo5, bottom: "-18%", right: "-12%", size: 210, opacity: 0.24 },
-  { src: circulo9, top: "60%", left: "8%", size: 30, opacity: 0.4 },
+  { src: circulo1, top: "-10%", left: "-10%", size: 150, opacity: 0.95 },
+  { src: circulo2, bottom: "-12%", right: "-10%", size: 130, opacity: 0.95 },
+  { src: circulo3, top: "62%", left: "9%", size: 26, opacity: 0.95 },
 ];
 
 function AuthBubbles() {
@@ -67,10 +66,10 @@ function AuthBrandPanel({ brandTitle, brandTagline }) {
       <Star className="auth-spark auth-spark--5" size={10} />
       <div className="auth-brand-content">
         <div className="auth-brand-badge">
-          <img src={logo} alt="Edumon" draggable={false} />
+          <img src={logo} alt="Logo de EDUMON" draggable={false} />
         </div>
         <div className="auth-brand-copy">
-          <h2>{brandTitle}</h2>
+          <p className="auth-brand-title">{brandTitle}</p>
           {brandTagline && <p className="auth-brand-tagline">{brandTagline}</p>}
         </div>
       </div>
@@ -80,23 +79,22 @@ function AuthBrandPanel({ brandTitle, brandTagline }) {
 
 /* ─────────────────────────────────────────────
    Contenedor principal — tarjeta de dos paneles, centrada.
-   topAction: contenido opcional FUERA de la tarjeta (ej. "Volver al
-   inicio"), alineado al mismo ancho que la tarjeta, encima de ella.
    brandTitle / brandTagline: copy del panel de marca. Traen defaults
    pensados para la pantalla de login.
    children: contenido del formulario, dentro del panel blanco.
 ───────────────────────────────────────────── */
 const AuthLayout = ({
   children,
-  topAction,
-  brandTitle = <>Bienvenido a<br /><strong>Edumon</strong></>,
+  brandTitle = <>Bienvenido a <br /><strong>Edumon</strong></>,
   brandTagline = "Educación conectada, familias unidas.",
 }) => (
   <>
     <style>{AUTH_CSS}</style>
     <div className="auth-root">
+      <Link to="/" className="auth-home" aria-label="Ir a la página de inicio" title="Ir a la página de inicio">
+        <Home size={20} aria-hidden="true" />
+      </Link>
       <div className="auth-stack">
-        {topAction && <div className="auth-topbar">{topAction}</div>}
         <div className="auth-card">
           <AuthBrandPanel brandTitle={brandTitle} brandTagline={brandTagline} />
           <div className="auth-card-body">
@@ -118,17 +116,19 @@ export default AuthLayout;
 ───────────────────────────────────────────── */
 export const AUTH_CSS = `
 .auth-root {
-  min-height: 100vh;
+  position: relative;
+  height: 100vh;
+  height: 100dvh;
   width: 100%;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* Fondo con más vida (antes un azul plano muy apagado). */
   background:
     radial-gradient(circle at 12% 10%, rgba(5, 199, 242, 0.18) 0%, transparent 40%),
     radial-gradient(circle at 88% 90%, rgba(124, 58, 237, 0.14) 0%, transparent 42%),
     linear-gradient(160deg, #EAF4FF 0%, var(--edu-blue-100, #D9EFFC) 100%);
-  padding: 24px 16px;
+  padding: clamp(64px, 9vh, 80px) 16px clamp(16px, 3vh, 28px);
 }
 
 /* ══ COLUMNA EXTERNA (topbar + tarjeta) ══ */
@@ -137,37 +137,36 @@ export const AUTH_CSS = `
   z-index: 1;
   width: 100%;
   max-width: 880px;
+  max-height: 100%;
   display: flex;
   flex-direction: column;
-  gap: 14px;
 }
 
-.auth-topbar { display: flex; }
-
-.auth-back-link {
+.auth-home {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 5;
+  width: 44px;
+  height: 44px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  align-self: flex-start;
+  justify-content: center;
+  border-radius: 50%;
   background: #fff;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
-  padding: 7px 14px 7px 10px;
-  font-size: 12.5px;
-  font-weight: 600;
-  color: var(--color-text-muted);
-  box-shadow: 0 1px 3px rgba(12,106,196,0.08);
-  cursor: pointer;
-  transition: color 150ms ease, border-color 150ms ease, box-shadow 150ms ease, transform 100ms ease;
+  color: var(--edu-blue-600, #0A5AA8);
+  box-shadow: 0 3px 0 var(--edu-blue-100, #D9EFFC), 0 6px 16px rgba(12, 106, 196, 0.14);
+  transition: background 150ms ease, color 150ms ease, transform 100ms ease, box-shadow 100ms ease;
 }
-.auth-back-link:hover {
-  color: var(--color-text);
-  border-color: var(--edu-blue-200, #B9D8F2);
-  box-shadow: 0 3px 10px rgba(12,106,196,0.14);
+.auth-home:hover {
+  background: var(--edu-blue-500, #0C6AC4);
+  border-color: var(--edu-blue-500, #0C6AC4);
+  color: #fff;
 }
-.auth-back-link:active { transform: scale(0.97); }
-.auth-back-link:focus-visible {
-  outline: 2px solid var(--edu-blue-500, #0C6AC4);
+.auth-home:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--edu-blue-100, #D9EFFC); }
+.auth-home:focus-visible {
+  outline: 3px solid var(--edu-blue-500, #0C6AC4);
   outline-offset: 2px;
 }
 
@@ -177,6 +176,7 @@ export const AUTH_CSS = `
   z-index: 1;
   width: 100%;
   max-width: 880px;
+  max-height: 100%;
   display: flex;
   align-items: stretch;
   background: #fff;
@@ -197,11 +197,11 @@ export const AUTH_CSS = `
   flex: 0 0 300px;
   min-width: 0;
   color: #fff;
-  padding: 36px 30px 32px;
+  padding: clamp(20px, 4vh, 36px) 30px clamp(20px, 4vh, 32px);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
   text-align: center;
   overflow: hidden;
   clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
@@ -252,13 +252,13 @@ export const AUTH_CSS = `
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 22px;
+  gap: clamp(12px, 2.4vh, 22px);
 }
 
 /* ══ LOGO — insignia con halo doble para que resalte del degradado ══ */
 .auth-brand-badge {
-  width: 190px;
-  height: 190px;
+  width: clamp(110px, 22vh, 190px);
+  height: clamp(110px, 22vh, 190px);
   border-radius: 50%;
   background: #fff;
   display: flex;
@@ -275,8 +275,8 @@ export const AUTH_CSS = `
 }
 
 .auth-brand-badge img {
-  width: 150px;
-  height: 150px;
+  width: 80%;
+  height: 80%;
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
@@ -284,7 +284,7 @@ export const AUTH_CSS = `
 }
 
 /* ══ TEXTO DE MARCA ══ */
-.auth-brand-copy h2 {
+.auth-brand-copy .auth-brand-title {
   font-family: var(--font-display);
   font-size: 1.65rem;
   font-weight: 800;
@@ -292,7 +292,7 @@ export const AUTH_CSS = `
   letter-spacing: -0.01em;
   margin: 0;
 }
-.auth-brand-copy h2::after {
+.auth-brand-copy .auth-brand-title::after {
   content: "";
   display: block;
   width: 38px;
@@ -313,10 +313,15 @@ export const AUTH_CSS = `
 .auth-card-body {
   flex: 1 1 auto;
   min-width: 0;
-  max-height: 88vh;
+  min-height: 0;
   overflow-y: auto;
-  padding: 40px 40px 32px;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(20px, 4.5vh, 40px) clamp(20px, 4vw, 40px);
 }
+.auth-card-body::-webkit-scrollbar { display: none; }
 
 /* ══ CHECK LABEL ══ */
 .check-label {
@@ -330,27 +335,19 @@ export const AUTH_CSS = `
 }
 
 /* ══ ENCABEZADO DE FORMULARIO ══ */
-.auth-form-head { margin-bottom: 22px; text-align: center; }
+.auth-form-head { margin-bottom: clamp(12px, 2.6vh, 22px); text-align: center; }
 
 /* Título grande, con la fuente redondeada (Baloo 2) y DEGRADADO de
    marca azul→cian, para que destaque claramente del subtítulo y del
    resto del formulario. Debajo, una línea de acento centrada. */
 .auth-form-head h1 {
   font-family: var(--font-display);
-  font-size: 2rem;
+  font-size: clamp(1.45rem, 4.2vh, 2rem);
   font-weight: 800;
   line-height: 1.12;
-  margin: 0 0 10px;
+  margin: 0 0 clamp(4px, 1vh, 10px);
   letter-spacing: 0.005em;
-  background: linear-gradient(
-    120deg,
-    var(--edu-blue-700, #084A8C) 0%,
-    var(--edu-blue-500, #0C6AC4) 45%,
-    var(--edu-cyan, #05C7F2) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--edu-blue-500, #0C6AC4);
 }
 .auth-form-head h1::after {
   content: "";
@@ -359,15 +356,17 @@ export const AUTH_CSS = `
   height: 4px;
   margin: 12px auto 0;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--edu-blue-500, #0C6AC4), var(--edu-cyan, #05C7F2));
+  background: linear-gradient(90deg,
+    #0C6AC4 0 20%, #0DC5E2 20% 40%, #41D958 40% 60%, #FCBD00 60% 80%, #F23D7F 80% 100%);
+  margin-top: clamp(6px, 1.4vh, 12px);
 }
 
 .auth-form-head p {
   font-size: 13.5px;
   color: var(--color-text-subtle, #94a3b8);
   font-weight: 500;
-  margin: 12px 0 0;
-  line-height: 1.5;
+  margin: clamp(6px, 1.4vh, 12px) 0 0;
+  line-height: 1.45;
 }
 
 /* ══ ALERTAS ══ */
@@ -415,7 +414,7 @@ export const AUTH_CSS = `
 .auth-success--lg svg { flex-shrink: 0; margin-top: 1px; }
 
 /* ══ FORM ══ */
-.auth-form { display: flex; flex-direction: column; gap: 14px; }
+.auth-form { display: flex; flex-direction: column; gap: clamp(8px, 1.8vh, 14px); }
 
 /* ══ CAMPOS DE ENTRADA EN AUTH ══
    Estas pantallas viven fuera de .app-shell, así que --color-primary
@@ -480,7 +479,10 @@ export const AUTH_CSS = `
   font-size: 12.5px;
   font-weight: 600;
   color: var(--edu-blue-500, #0C6AC4);
-  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 4px 2px;
   transition: color var(--transition-fast);
 }
 .auth-link-btn:hover { color: var(--edu-blue-600, #0958A5); text-decoration: underline; }
@@ -494,14 +496,14 @@ export const AUTH_CSS = `
   height: 48px;
   border: none;
   border-radius: 14px;
-  background: linear-gradient(135deg, var(--edu-blue-700, #084A8C), var(--edu-blue-500, #0C6AC4) 55%, var(--edu-cyan, #05C7F2));
+  background: var(--edu-blue-500, #0C6AC4);
   color: #fff;
   font-family: var(--font-display);
   font-size: 0.95rem;
   font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 6px 18px rgba(12,106,196,0.32);
-  transition: filter 150ms ease, transform 100ms ease, box-shadow 100ms ease;
+  box-shadow: 0 5px 0 var(--edu-blue-700, #084A8C);
+  transition: background 150ms ease, transform 100ms ease, box-shadow 100ms ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -509,10 +511,10 @@ export const AUTH_CSS = `
   margin-top: 4px;
 }
 .auth-submit:hover:not(:disabled) {
-  filter: saturate(1.15) brightness(1.04);
-  box-shadow: 0 8px 22px rgba(12,106,196,0.4);
+  background: var(--edu-blue-700, #084A8C);
+  box-shadow: 0 5px 0 var(--edu-blue-900, #042A54);
 }
-.auth-submit:active:not(:disabled) { transform: scale(0.98); }
+.auth-submit:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 2px 0 var(--edu-blue-900, #042A54); }
 .auth-submit:disabled { opacity: 0.55; cursor: not-allowed; }
 .auth-submit:focus-visible { outline: 2px solid var(--edu-blue-500, #0C6AC4); outline-offset: 2px; }
 
@@ -563,6 +565,25 @@ export const AUTH_CSS = `
   margin: 0 auto 4px;
 }
 
+.auth-pass-block {
+  border-top: 1px solid var(--color-border);
+  padding-top: clamp(10px, 1.8vh, 14px);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.auth-pass-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+.auth-hint {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--color-text-subtle);
+}
+
 .auth-resend {
   text-align: center;
   font-size: 12.5px;
@@ -576,51 +597,76 @@ export const AUTH_CSS = `
    panel de marca pasa a ser una "cabecera" centrada y generosa (no una
    franja apretada): el logo grande es el protagonista. */
 @media (max-width: 760px) {
-  .auth-card { flex-direction: column; border-radius: 22px; }
+  .auth-root { padding: 0; align-items: stretch; }
+  .auth-stack { height: 100%; max-width: none; }
+  .auth-card {
+    flex-direction: column;
+    height: 100%;
+    max-width: none;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+  }
   .auth-card-brand {
     flex: 0 0 auto;
     width: 100%;
     clip-path: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 32px 22px 36px;
+    padding: clamp(56px, 9vh, 72px) 22px clamp(28px, 4.5vh, 40px);
   }
-  .auth-brand-content { flex-direction: column; align-items: center; gap: 14px; }
+  .auth-brand-content { flex-direction: row; gap: 14px; text-align: left; }
   .auth-brand-badge {
-    width: 112px; height: 112px;
-    padding: 12px;
+    width: clamp(56px, 9vh, 84px);
+    height: clamp(56px, 9vh, 84px);
+    padding: 8px;
     box-shadow:
       0 0 0 1px rgba(255,255,255,0.32),
-      0 0 0 10px rgba(255,255,255,0.06),
-      0 12px 30px rgba(4,42,84,0.4);
+      0 0 0 6px rgba(255,255,255,0.06),
+      0 10px 24px rgba(4,42,84,0.4);
   }
-  .auth-brand-badge img { width: 86px; height: 86px; }
-  .auth-brand-copy h2 { font-size: 1.2rem; margin: 0; }
-  .auth-brand-copy h2::after { display: block; margin: 8px auto 6px; }
-  .auth-brand-copy .auth-brand-tagline { display: block; font-size: 12.5px; }
+  .auth-brand-copy .auth-brand-title { font-size: clamp(1.05rem, 2.6vh, 1.25rem); margin: 0; }
+  .auth-brand-copy .auth-brand-title br { display: none; }
+  .auth-brand-copy .auth-brand-title::after { display: none; }
+  .auth-brand-copy .auth-brand-tagline { display: block; font-size: 12.5px; margin-top: 4px; }
   .auth-spark--3, .auth-spark--5 { display: none; }
   .auth-card-body {
     position: relative;
-    margin-top: -16px;
-    border-radius: 26px 26px 0 0;
+    flex: 1 1 auto;
+    margin-top: -18px;
+    border-radius: 24px 24px 0 0;
     background: #fff;
-    padding: 28px 22px 24px;
-    max-height: none;
-    overflow-y: visible;
+    justify-content: flex-start;
+    padding: clamp(18px, 3.5vh, 30px) 20px clamp(14px, 2.5vh, 24px);
   }
-  .auth-form-head h1 { font-size: 1.6rem; }
+  .auth-form-head h1 { font-size: clamp(1.35rem, 3.6vh, 1.6rem); }
   .auth-otp-digit { width: 38px; height: 46px; font-size: 18px; }
   .auth-otp-row { gap: 6px; }
+}
+@media (max-width: 520px) {
+  .auth-pass-grid { grid-template-columns: minmax(0, 1fr); gap: clamp(8px, 1.6vh, 12px); }
+}
+@media (max-width: 760px) {
+  .auth-home { top: clamp(14px, 2.6vh, 22px); }
+  .auth-card-brand { padding: clamp(14px, 2.6vh, 22px) 20px clamp(28px, 4.5vh, 36px) 76px; }
+  .auth-brand-content { width: 100%; justify-content: flex-start; }
 }
 @media (max-width: 380px) {
   .auth-otp-digit { width: 32px; height: 42px; font-size: 16px; }
   .auth-otp-row { gap: 5px; }
 }
-
+@media (max-width: 760px) and (max-height: 700px) {
+  .auth-brand-copy .auth-brand-tagline { display: none; }
+  .auth-card-brand { padding-bottom: 24px; }
+  .auth-otp-digit { height: 40px; }
+}
 @media (max-height: 700px) {
-  .auth-root { align-items: flex-start; padding-top: 24px; }
+  .auth-card-body:has(.auth-otp-row) .auth-form-head p { display: none; }
+  .auth-card-body .input,
+  .auth-card-body .phone-field { min-height: 42px; height: 42px; }
+  .auth-submit { height: 44px; }
+}
+@media (min-width: 761px) and (max-height: 620px) {
+  .auth-card-brand { flex-basis: 240px; }
+  .auth-brand-copy .auth-brand-tagline { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

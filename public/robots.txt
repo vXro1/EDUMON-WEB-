@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /docente
+Disallow: /padre
+Disallow: /dashboard
+Disallow: /primer-inicio
+Disallow: /reset-password
+
+Sitemap: https://edumon.uniautonoma.edu.co/sitemap.xml

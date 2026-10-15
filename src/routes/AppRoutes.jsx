@@ -1,7 +1,7 @@
 // navegación por pestañas usa ?tab= (ej. /cursos/:id?tab=tareas); los tabs usan { replace: true }
 
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import { LoadingScreen }                                 from "@/components";
 import { ProtectedRoute, PublicOnlyRoute, RoleRedirect } from "./ProtectedRoute";
@@ -11,6 +11,7 @@ import MainLayout                                        from "../components/lay
 const LandingPage    = lazy(() => import("../pages/LandingPage"));
 const NotFoundPage   = lazy(() => import("../pages/NotFoundPage"));
 const DemoPage       = lazy(() => import("../pages/DemoPage"));
+const TutorialesPage = lazy(() => import("../pages/TutorialesPage"));
 
 // ── Autenticación ─────────────────────────────────────────────────
 const LoginPage          = lazy(() => import("../features/auth/pages/LoginPage")         .then(m => ({ default: m.LoginPage })));
@@ -54,7 +55,6 @@ const FamiliaTareasPage     = lazy(() => import("../features/familia/pages/Famil
 const FamiliaEntregasPage   = lazy(() => import("../features/familia/pages/FamiliaEntregasPage"));
 const FamiliaEntregaDetallePage = lazy(() => import("../features/familia/pages/FamiliaEntregaDetallePage"));
 const FamiliaForosPage      = lazy(() => import("../features/familia/pages/FamiliaForosPage"));
-const FamiliaCalendarioPage = lazy(() => import("../features/familia/pages/FamiliaCalendarioPage"));
 
 // ── Universal ─────────────────────────────────────────────────────
 const PerfilPage         = lazy(() => import("../features/perfil/pages/PerfilPage"));
@@ -79,6 +79,8 @@ export default function AppRoutes() {
 
           {/* ── DEMO — vista previa del dashboard sin iniciar sesión ── */}
           <Route path="/demo" element={<DemoPage />} />
+
+          <Route path="/tutoriales" element={<TutorialesPage />} />
 
           {/* ── AUTENTICACIÓN (solo sin sesión) ── */}
           <Route path="/login"           element={<PublicOnlyRoute><LoginPage /></PublicOnlyRoute>} />
@@ -130,7 +132,7 @@ export default function AppRoutes() {
             {/* URL propia por entrega — una sola vista, sin modal ni acordeón */}
             <Route path="/familia/entregas/:tareaId" element={<ProtectedRoute allowedRoles={["padre","padre/tutor"]}><FamiliaEntregaDetallePage /></ProtectedRoute>} />
             <Route path="/familia/foros"      element={<ProtectedRoute allowedRoles={["padre","padre/tutor"]}><FamiliaForosPage /></ProtectedRoute>} />
-            <Route path="/familia/calendario" element={<ProtectedRoute allowedRoles={["padre","padre/tutor"]}><FamiliaCalendarioPage /></ProtectedRoute>} />
+            <Route path="/familia/calendario" element={<Navigate to="/calendario" replace />} />
 
             {/* Universal */}
             <Route path="/perfil"         element={<ProtectedRoute><PerfilPage /></ProtectedRoute>} />

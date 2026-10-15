@@ -16,9 +16,16 @@ import { normalizeUser } from "@/lib/normalizers";
 export const UserContext = createContext(null);
 export const AuthContext = createContext(null);
 
+const PUBLIC_MARKETING_PATHS = ["/", "/tutoriales", "/demo"];
+
+const isMarketingPath = () =>
+  typeof window !== "undefined" && PUBLIC_MARKETING_PATHS.includes(window.location.pathname);
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser]       = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(() => !isMarketingPath());
+  const [sessionChecked, setSessionChecked] = useState(false);
+  const sessionCheckRef = useRef(null);
   const [showWarning, setShowWarning] = useState(false);
 
   const handling401 = useRef(false);
@@ -85,25 +92,26 @@ export const AuthProvider = ({ children }) => {
   }, [isAuthenticated]);
 
   // pregunta silenciosa "¿quién soy?"; sin sesión válida, el catch deja user en null sin navegar
-  useEffect(() => {
-    let mounted = true;
-
-    const init = async () => {
+  const ensureSession = useCallback(() => {
+    if (sessionCheckRef.current) return sessionCheckRef.current;
+    setLoading(true);
+    sessionCheckRef.current = (async () => {
       try {
         const profile = await authService.getProfile();
-        if (mounted) {
-          setUser(normalizeUser(profile.user ?? profile));
-        }
+        setUser(normalizeUser(profile.user ?? profile));
       } catch {
-        if (mounted) setUser(null);
+        setUser(null);
       } finally {
-        if (mounted) setLoading(false);
+        setLoading(false);
+        setSessionChecked(true);
       }
-    };
-
-    init();
-    return () => { mounted = false; };
+    })();
+    return sessionCheckRef.current;
   }, []);
+
+  useEffect(() => {
+    if (!isMarketingPath()) ensureSession();
+  }, [ensureSession]);
 
   const login = useCallback(async (credentials) => {
     const data = await authService.login(credentials);
@@ -111,6 +119,8 @@ export const AuthProvider = ({ children }) => {
     if (data?.user) {
       setUser(normalizeUser(data.user));
     }
+    sessionCheckRef.current = Promise.resolve();
+    setSessionChecked(true);
 
     return data;
   }, []);
@@ -146,8 +156,8 @@ export const AuthProvider = ({ children }) => {
   );
 
   const fullValue = useMemo(
-    () => ({ ...userValue, loading, showWarning, stayLoggedIn }),
-    [userValue, loading, showWarning, stayLoggedIn]
+    () => ({ ...userValue, loading, sessionChecked, ensureSession, showWarning, stayLoggedIn }),
+    [userValue, loading, sessionChecked, ensureSession, showWarning, stayLoggedIn]
   );
 
   return (

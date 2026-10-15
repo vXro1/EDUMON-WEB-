@@ -1,8 +1,8 @@
 // Pantalla de carga de página completa — usada durante la verificación inicial de sesión
 // y en las transiciones de ruta (Suspense fallback de los lazy imports).
-import edumonLogo from "@/assets/icons/logo.svg";
+import edumonLogo from "@/assets/icons/edumon-logo.svg";
 
-// Mismos colores del logo (ver src/assets/icons/logo.svg) — así las burbujas
+// Mismos colores del logo (ver src/assets/icons/edumon-logo.svg) — así las burbujas
 // se sienten parte de la marca en vez de decoración genérica.
 const BUBBLE_COLORS = ["#0DC5E2", "#71C83A", "#F12474", "#FDBA03", "#8421CD", "#FC5891"];
 

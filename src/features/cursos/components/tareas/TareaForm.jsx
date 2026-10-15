@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from "react";
 import { FileText, Upload, X, Globe, Users, Link2, Calendar, Clock, Eye, ZoomIn, ZoomOut, RotateCcw, ExternalLink, Check, Trash2 } from "lucide-react";
 import { Input, Select, Checkbox, RichTextEditor } from "@/components";
 import { Field, Sk } from "../shared/ui";
+import useDialogFocus from "@/hooks/useDialogFocus";
 
 const TIPO_ENTREGA_OPTS = [
   { value: "archivo",    label: "Archivo / Documento" },
@@ -92,17 +93,12 @@ const iconBtnStyle = {
 /* ── Modal de vista previa con zoom — imagen o iframe (PDF), o insignia + link para el resto ── */
 function PreviewModal({ item, onClose }) {
   const [zoom, setZoom] = useState(1);
+  const panelRef = useRef(null);
+  useDialogFocus(panelRef, !!item, onClose);
 
   useEffect(() => {
     setZoom(1);
   }, [item]);
-
-  useEffect(() => {
-    if (!item) return;
-    const handleKey = (e) => { if (e.key === "Escape") onClose(); };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [item, onClose]);
 
   if (!item) return null;
 
@@ -123,6 +119,11 @@ function PreviewModal({ item, onClose }) {
       }}
     >
       <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Vista previa: ${item.name}`}
+        tabIndex={-1}
         onClick={e => e.stopPropagation()}
         style={{
           background: "var(--color-bg)", borderRadius: 12,
@@ -567,7 +568,7 @@ function EnlacesInput({ enlaces, onChange }) {
           </p>
         )}
         <p style={{ margin: "6px 0 0", fontSize: 11.5, color: "var(--color-text-muted)" }}>
-          Escribe la URL y presiona ✓ (o Enter) para agregarla
+          Escribe la URL y confirma (o presiona Enter) para agregarla
         </p>
       </div>
     </div>

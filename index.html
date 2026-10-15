@@ -2,37 +2,84 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-
-    <!-- Responsive -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Title -->
-    <title>Edumon - Plataforma Educativa</title>
-
-    <!-- SEO -->
+    <title>EDUMON | Plataforma educativa para docentes y familias</title>
     <meta
       name="description"
-      content="Edumon: Plataforma educativa tipo LMS para gestión académica entre estudiantes, docentes y familias."
+      content="EDUMON integra a docentes, estudiantes y familias para acompañar el desarrollo integral de cada niño: cursos, retos, calificaciones, foros y calendario."
     />
+    <meta name="application-name" content="EDUMON" />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0c6bc6" />
+    <link rel="canonical" href="https://edumon.uniautonoma.edu.co/" />
 
-    <!-- Favicon (IMPORTANTE: Vite usa ruta /src/ o /public correctamente) -->
-    <link rel="icon" type="image/svg+xml" href="/src/assets/icons/logo.svg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="EDUMON" />
+    <meta property="og:locale" content="es_CO" />
+    <meta property="og:url" content="https://edumon.uniautonoma.edu.co/" />
+    <meta property="og:title" content="EDUMON – Sistema de Gestión y Acompañamiento de la Comunidad Educativa" />
+    <meta property="og:description" content="Pequeños pasos, grandes aprendizajes. EDUMON integra a docentes, estudiantes y familias en un mismo espacio." />
+    <meta property="og:image" content="https://edumon.uniautonoma.edu.co/img/edumon.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="EDUMON – Sistema de Gestión y Acompañamiento de la Comunidad Educativa" />
+    <meta name="twitter:description" content="Pequeños pasos, grandes aprendizajes. EDUMON integra a docentes, estudiantes y familias en un mismo espacio." />
+    <meta name="twitter:image" content="https://edumon.uniautonoma.edu.co/img/edumon.png" />
 
-    <!-- Nunito es la única familia de toda la app (títulos y cuerpo,
-         --font-heading/--font-sans en src/styles/tokens/tokens.css). -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="icon" type="image/svg+xml" href="/src/assets/icons/edumon-logo.svg" />
+    <link rel="apple-touch-icon" href="/img/edumon.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://edumon.uniautonoma.edu.co/#website",
+            "url": "https://edumon.uniautonoma.edu.co/",
+            "name": "EDUMON",
+            "alternateName": ["Edumon", "EDUMON – Sistema de Gestión y Acompañamiento de la Comunidad Educativa"],
+            "inLanguage": "es-CO",
+            "publisher": { "@id": "https://edumon.uniautonoma.edu.co/#organization" }
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://edumon.uniautonoma.edu.co/#organization",
+            "name": "EDUMON",
+            "url": "https://edumon.uniautonoma.edu.co/",
+            "logo": "https://edumon.uniautonoma.edu.co/img/edumon.png",
+            "parentOrganization": {
+              "@type": "CollegeOrUniversity",
+              "name": "Corporación Universitaria Autónoma del Cauca",
+              "url": "https://www.uniautonoma.edu.co/"
+            }
+          },
+          {
+            "@type": "SoftwareApplication",
+            "name": "EDUMON",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Web, Android",
+            "url": "https://edumon.uniautonoma.edu.co/",
+            "description": "Plataforma que integra a docentes, estudiantes y familias para acompañar el desarrollo integral de cada niño.",
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "COP" }
+          }
+        ]
+      }
+    </script>
   </head>
 
   <body>
-    <!-- React root -->
-    <div id="root"></div>
-
-    <!-- Entry point -->
+    <div id="root">
+      <main style="max-width:720px;margin:64px auto;padding:0 16px;font-family:Nunito,system-ui,sans-serif;color:#1e293b">
+        <h1>EDUMON – Sistema de Gestión y Acompañamiento de la Comunidad Educativa</h1>
+        <p>Pequeños pasos, grandes aprendizajes. EDUMON integra a profesores, estudiantes y familias en un mismo espacio para acompañar a cada niño en su desarrollo integral, fortaleciendo sus aprendizajes, emociones, vínculos y convivencia.</p>
+        <p>Docentes, administradores y familias gestionan cursos, retos, entregas, calificaciones, foros y calendario desde la web o desde la app móvil de EDUMON.</p>
+        <nav>
+          <a href="/login">Iniciar sesión en EDUMON</a> ·
+          <a href="/tutoriales">Tutoriales de EDUMON</a>
+        </nav>
+      </main>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

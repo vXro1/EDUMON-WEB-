@@ -36,7 +36,7 @@ export const NAV_GROUPS = {
       items: [{ label: "Inicio", path: "/admin", icon: "home", exact: true }],
     },
     {
-      group: "Gestion global",
+      group: "Gestión global",
       items: [
         { label: "Instituciones", path: "/instituciones", icon: "building" },
         { label: "Usuarios",      path: "/usuarios",      icon: "users" },
@@ -45,7 +45,7 @@ export const NAV_GROUPS = {
     {
       group: "Sistema",
       items: [
-        { label: "App movil",      path: "/app-movil",      icon: "smartphone" },
+        { label: "App móvil",      path: "/app-movil",      icon: "smartphone" },
         { label: "Notificaciones", path: "/notificaciones", icon: "bell" },
       ],
     },
@@ -57,16 +57,16 @@ export const NAV_GROUPS = {
       items: [{ label: "Inicio", path: "/admin", icon: "home", exact: true }],
     },
     {
-      group: "Mi institucion",
+      group: "Mi institución",
       items: [
-        { label: "Institucion", path: "/institucion", icon: "school" },
+        { label: "Institución", path: "/institucion", icon: "school" },
         { label: "Docentes",    path: "/docentes",    icon: "chalkboard-teacher" },
         { label: "Cursos",      path: "/cursos",      icon: "layers" },
         { label: "Calendario",  path: "/calendario",  icon: "calendar" },
       ],
     },
     {
-      group: "Comunicacion",
+      group: "Comunicación",
       items: [{ label: "Notificaciones", path: "/notificaciones", icon: "bell" }],
     },
   ],
@@ -77,7 +77,7 @@ export const NAV_GROUPS = {
       items: [{ label: "Inicio", path: "/docente", icon: "home", exact: true }],
     },
     {
-      group: "Ensenanza",
+      group: "Enseñanza",
       items: [
         { label: "Cursos",      path: "/cursos",      icon: "layers" },
         { label: "Retos",       path: "/tareas",      icon: "clipboard" },
@@ -86,7 +86,7 @@ export const NAV_GROUPS = {
       ],
     },
     {
-      group: "Comunicacion",
+      group: "Comunicación",
       items: [{ label: "Notificaciones", path: "/notificaciones", icon: "bell" }],
     },
   ],
@@ -108,7 +108,7 @@ export const NAV_GROUPS = {
       ],
     },
     {
-      group: "Comunicacion",
+      group: "Comunicación",
       items: [{ label: "Notificaciones", path: "/notificaciones", icon: "bell" }],
     },
   ],

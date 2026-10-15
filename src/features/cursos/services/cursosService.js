@@ -1,4 +1,5 @@
 import { apiFetch, apiFetchFormData } from '@/services/core/apiClient';
+import { normalizeRole, ROLES } from '@/security/roleMatrix';
 
 // ── Cursos ────────────────────────────────────────────────────────────────────
 
@@ -14,6 +15,9 @@ export const cursosGetMine = (params = {}) => {
   const qs = new URLSearchParams(params).toString();
   return apiFetch(`/cursos/mis-cursos${qs ? `?${qs}` : ''}`);
 };
+
+export const cursosGetVisibles = (rol, params = {}) =>
+  normalizeRole(rol) === ROLES.ADMIN ? cursosGetAll(params) : cursosGetMine(params);
 
 export const cursosGetById = (id) => apiFetch(`/cursos/${id}`);
 

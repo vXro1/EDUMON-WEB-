@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const HOME_BY_ROLE = {
   superadmin:   "/admin",
@@ -10,6 +11,7 @@ const HOME_BY_ROLE = {
 };
 
 export default function NotFoundPage() {
+  usePageMeta({ title: "Página no encontrada | EDUMON", noindex: true });
   const navigate = useNavigate();
   const { user } = useAuth();
   const home = HOME_BY_ROLE[user?.rol] ?? (user ? "/dashboard" : "/");

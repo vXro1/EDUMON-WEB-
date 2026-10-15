@@ -40,17 +40,17 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  test: {
+    environment: 'jsdom',
+    include: ['src/**/*.test.{js,jsx}'],
+  },
   build: {
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react')) return 'vendor.react';
-            return 'vendor';
+          if (/node_modules[\/](react|react-dom|react-router|react-router-dom|scheduler)[\/]/.test(id)) {
+            return 'vendor.react';
           }
-          // cursos + foros comparten contexto (CursoContext, ForosTab) — un solo chunk evita el ciclo
-          if (id.includes('src/features/cursos') || id.includes('src/features/foros')) return 'feature.cursos';
-          if (id.includes('src/features/tareas')) return 'feature.tareas';
         }
       }
     }

@@ -115,7 +115,6 @@ const ResetPasswordForm = ({
   error = "",
   success = false,
   defaultEmail = "",
-  onBack,
   onGoLogin,
   onResend,
 }) => {
@@ -150,7 +149,7 @@ const ResetPasswordForm = ({
     e.preventDefault();
     const ve = validate(form);
     if (Object.keys(ve).length) { setErrors(ve); return; }
-    const { confirmar, ...rest } = form;
+    const { confirmar: _confirmar, ...rest } = form;
     onSubmit(rest);
   };
 
@@ -235,32 +234,33 @@ const ResetPasswordForm = ({
             )}
           </p>
 
-          <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: 14, marginTop: 2 }}>
-            <Input
-              label="Nueva contraseña"
-              name="contrasenaNueva"
-              type="password"
-              placeholder="Nueva contraseña"
-              hint={TEXTO_REQUISITOS_CONTRASENA}
-              value={form.contrasenaNueva}
-              onChange={handleChange}
-              leftIcon={<Lock size={16} />}
-              error={errors.contrasenaNueva}
-              autoComplete="new-password"
-            />
+          <div className="auth-pass-block">
+            <div className="auth-pass-grid">
+              <Input
+                label="Nueva contraseña"
+                name="contrasenaNueva"
+                type="password"
+                placeholder="Nueva contraseña"
+                value={form.contrasenaNueva}
+                onChange={handleChange}
+                leftIcon={<Lock size={16} />}
+                error={errors.contrasenaNueva}
+                autoComplete="new-password"
+              />
+              <Input
+                label="Confirmar contraseña"
+                name="confirmar"
+                type="password"
+                placeholder="Repite tu contraseña"
+                value={form.confirmar}
+                onChange={handleChange}
+                leftIcon={<Lock size={16} />}
+                error={errors.confirmar}
+                autoComplete="new-password"
+              />
+            </div>
+            {!errors.contrasenaNueva && <p className="auth-hint">{TEXTO_REQUISITOS_CONTRASENA}</p>}
           </div>
-
-          <Input
-            label="Confirmar contraseña"
-            name="confirmar"
-            type="password"
-            placeholder="Repite tu contraseña"
-            value={form.confirmar}
-            onChange={handleChange}
-            leftIcon={<Lock size={16} />}
-            error={errors.confirmar}
-            autoComplete="new-password"
-          />
 
           <button type="submit" disabled={loading} className="auth-submit">
             {loading
@@ -269,11 +269,6 @@ const ResetPasswordForm = ({
             }
           </button>
 
-          <div className="auth-row-between" style={{ justifyContent: "center" }}>
-            <button type="button" className="auth-link-btn" onClick={onBack}>
-              ← Volver
-            </button>
-          </div>
         </form>
       )}
     </AuthLayout>

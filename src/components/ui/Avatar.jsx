@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import fallbackImg from "@/assets/icons/logo.svg";
+import fallbackImg from "@/assets/icons/edumon-logo.svg";
 
 const SIZES = {
   sm: "w-8 h-8 text-xs",
