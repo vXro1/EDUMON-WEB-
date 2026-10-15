@@ -20,7 +20,7 @@ import {
 import { Modal, Toast, Button, Input, useConfirm } from "@/components";
 import { humanizeError } from "@/utils/humanizeError";
 import { formatBytes } from "@/utils/formatBytes";
-import logo from "@/assets/icons/logo.svg";
+import logo from "@/assets/icons/edumon-logo.svg";
 import "./AppMovilPage.css";
 
 const VERSION_RE = /^\d+\.\d+\.\d+$/;

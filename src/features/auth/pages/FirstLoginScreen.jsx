@@ -6,7 +6,7 @@ import { authChangePassword } from "@/services/authService";
 import { humanizeError } from "@/utils/humanizeError";
 import { assetUrl } from "@/utils/assetUrl";
 import { validarContrasenaNueva, PASSWORD_RULES } from "@/utils/credenciales";
-import logoSvg from "@/assets/icons/logo.svg";
+import logoSvg from "@/assets/icons/edumon-logo.svg";
 import { readLoginPassword, clearLoginPassword } from "../utils/firstLoginPassword";
 import {
   CheckCircle2,

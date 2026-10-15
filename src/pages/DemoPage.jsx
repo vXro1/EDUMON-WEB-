@@ -11,7 +11,7 @@ import { UserAvatar, Button } from "@/components";
 import { useToast } from "@/context/ToastContext";
 import { NAV_GROUPS, ROLE_LABELS, ICONS } from "@/config/navigation/navGroups";
 import CursoCard from "@/features/cursos/components/CursoCard";
-import logoSvg from "@/assets/icons/logo.svg";
+import logoSvg from "@/assets/icons/edumon-logo.svg";
 
 const BANNER_H = 46;
 
