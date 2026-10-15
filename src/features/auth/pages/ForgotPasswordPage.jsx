@@ -39,7 +39,6 @@ export const ForgotPasswordPage = () => {
       sent={sent}
       emailSent={emailSent}
       onContinue={handleContinue}
-      onBack={() => navigate("/login")}
     />
   );
 };

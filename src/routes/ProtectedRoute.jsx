@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuthContext } from "../features/auth/context/AuthContext";
 import { LoadingScreen } from "@/components";
@@ -9,11 +10,20 @@ export const ROLE_HOME = {
   "padre/tutor": "/padre",  // alias de compatibilidad
 };
 
+function useSessionReady() {
+  const { loading, sessionChecked, ensureSession } = useAuthContext();
+  useEffect(() => {
+    if (!sessionChecked) ensureSession?.();
+  }, [sessionChecked, ensureSession]);
+  return !loading && sessionChecked;
+}
+
 export const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { isAuthenticated, user, loading } = useAuthContext();
+  const { isAuthenticated, user } = useAuthContext();
+  const ready = useSessionReady();
   const location = useLocation();
 
-  if (loading) return <LoadingScreen message="Verificando sesión..." />;
+  if (!ready) return <LoadingScreen message="Verificando sesión..." />;
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
@@ -32,21 +42,23 @@ export const ProtectedRoute = ({ children, allowedRoles }) => {
 };
 
 export const PublicOnlyRoute = ({ children }) => {
-  const { isAuthenticated, user, loading } = useAuthContext();
+  const { isAuthenticated, user } = useAuthContext();
+  const ready = useSessionReady();
 
-  if (loading) return <LoadingScreen message="Verificando sesión..." />;
+  if (!ready) return <LoadingScreen message="Verificando sesión..." />;
 
-  if (isAuthenticated) {
-    return <Navigate to={ROLE_HOME[user?.rol] ?? "/dashboard"} replace />;
+  if (isAuthenticated && ROLE_HOME[user?.rol]) {
+    return <Navigate to={ROLE_HOME[user.rol]} replace />;
   }
 
   return children;
 };
 
 export const RoleRedirect = () => {
-  const { user, loading } = useAuthContext();
+  const { user } = useAuthContext();
+  const ready = useSessionReady();
 
-  if (loading) return <LoadingScreen message="Verificando sesión..." />;
+  if (!ready) return <LoadingScreen message="Verificando sesión..." />;
 
   return <Navigate to={ROLE_HOME[user?.rol] ?? "/login"} replace />;
 };

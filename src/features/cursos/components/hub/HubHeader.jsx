@@ -6,7 +6,7 @@ import { Sk } from "../shared/ui";
 // liso en su lugar, así que un curso sin foto propia se veía distinto aquí
 // que en el resto de la app, y el color sólido tapaba por completo cualquier
 // imagen (de ahí "ese color no me deja ver la imagen").
-import letrasImg from "@/assets/img/letras.svg";
+import letrasImg from "@/assets/img/edumon-letras-sm.webp";
 
 const FALLBACK_COLOR = "#0C6AC4";
 

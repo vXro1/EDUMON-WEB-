@@ -103,7 +103,7 @@ export function normalizeEntrega(data) {
       data.tarea && typeof data.tarea === "object"
         ? {
             _id: data.tarea._id || data.tarea.id || null,
-            titulo: data.tarea.titulo || "Tarea",
+            titulo: data.tarea.titulo || "Reto",
             descripcion: data.tarea.descripcion || "",
             fechaEntrega: data.tarea.fechaEntrega || null,
             criterios: typeof data.tarea.criterios === "string" ? data.tarea.criterios : "",
@@ -111,7 +111,7 @@ export function normalizeEntrega(data) {
         : data.tareaId && typeof data.tareaId === "object"
         ? {
             _id: data.tareaId._id || data.tareaId.id || null,
-            titulo: data.tareaId.titulo || "Tarea",
+            titulo: data.tareaId.titulo || "Reto",
             descripcion: data.tareaId.descripcion || "",
             fechaEntrega: data.tareaId.fechaEntrega || null,
             criterios: typeof data.tareaId.criterios === "string" ? data.tareaId.criterios : "",

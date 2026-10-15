@@ -19,7 +19,6 @@ const ForgotPasswordForm = ({
   sent = false,
   emailSent = "",
   onContinue,
-  onBack,
 }) => {
   const [form,   setForm]   = useState({ correo: "" });
   const [errors, setErrors] = useState({});
@@ -64,11 +63,6 @@ const ForgotPasswordForm = ({
           <button className="auth-submit" onClick={onContinue}>
             Ingresar código
           </button>
-          <div className="auth-row-between" style={{ marginTop: 12, justifyContent: "center" }}>
-            <button type="button" className="auth-link-btn" onClick={onBack}>
-              ← Volver al inicio de sesión
-            </button>
-          </div>
         </>
       ) : (
         <form onSubmit={handleSubmit} noValidate className="auth-form">
@@ -92,11 +86,6 @@ const ForgotPasswordForm = ({
             }
           </button>
 
-          <div className="auth-row-between" style={{ justifyContent: "center" }}>
-            <button type="button" className="auth-link-btn" onClick={onBack}>
-              ← Volver al inicio de sesión
-            </button>
-          </div>
         </form>
       )}
     </AuthLayout>

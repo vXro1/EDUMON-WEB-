@@ -215,13 +215,22 @@
   background: none;
   border: none;
   padding: 0;
+  min-width: 36px;
+  min-height: 36px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--color-text-subtle);
-  transition: color 120ms ease;
+  transition: color 120ms ease, background 120ms ease;
 }
 .input-adornment-btn:hover {
+  color: var(--color-text);
+  background: var(--color-bg-muted, rgba(0, 0, 0, 0.04));
+}
+.input-adornment-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
   color: var(--color-text);
 }
 
@@ -564,10 +573,10 @@
 }
 
 .check-input {
-  width: 22px;
-  height: 22px;
-  min-width: 22px;
-  min-height: 22px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
   border: 1.5px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-surface);

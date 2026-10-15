@@ -17,7 +17,7 @@ import {
   appMovilGetActual, appMovilGetAll, appMovilUpload,
   appMovilUpdate, appMovilActivar, appMovilEliminar,
 } from "@/services/appMovilService";
-import { Modal, Toast, Button, Input } from "@/components";
+import { Modal, Toast, Button, Input, useConfirm } from "@/components";
 import { humanizeError } from "@/utils/humanizeError";
 import { formatBytes } from "@/utils/formatBytes";
 import logo from "@/assets/icons/logo.svg";
@@ -68,6 +68,7 @@ const INIT_UPLOAD = { version: "", versionCode: "", notas: "", obligatoria: fals
 const INIT_EDIT = { version: "", versionCode: "", notas: "", obligatoria: false };
 
 export default function AppMovilPage() {
+  const confirmar = useConfirm();
   const [build, setBuild] = useState(null);       // versión activa (GET /apk/actual)
   const [history, setHistory] = useState([]);      // todas las versiones (GET /apk)
   const [historyError, setHistoryError] = useState(false);
@@ -207,7 +208,12 @@ export default function AppMovilPage() {
   };
 
   const handleEliminar = async (id) => {
-    if (!window.confirm("¿Eliminar esta versión del APK? Esta acción no se puede deshacer.")) return;
+    const ok = await confirmar({
+      title: "¿Eliminar esta versión del APK?",
+      message: "Las familias ya no podrán descargarla. Esta acción no se puede deshacer.",
+      confirmLabel: "Eliminar versión",
+    });
+    if (!ok) return;
     setBusyId(id);
     try {
       await appMovilEliminar(id);

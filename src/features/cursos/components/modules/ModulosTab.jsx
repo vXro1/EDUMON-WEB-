@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useContext } from "react";
 import CursoContext from "../../context/CursoContext";
 import { BookOpen, Eye, Pencil, Trash2, Upload } from "lucide-react";
 import { modulosGetByCurso, modulosCreate, modulosUpdate, modulosDelete } from "@/features/cursos/services/cursosService";
-import { Button, Input, AppModal, Badge, Toast, CsvUploadModal, RichTextEditor } from "@/components";
+import { Button, Input, AppModal, Badge, Toast, CsvUploadModal, RichTextEditor, useConfirm } from "@/components";
 import { Sk, EmptyState, Field, InfoBlock, IconBtn } from "../shared/ui";
 import { makeNotify } from "../shared/helpers";
 import { sanitizeRichText, stripHtml } from "@/utils/richText";
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/ModulosCsvTemplate";
 
 export default function ModulosTab({ cursoId: cursoIdProp, canManage: canManageProp }) {
+  const confirmar = useConfirm();
   const ctx       = useContext(CursoContext);
   const cursoId   = ctx?.cursoId   ?? cursoIdProp;
   const canManage = ctx?.canManageModules ?? canManageProp;
@@ -75,7 +76,12 @@ export default function ModulosTab({ cursoId: cursoIdProp, canManage: canManageP
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("¿Eliminar este módulo?")) return;
+    const ok = await confirmar({
+      title: "¿Eliminar este módulo?",
+      message: "Se quitará del curso con todo su contenido. Esta acción no se puede deshacer.",
+      confirmLabel: "Eliminar módulo",
+    });
+    if (!ok) return;
     try { await modulosDelete(id); notify("Módulo eliminado"); load(); }
     catch { notify("Error al eliminar", "error"); }
   };
