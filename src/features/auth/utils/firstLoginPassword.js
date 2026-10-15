@@ -1,16 +1,11 @@
-// puente entre LoginPage y FirstLoginScreen (necesita la contraseña actual para
-// change-password). sessionStorage en vez de location.state: FirstLoginScreen
-// hace pushState para bloquear el botón "atrás", lo que dejaba el state de ruta en null
-const KEY = "edumon_first_login_pwd";
+let loginPassword = null;
 
 export const stashLoginPassword = (password) => {
-  try { sessionStorage.setItem(KEY, password); } catch {}
+  loginPassword = password || null;
 };
 
-export const readLoginPassword = () => {
-  try { return sessionStorage.getItem(KEY); } catch { return null; }
-};
+export const readLoginPassword = () => loginPassword;
 
 export const clearLoginPassword = () => {
-  try { sessionStorage.removeItem(KEY); } catch {}
+  loginPassword = null;
 };

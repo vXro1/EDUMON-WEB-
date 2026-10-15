@@ -19,7 +19,7 @@ import { humanizeError } from "@/utils/humanizeError";
 import { sanitizeRichText, isRichTextEmpty } from "@/utils/richText";
 
 // Shared UI — componentes del sistema
-import { Toast, AppModal, Modal, Button, Badge, Input, Select, RichTextEditor } from "@/components";
+import { Toast, AppModal, Modal, Button, Badge, Input, Select, RichTextEditor, useConfirm } from "@/components";
 import { Sk, EmptyState, Field } from "../../cursos/components/shared/ui";
 import { makeNotify } from "@/features/cursos/components/shared/helpers";
 
@@ -165,6 +165,7 @@ function toDatetimeLocalValue(iso) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function TareasPage() {
+  const confirmar = useConfirm();
   const navigate = useNavigate();
   const { registerSearchHandler } = useSearch();
 
@@ -493,7 +494,12 @@ export default function TareasPage() {
 
   // ── Cerrar tarea ──────────────────────────────────────────────────────────
   const handleCerrar = async (id) => {
-    if (!window.confirm("¿Cerrar este reto? No se aceptarán más entregas.")) return;
+    const ok = await confirmar({
+      title: "¿Cerrar este reto?",
+      message: "No se aceptarán más entregas de las familias.",
+      confirmLabel: "Cerrar reto",
+    });
+    if (!ok) return;
     try {
       await tareasCerrar(id);
       notify("Reto cerrado");

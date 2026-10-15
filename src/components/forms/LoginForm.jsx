@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Lock, AlertTriangle, X, ArrowLeft } from "lucide-react";
+import { Lock, AlertTriangle, X } from "lucide-react";
 import { Input, PhoneInput } from "@/components";
 import AuthLayout from "./AuthLayout";
 import { toLocalPhone, normalizePhone, isValidPhone, PHONE_ERROR } from "@/utils/normalizePhone";
@@ -37,14 +37,7 @@ const LoginForm = ({ onSubmit, loading = false, error = "", sessionExpired = fal
   };
 
   return (
-    <AuthLayout
-      topAction={
-        <button type="button" className="auth-back-link" onClick={() => navigate("/")}>
-          <ArrowLeft size={13} />
-          Volver al inicio
-        </button>
-      }
-    >
+    <AuthLayout>
       {/* Encabezado */}
       <div className="auth-form-head">
         <h1>Inicia sesión</h1>

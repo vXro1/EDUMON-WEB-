@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import { getCourseActionsByRole, getCourseMainPath } from "../utils/courseActions";
 import { Button } from "@/components";
-import letrasImg from "@/assets/img/letras.svg"; // fallback para cursos sin portada
+import { getCursoAvatar, getCursoCover } from "../utils/cursoCover";
 
 const HEX_RE = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/;
 const DEFAULT_COLOR = "var(--color-primary)"; // mismo fallback usado en CursosPage / CursoContext
@@ -43,7 +43,9 @@ export default memo(function CursoCard({
   const cursoColor = HEX_RE.test(curso?.color || "") ? curso.color : DEFAULT_COLOR;
 
   // Imagen del curso — siempre presente: portada real o fallback por defecto
-  const coverSrc = curso?.fotoPortada || curso?.fotoPortadaUrl || curso?.imagen || letrasImg;
+  const portada = getCursoCover(curso);
+  const avatarSrc = getCursoAvatar(curso);
+  const coverSrc = portada || avatarSrc;
 
   const actions  = compact ? [] : getCourseActionsByRole(role, curso._id ?? curso.id);
   const mainPath = getCourseMainPath(curso._id ?? curso.id);
@@ -52,7 +54,7 @@ export default memo(function CursoCard({
   const handleNavigate  = (path) => navigate(path);
 
   return (
-    <article
+    <div
       onClick={handleCardClick}
       onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handleCardClick(); } }}
       role="button"
@@ -79,15 +81,29 @@ export default memo(function CursoCard({
         width: "100%",
         aspectRatio: "16 / 9",
         flexShrink: 0,
-        background: "var(--color-bg)",
+        background: portada ? "var(--color-bg)" : `color-mix(in srgb, ${cursoColor} 16%, #fff)`,
         overflow: "hidden",
       }}>
         <img
           src={coverSrc}
           alt={curso.nombre ?? "Curso"}
           loading="lazy"
-          onError={e => { e.target.onerror = null; e.target.src = letrasImg; }}
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          onError={e => {
+            e.target.onerror = null;
+            e.target.src = avatarSrc;
+            e.target.style.objectFit = "contain";
+            e.target.style.padding = "8% 0 0";
+            e.target.parentElement.style.background = `color-mix(in srgb, ${cursoColor} 16%, #fff)`;
+          }}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: portada ? "cover" : "contain",
+            objectPosition: portada ? "center" : "center bottom",
+            padding: portada ? 0 : "8% 0 0",
+            boxSizing: "border-box",
+            display: "block",
+          }}
         />
       </div>
 
@@ -136,7 +152,7 @@ export default memo(function CursoCard({
           </span>
           <span style={{
             display: "flex", alignItems: "center", gap: 2,
-            fontSize: 11.5, fontWeight: 700, color: cursoColor,
+            fontSize: 11.5, fontWeight: 700, color: `color-mix(in srgb, ${cursoColor} 55%, #000)`,
           }}>
             Ver curso
             <ChevronRight size={13} aria-hidden="true" />
@@ -157,6 +173,6 @@ export default memo(function CursoCard({
           </div>
         )}
       </div>
-    </article>
+    </div>
   );
 });

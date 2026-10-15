@@ -1,17 +1,19 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { buzonEnviar } from "@/features/buzon/services/buzonService";
 import { appMovilGetActual } from "@/services/appMovilService";
 import { normalizePhone } from "@/utils/normalizePhone";
 import { formatBytes } from "@/utils/formatBytes";
+import { TUTORIALES } from "./tutoriales.data";
+import useDialogFocus from "@/hooks/useDialogFocus";
 import edumonLogo from "@/assets/icons/titulo.svg";
+import edumonIcono from "@/assets/icons/logo.svg";
+import edumonLetras from "@/assets/img/edumon-letras-sm.webp";
 import mascota from "@/assets/img/cuerpocompleto.svg";
 import soporte from "@/assets/img/Buzonsoporte.svg";
-// Versión reducida de avatars.png (2,8 MB → ~0,4 MB): solo se muestra a
-// ~260px en el footer, no hace falta la resolución completa.
-import mascotasEquipo from "@/assets/img/avatars-footer.png";
+import mascotasEquipo from "@/assets/img/avatars-footer.webp";
 
 /* ─── Burbujas decorativas (assets reales) ─── */
 import circulo1 from "@/assets/img/circulos/circulo1.svg";
@@ -105,10 +107,11 @@ const IconMail = ({ size = 16 }) => (
   </svg>
 );
 
-const IconPhone = ({ size = 16 }) => (
+const IconYoutube = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z" />
+    <rect x="2" y="5" width="20" height="14" rx="4" />
+    <polygon points="10 9 15 12 10 15 10 9" fill="currentColor" />
   </svg>
 );
 
@@ -117,21 +120,6 @@ const IconMapPin = ({ size = 16 }) => (
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
     <circle cx="12" cy="10" r="3" />
-  </svg>
-);
-
-const IconFacebook = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-    <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
-  </svg>
-);
-
-const IconInstagram = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-    <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
-    <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
   </svg>
 );
 
@@ -154,17 +142,6 @@ const IconNavigation = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
     stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <polygon points="3 11 22 2 13 21 11 13 3 11" />
-  </svg>
-);
-
-const IconShare = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="18" cy="5" r="3" />
-    <circle cx="6" cy="12" r="3" />
-    <circle cx="18" cy="19" r="3" />
-    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
-    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
   </svg>
 );
 
@@ -290,6 +267,14 @@ const IconDownload = ({ size = 16 }) => (
 );
 
 /* ── Datos ── */
+const CONTACTO = {
+  correo: "edumonsoporte@gmail.com",
+  youtube: "https://www.youtube.com/@EDUMONEduca",
+  youtubeHandle: "@EDUMONEduca",
+};
+
+const Letras = () => <img src={edumonLetras} alt="Edumon" className="edumon-letras" width={480} height={189} />;
+
 const NAV_LINKS = [
   { label: "Inicio", href: "#inicio" },
   { label: "Pilares", href: "#pilares" },
@@ -327,77 +312,77 @@ const PILARES = [
 const MODULOS = [
   {
     icon: <IconUsers size={24} />,
-    color: "#7c3aed",
+    color: "#0C6AC4",
     title: "Mi familia y mi identidad",
     desc: "Ayuda a tu hijo a sentirse querido, reconocer quién es y valorar a su familia y comunidad.",
   },
 
   {
     icon: <IconHeartHandshake size={24} />,
-    color: "#db2777",
+    color: "#F23D7F",
     title: "Sentirse querido y seguro",
     desc: "Fortalece los vínculos afectivos y acompaña a tu hijo para que crezca sintiéndose valorado y protegido.",
   },
 
   {
     icon: <IconMessageCircle size={24} />,
-    color: "#06b6d4",
+    color: "#0DC5E2",
     title: "Hablar, imaginar y expresar",
     desc: "Anima a tu hijo a contar sus ideas, sentimientos y emociones mediante palabras, juegos, dibujos y otras formas de expresión.",
   },
 
   {
     icon: <IconSmile size={24} />,
-    color: "#f59e0b",
+    color: "#FCBD00",
     title: "Mis emociones",
     desc: "Aprende a reconocer y acompañar las emociones de tu hijo para que pueda expresarlas de manera saludable.",
   },
 
   {
     icon: <IconCompass size={24} />,
-    color: "#16a34a",
+    color: "#41D958",
     title: "Explorar y descubrir",
     desc: "Acompaña a tu hijo a observar, preguntar, experimentar y descubrir cómo funciona el mundo que lo rodea.",
   },
 
   {
     icon: <IconPuzzle size={24} />,
-    color: "#7c3aed",
+    color: "#0C6AC4",
     title: "Aprender a resolver problemas",
     desc: "Invita a tu hijo a buscar soluciones, tomar pequeñas decisiones y aprender de las situaciones de la vida cotidiana.",
   },
 
   {
     icon: <IconSprout size={24} />,
-    color: "#16a34a",
+    color: "#41D958",
     title: "Descubrir mi entorno",
     desc: "Ayuda a tu hijo a conocer, cuidar y apropiarse de los espacios, lugares y comunidad donde vive.",
   },
 
   {
     icon: <IconRepeat size={24} />,
-    color: "#f59e0b",
+    color: "#FCBD00",
     title: "Aprender con el cuerpo y el movimiento",
     desc: "Promueve juegos y actividades donde tu hijo pueda moverse libremente, explorar y conocer su propio cuerpo.",
   },
 
   {
     icon: <IconShieldCheck size={24} />,
-    color: "#06b6d4",
+    color: "#0DC5E2",
     title: "Límites con amor",
     desc: "Establece límites claros y respetuosos que ayuden a tu hijo a sentirse seguro y aprender a convivir con los demás.",
   },
 
   {
     icon: <IconHeartHandshake size={24} />,
-    color: "#db2777",
+    color: "#F23D7F",
     title: "Familia que dialoga",
     desc: "Crea espacios para conversar, escuchar y compartir en familia, fortaleciendo la confianza y los vínculos.",
   },
 
   {
     icon: <IconApple size={24} />,
-    color: "#16a34a",
+    color: "#41D958",
     title: "Cuidar y crecer juntos",
     desc: "Descubre prácticas sencillas para acompañar el desarrollo integral de tu hijo desde el hogar.",
   },
@@ -435,6 +420,11 @@ const QUIENES_BUBBLES = [
   { circulo: 5, top: "6%", right: "2%", size: "100px", opacity: 0.24, anim: "a", delay: "0s" },
   { circulo: 8, bottom: "6%", left: "3%", size: "64px", opacity: 0.22, anim: "b", delay: "1.2s" },
   { circulo: 10, bottom: "20%", right: "22%", size: "44px", opacity: 0.2, anim: "c", delay: "1.7s" },
+];
+
+const TUTORIALES_BUBBLES = [
+  { circulo: 11, top: "6%", right: "3%", size: "70px", opacity: 0.22, anim: "b", delay: "0.4s" },
+  { circulo: 1, bottom: "6%", left: "3%", size: "58px", opacity: 0.2, anim: "a", delay: "1.3s" },
 ];
 
 const APP_BUBBLES = [
@@ -499,10 +489,7 @@ function ModuloCard({ m }) {
   return (
     <article
       className="modulo-card"
-      style={{
-        "--m-color": m.color,
-        background: `linear-gradient(165deg, ${m.color}16 0%, #ffffff 55%)`,
-      }}
+      style={{ "--m-color": m.color }}
     >
       <div className="modulo-card__bar" style={{ background: m.color }} />
       <div className="modulo-card__body">
@@ -626,7 +613,6 @@ function ModuloCarousel() {
     return () => emblaApi.off("reInit", update);
   }, [emblaApi]);
 
-
   /* ─────────────────────────────────────────
      ACTUALIZAR CARD ACTIVA
   ───────────────────────────────────────── */
@@ -636,7 +622,6 @@ function ModuloCarousel() {
 
     setSelectedIndex(emblaApi.selectedScrollSnap());
   }, [emblaApi]);
-
 
   useEffect(() => {
     if (!emblaApi) return;
@@ -651,7 +636,6 @@ function ModuloCarousel() {
       emblaApi.off("reInit", onSelect);
     };
   }, [emblaApi, onSelect]);
-
 
   /* ─────────────────────────────────────────
      NAVEGACIÓN
@@ -672,7 +656,6 @@ function ModuloCarousel() {
     [emblaApi]
   );
 
-
   /* ─────────────────────────────────────────
      TECLADO
   ───────────────────────────────────────── */
@@ -688,7 +671,6 @@ function ModuloCarousel() {
       scrollNext();
     }
   };
-
 
   return (
     <div className="modulo-embla">
@@ -732,7 +714,6 @@ function ModuloCarousel() {
               : 1;
 
             const isActive = singleView && i === selectedIndex;
-
 
             return (
               <div
@@ -788,7 +769,6 @@ function ModuloCarousel() {
         </div>
       </div>
 
-
       {/* ───────────────── FLECHA ANTERIOR ───────────────── */}
 
       <button
@@ -800,7 +780,6 @@ function ModuloCarousel() {
         <IconChevronLeft size={20} />
       </button>
 
-
       {/* ───────────────── FLECHA SIGUIENTE ───────────────── */}
 
       <button
@@ -811,7 +790,6 @@ function ModuloCarousel() {
       >
         <IconChevronRight size={20} />
       </button>
-
 
       {/* ───────────────── DOTS ───────────────── */}
 
@@ -848,6 +826,7 @@ function ModuloCarousel() {
 }
 export default function LandingPage() {
   const navigate = useNavigate();
+  const { hash } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("inicio");
   const [formData, setFormData] = useState({
@@ -856,6 +835,9 @@ export default function LandingPage() {
   const [submitStatus, setSubmitStatus] = useState("idle");
   const [submitError, setSubmitError] = useState("");
   const [showConfirm, setShowConfirm] = useState(false);
+  const confirmPanelRef = useRef(null);
+  const closeConfirm = useCallback(() => setShowConfirm(false), []);
+  useDialogFocus(confirmPanelRef, showConfirm, closeConfirm);
   // Versión activa del APK (GET /apk/actual, público). null = sin publicar
   // (404) — la sección "App" cae con gracia a "Próximamente".
   const [appBuild, setAppBuild] = useState(null);
@@ -873,13 +855,23 @@ export default function LandingPage() {
   const aprendeRef = useRef(null);
   const quienesRef = useRef(null);
   const appRef = useRef(null);
+  const tutorialesRef = useRef(null);
   const contactoRef = useRef(null);
 
   const pilaresVis = useIntersect(pilaresRef);
   const aprendeVis = useIntersect(aprendeRef);
   const quienesVis = useIntersect(quienesRef);
   const appVis = useIntersect(appRef);
+  const tutorialesVis = useIntersect(tutorialesRef);
   const contactoVis = useIntersect(contactoRef);
+
+  useEffect(() => {
+    if (!hash) return;
+    const id = setTimeout(() => {
+      document.getElementById(hash.slice(1))?.scrollIntoView({ behavior: "smooth" });
+    }, 80);
+    return () => clearTimeout(id);
+  }, [hash]);
 
   useEffect(() => {
     const sections = ["inicio", "pilares", "aprende", "quienes", "app", "contacto"];
@@ -963,6 +955,12 @@ export default function LandingPage() {
                 </a>
               </li>
             ))}
+            <li>
+              <Link to="/tutoriales" className="landing-nav__tutoriales">
+                <IconPlay size={11} />
+                Tutoriales
+              </Link>
+            </li>
           </ul>
 
           <button className="landing-nav__cta" onClick={() => navigate("/login")}>
@@ -992,6 +990,14 @@ export default function LandingPage() {
               {l.label}
             </a>
           ))}
+          <Link
+            to="/tutoriales"
+            className="landing-nav__tutoriales"
+            onClick={() => setMenuOpen(false)}
+          >
+            <IconPlay size={11} />
+            Tutoriales
+          </Link>
           <button
             className="landing-nav__mobile-cta"
             onClick={() => { navigate("/login"); setMenuOpen(false); }}
@@ -1050,7 +1056,10 @@ export default function LandingPage() {
               src={mascota}
               alt="Mascota Edumon"
               className="edumon-mascot-img"
+              width={660}
+              height={626}
               loading="eager"
+              fetchPriority="high"
             />
           </div>
         </div>
@@ -1060,7 +1069,7 @@ export default function LandingPage() {
         id="pilares"
         className="landing-pilares"
         ref={pilaresRef}
-        style={{ opacity: pilaresVis ? 1 : 0, transition: "opacity 0.8s ease" }}
+        style={{ transform: pilaresVis ? "none" : "translateY(12px)", transition: "transform 0.6s ease" }}
       >
         <DecoBubbles items={PILARES_BUBBLES} />
 
@@ -1101,8 +1110,8 @@ export default function LandingPage() {
         className="landing-aprende"
         ref={aprendeRef}
         style={{
-          opacity: aprendeVis ? 1 : 0,
-          transition: "opacity 0.8s ease 0.1s",
+          transform: aprendeVis ? "none" : "translateY(12px)",
+          transition: "transform 0.6s ease",
         }}
       >
         <DecoBubbles items={APRENDE_BUBBLES} />
@@ -1116,7 +1125,7 @@ export default function LandingPage() {
             </div>
 
             <h2 className="aprende-head__title">
-              ¿Qué podrás aprender en Edumon?
+              ¿Qué podrás aprender en <Letras />?
             </h2>
 
             <p className="aprende-head__desc">
@@ -1135,9 +1144,8 @@ export default function LandingPage() {
         className="landing-section--alt"
         ref={quienesRef}
         style={{
-          opacity: quienesVis ? 1 : 0,
-          transform: quienesVis ? "none" : "translateY(24px)",
-          transition: "opacity 0.7s ease, transform 0.7s ease",
+          transform: quienesVis ? "none" : "translateY(12px)",
+          transition: "transform 0.6s ease",
           position: "relative",
           overflow: "hidden",
         }}
@@ -1195,9 +1203,8 @@ export default function LandingPage() {
         ref={contactoRef}
         className="landing-contacto-section"
         style={{
-          opacity: contactoVis ? 1 : 0,
-          transform: contactoVis ? "none" : "translateY(24px)",
-          transition: "opacity 0.7s ease, transform 0.7s ease",
+          transform: contactoVis ? "none" : "translateY(12px)",
+          transition: "transform 0.6s ease",
         }}
       >
         <DecoBubbles items={CONTACTO_BUBBLES} />
@@ -1212,11 +1219,7 @@ export default function LandingPage() {
             </div>
 
             <h2 className="contacto-left__title">
-              ¿Tu institución quiere ser parte de{" "}
-              <span className="highlight-1">E</span>
-              <span className="highlight-2">d</span>
-              <span className="highlight-3">u</span>
-              mon?
+              ¿Tu institución quiere ser parte de <Letras />?
             </h2>
 
             <p className="contacto-left__text">
@@ -1249,14 +1252,6 @@ export default function LandingPage() {
 
                 {/* Banderita del buzón: se levanta al pasar el mouse */}
                 <span className="buzon-flag" aria-hidden="true" />
-
-                {/* Contador de mensajes nuevos */}
-                <span className="buzon-badge" aria-hidden="true">1</span>
-
-                {/* Carta entrando al buzón (animación en bucle) */}
-                <span className="buzon-envelope" aria-hidden="true">
-                  <IconMail size={18} />
-                </span>
 
                 {/* Pedestal + sombra en el piso, para que "se pare" como un buzón real */}
                 <span className="buzon-scene__post" aria-hidden="true" />
@@ -1362,9 +1357,8 @@ export default function LandingPage() {
         ref={appRef}
         className="landing-app"
         style={{
-          opacity: appVis ? 1 : 0,
-          transform: appVis ? "none" : "translateY(24px)",
-          transition: "opacity 0.7s ease, transform 0.7s ease",
+          transform: appVis ? "none" : "translateY(12px)",
+          transition: "transform 0.6s ease",
         }}
       >
         <DecoBubbles items={APP_BUBBLES} />
@@ -1376,10 +1370,10 @@ export default function LandingPage() {
               App móvil
             </div>
 
-            <h2 className="landing-app__title">Lleva Edumon en el bolsillo</h2>
+            <h2 className="landing-app__title">Lleva <Letras /> en el bolsillo</h2>
 
             <p className="landing-app__text">
-              Consulta tareas, entregas, foros y avisos desde el celular. La app
+              Consulta retos, entregas, foros y avisos desde el celular. La app
               reúne todo lo de la plataforma en una experiencia pensada para el
               día a día de las familias.
             </p>
@@ -1420,9 +1414,93 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="landing-app__visual" aria-hidden="true">
-            <img src={edumonLogo} alt="" className="landing-app__logo-img" />
+          <div className="landing-app__visual">
+            <div className="landing-app__halo" aria-hidden="true" />
+            {appBuild?.urlDescarga ? (
+              <a
+                className="landing-app__icon"
+                href={appBuild.urlDescarga}
+                rel="noopener noreferrer"
+                aria-label="Descargar la app de Edumon para Android"
+              >
+                <span className="landing-app__icon-tile">
+                  <img src={edumonIcono} alt="" />
+                  <span className="landing-app__icon-badge" aria-hidden="true">
+                    <IconDownload size={16} />
+                  </span>
+                </span>
+                <span className="landing-app__icon-label">Edumon</span>
+              </a>
+            ) : (
+              <div className="landing-app__icon landing-app__icon--off" aria-hidden="true">
+                <span className="landing-app__icon-tile">
+                  <img src={edumonIcono} alt="" />
+                </span>
+                <span className="landing-app__icon-label">Edumon</span>
+              </div>
+            )}
           </div>
+        </div>
+      </section>
+
+      <section
+        id="tutoriales"
+        ref={tutorialesRef}
+        className="landing-tutoriales"
+        style={{
+          transform: tutorialesVis ? "none" : "translateY(12px)",
+          transition: "transform 0.6s ease",
+        }}
+      >
+        <DecoBubbles items={TUTORIALES_BUBBLES} />
+
+        <div className="landing-tutoriales__inner">
+          <div className="landing-tutoriales__head">
+            <span className="landing-tutoriales__badge">
+              <IconPlay size={11} />
+              Tutoriales
+            </span>
+            <h2 className="landing-tutoriales__title">
+              Aprende a usar <Letras /> <span className="landing-tutoriales__mark">en minutos</span>
+            </h2>
+            <p className="landing-tutoriales__text">
+              Videos cortos para padres de familia y profesores: cómo instalar
+              la app móvil y cómo sacarle provecho desde el primer día.
+            </p>
+          </div>
+
+          <div className="landing-tutoriales__grid">
+            {TUTORIALES.map((t) => (
+              <Link
+                key={t.id}
+                to={`/tutoriales#${t.id}`}
+                className={`tuto-teaser tuto-teaser--${t.tono}`}
+              >
+                <img className="tuto-teaser__peek" src={t.mascota} alt="" aria-hidden="true" draggable={false} />
+                <div className="tuto-teaser__media">
+                  <img src={t.banner} alt="" width={960} height={540} loading="lazy" />
+                  <span className="tuto-teaser__play" aria-hidden="true">
+                    <IconPlay size={20} />
+                  </span>
+                </div>
+                <div className="tuto-teaser__body">
+                  <div className="tuto-teaser__chips">
+                    {t.publico.map((p) => (
+                      <span key={p}>{p}</span>
+                    ))}
+                  </div>
+                  <h3 className="tuto-teaser__title">{t.titulo}</h3>
+                  <span className="tuto-teaser__more">
+                    Ver tutorial <IconArrowRight size={14} />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <Link to="/tutoriales" className="landing-tutoriales__cta">
+            Ver todos los tutoriales <IconArrowRight size={16} />
+          </Link>
         </div>
       </section>
 
@@ -1431,15 +1509,14 @@ export default function LandingPage() {
 
         <div className="landing-footer__grid">
           <div className="footer-brand">
-            <div className="footer-brand__wordmark">
-              <span>E</span><span>D</span><span>U</span>
-              <span>M</span><span>O</span><span>N</span>
-            </div>
+            <img src={edumonLetras} alt="Edumon" className="footer-brand__letras" width={480} height={189} loading="lazy" />
             <p className="footer-brand__tagline">
               Educación conectada, <strong>familias unidas.</strong>
             </p>
             <img
               src={mascotasEquipo}
+              width={640}
+              height={427}
               alt="Las mascotas de Edumon jugando con bloques"
               className="footer-crew"
               loading="lazy"
@@ -1482,6 +1559,12 @@ export default function LandingPage() {
                   Descargar para Android
                 </a>
               </li>
+              <li>
+                <Link to="/tutoriales">
+                  <IconPlay size={12} />
+                  Tutoriales en video
+                </Link>
+              </li>
             </ul>
             <p className="footer-col__note">Solo disponible para Android.</p>
           </div>
@@ -1493,7 +1576,13 @@ export default function LandingPage() {
             </div>
             <div className="footer-contact-item">
               <IconMail size={15} />
-              edumon@gmail.com
+              <a href={`mailto:${CONTACTO.correo}`}>{CONTACTO.correo}</a>
+            </div>
+            <div className="footer-contact-item">
+              <IconYoutube size={15} />
+              <a href={CONTACTO.youtube} target="_blank" rel="noopener noreferrer">
+                YouTube {CONTACTO.youtubeHandle}
+              </a>
             </div>
             <div className="footer-contact-item">
               <IconMapPin size={15} />
@@ -1520,7 +1609,7 @@ export default function LandingPage() {
           }}
           onClick={(e) => { if (e.target === e.currentTarget) setShowConfirm(false); }}
         >
-          <div style={{
+          <div ref={confirmPanelRef} style={{
             background: "#fff", borderRadius: 20, padding: "2rem",
             width: "100%", maxWidth: 480, boxShadow: "0 24px 60px rgba(0,0,0,0.18)",
             display: "flex", flexDirection: "column", gap: "1rem",
@@ -1528,7 +1617,7 @@ export default function LandingPage() {
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
               <div style={{
                 width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-                background: "linear-gradient(135deg,#7c3aed,#06b6d4)",
+                background: "#0C6AC4",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
                 <IconSend size={18} color="#fff" />
@@ -1576,7 +1665,7 @@ export default function LandingPage() {
                 onClick={handleConfirm}
                 style={{
                   padding: "0.6rem 1.5rem", borderRadius: 10, border: "none",
-                  background: "linear-gradient(135deg,#7c3aed,#06b6d4)",
+                  background: "#0C6AC4",
                   color: "#fff", fontWeight: 700, fontSize: "0.875rem",
                   cursor: "pointer", display: "flex", alignItems: "center", gap: 8,
                 }}
