@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { UserAvatar } from "@/components";
 import { ICONS, NAV_GROUPS, ROLE_LABELS } from "@/config/navigation/navGroups";
-import logoSvg from "@/assets/icons/logo.svg";
+import logoSvg from "@/assets/icons/edumon-logo.svg";
 
 const NavItem = memo(function NavItem({ item, onClose }) {
   const { pathname } = useLocation();

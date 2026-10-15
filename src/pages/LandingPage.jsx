@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
@@ -8,12 +9,12 @@ import { normalizePhone } from "@/utils/normalizePhone";
 import { formatBytes } from "@/utils/formatBytes";
 import { TUTORIALES } from "./tutoriales.data";
 import useDialogFocus from "@/hooks/useDialogFocus";
-import edumonLogo from "@/assets/icons/titulo.svg";
-import edumonIcono from "@/assets/icons/logo.svg";
+import edumonLogo from "@/assets/icons/edumon-logo-letras.svg";
+import edumonIcono from "@/assets/icons/edumon-logo.svg";
 import edumonLetras from "@/assets/img/edumon-letras-sm.webp";
-import mascota from "@/assets/img/cuerpocompleto.svg";
-import soporte from "@/assets/img/Buzonsoporte.svg";
-import mascotasEquipo from "@/assets/img/avatars-footer.webp";
+import mascota from "@/assets/img/edumon-mascota.svg";
+import soporte from "@/assets/img/edumon-mascota-buzon-soporte.svg";
+import mascotasEquipo from "@/assets/img/edumon-mascotas-jugando.webp";
 
 /* ─── Burbujas decorativas (assets reales) ─── */
 import circulo1 from "@/assets/img/circulos/circulo1.svg";
@@ -273,15 +274,15 @@ const CONTACTO = {
   youtubeHandle: "@EDUMONEduca",
 };
 
-const Letras = () => <img src={edumonLetras} alt="Edumon" className="edumon-letras" width={480} height={189} />;
+const Letras = () => <img src={edumonLetras} alt="EDUMON" className="edumon-letras" width={480} height={189} />;
 
 const NAV_LINKS = [
   { label: "Inicio", href: "#inicio" },
   { label: "Pilares", href: "#pilares" },
   { label: "Aprende", href: "#aprende" },
   { label: "Quiénes somos", href: "#quienes" },
-  { label: "App", href: "#app" },
   { label: "Contáctanos", href: "#contacto" },
+  { label: "App", href: "#app" },
 ];
 
 /* Equipo mostrado en "Quiénes somos" — se renderiza con clases CSS
@@ -825,6 +826,7 @@ function ModuloCarousel() {
   );
 }
 export default function LandingPage() {
+  usePageMeta({ title: "EDUMON | Plataforma educativa para docentes y familias", description: "EDUMON integra a docentes, estudiantes y familias para acompañar el desarrollo integral de cada niño: cursos, retos, calificaciones, foros y calendario.", path: "/" });
   const navigate = useNavigate();
   const { hash } = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -874,7 +876,7 @@ export default function LandingPage() {
   }, [hash]);
 
   useEffect(() => {
-    const sections = ["inicio", "pilares", "aprende", "quienes", "app", "contacto"];
+    const sections = ["inicio", "pilares", "aprende", "quienes", "contacto", "app", "tutoriales"];
     const handler = () => {
       for (const id of [...sections].reverse()) {
         const el = document.getElementById(id);
@@ -940,7 +942,7 @@ export default function LandingPage() {
       <header className="landing-header">
         <nav className="landing-nav">
           <a href="#inicio" className="landing-nav__logo" onClick={(e) => handleNav(e, "#inicio")}>
-            <img src={edumonLogo} alt="Edumon" className="landing-nav__logo-img" />
+            <img src={edumonLogo} alt="Logo de EDUMON" className="landing-nav__logo-img" width={699} height={372} />
           </a>
 
           <ul className="landing-nav__links">
@@ -1014,6 +1016,7 @@ export default function LandingPage() {
         <div className="landing-hero__content-row">
           <div className="landing-hero__content">
             <h1 className="landing-hero__title">
+              <span className="sr-only">EDUMON: </span>
               <span className="gradient-word">Pequeños pasos, grandes aprendizajes.</span>
             </h1>
 
@@ -1044,7 +1047,6 @@ export default function LandingPage() {
           </div>
 
           <div className="edumon-mascot-visual" aria-hidden="true">
-            <div className="edumon-mascot-ring" />
             <IconSparkles size={28} className="edumon-mascot-sparkle edumon-mascot-sparkle--1" />
             <IconStar size={18} className="edumon-mascot-sparkle edumon-mascot-sparkle--2" />
             <IconStar size={13} className="edumon-mascot-sparkle edumon-mascot-sparkle--3" />
@@ -1054,7 +1056,7 @@ export default function LandingPage() {
             <IconStar size={15} className="edumon-mascot-sparkle edumon-mascot-sparkle--7" />
             <img
               src={mascota}
-              alt="Mascota Edumon"
+              alt="Mascota de EDUMON saludando con su mochila"
               className="edumon-mascot-img"
               width={660}
               height={626}
@@ -1238,7 +1240,6 @@ export default function LandingPage() {
             <div className="contacto-left__img-wrap">
 
               <div className="buzon-scene">
-                <div className="buzon-scene__halo" aria-hidden="true" />
 
                 <IconStar size={16} className="buzon-spark buzon-spark--1" />
                 <IconSparkles size={20} className="buzon-spark buzon-spark--2" />
@@ -1246,8 +1247,11 @@ export default function LandingPage() {
 
                 <img
                   src={soporte}
-                  alt="Buzón de soporte Edumon"
+                  alt="Mascota de EDUMON junto al buzón de soporte"
                   className="buzon-scene__img"
+                  width={538}
+                  height={502}
+                  loading="lazy"
                 />
 
                 {/* Banderita del buzón: se levanta al pasar el mouse */}
@@ -1415,7 +1419,6 @@ export default function LandingPage() {
           </div>
 
           <div className="landing-app__visual">
-            <div className="landing-app__halo" aria-hidden="true" />
             {appBuild?.urlDescarga ? (
               <a
                 className="landing-app__icon"
@@ -1424,7 +1427,7 @@ export default function LandingPage() {
                 aria-label="Descargar la app de Edumon para Android"
               >
                 <span className="landing-app__icon-tile">
-                  <img src={edumonIcono} alt="" />
+                  <img src={edumonIcono} alt="Ícono de la app EDUMON" width={504} height={504} loading="lazy" />
                   <span className="landing-app__icon-badge" aria-hidden="true">
                     <IconDownload size={16} />
                   </span>
@@ -1434,7 +1437,7 @@ export default function LandingPage() {
             ) : (
               <div className="landing-app__icon landing-app__icon--off" aria-hidden="true">
                 <span className="landing-app__icon-tile">
-                  <img src={edumonIcono} alt="" />
+                  <img src={edumonIcono} alt="Ícono de la app EDUMON" width={504} height={504} loading="lazy" />
                 </span>
                 <span className="landing-app__icon-label">Edumon</span>
               </div>
@@ -1476,9 +1479,9 @@ export default function LandingPage() {
                 to={`/tutoriales#${t.id}`}
                 className={`tuto-teaser tuto-teaser--${t.tono}`}
               >
-                <img className="tuto-teaser__peek" src={t.mascota} alt="" aria-hidden="true" draggable={false} />
+                <img className="tuto-teaser__peek" src={t.mascota} alt={`Mascota de EDUMON del tutorial ${t.titulo}`} aria-hidden="true" draggable={false} loading="lazy" />
                 <div className="tuto-teaser__media">
-                  <img src={t.banner} alt="" width={960} height={540} loading="lazy" />
+                  <img src={t.banner} alt={`Miniatura del tutorial de EDUMON: ${t.titulo}`} width={960} height={540} loading="lazy" />
                   <span className="tuto-teaser__play" aria-hidden="true">
                     <IconPlay size={20} />
                   </span>
@@ -1509,7 +1512,7 @@ export default function LandingPage() {
 
         <div className="landing-footer__grid">
           <div className="footer-brand">
-            <img src={edumonLetras} alt="Edumon" className="footer-brand__letras" width={480} height={189} loading="lazy" />
+            <img src={edumonLetras} alt="EDUMON" className="footer-brand__letras" width={480} height={189} loading="lazy" />
             <p className="footer-brand__tagline">
               Educación conectada, <strong>familias unidas.</strong>
             </p>
@@ -1517,7 +1520,7 @@ export default function LandingPage() {
               src={mascotasEquipo}
               width={640}
               height={427}
-              alt="Las mascotas de Edumon jugando con bloques"
+              alt="Las mascotas de EDUMON jugando con bloques"
               className="footer-crew"
               loading="lazy"
             />

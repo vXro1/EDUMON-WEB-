@@ -1,4 +1,4 @@
-import logo from "@/assets/icons/logo.svg";
+import logo from "@/assets/icons/edumon-logo.svg";
 
 export default function Footer({
   brandDescription = "Transformando la educacion digital",

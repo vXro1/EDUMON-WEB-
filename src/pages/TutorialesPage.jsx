@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
+import { usePageMeta } from "@/hooks/usePageMeta";
 import { Link, useLocation } from "react-router-dom";
-import edumonLogo from "@/assets/icons/titulo.svg";
+import edumonLogo from "@/assets/icons/edumon-logo-letras.svg";
 import edumonLetras from "@/assets/img/edumon-letras.webp";
-import mascota from "@/assets/img/cuerpocompleto.svg";
-import mascotasEquipo from "@/assets/img/avatars-footer.webp";
+import mascota from "@/assets/img/edumon-mascota.svg";
+import mascotasEquipo from "@/assets/img/edumon-mascotas-jugando.webp";
 import avatarVerde from "@/assets/img/avatars/Avatar5.svg";
 import avatarProfe from "@/assets/img/avatars/Avatar3.svg";
 import circulo1 from "@/assets/img/circulos/circulo1.svg";
@@ -118,7 +119,7 @@ function VideoPlayer({ t, playing, onPlay }) {
       onClick={onPlay}
       aria-label={`Video en YouTube: reproducir ${t.titulo}`}
     >
-      <img className="tuto-video__thumb" src={t.banner} alt="" width={960} height={540} loading="lazy" />
+      <img className="tuto-video__thumb" src={t.banner} alt={`Miniatura del video de EDUMON: ${t.titulo}`} width={960} height={540} loading="lazy" />
       <span className="tuto-video__yt" aria-hidden="true">
         <IconYouTube size={18} /> Video en YouTube
       </span>
@@ -134,7 +135,7 @@ function TutorialCard({ t }) {
 
   return (
     <article className={`tuto-card tuto-card--${t.tono}`} id={t.id}>
-      <img className="tuto-card__peek" src={t.mascota} alt="" aria-hidden="true" draggable={false} />
+      <img className="tuto-card__peek" src={t.mascota} alt={`Mascota de EDUMON del tutorial ${t.titulo}`} aria-hidden="true" draggable={false} />
 
       <div className="tuto-card__media">
         <VideoPlayer t={t} playing={playing} onPlay={() => setPlaying(true)} />
@@ -183,9 +184,11 @@ function TutorialCard({ t }) {
 export default function TutorialesPage() {
   const { hash } = useLocation();
 
-  useEffect(() => {
-    document.title = "Tutoriales · Edumon";
-  }, []);
+  usePageMeta({
+    title: "Tutoriales de EDUMON | Aprende a usar la plataforma",
+    description: "Videos tutoriales de EDUMON para docentes y padres de familia: aprende a usar la app móvil y la plataforma web paso a paso.",
+    path: "/tutoriales",
+  });
 
   useEffect(() => {
     const target = hash && document.getElementById(hash.slice(1));
@@ -203,7 +206,7 @@ export default function TutorialesPage() {
       <header className="landing-header">
         <nav className="landing-nav">
           <Link to="/" className="landing-nav__logo" aria-label="Ir al inicio de Edumon">
-            <img src={edumonLogo} alt="Edumon" className="landing-nav__logo-img" />
+            <img src={edumonLogo} alt="Logo de EDUMON" className="landing-nav__logo-img" />
           </Link>
 
           <Link to="/" className="tuto-back" aria-label="Volver al inicio">
@@ -225,7 +228,7 @@ export default function TutorialesPage() {
             <div className="tuto-hero__content">
               <h1 className="tuto-hero__title">
                 <span className="tuto-hero__line">Aprende a usar</span>
-                <img src={edumonLetras} alt="Edumon" className="tuto-hero__letras" width={900} height={354} fetchPriority="high" />
+                <img src={edumonLetras} alt="EDUMON" className="tuto-hero__letras" width={900} height={354} fetchPriority="high" />
                 <span className="tuto-hero__line">
                   <span className="tuto-mark">paso a paso</span>
                 </span>
@@ -244,7 +247,7 @@ export default function TutorialesPage() {
                     onClick={(e) => irA(e, a.id)}
                     className={`tuto-acceso tuto-acceso--${a.tono}`}
                   >
-                    <img src={a.avatar} alt="" aria-hidden="true" />
+                    <img src={a.avatar} alt={`Mascota de EDUMON para ${a.label}`} aria-hidden="true" />
                     {a.label}
                   </a>
                 ))}
@@ -266,7 +269,7 @@ export default function TutorialesPage() {
               <IconStar size={22} className="tuto-spark tuto-spark--1" />
               <IconSparkles size={26} className="tuto-spark tuto-spark--2" />
               <div className="tuto-hero__bubble-talk">¡Dale play y aprende conmigo!</div>
-              <img src={mascota} alt="" className="tuto-hero__mascota" width={660} height={626} />
+              <img src={mascota} alt="Mascota de EDUMON" className="tuto-hero__mascota" width={660} height={626} />
             </div>
           </div>
 
@@ -295,7 +298,7 @@ export default function TutorialesPage() {
                 Ir a descargar
               </Link>
             </div>
-            <img src={mascotasEquipo} alt="Las mascotas de Edumon" className="tuto-cta__crew" width={640} height={427} loading="lazy" />
+            <img src={mascotasEquipo} alt="Las mascotas de EDUMON" className="tuto-cta__crew" width={640} height={427} loading="lazy" />
           </div>
         </section>
       </main>

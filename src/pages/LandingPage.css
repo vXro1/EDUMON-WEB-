@@ -659,16 +659,6 @@
   justify-content: center;
 }
 
-.edumon-mascot-ring {
-  position: absolute;
-  inset: 2%;
-  border-radius: 50%;
-  z-index: 0;
-  background: var(--lp-halo);
-  -webkit-mask: var(--lp-halo-mask);
-  mask: var(--lp-halo-mask);
-  filter: blur(4px);
-}
 
 .edumon-mascot-img {
   position: relative;
@@ -926,6 +916,7 @@
 
   border-color: var(--edumon-blue-200);
 }
+
 
 .pilar-card:nth-child(1) { background: var(--edumon-blue-50); }
 .pilar-card:nth-child(2) { background: var(--lp-green-soft); }
@@ -1798,25 +1789,12 @@
   isolation: isolate;
 }
 
-.buzon-scene__halo {
-  position: absolute;
-  z-index: 0;
-  width: 118%;
-  aspect-ratio: 1;
-  left: 50%;
-  top: 46%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  background: var(--lp-halo);
-  -webkit-mask: var(--lp-halo-mask);
-  mask: var(--lp-halo-mask);
-  filter: blur(4px);
-}
 
 .buzon-scene__img {
   position: relative;
   z-index: 2;
   width: 100%;
+  height: auto;
   filter: drop-shadow(0 26px 32px rgba(15, 23, 42, 0.24));
   transition: transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
   transform-origin: center bottom;
@@ -1967,6 +1945,7 @@
   border: 2px solid var(--edumon-blue-100);
   box-shadow: 0 10px 0 var(--edumon-blue-100), 0 28px 50px rgba(4, 42, 84, 0.10);
 }
+
 .contacto-form-card::before {
   content: "";
   position: absolute;
@@ -2211,16 +2190,6 @@
   width: 100%;
   min-height: clamp(240px, 26vw, 340px);
 }
-.landing-app__halo {
-  position: absolute;
-  width: min(100%, 340px);
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: var(--lp-halo);
-  -webkit-mask: var(--lp-halo-mask);
-  mask: var(--lp-halo-mask);
-  filter: blur(4px);
-}
 
 .landing-app__icon {
   position: relative;
@@ -2292,7 +2261,6 @@ a.landing-app__icon:focus-visible .landing-app__icon-tile { box-shadow: var(--fo
 }
 @media (max-width: 480px) {
   .landing-app__btn { width: 100%; }
-  .landing-app__halo { width: min(90%, 260px); }
 }
 
 .landing-nav__links a.landing-nav__tutoriales,

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components";
-import logo from "@/assets/icons/logo.svg";
+import logo from "@/assets/icons/edumon-logo.svg";
 
 function IconChevron({ open }) {
   return (
