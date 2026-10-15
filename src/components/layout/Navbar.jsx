@@ -139,7 +139,7 @@ export const Navbar = memo(function Navbar({ user, logout, drawerOpen, onToggleD
             onClick={() => setProfileOpen((p) => !p)}
             aria-expanded={profileOpen}
             aria-haspopup="menu"
-            aria-label="Menu de perfil"
+            aria-label={`${user?.nombre ?? "Usuario"} ${ROLE_LABELS[user?.rol] ?? user?.rol ?? ""}, menú de perfil`}
           >
             <UserAvatar user={user} size={32} />
             <div className="nav-avatar-info">

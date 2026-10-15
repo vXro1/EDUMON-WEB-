@@ -191,14 +191,14 @@
 }
 
 /* ── Variante de peligro para el item logout ────────────────────── */
-.sidebar-item--danger { color: var(--color-error) !important; }
+.sidebar-item--danger { color: var(--color-error-text) !important; }
 .sidebar-item--danger .ico {
   background: rgba(239, 68, 68, 0.08);
-  color: var(--color-error);
+  color: var(--color-error-text);
 }
 .sidebar-item--danger:hover {
   background: rgba(239, 68, 68, 0.08) !important;
-  color: var(--color-error-hover) !important;
+  color: var(--color-error-text) !important;
   transform: translateX(2px);
 }
 .sidebar-item--danger:hover .ico {
@@ -1413,4 +1413,10 @@ button.sidebar-card:focus-visible,
 }
 .table-scroll table {
   min-width: 560px;
+}
+
+.demo-banner__short { display: none; }
+@media (max-width: 600px) {
+  .demo-banner__long { display: none; }
+  .demo-banner__short { display: inline; }
 }

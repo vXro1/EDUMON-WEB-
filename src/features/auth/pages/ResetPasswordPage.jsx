@@ -42,7 +42,6 @@ export const ResetPasswordPage = () => {
       error={error}
       success={success}
       defaultEmail={defaultEmail}
-      onBack={() => navigate("/login")}
       onGoLogin={() => navigate("/login", { replace: true })}
       onResend={handleResend}
     />

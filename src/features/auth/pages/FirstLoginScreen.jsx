@@ -739,6 +739,7 @@ function StepData({ user, loginPassword, onComplete, onBack }) {
     correo:          user?.correo    ?? "",
     contraseñaNueva: "",
     confirmar:       "",
+    contrasenaActual: "",
   });
   const [errors,      setErrors]      = useState({});
   const [saving,      setSaving]      = useState(false);
@@ -752,12 +753,9 @@ function StepData({ user, loginPassword, onComplete, onBack }) {
   const handleSubmit = async () => {
     setSubmitError("");
     const errs = validateDataForm(form);
+    const contrasenaActual = loginPassword || form.contrasenaActual;
+    if (!contrasenaActual) errs.contrasenaActual = "Escribe la contraseña con la que ingresaste";
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
-
-    if (!loginPassword) {
-      setSubmitError("No se encontró la contraseña de acceso. Por favor cierra sesión e inicia de nuevo.");
-      return;
-    }
 
     setSaving(true);
     try {
@@ -772,7 +770,7 @@ function StepData({ user, loginPassword, onComplete, onBack }) {
       // el backend pone primerInicioSesion:false pero no lo devuelve — se refleja a mano
       // para que ProtectedRoute no vuelva a mandar al usuario a este wizard
       await authChangePassword({
-        contrasenaActual: loginPassword,
+        contrasenaActual,
         contrasenaNueva:  form.contraseñaNueva,
       });
       clearLoginPassword();
@@ -830,6 +828,16 @@ function StepData({ user, loginPassword, onComplete, onBack }) {
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {!loginPassword && (
+              <Field label="Contraseña con la que ingresaste *" error={errors.contrasenaActual}>
+                <PasswordInput
+                  value={form.contrasenaActual}
+                  onChange={f("contrasenaActual")}
+                  placeholder="La contraseña temporal que te dio tu colegio"
+                  hasError={!!errors.contrasenaActual}
+                />
+              </Field>
+            )}
             <Field label="Nueva contraseña *" error={errors.contraseñaNueva}>
               <PasswordInput
                 value={form.contraseñaNueva}
@@ -950,8 +958,6 @@ const STEP_TITLES = [
 
 export default function FirstLoginScreen() {
   const { user, updateUser, logout } = useAuth();
-  // se lee de sessionStorage, no location.state: el bloqueo del botón "atrás" toca
-  // el History API y puede dejar el state de la ruta en null
   const [loginPassword] = useState(() => readLoginPassword());
 
   const [step, setStep]       = useState(1);

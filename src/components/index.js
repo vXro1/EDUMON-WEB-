@@ -1,7 +1,6 @@
 /* ── FORMS ── */
 export { default as ForgotPasswordForm } from "./forms/ForgotPasswordForm";
 export { default as LoginForm }          from "./forms/LoginForm";
-export { default as RegisterForm }       from "./forms/RegisterForm";
 export { default as ResetPasswordForm }  from "./forms/ResetPasswordForm";
 
 /* ── LAYOUT ── */
@@ -33,3 +32,4 @@ export { default as IconActionButton } from "./ui/IconActionButton";
 /* ── TOAST GLOBAL (contexto) ── */
 // Para notificaciones globales: const { notify } = useToast()
 export { useToast, ToastProvider } from "../context/ToastContext";
+export { useConfirm, ConfirmProvider } from "../context/ConfirmContext";
