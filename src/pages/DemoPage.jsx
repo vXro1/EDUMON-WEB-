@@ -11,7 +11,7 @@ import { UserAvatar, Button } from "@/components";
 import { useToast } from "@/context/ToastContext";
 import { NAV_GROUPS, ROLE_LABELS, ICONS } from "@/config/navigation/navGroups";
 import CursoCard from "@/features/cursos/components/CursoCard";
-import logoSvg from "@/assets/icons/logo.svg";
+import logoSvg from "@/assets/icons/edumon-logo.svg";
 
 const BANNER_H = 46;
 
@@ -46,6 +46,36 @@ const STATS_BY_ROLE = {
     { value: 340, label: "Estudiantes matriculados",  icon: ClipboardList, colorClass: "stat-icon-cyan" },
     { value: 3,   label: "Eventos hoy",               icon: Calendar,       colorClass: "stat-icon-yellow" },
   ],
+};
+
+const CHIPS_BY_ROLE = {
+  docente:       ["3 cursos activos", "4 retos activos", "2 eventos hoy", "68 padres de familia"],
+  padre:         ["2 hijos vinculados", "3 retos por entregar", "1 evento hoy"],
+  administrador: ["12 docentes activos", "24 cursos abiertos", "3 eventos hoy"],
+};
+
+const ACTIONS_BY_ROLE = {
+  docente: [
+    { label: "Crear curso",    section: "Cursos",     icon: Plus,          variant: "primary" },
+    { label: "Nuevo reto",     section: "Retos",      icon: ClipboardList, variant: "outline-neutral" },
+    { label: "Ver calendario", section: "Calendario", icon: Calendar,      variant: "ghost" },
+  ],
+  padre: [
+    { label: "Ver retos de mis hijos", section: "Retos",      icon: ClipboardList, variant: "primary" },
+    { label: "Ver perfiles",           section: "Perfiles",   icon: Users,         variant: "outline-neutral" },
+    { label: "Ver calendario",         section: "Calendario", icon: Calendar,      variant: "ghost" },
+  ],
+  administrador: [
+    { label: "Agregar docente", section: "Docentes",   icon: Plus,     variant: "primary" },
+    { label: "Crear curso",     section: "Cursos",     icon: BookOpen, variant: "outline-neutral" },
+    { label: "Ver calendario",  section: "Calendario", icon: Calendar, variant: "ghost" },
+  ],
+};
+
+const RETOS_TITLE_BY_ROLE = {
+  docente:       "Retos activos",
+  padre:         "Retos de tus hijos",
+  administrador: "Retos activos",
 };
 
 const DEMO_CURSOS = [
@@ -97,7 +127,7 @@ function TaskItem({ tarea }) {
           Vence: {new Date(tarea.fechaVencimiento).toLocaleDateString("es", { day: "numeric", month: "short" })}
         </p>
       </div>
-      <span className="list-card-item-badge" style={{ background: "var(--edu-cyan-50)", color: "var(--edu-cyan-700)" }}>Activa</span>
+      <span className="list-card-item-badge" style={{ background: "var(--edu-cyan-50)", color: "var(--edu-cyan-800)" }}>Activa</span>
     </div>
   );
 }
@@ -147,7 +177,7 @@ function SectionPreview({ label, onExit }) {
       <h2 style={{ margin: 0, fontSize: "var(--text-lg)", color: "var(--color-text)" }}>{label}</h2>
       <p style={{ margin: 0, maxWidth: 380, fontSize: "var(--text-sm)", color: "var(--color-text-muted)" }}>
         Esta sección hace parte de tu cuenta real, con tus cursos, estudiantes y datos actualizados.
-        Crea una cuenta para explorarla por completo.
+        Las cuentas las crea tu colegio; si representas a una institución, solicita acceso.
       </p>
       <Button variant="primary" size="sm" onClick={onExit} style={{ marginTop: "var(--space-2)" }}>
         Volver al inicio de la demo
@@ -198,10 +228,11 @@ export default function DemoPage() {
   const groups    = NAV_GROUPS[role] ?? [];
   const roleLabel = ROLE_LABELS[role] ?? role;
   const stats     = STATS_BY_ROLE[role];
+  const chips     = CHIPS_BY_ROLE[role];
+  const actions   = ACTIONS_BY_ROLE[role];
 
   const hora   = new Date().getHours();
   const saludo = hora < 12 ? "Buenos días" : hora < 19 ? "Buenas tardes" : "Buenas noches";
-  const totalPadres = DEMO_CURSOS.reduce((a, c) => a + c.participantes.length, 0);
 
   const goHome = () => { setSection("home"); setDrawerOpen(false); };
 
@@ -225,15 +256,16 @@ export default function DemoPage() {
         position: "sticky", top: 0, zIndex: 210, height: BANNER_H,
         display: "flex", alignItems: "center", justifyContent: "center", gap: "var(--space-3)",
         padding: "0 var(--space-4)", background: "var(--gradient-brand-full, var(--color-primary))",
-        color: "#fff", fontSize: 13, fontWeight: 600, flexWrap: "wrap",
+        color: "#fff", fontSize: 13, fontWeight: 600, flexWrap: "nowrap", whiteSpace: "nowrap",
       }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
           <Sparkles size={14} aria-hidden="true" />
-          Estás viendo una demo con datos de ejemplo
+          <span className="demo-banner__long">Estás viendo una demo con datos de ejemplo</span>
+          <span className="demo-banner__short">Modo demo</span>
         </span>
-        <span style={{ display: "flex", gap: 8 }}>
+        <span style={{ display: "flex", gap: 8, flexShrink: 0 }}>
           <button onClick={() => navigate("/login")} style={demoBannerBtnStyle(false)}>Iniciar sesión</button>
-          <button onClick={() => navigate("/#contacto")} style={demoBannerBtnStyle(true)}>Crear cuenta</button>
+          <button onClick={() => navigate("/#contacto")} style={demoBannerBtnStyle(true)}>Solicitar acceso</button>
         </span>
       </div>
 
@@ -333,7 +365,7 @@ export default function DemoPage() {
                   onClick={() => setProfileOpen(p => !p)}
                   aria-expanded={profileOpen}
                   aria-haspopup="menu"
-                  aria-label="Menu de perfil"
+                  aria-label={`${user.nombre} ${user.apellido} ${roleLabel}, menú de perfil`}
                 >
                   <UserAvatar user={user} size={32} />
                   <div className="nav-avatar-info">
@@ -404,10 +436,7 @@ export default function DemoPage() {
                       </span>
                       <h1 className="welcome-title">{saludo}, {user.nombre}</h1>
                       <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap", marginTop: "var(--space-3)" }}>
-                        <span className="welcome-chip">{DEMO_CURSOS.length} cursos activos</span>
-                        <span className="welcome-chip">{DEMO_TAREAS.length} retos activos</span>
-                        <span className="welcome-chip">{DEMO_EVENTOS.length} eventos hoy</span>
-                        <span className="welcome-chip">{totalPadres} padres de familia</span>
+                        {chips.map(chip => <span key={chip} className="welcome-chip">{chip}</span>)}
                       </div>
                     </div>
                   </div>
@@ -424,15 +453,11 @@ export default function DemoPage() {
                   <section aria-label="Acciones rápidas" style={{ marginBottom: "var(--space-6)" }}>
                     <SectionHeader title="Acciones rápidas" />
                     <div className="quick-actions">
-                      <Button variant="primary" onClick={() => openPreview("Cursos")}>
-                        <Plus size={15} aria-hidden="true" /> Crear curso
-                      </Button>
-                      <Button variant="outline-neutral" onClick={() => openPreview("Retos")}>
-                        <ClipboardList size={15} aria-hidden="true" /> Nuevo reto
-                      </Button>
-                      <Button variant="ghost" onClick={() => openPreview("Calendario")}>
-                        <Calendar size={15} aria-hidden="true" /> Ver calendario
-                      </Button>
+                      {actions.map(({ label, section: target, icon: Icon, variant }) => (
+                        <Button key={label} variant={variant} onClick={() => openPreview(target)}>
+                          <Icon size={15} aria-hidden="true" /> {label}
+                        </Button>
+                      ))}
                     </div>
                   </section>
 
@@ -447,8 +472,8 @@ export default function DemoPage() {
                       </div>
                     </section>
 
-                    <section aria-label="Retos activos">
-                      <SectionHeader title="Retos activos" actionLabel="Ver todos" onAction={() => openPreview("Retos")} />
+                    <section aria-label={RETOS_TITLE_BY_ROLE[role]}>
+                      <SectionHeader title={RETOS_TITLE_BY_ROLE[role]} actionLabel="Ver todos" onAction={() => openPreview("Retos")} />
                       <div className="list-card">
                         {DEMO_TAREAS.map(t => <TaskItem key={t._id} tarea={t} />)}
                       </div>

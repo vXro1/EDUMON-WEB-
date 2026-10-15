@@ -14,7 +14,7 @@ import {
 } from "@/features/notificaciones/services/notificacionesService";
 import { getSocket } from "@/lib/socket";
 
-import { Toast, Button, Badge } from "@/components";
+import { Toast, Button, Badge, useConfirm } from "@/components";
 import { IconBtn } from "@/features/cursos/components/shared/ui";
 
 /* ───────────────────────── CONFIG ───────────────────────── */
@@ -73,6 +73,7 @@ const Sk = ({ h = 16, w = "100%", r = 7 }) => (
 /* ───────────────────────── COMPONENTE ───────────────────────── */
 
 export default function NotificacionesPage() {
+  const confirmar = useConfirm();
   const [notifs, setNotifs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -201,9 +202,11 @@ export default function NotificacionesPage() {
   };
 
   const handleLimpiarAntiguas = async () => {
-    const confirmado = window.confirm(
-      `Esto elimina las notificaciones ya leídas con más de ${DIAS_LIMPIEZA} días. ¿Continuar?`
-    );
+    const confirmado = await confirmar({
+      title: "¿Limpiar notificaciones antiguas?",
+      message: `Se eliminarán las notificaciones ya leídas con más de ${DIAS_LIMPIEZA} días.`,
+      confirmLabel: "Limpiar",
+    });
     if (!confirmado) return;
 
     setCleaning(true);

@@ -7,7 +7,7 @@ import {
   UserPlus, UserMinus, Upload, ExternalLink, Pipette,
 } from "lucide-react";
 
-import letrasImg from "@/assets/img/letras.svg"; // fallback para cursos sin portada  
+import { getCursoAvatar } from "../utils/cursoCover";
 
 import {
   Modal, Button, UserAvatar, Toast, Badge,
@@ -655,8 +655,8 @@ export default function CursosPage() {
               borderLeft: `4px solid ${editForm.color || "var(--color-primary)"}`,
             }}>
               <img
-                src={selected.fotoPortada || letrasImg} alt={selected.nombre}
-                onError={e => { e.target.onerror = null; e.target.src = letrasImg; }}
+                src={selected.fotoPortada || getCursoAvatar(selected)} alt={selected.nombre}
+                onError={e => { e.target.onerror = null; e.target.src = getCursoAvatar(selected); }}
                 style={{ width: 40, height: 40, borderRadius: 8, objectFit: "cover", flexShrink: 0 }}
               />
               <div>
@@ -698,7 +698,7 @@ export default function CursosPage() {
               </Button>
               {(editCoverFile || selected?.fotoPortada) && (
                 <img
-                  src={editCoverFile ? URL.createObjectURL(editCoverFile) : (selected?.fotoPortada || letrasImg)}
+                  src={editCoverFile ? URL.createObjectURL(editCoverFile) : (selected?.fotoPortada || getCursoAvatar(selected))}
                   alt="preview"
                   style={{ width: 40, height: 40, borderRadius: 7, objectFit: "cover", border: "1px solid var(--color-border)" }}
                 />

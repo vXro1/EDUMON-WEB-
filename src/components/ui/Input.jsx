@@ -89,7 +89,6 @@ export const Input = forwardRef(function Input({
               type="button"
               className="input-adornment-btn"
               onClick={() => setShowPwd(v => !v)}
-              tabIndex={-1}
               aria-label={showPwd ? "Ocultar contraseña" : "Mostrar contraseña"}
             >
               {showPwd ? <EyeOff size={17} /> : <Eye size={17} />}
