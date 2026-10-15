@@ -6,7 +6,7 @@
 // marca se aplana a una franja horizontal compacta arriba.
 import { Link } from "react-router-dom";
 import { Home } from "lucide-react";
-import logo from "@/assets/icons/logo.svg";
+import logo from "@/assets/icons/edumon-logo.svg";
 import circulo1 from "@/assets/img/circulos/circulo1.svg";
 import circulo2 from "@/assets/img/circulos/circulo2.svg";
 import circulo3 from "@/assets/img/circulos/circulo3.svg";
@@ -66,7 +66,7 @@ function AuthBrandPanel({ brandTitle, brandTagline }) {
       <Star className="auth-spark auth-spark--5" size={10} />
       <div className="auth-brand-content">
         <div className="auth-brand-badge">
-          <img src={logo} alt="Edumon" draggable={false} />
+          <img src={logo} alt="Logo de EDUMON" draggable={false} />
         </div>
         <div className="auth-brand-copy">
           <p className="auth-brand-title">{brandTitle}</p>

@@ -5,6 +5,7 @@ import { humanizeError } from "../../../utils/humanizeError";
 import { LoginForm } from "@/components";
 import { useToast } from "../../../context/ToastContext";
 import { stashLoginPassword } from "../utils/firstLoginPassword";
+import { usePageMeta } from "@/hooks/usePageMeta";
 
 const ROLE_REDIRECTS = {
   superadmin: "/admin",
@@ -15,6 +16,11 @@ const ROLE_REDIRECTS = {
 };
 
 export const LoginPage = () => {
+  usePageMeta({
+    title: "Iniciar sesión | EDUMON",
+    description: "Ingresa a EDUMON con tu número de teléfono y contraseña para ver tus cursos, retos, calificaciones, foros y calendario.",
+    path: "/login",
+  });
   const { login } = useAuth();
   const { notify } = useToast();
   const navigate = useNavigate();
