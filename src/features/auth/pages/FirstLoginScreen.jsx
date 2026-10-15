@@ -6,10 +6,12 @@ import { authChangePassword } from "@/services/authService";
 import { humanizeError } from "@/utils/humanizeError";
 import { assetUrl } from "@/utils/assetUrl";
 import { validarContrasenaNueva, PASSWORD_RULES } from "@/utils/credenciales";
-import logoSvg from "@/assets/icons/logo.svg";
+import logoSvg from "@/assets/icons/edumon-logo.svg";
 import { readLoginPassword, clearLoginPassword } from "../utils/firstLoginPassword";
 import {
   CheckCircle2,
+  Check,
+  Circle,
   Eye,
   EyeOff,
   RefreshCw,
@@ -212,7 +214,6 @@ function BackgroundDecor() {
 }
 
 /* ── Micro-componentes ──────────────────────────────────────── */
-// maxStep = paso más lejano alcanzado; solo los completados se pueden reabrir, nunca se salta adelante
 function Stepper({ step, maxStep, onStepClick }) {
   const steps = ["Foto", "Datos", "Listo"];
   return (
@@ -443,7 +444,7 @@ function PasswordStrength({ password }) {
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           {checks.map((c, i) => (
             <span key={i} style={{ fontSize: 11, color: c.ok ? "var(--edu-green-600)" : "var(--color-text-muted)", display: "flex", alignItems: "center", gap: 3 }}>
-              <span>{c.ok ? "✓" : "○"}</span> {c.label}
+              {c.ok ? <Check size={12} strokeWidth={3} /> : <Circle size={12} />} {c.label}
             </span>
           ))}
         </div>
@@ -624,8 +625,12 @@ function StepAvatar({ currentPhotoUrl, onComplete }) {
           color: hasSelection ? "#6366F1" : "var(--color-text-muted)",
           marginTop: 12,
           transition: "color 200ms",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 4,
         }}>
-          {hasSelection ? "Avatar seleccionado ✓" : "Sin avatar seleccionado"}
+          {hasSelection ? <>Avatar seleccionado <Check size={13} strokeWidth={3} /></> : "Sin avatar seleccionado"}
         </p>
       </div>
 
@@ -734,6 +739,7 @@ function StepData({ user, loginPassword, onComplete, onBack }) {
     correo:          user?.correo    ?? "",
     contraseñaNueva: "",
     confirmar:       "",
+    contrasenaActual: "",
   });
   const [errors,      setErrors]      = useState({});
   const [saving,      setSaving]      = useState(false);
@@ -747,12 +753,9 @@ function StepData({ user, loginPassword, onComplete, onBack }) {
   const handleSubmit = async () => {
     setSubmitError("");
     const errs = validateDataForm(form);
+    const contrasenaActual = loginPassword || form.contrasenaActual;
+    if (!contrasenaActual) errs.contrasenaActual = "Escribe la contraseña con la que ingresaste";
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
-
-    if (!loginPassword) {
-      setSubmitError("No se encontró la contraseña de acceso. Por favor cierra sesión e inicia de nuevo.");
-      return;
-    }
 
     setSaving(true);
     try {
@@ -767,7 +770,7 @@ function StepData({ user, loginPassword, onComplete, onBack }) {
       // el backend pone primerInicioSesion:false pero no lo devuelve — se refleja a mano
       // para que ProtectedRoute no vuelva a mandar al usuario a este wizard
       await authChangePassword({
-        contrasenaActual: loginPassword,
+        contrasenaActual,
         contrasenaNueva:  form.contraseñaNueva,
       });
       clearLoginPassword();
@@ -825,6 +828,16 @@ function StepData({ user, loginPassword, onComplete, onBack }) {
           </p>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {!loginPassword && (
+              <Field label="Contraseña con la que ingresaste *" error={errors.contrasenaActual}>
+                <PasswordInput
+                  value={form.contrasenaActual}
+                  onChange={f("contrasenaActual")}
+                  placeholder="La contraseña temporal que te dio tu colegio"
+                  hasError={!!errors.contrasenaActual}
+                />
+              </Field>
+            )}
             <Field label="Nueva contraseña *" error={errors.contraseñaNueva}>
               <PasswordInput
                 value={form.contraseñaNueva}
@@ -945,8 +958,6 @@ const STEP_TITLES = [
 
 export default function FirstLoginScreen() {
   const { user, updateUser, logout } = useAuth();
-  // se lee de sessionStorage, no location.state: el bloqueo del botón "atrás" toca
-  // el History API y puede dejar el state de la ruta en null
   const [loginPassword] = useState(() => readLoginPassword());
 
   const [step, setStep]       = useState(1);

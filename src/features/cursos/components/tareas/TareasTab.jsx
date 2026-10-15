@@ -6,7 +6,7 @@ import { ClipboardList, Clock, Eye, Pencil, Lock, Layers } from "lucide-react";
 import { tareasGetAll, tareasGetById, tareasCreate, tareasUpdate, tareasDelete } from "@/features/cursos/services/tareasService";
 import { cursosGetParticipantes, modulosGetByCurso } from "@/features/cursos/services/cursosService";
 
-import { AppModal, Button, Toast, IconActionButton } from "@/components";
+import { AppModal, Button, Toast, IconActionButton, useConfirm } from "@/components";
 import {
   Sk,
   EmptyState,
@@ -41,6 +41,7 @@ const emptyForm = () => ({
 });
 
 export default function TareasTab({ cursoId: cursoIdProp, canManage: canManageProp, canGrade: canGradeProp, esPadre: esPadreProp }) {
+  const confirmar = useConfirm();
   const ctx = useContext(CursoContext);
   const cursoId = ctx?.cursoId ?? cursoIdProp;
   const canManage = ctx?.canManageTasks ?? canManageProp;
@@ -300,7 +301,12 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
 
   // tareasDelete no borra el reto, solo lo cierra y limpia sus adjuntos
   const handleDelete = async (id) => {
-    if (!confirm("¿Cerrar este reto? No se podrá reabrir y se eliminarán sus archivos adjuntos.")) return;
+    const ok = await confirmar({
+      title: "¿Cerrar este reto?",
+      message: "No se podrá reabrir y se eliminarán sus archivos adjuntos.",
+      confirmLabel: "Cerrar reto",
+    });
+    if (!ok) return;
     try {
       await tareasDelete(id);
       notify("Reto cerrado");

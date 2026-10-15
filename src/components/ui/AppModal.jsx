@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 const SIZE_MAP = { sm: "modal-sm", md: "modal-md", lg: "modal-lg", xl: "modal-xl" };
 
 /* ─── Main component ──────────────────────────────────────────────────── */
-function AppModal({ isOpen, onClose, size = "md", closeOnOverlay = true, children }) {
+function AppModal({ isOpen, onClose, size = "md", closeOnOverlay = true, labelledBy, describedBy, children }) {
   const panelRef        = useRef(null);
   const mouseDownTarget = useRef(null);
   const onCloseRef      = useRef(onClose);
@@ -66,6 +66,8 @@ function AppModal({ isOpen, onClose, size = "md", closeOnOverlay = true, childre
         className={`modal-panel ${SIZE_MAP[size] ?? "modal-md"}`}
         role="dialog"
         aria-modal="true"
+        aria-labelledby={labelledBy}
+        aria-describedby={describedBy}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="modal-strip" aria-hidden="true" />
@@ -77,11 +79,11 @@ function AppModal({ isOpen, onClose, size = "md", closeOnOverlay = true, childre
 }
 
 /* ─── Sub-components ──────────────────────────────────────────────────── */
-AppModal.Header = function ModalHeader({ title, description, onClose }) {
+AppModal.Header = function ModalHeader({ title, description, onClose, titleId }) {
   return (
     <div className="modal-header">
       <div style={{ minWidth: 0 }}>
-        <h2 className="modal-title">{title}</h2>
+        <h2 className="modal-title" id={titleId}>{title}</h2>
         {description && <p className="modal-description">{description}</p>}
       </div>
       {onClose && (

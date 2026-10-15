@@ -9,13 +9,6 @@
    Fuente única de verdad para todos los tokens de diseño.
    ════════════════════════════════════════════════════════════════════ */
 
-/* ── Fuentes web ──────────────────────────────────────────────────
-   Nunito es ahora la ÚNICA familia de toda la app (antes: Baloo 2 en
-   títulos + Quicksand en cuerpo). Se sirve vía Google Fonts <link> en
-   index.html (pesos 400/500/600/700/800/900) — no hace falta @font-face
-   aquí. --font-heading/--font-display y --font-sans/--font-body
-   apuntan a la misma familia: Black (900) en títulos, Regular (400) en
-   texto general, vía el font-weight que ya define cada componente. */
 :root {
   /* ──────────────────────────────────────────────────────────────────
      PALETA DE MARCA EN BRUTO
@@ -76,6 +69,7 @@
   --edu-cyan-500: #05C7F2;
   --edu-cyan-600: #04AED6;
   --edu-cyan-700: #0392B4;
+  --edu-cyan-800: #0A6E80;
 
   /* ── Escala de verde (éxito) ─────────────────────────────────────────── */
   --edu-green-50:  #F0FDF4;
@@ -86,6 +80,7 @@
   --edu-green-500: #41D958;
   --edu-green-600: #2FBD45;
   --edu-green-700: #229D35;
+  --edu-green-800: #1C7A2D;
 
   /* ── Escala de amarillo (advertencia / XP) ───────────────────────────── */
   --edu-yellow-50:  #FFFBEB;
@@ -116,11 +111,11 @@
      ────────────────────────────────────────────────────────────────── */
 
   /* Primario → Morado */
-  --color-primary:         var(--edu-purple-500);
-  --color-primary-hover:   var(--edu-purple-600);
-  --color-primary-active:  var(--edu-purple-700);
-  --color-primary-light:   var(--edu-purple-50);
-  --color-primary-subtle:  rgba(140, 56, 240, 0.08);
+  --color-primary:         var(--edu-blue-500);
+  --color-primary-hover:   var(--edu-blue-600);
+  --color-primary-active:  var(--edu-blue-700);
+  --color-primary-light:   var(--edu-blue-50);
+  --color-primary-subtle:  rgba(12, 106, 196, 0.08);
 
   /* Secundario → Rosa */
   --color-secondary:       var(--edu-pink-500);
@@ -143,6 +138,7 @@
 
   --color-error:           #EF4444;
   --color-error-hover:     #DC2626;
+  --color-error-text:      #B91C1C;
   --color-error-light:     #FEF2F2;
 
   --color-info:            var(--edu-cyan-500);
@@ -164,41 +160,37 @@
   --fg-inverse: #FFFFFF;
   --color-text:            var(--edu-dark);
   --color-text-muted:      var(--edu-neutral-500);
-  --color-text-subtle:     var(--edu-neutral-400);
+  --color-text-subtle:     var(--edu-neutral-500);
   --color-text-inverse:    #FFFFFF;
 
   /* Bordes */
   --color-border:          var(--edu-neutral-200);
   --color-border-strong:   var(--edu-neutral-300);
-  --color-border-focus:    var(--edu-purple-400);
+  --color-border-focus:    var(--edu-blue-400);
 
   /* Sidebar (oscuro de marca) — conservado para legado / futuro modo oscuro */
   --color-sidebar-bg:           #0D0D0D;
   --color-sidebar-text:         rgba(255, 255, 255, 0.80);
   --color-sidebar-text-active:  #FFFFFF;
-  --color-sidebar-active:       var(--edu-purple-500);
-  --color-sidebar-hover:        rgba(140, 56, 240, 0.14);
+  --color-sidebar-active:       var(--edu-blue-500);
+  --color-sidebar-hover:        rgba(12, 106, 196, 0.14);
   --color-sidebar-border:       rgba(255, 255, 255, 0.07);
 
   /* ──────────────────────────────────────────────────────────────────
      GRADIENTES
      ────────────────────────────────────────────────────────────────── */
-  --gradient-brand:      linear-gradient(135deg, var(--edu-purple-500) 0%, #C97AE5 55%, var(--edu-pink-400) 100%);
-  --gradient-brand-full: linear-gradient(135deg, var(--edu-purple-600) 0%, var(--edu-purple-400) 50%, #DC78C4 100%);
-  --gradient-cool:       linear-gradient(135deg, var(--edu-cyan-400) 0%, #8AC2F0 50%, var(--edu-purple-400) 100%);
+  --gradient-brand:      linear-gradient(135deg, var(--edu-blue-600) 0%, var(--edu-blue-500) 50%, var(--edu-blue-400) 100%);
+  --gradient-brand-full: linear-gradient(135deg, var(--edu-blue-700) 0%, var(--edu-blue-500) 50%, var(--edu-blue-300) 100%);
+  --gradient-cool:       linear-gradient(135deg, var(--edu-blue-500) 0%, var(--edu-blue-300) 50%, var(--edu-blue-100) 100%);
   --gradient-warm:       linear-gradient(135deg, #FFD96B 0%, #FFB07A 60%, var(--edu-pink-300) 100%);
   --gradient-success:    linear-gradient(135deg, var(--edu-green-500) 0%, #7DDDB8 50%, var(--edu-cyan-400) 100%);
   --gradient-sky:        linear-gradient(135deg, var(--edu-cyan-300) 0%, #A8E6D5 50%, var(--edu-green-300) 100%);
-  --gradient-berry:      linear-gradient(135deg, var(--edu-purple-400) 0%, var(--edu-pink-400) 100%);
+  --gradient-berry:      linear-gradient(135deg, var(--edu-blue-400) 0%, var(--edu-pink-400) 100%);
   --gradient-hero:       linear-gradient(125deg, var(--edu-purple-500) 0%, var(--edu-pink-400) 33%, #FFC078 66%, var(--edu-cyan-400) 100%);
-  --gradient-text:       linear-gradient(120deg, var(--edu-purple-500) 0%, var(--edu-cyan-500) 100%);
+  --gradient-text:       linear-gradient(120deg, var(--edu-blue-600) 0%, var(--edu-blue-400) 100%);
   --gradient-card:       linear-gradient(145deg, rgba(184,122,245,0.05) 0%, rgba(93,215,248,0.04) 50%, rgba(125,221,184,0.05) 100%);
   --gradient-cream:      linear-gradient(180deg, #FFFFFF 0%, var(--edu-cream) 100%);
-  --gradient-mesh:       radial-gradient(at 20% 20%, rgba(184,122,245,0.55) 0%, transparent 50%),
-                         radial-gradient(at 80% 15%, rgba(93,215,248,0.55) 0%, transparent 50%),
-                         radial-gradient(at 80% 85%, rgba(125,221,184,0.55) 0%, transparent 50%),
-                         radial-gradient(at 20% 85%, rgba(253,214,77,0.50) 0%, transparent 50%),
-                         var(--edu-cream);
+  --gradient-mesh:       linear-gradient(180deg, #FFFFFF 0%, var(--edu-blue-50) 100%);
 
   /* ──────────────────────────────────────────────────────────────────
      ESCALA DE RADIO
@@ -222,8 +214,8 @@
   --shadow-xl:  0 24px 48px rgba(0,0,0,0.14);
   --shadow-2xl: 0 40px 80px rgba(0,0,0,0.18);
 
-  --shadow-brand:     0 4px 20px rgba(140, 56, 240, 0.25);
-  --shadow-primary:   0 4px 16px rgba(140, 56, 240, 0.30);
+  --shadow-brand:     0 4px 20px rgba(12, 106, 196, 0.25);
+  --shadow-primary:   0 4px 16px rgba(12, 106, 196, 0.30);
   --shadow-secondary: 0 4px 16px rgba(242, 61, 127, 0.24);
   --shadow-accent:    0 4px 16px rgba(5, 199, 242, 0.22);
   --shadow-success:   0 4px 16px rgba(65, 217, 88, 0.22);
@@ -231,22 +223,19 @@
   --shadow-warning:   0 4px 16px rgba(252, 189, 0, 0.24);
 
   --shadow-card:       0 1px 4px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.04);
-  --shadow-card-hover: 0 8px 24px rgba(140, 56, 240, 0.12), 0 0 0 1.5px var(--color-primary);
+  --shadow-card-hover: 0 8px 24px rgba(12, 106, 196, 0.12), 0 0 0 1.5px var(--color-primary);
   --shadow-modal:      0 0 0 1px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.18), 0 32px 64px rgba(0,0,0,0.12);
   --shadow-dropdown:   0 4px 24px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
 
-  --shadow-focus:         0 0 0 3px rgba(140, 56, 240, 0.30);
-  --shadow-focus-soft:    0 0 0 3px rgba(140, 56, 240, 0.14);
+  --shadow-focus:         0 0 0 3px rgba(12, 106, 196, 0.30);
+  --shadow-focus-soft:    0 0 0 3px rgba(12, 106, 196, 0.14);
   --shadow-focus-error:   0 0 0 3px rgba(239, 68, 68, 0.28);
   --shadow-focus-success: 0 0 0 3px rgba(65, 217, 88, 0.28);
 
-  /* Antes hardcodeados directamente en cards.css / accessibility.css como
-     rgba(140,56,240,...) — tokenizados para poder sobreescribirlos solo
-     dentro de .app-shell sin tocar login/landing. */
-  --color-border-brand: rgba(140, 56, 240, 0.18);
-  --color-selection:    rgba(140, 56, 240, 0.18);
+  --color-border-brand: rgba(12, 106, 196, 0.18);
+  --color-selection:    rgba(12, 106, 196, 0.18);
 
-  --shadow-btn-primary: 0 5px 0 var(--edu-purple-700), 0 1px 3px rgba(140, 56, 240, 0.20);
+  --shadow-btn-primary: 0 5px 0 var(--edu-blue-700), 0 1px 3px rgba(12, 106, 196, 0.20);
   --shadow-btn-success: 0 5px 0 var(--edu-green-700),  0 1px 3px rgba(65, 217, 88, 0.20);
   --shadow-btn-danger:  0 5px 0 #B91C1C,               0 1px 3px rgba(239, 68, 68, 0.20);
   --shadow-btn-warning: 0 5px 0 var(--edu-yellow-600), 0 1px 3px rgba(252,189,0,0.20);
@@ -283,10 +272,6 @@
   /* ──────────────────────────────────────────────────────────────────
      TIPOGRAFÍA
      ────────────────────────────────────────────────────────────────── */
-  /* Nunito en toda la app — títulos y cuerpo comparten familia (antes:
-     Baloo 2 en títulos + Quicksand en cuerpo). El peso hace la
-     jerarquía: 900/Black donde el componente pide título, 400/Regular
-     por defecto en el resto. */
   --font-heading: "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-display: var(--font-heading);
   --font-sans:    "Nunito", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -369,9 +354,7 @@
     inset 0 2px 0 rgba(255,255,255,0.90);
 
   --clay-shadow-hover:
-    0 12px 36px rgba(140, 56, 240, 0.16),
-    0 4px 12px rgba(0,0,0,0.10),
-    inset 0 1px 0 rgba(255,255,255,0.90);
+    0 12px 36px rgba(12, 106, 196, 0.16), 0 4px 12px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.90);
 
   /* Clay para cards de estadística/acción */
   --clay-card:
@@ -380,9 +363,7 @@
     inset 0 1px 0 rgba(255,255,255,0.85);
 
   --clay-card-hover:
-    0 0px 0 rgba(0,0,0,0.04),
-    0 8px 28px rgba(140,56,240,0.14),
-    inset 0 1px 0 rgba(255,255,255,0.90);
+    0 0px 0 rgba(0,0,0,0.04), 0 8px 28px rgba(12,106,196,0.14), inset 0 1px 0 rgba(255,255,255,0.90);
 
   /* Clay para píldoras / badges */
   --clay-pill:
@@ -395,8 +376,7 @@
     inset 0 1px 0 rgba(255,255,255,0.70);
 
   --clay-icon-active:
-    0 4px 12px rgba(140, 56, 240, 0.30),
-    inset 0 1px 0 rgba(255,255,255,0.25);
+    0 4px 12px rgba(12, 106, 196, 0.30), inset 0 1px 0 rgba(255,255,255,0.25);
 
   /* Clay para botones (reemplaza el press con fondo duro en elementos más suaves) */
   --clay-btn:
@@ -418,52 +398,6 @@
   --z-backdrop: 39;
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   REPINTADO DE MARCA — SOLO DASHBOARD (.app-shell)
-   .app-shell envuelve todas las rutas protegidas (ver MainLayout.jsx).
-   Login (/login, /forgot-password, /reset-password) y la página de
-   aterrizaje (/) viven FUERA de .app-shell y jamás heredan este bloque:
-   siguen resolviendo los tokens morados originales de :root sin ningún
-   cambio, tal como se pidió.
-
-   Primario → azul (antes morado). Secundario (rosa) y acento (cian) se
-   conservan igual que en :root — no se tocan.
-   ────────────────────────────────────────────────────────────────────── */
-.app-shell {
-  --color-primary:         var(--edu-blue-500);
-  --color-primary-hover:   var(--edu-blue-600);
-  --color-primary-active:  var(--edu-blue-700);
-  --color-primary-light:   var(--edu-blue-50);
-  --color-primary-subtle:  rgba(12, 106, 196, 0.08);
-
-  --color-border-focus:    var(--edu-blue-400);
-  --color-border-brand:    rgba(12, 106, 196, 0.18);
-  --color-selection:       rgba(12, 106, 196, 0.18);
-
-  --color-sidebar-active:  var(--edu-blue-500);
-  --color-sidebar-hover:   rgba(12, 106, 196, 0.14);
-
-  --shadow-brand:      0 4px 20px rgba(12, 106, 196, 0.25);
-  --shadow-primary:    0 4px 16px rgba(12, 106, 196, 0.30);
-  --shadow-card-hover: 0 8px 24px rgba(12, 106, 196, 0.12), 0 0 0 1.5px var(--color-primary);
-  --shadow-focus:      0 0 0 3px rgba(12, 106, 196, 0.30);
-  --shadow-focus-soft: 0 0 0 3px rgba(12, 106, 196, 0.14);
-  --shadow-btn-primary: 0 5px 0 var(--edu-blue-700), 0 1px 3px rgba(12, 106, 196, 0.20);
-
-  --clay-shadow-hover: 0 12px 36px rgba(12, 106, 196, 0.16), 0 4px 12px rgba(0,0,0,0.10), inset 0 1px 0 rgba(255,255,255,0.90);
-  --clay-card-hover:   0 0px 0 rgba(0,0,0,0.04), 0 8px 28px rgba(12,106,196,0.14), inset 0 1px 0 rgba(255,255,255,0.90);
-  --clay-icon-active:  0 4px 12px rgba(12, 106, 196, 0.30), inset 0 1px 0 rgba(255,255,255,0.25);
-
-  /* Fondo blanco liso — nada de mesh cian/morado detrás de la tarjeta de
-     usuario del sidebar (antes --gradient-mesh mezclaba morado+cian+verde+
-     amarillo en radiales). */
-  --gradient-mesh:       linear-gradient(180deg, #FFFFFF 0%, var(--edu-blue-50) 100%);
-  --gradient-brand:      linear-gradient(135deg, var(--edu-blue-600) 0%, var(--edu-blue-500) 50%, var(--edu-blue-400) 100%);
-  --gradient-brand-full: linear-gradient(135deg, var(--edu-blue-700) 0%, var(--edu-blue-500) 50%, var(--edu-blue-300) 100%);
-  --gradient-text:       linear-gradient(120deg, var(--edu-blue-600) 0%, var(--edu-blue-400) 100%);
-  --gradient-berry:      linear-gradient(135deg, var(--edu-blue-400) 0%, var(--edu-pink-400) 100%);
-  --gradient-cool:       linear-gradient(135deg, var(--edu-blue-500) 0%, var(--edu-blue-300) 50%, var(--edu-blue-100) 100%);
-}
 
 /* ──────────────────────────────────────────────────────────────────────
    ACENTOS SEMÁNTICOS POR SECCIÓN

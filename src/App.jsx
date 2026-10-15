@@ -4,6 +4,7 @@ import { AuthProvider } from "./features/auth/context/AuthContext";
 import SessionWarningModal from "./features/auth/components/SessionWarningModal";
 import { SearchProvider } from "./context/SearchContext";
 import { ToastProvider } from "./context/ToastContext";
+import { ConfirmProvider } from "./context/ConfirmContext";
 import { BreadcrumbProvider } from "./context/BreadcrumbContext";
 
 const queryClient = new QueryClient({
@@ -20,14 +21,16 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
-        <AuthProvider>
-          <SearchProvider>
-            <BreadcrumbProvider>
-              <AppRoutes />
-            </BreadcrumbProvider>
-          </SearchProvider>
-          <SessionWarningModal />
-        </AuthProvider>
+        <ConfirmProvider>
+          <AuthProvider>
+            <SearchProvider>
+              <BreadcrumbProvider>
+                <AppRoutes />
+              </BreadcrumbProvider>
+            </SearchProvider>
+            <SessionWarningModal />
+          </AuthProvider>
+        </ConfirmProvider>
       </ToastProvider>
     </QueryClientProvider>
   );
