@@ -51,8 +51,11 @@ function explicacion(alerta) {
 
 const ICONO_ACCION = { creada: CircleDot, estado: CheckCircle2, nota: StickyNote };
 
-/** Por qué existe la alerta + la línea de tiempo de su atención (nunca se reescribe). */
-export default function AlertaTrazabilidad({ alerta }) {
+/**
+ * Por qué existe la alerta + la línea de tiempo de su atención (nunca se reescribe).
+ * soloHistorial: la explicación ya la muestra AlertaExplicacion (desde el backend).
+ */
+export default function AlertaTrazabilidad({ alerta, soloHistorial = false }) {
   const exp = explicacion(alerta);
   const Icono = exp.icono;
   const historial = alerta.historial?.length
@@ -61,7 +64,7 @@ export default function AlertaTrazabilidad({ alerta }) {
 
   return (
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16, marginTop: 16 }}>
-      <div style={card}>
+      {!soloHistorial && <div style={card}>
         <h2 style={{ fontSize: 15, fontWeight: 800, margin: "0 0 10px", display: "flex", alignItems: "center", gap: 8 }}>
           <Icono size={18} color="var(--color-primary)" /> {exp.titulo}
         </h2>
@@ -81,7 +84,7 @@ export default function AlertaTrazabilidad({ alerta }) {
             </span>
           )}
         </div>
-      </div>
+      </div>}
 
       <div style={card}>
         <h2 style={{ fontSize: 15, fontWeight: 800, margin: "0 0 12px", display: "flex", alignItems: "center", gap: 8 }}>
@@ -95,7 +98,7 @@ export default function AlertaTrazabilidad({ alerta }) {
               <div key={`${h.en}-${i}`} style={{ display: "grid", gridTemplateColumns: "22px 1fr", gap: 10, paddingBottom: i < historial.length - 1 ? 12 : 0, position: "relative" }}>
                 {i < historial.length - 1 && <span style={{ position: "absolute", left: 10, top: 22, bottom: 0, width: 2, background: "var(--color-border)" }} />}
                 <IconoAccion size={20} color={h.estado === "cerrada" ? "#059669" : "var(--color-primary)"} style={{ background: "var(--color-surface)", position: "relative" }} />
-                <div style={{ fontSize: 13, lineHeight: 1.5 }}>
+                <div style={{ fontSize: 15, lineHeight: 1.5 }}>
                   <strong>
                     {h.accion === "creada" ? "Alerta creada" : h.accion === "estado" ? `Pasó a "${ESTADO[h.estado] ?? h.estado}"` : "Nota agregada"}
                   </strong>
