@@ -5,6 +5,7 @@ import { cursosGetVisibles } from "@/features/cursos/services/cursosService";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { calendarioGetByCurso } from "@/features/calendario/services/calendarioService";
 import { eventosDelete, eventosCreateSimple, eventosUpdateSimple } from "@/features/eventos/services/eventosService";
+import RecomendarConEdumon, { camposEscuelaPadres } from "@/features/edumon/components/RecomendarConEdumon";
 import { usePermission, PERMISSIONS } from "@/hooks/usePermission";
 import CalendarWidget from "@/components/ui/CalendarWidget";
 import { Modal, Button } from "@/components";
@@ -18,6 +19,7 @@ const CATEGORIAS = [
 const EMPTY_FORM = {
   titulo: "", descripcion: "", fechaInicio: "", fechaFin: "",
   hora: "", ubicacion: "", categoria: "institucional",
+  escuelaPadres: null,
 };
 
 const inp = {
@@ -57,6 +59,7 @@ function CreateEventoModal({ cursos, onClose, onSaved }) {
         ubicacion:   form.ubicacion.trim(),
         categoria:   form.categoria,
         cursosIds:   [cursoId],
+        ...camposEscuelaPadres(form.escuelaPadres),
       });
       onSaved();
     } catch (err) {
@@ -123,6 +126,7 @@ function CreateEventoModal({ cursos, onClose, onSaved }) {
           <label style={lbl}>Ubicación</label>
           <input style={inp} value={form.ubicacion} onChange={e => set("ubicacion", e.target.value)} placeholder="Salón, virtual, etc." />
         </div>
+        <RecomendarConEdumon value={form.escuelaPadres} onChange={v => set("escuelaPadres", v)} />
 
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
           <Button variant="ghost" size="sm" onClick={onClose}>Cancelar</Button>
@@ -145,6 +149,7 @@ function EditEventoModal({ evento, onClose, onSaved }) {
     hora:        evento.hora        ?? "",
     ubicacion:   evento.ubicacion   ?? "",
     categoria:   evento.categoria   ?? "institucional",
+    escuelaPadres: evento.escuelaPadres ?? null,
   });
   const [saving, setSaving] = useState(false);
   const [error,  setError]  = useState("");
@@ -166,6 +171,7 @@ function EditEventoModal({ evento, onClose, onSaved }) {
         hora:        form.hora,
         ubicacion:   form.ubicacion.trim(),
         categoria:   form.categoria,
+        ...camposEscuelaPadres(form.escuelaPadres),
       });
       onSaved();
     } catch (err) {
@@ -217,6 +223,7 @@ function EditEventoModal({ evento, onClose, onSaved }) {
           <label style={lbl}>Ubicación</label>
           <input style={inp} value={form.ubicacion} onChange={e => set("ubicacion", e.target.value)} placeholder="Salón, virtual, etc." />
         </div>
+        <RecomendarConEdumon value={form.escuelaPadres} onChange={v => set("escuelaPadres", v)} />
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
           <Button variant="ghost" size="sm" onClick={onClose}>Cancelar</Button>
           <Button size="sm" onClick={handleSave} disabled={saving}>

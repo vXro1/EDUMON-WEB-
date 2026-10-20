@@ -11,6 +11,7 @@ import { cursosGetAll } from "@/features/cursos/services/cursosService";
 import { usersGetAll } from "@/services/usersService";
 import { humanizeError } from "@/utils/humanizeError";
 import {Badge} from "@/components";
+import ResponsableConvivenciaCard from "@/features/edumon/components/ResponsableConvivenciaCard";
 
 function Sk({ h = 16, w = "100%", r = 7 }) {
   return <div className="animate-pulse" style={{ height: h, width: w, borderRadius: r, background: "var(--color-border)" }} />;
@@ -183,6 +184,13 @@ export default function MiInstitucionPage() {
               </div>
             </div>
           </div>
+
+          {user?.rol === "administrador" && !loading && (
+            <ResponsableConvivenciaCard
+              responsableActual={inst?.responsableConvivenciaId}
+              onCambio={(actualizada) => setInst((i) => ({ ...i, responsableConvivenciaId: actualizada?.responsableConvivenciaId ?? null }))}
+            />
+          )}
 
           {/* Tarjeta de información del sistema */}
           <div style={{ background: "var(--color-surface)", borderRadius: 16, border: "1px solid var(--color-border)", boxShadow: "var(--clay-card)" }}>
