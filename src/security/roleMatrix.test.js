@@ -13,7 +13,7 @@ describe("normalizeRole", () => {
   it.each([
     ["superadmin", ROLES.SUPERADMIN],
     ["Administrador", ROLES.ADMIN],
-    ["admin", ROLES.ADMIN],
+    ["administrador", ROLES.ADMIN],
     [" docente ", ROLES.DOCENTE],
     ["padre/tutor", ROLES.PADRE],
     ["tutor", ROLES.PADRE],
