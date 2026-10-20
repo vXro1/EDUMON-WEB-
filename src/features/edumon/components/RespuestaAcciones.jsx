@@ -2,6 +2,7 @@ import { useState, useId } from "react";
 import { ThumbsUp, ThumbsDown, HelpCircle, BookOpen, ExternalLink, Cpu, ShieldCheck, SpellCheck, Info } from "lucide-react";
 import { AppModal, Button } from "@/components";
 import RutaAtencionInfo from "./RutaAtencionInfo";
+import BotonEscuchar from "./BotonEscuchar";
 import { edumonCalificar, edumonExplicacionMensaje, mensajeErrorIA } from "../services/edumonService";
 import "../edumon-ia.css";
 
@@ -247,11 +248,12 @@ function BotonPorQue({ conversacionId, mensajeId }) {
 }
 
 /** Pie de cada respuesta de Edumon: modo, 👍/👎 y explicación. Solo para mensajes ya guardados. */
-export default function RespuestaAcciones({ conversacionId, mensaje, avisar }) {
+export default function RespuestaAcciones({ conversacionId, mensaje, avisar, textoLectura }) {
   if (!conversacionId || !mensaje?._id) return null;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 2 }}>
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "4px 14px" }}>
+        <BotonEscuchar id={mensaje._id} texto={textoLectura ?? mensaje.contenido} />
         <BotonPorQue conversacionId={conversacionId} mensajeId={mensaje._id} />
         <ModoEtiqueta ia={mensaje.ia} />
       </div>
