@@ -81,6 +81,7 @@ export const NAV_GROUPS = {
       group: "Escuela de padres",
       items: [
         { label: "Lineamientos y seguimiento", path: "/escuela-padres/lineamientos", icon: "edumon-ia" },
+        { label: "Ciclo Edumon",               path: "/escuela-padres/ciclo",        icon: "sparkles" },
       ],
     },
     {
@@ -105,6 +106,7 @@ export const NAV_GROUPS = {
         { label: "Foros",       path: "/foros",       icon: "message-circle" },
         { label: "Calendario",  path: "/calendario",  icon: "calendar" },
         { label: "Lineamientos escuela de padres", path: "/escuela-padres/lineamientos", icon: "edumon-ia" },
+        { label: "Ciclo Edumon",                   path: "/escuela-padres/ciclo",        icon: "sparkles" },
       ],
     },
     {

@@ -9,6 +9,7 @@ import { humanizeError } from "@/utils/humanizeError";
 import EdumonMascota from "./EdumonMascota";
 import { cargarTemas } from "./RecomendarConEdumon";
 import { edumonGenerarReto, lineamientosGet } from "../services/edumonService";
+import { leerRetoDelCiclo, olvidarRetoDelCiclo } from "../data/retoDelCiclo";
 
 // ajustes rápidos que el docente puede pedirle a Edumon sobre el borrador
 const AJUSTES_RAPIDOS = [
@@ -102,6 +103,17 @@ export default function EdumonRetoAsistente({ onAplicar, cursoId, moduloId, cont
   const [lineamientos, setLineamientos] = useState(null); // lo publicado por rectoría
   const raiz = useRef(null);
 
+  // borrador sugerido desde el Ciclo Edumon ("¿Qué preguntan las familias?"): se muestra listo para usar
+  useEffect(() => {
+    const delCiclo = leerRetoDelCiclo(cursoId);
+    if (!delCiclo) return;
+    setAbierto(true);
+    setBorrador(delCiclo);
+    setTema(delCiclo.tema ?? "");
+    setEje(delCiclo.eje ?? "");
+    setEditandoTema(false);
+  }, [cursoId]);
+
   // tres ejemplos distintos cada vez que se abre
   const ejemplos = useMemo(
     () => [...EJEMPLOS].sort(() => Math.random() - 0.5).slice(0, 3),
@@ -144,6 +156,7 @@ export default function EdumonRetoAsistente({ onAplicar, cursoId, moduloId, cont
   };
 
   const aplicar = () => {
+    olvidarRetoDelCiclo();
     onAplicar(borrador);
     setAplicado(true);
     // que el docente vea el formulario ya lleno
