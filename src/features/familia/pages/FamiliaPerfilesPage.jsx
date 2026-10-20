@@ -331,7 +331,7 @@ export default function FamiliaPerfilesPage() {
           <div>
             <h1 style={{ fontSize: 20, fontWeight: 800, color: "var(--color-text)", margin: 0 }}>Perfiles familiares</h1>
             <p style={{ fontSize: 13, color: "var(--color-text-muted)", margin: "3px 0 0" }}>
-              Selecciona o gestiona los perfiles de tu familia
+              Identifica quién de la familia está usando el celular en este momento
             </p>
           </div>
         </div>
@@ -428,7 +428,7 @@ export default function FamiliaPerfilesPage() {
         isOpen={createOpen}
         onClose={() => { setCreateOpen(false); setFormErrors({}); }}
         title="Nuevo perfil familiar"
-        description="Elige un nombre y un avatar para el perfil."
+        description="Este perfil es para identificar a la persona que usa el celular (ej. mamá, papá), no para separar la información por hijo: todos los perfiles ven los mismos cursos y tareas."
         size="md"
       >
         <form onSubmit={handleCreate}>
@@ -441,7 +441,7 @@ export default function FamiliaPerfilesPage() {
             <div style={{ borderTop: "1px solid var(--color-border)", paddingTop: 16 }}>
               <Input
                 label="Nombre del perfil *"
-                placeholder="Ej: María, Hijo mayor…"
+                placeholder="Ej: Mamá, Papá, Abuela…"
                 value={form.nombre}
                 onChange={e => setForm(f => ({ ...f, nombre: e.target.value }))}
                 error={formErrors.nombre}
