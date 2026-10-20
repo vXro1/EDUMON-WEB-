@@ -97,7 +97,8 @@ export const apiFetch = async (endpoint, options = {}) => {
   const token = _tokenProvider ? _tokenProvider() : undefined;
 
   // silentAuth: bandera interna (no va al backend) para chequeos rutinarios de sesión — un 401 ahí no dispara logout global
-  const { silentAuth, ...restOptions } = options;
+  // timeoutMs: bandera interna para endpoints lentos (ej. el chat con IA, que puede pasar por dos proveedores)
+  const { silentAuth, timeoutMs, ...restOptions } = options;
 
   const opts = { method: "GET", ...restOptions };
   const isFormData = opts.body instanceof FormData;
@@ -113,17 +114,17 @@ export const apiFetch = async (endpoint, options = {}) => {
 
   return queueRequest(key, async (signal) => {
     finalOpts.signal = signal;
-    return runRequest(endpoint, finalUrl, finalOpts, { silentAuth });
+    return runRequest(endpoint, finalUrl, finalOpts, { silentAuth, timeoutMs });
   });
 };
 
 // separado de apiFetch para poder reintentar tras un refresh sin volver a pasar por queueRequest
 // (que deduplicaría la segunda llamada contra sí misma)
-async function runRequest(endpoint, finalUrl, finalOpts, { silentAuth, isRetry = false } = {}) {
+async function runRequest(endpoint, finalUrl, finalOpts, { silentAuth, timeoutMs, isRetry = false } = {}) {
   const isUpload = finalOpts.body instanceof FormData;
   const { signal: timedSignal, cleanup } = withTimeout(
     finalOpts.signal,
-    isUpload ? UPLOAD_TIMEOUT_MS : REQUEST_TIMEOUT_MS,
+    timeoutMs ?? (isUpload ? UPLOAD_TIMEOUT_MS : REQUEST_TIMEOUT_MS),
   );
 
   let res;
@@ -158,7 +159,7 @@ async function runRequest(endpoint, finalUrl, finalOpts, { silentAuth, isRetry =
     if (!isRetry && endpoint !== "/auth/refresh" && data.code === "TOKEN_EXPIRED") {
       const refreshed = await tryRefreshToken();
       if (refreshed) {
-        return runRequest(endpoint, finalUrl, finalOpts, { silentAuth, isRetry: true });
+        return runRequest(endpoint, finalUrl, finalOpts, { silentAuth, timeoutMs, isRetry: true });
       }
     }
 
@@ -193,6 +194,7 @@ async function runRequest(endpoint, finalUrl, finalOpts, { silentAuth, isRetry =
     // bloquea la suspensión de un docente con cursos activos.
     const error = new Error(errorMsg);
     error.data = data;
+    error.status = res.status;
     throw error;
   }
 
