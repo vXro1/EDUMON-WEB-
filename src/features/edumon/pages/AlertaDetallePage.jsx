@@ -5,9 +5,13 @@ import { Button, Toast } from "@/components";
 import { humanizeError } from "@/utils/humanizeError";
 import AlertaCard from "../components/AlertaCard";
 import AlertaTrazabilidad from "../components/AlertaTrazabilidad";
+import AlertaExplicacion from "../components/AlertaExplicacion";
+import { VerificarIntegridad } from "../components/IntegridadBitacora";
 import EdumonMascota from "../components/EdumonMascota";
 import { RUTAS_ATENCION, CATEGORIAS_ALERTA } from "../data/rutasAtencion";
-import { edumonGetAlerta, edumonActualizarAlerta } from "../services/edumonService";
+import {
+  edumonGetAlerta, edumonActualizarAlerta, esAlertaModificada, mensajeErrorIA,
+} from "../services/edumonService";
 
 const LINEAS = [
   ["ICBF", "141", "Protección de niños, niñas y adolescentes (24 h)"],
@@ -41,7 +45,11 @@ export default function AlertaDetallePage() {
       setAlerta(alerta);
       setToast({ msg: "Alerta actualizada", type: "success" });
     } catch (err) {
-      setToast({ msg: humanizeError(err), type: "error" });
+      // 409: otra persona la cambió al mismo tiempo -> se recarga la versión vigente
+      if (esAlertaModificada(err)) {
+        try { setAlerta((await edumonGetAlerta(alertaId)).alerta); } catch { /* se muestra el aviso igual */ }
+      }
+      setToast({ msg: mensajeErrorIA(err, "No pudimos actualizar la alerta."), type: "error" });
     }
     setTimeout(() => setToast({ msg: "", type: "success" }), 3500);
   };
@@ -84,17 +92,22 @@ export default function AlertaDetallePage() {
 
           <AlertaCard alerta={alerta} onActualizar={actualizar} />
 
-          <AlertaTrazabilidad alerta={alerta} />
+          <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 16 }}>
+            <AlertaExplicacion alertaId={alerta._id} rutaRespaldo={alerta.rutaAtencion} />
+            <VerificarIntegridad key={alerta.historial?.length ?? 0} alertaId={alerta._id} />
+          </div>
+
+          <AlertaTrazabilidad alerta={alerta} soloHistorial />
 
           {ruta && (
             <div style={{ ...card, padding: 20, marginTop: 16 }}>
-              <h2 style={{ fontSize: 15, fontWeight: 800, margin: "0 0 12px", display: "flex", alignItems: "center", gap: 8 }}>
-                <ListChecks size={18} color="var(--color-primary)" /> Qué hacer ahora
+              <h2 style={{ fontSize: 17, fontWeight: 800, margin: "0 0 12px", display: "flex", alignItems: "center", gap: 8 }}>
+                <ListChecks size={20} color="var(--color-primary)" aria-hidden="true" /> Qué hacer ahora (guía del colegio)
               </h2>
               {/* números explícitos: el reset global de estilos oculta los de <ol> */}
               <ol style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 10 }}>
                 {ruta.pasos.map((paso, i) => (
-                  <li key={paso} style={{ display: "flex", gap: 10, fontSize: 13.5, lineHeight: 1.55 }}>
+                  <li key={paso} style={{ display: "flex", gap: 10, fontSize: 15, lineHeight: 1.55 }}>
                     <span style={{
                       flexShrink: 0, width: 22, height: 22, borderRadius: "50%", marginTop: 1,
                       background: "rgba(12,106,196,0.12)", color: "var(--color-primary)",
