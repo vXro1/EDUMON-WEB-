@@ -1,0 +1,57 @@
+/* Estilos compartidos del módulo Edumon IA (chat, convivencia, ciclo y panel).
+   La demo se proyecta: texto legible, contraste alto y foco siempre visible. */
+
+.eia-focus:focus-visible,
+.eia-btn:focus-visible,
+.eia-link:focus-visible,
+.eia-item:focus-visible {
+  outline: 3px solid var(--color-primary, #0c6ac4);
+  outline-offset: 2px;
+}
+
+.eia-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font: inherit; font-size: 14px; font-weight: 700;
+  padding: 7px 12px; border-radius: 999px; cursor: pointer;
+  border: 1.5px solid var(--color-border); background: var(--color-surface); color: var(--color-text);
+}
+.eia-btn:hover:not(:disabled) { border-color: var(--color-primary); }
+.eia-btn:disabled { opacity: 0.6; cursor: default; }
+.eia-btn[aria-pressed="true"] { border-color: #047857; background: #ECFDF5; color: #065F46; }
+.eia-btn[data-tono="no"][aria-pressed="true"] { border-color: #B91C1C; background: #FEF2F2; color: #991B1B; }
+
+.eia-link {
+  font: inherit; font-size: 14px; font-weight: 700; color: #0369A1;
+  background: none; border: 0; padding: 4px 2px; cursor: pointer; text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.eia-item { font: inherit; text-align: left; width: 100%; border: 0; color: inherit; }
+
+.eia-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 999px;
+  border: 1px solid var(--color-border); background: var(--color-bg); color: var(--color-text);
+}
+
+.eia-card {
+  background: var(--color-surface); border-radius: 16px;
+  border: 1px solid var(--color-border); box-shadow: var(--clay-card);
+}
+
+.eia-muted { color: var(--color-text-muted); }
+
+.eia-seccion-t {
+  font-size: 13px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--color-text-muted); margin: 0 0 8px;
+}
+
+.eia-kpi { font-size: 30px; font-weight: 900; line-height: 1.1; }
+
+.eia-tabla { width: 100%; border-collapse: collapse; font-size: 14px; }
+.eia-tabla th { text-align: left; font-size: 13px; color: var(--color-text-muted); font-weight: 800; padding: 8px 10px; border-bottom: 2px solid var(--color-border); }
+.eia-tabla td { padding: 10px; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+
+@media (max-width: 640px) {
+  .eia-kpi { font-size: 24px; }
+}
