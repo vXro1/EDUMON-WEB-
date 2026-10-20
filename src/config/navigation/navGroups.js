@@ -82,6 +82,7 @@ export const NAV_GROUPS = {
       items: [
         { label: "Lineamientos y seguimiento", path: "/escuela-padres/lineamientos", icon: "edumon-ia" },
         { label: "Ciclo Edumon",               path: "/escuela-padres/ciclo",        icon: "sparkles" },
+        { label: "Panel Edumon IA",            path: "/edumon-ia/panel",             icon: "edumon-ia" },
       ],
     },
     {
