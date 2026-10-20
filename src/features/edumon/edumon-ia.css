@@ -9,6 +9,12 @@
   outline-offset: 2px;
 }
 
+/* campo con el textarea sin borde propio: el foco se marca en el contenedor */
+.eia-campo:has(textarea:focus-visible) {
+  outline: 3px solid var(--color-primary, #0c6ac4);
+  outline-offset: 2px;
+}
+
 .eia-btn {
   display: inline-flex; align-items: center; gap: 6px;
   font: inherit; font-size: 14px; font-weight: 700;

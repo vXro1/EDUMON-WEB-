@@ -713,7 +713,7 @@ export default function EdumonChatPage() {
                 <button type="button" className="eia-link" onClick={() => setAviso("")} style={{ color: "#78350F" }}>Entendido</button>
               </div>
             )}
-            <div style={{
+            <div className="eia-campo" style={{
               display: "flex", gap: 8, alignItems: "flex-end", padding: "6px 6px 6px 14px", borderRadius: 22,
               border: `1.5px solid ${texto.trim() ? AZUL : "var(--color-border)"}`, background: "var(--color-bg)",
             }}>
