@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Bell, BellOff, Check, CheckCheck, Trash2,
-  ChevronLeft, ChevronRight, Sparkles,
+  ChevronLeft, ChevronRight, Sparkles, ShieldAlert,
 } from "lucide-react";
 
 import {
@@ -30,6 +31,7 @@ const TIPO_META = {
   foro:         { variant: "warning", label: "Foro" },
   evento:       { variant: "info",    label: "Evento" },
   sistema:      { variant: "error",   label: "Sistema" },
+  alerta_ia:    { variant: "error",   label: "Alerta convivencia" },
 };
 
 const FILTERS = [
@@ -103,6 +105,8 @@ export default function NotificacionesPage() {
       .catch(() => {});
   }, []);
 
+  const navigate = useNavigate();
+
   /* cargar datos */
   const load = useCallback(async () => {
     setLoading(true);
@@ -156,6 +160,23 @@ export default function NotificacionesPage() {
   }, [load]);
 
   /* ───────── acciones ───────── */
+
+  // notificaciones con destino propio (por ahora: alertas de Edumon → detalle con la ruta de atención)
+  const destinoDe = (n) => {
+    const refId = n.referenciaId?._id ?? n.referenciaId;
+    if (n.tipo === "alerta_ia" && refId) return `/convivencia/alertas/${refId}`;
+    // destino interno que manda el backend (ej. lineamientos de escuela de padres)
+    const destino = n.metadata?.destino;
+    if (typeof destino === "string" && destino.startsWith("/")) return destino;
+    return null;
+  };
+
+  const abrir = (n) => {
+    const destino = destinoDe(n);
+    if (!destino) return;
+    if (!n.leido) handleMarkRead(n._id);
+    navigate(destino);
+  };
 
   const handleMarkRead = async (id) => {
     try {
@@ -363,11 +384,15 @@ export default function NotificacionesPage() {
         ) : (
           notifs.map((n) => {
             const tipoConfig = TIPO_META[n.tipo] ?? { variant: "info", label: n.tipo ?? "Notificación" };
+            const destino = destinoDe(n);
 
             return (
               <div
                 key={n._id}
+                onClick={destino ? () => abrir(n) : undefined}
+                role={destino ? "button" : undefined}
                 style={{
+                  cursor: destino ? "pointer" : "default",
                   display: "flex",
                   gap: 12,
                   padding: 14,
@@ -412,9 +437,20 @@ export default function NotificacionesPage() {
                   <p style={{ fontSize: 11, color: "#94A3B8" }}>
                     {formatDate(n.fecha)}
                   </p>
+
+                  {destino && (
+                    <Button
+                      size="sm"
+                      variant="danger"
+                      leftIcon={<ShieldAlert size={14} />}
+                      onClick={(e) => { e.stopPropagation(); abrir(n); }}
+                    >
+                      Ver alerta y qué hacer
+                    </Button>
+                  )}
                 </div>
 
-                <div style={{ display: "flex", gap: 6, flexShrink: 0, alignItems: "flex-start" }}>
+                <div style={{ display: "flex", gap: 6, flexShrink: 0, alignItems: "flex-start" }} onClick={(e) => e.stopPropagation()}>
                   {!n.leido && (
                     <IconBtn
                       title="Marcar como leída"

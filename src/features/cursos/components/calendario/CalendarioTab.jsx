@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { calendarioGetByCurso } from "@/features/calendario/services/calendarioService";
 import { eventosDelete, eventosCreateSimple, eventosUpdateSimple } from "@/features/eventos/services/eventosService";
+import RecomendarConEdumon, { camposEscuelaPadres } from "@/features/edumon/components/RecomendarConEdumon";
 import CalendarWidget from "@/components/ui/CalendarWidget";
 import { AppModal, Button, Input, Textarea, Select } from "@/components";
 import { parseValidationErrors, summarizeValidationErrors } from "@/utils/parseValidationErrors";
@@ -13,6 +14,7 @@ const CATEGORIAS = [
 const EMPTY_FORM = {
   titulo: "", descripcion: "", fechaInicio: "", fechaFin: "",
   hora: "", ubicacion: "", categoria: "institucional",
+  escuelaPadres: null,
 };
 
 /* ── Texto de error inline debajo de cada campo ────────────────────── */
@@ -38,6 +40,7 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
           hora:        evento.hora        ?? "",
           ubicacion:   evento.ubicacion   ?? "",
           categoria:   evento.categoria   ?? "institucional",
+          escuelaPadres: evento.escuelaPadres ?? null,
         }
       : EMPTY_FORM
   );
@@ -75,6 +78,7 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
         hora:        form.hora,
         ubicacion:   form.ubicacion.trim(),
         categoria:   form.categoria,
+        ...camposEscuelaPadres(form.escuelaPadres),
       };
       if (!isEdit) body.cursosIds = [cursoId];
 
@@ -191,6 +195,8 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
             />
             <FieldError message={fieldErrors.ubicacion} />
           </div>
+
+          <RecomendarConEdumon value={form.escuelaPadres} onChange={v => set("escuelaPadres", v)} />
         </div>
       </AppModal.Body>
       <AppModal.Footer>

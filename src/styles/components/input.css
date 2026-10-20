@@ -469,6 +469,11 @@
 .rich-content ul,
 .rich-content ol { margin: 4px 0 8px 22px; padding: 0; }
 .rich-content li { margin-bottom: 2px; }
+/* el reset global quita las viñetas (ul, ol { list-style: none }); en el texto
+   enriquecido sí hacen falta: pasos numerados de un reto, listas de criterios */
+.rich-content ul, .rte-editable ul, .modulo-desc-rich ul { list-style: disc; }
+.rich-content ol, .rte-editable ol, .modulo-desc-rich ol { list-style: decimal; }
+.modulo-desc-rich ul, .modulo-desc-rich ol { margin: 4px 0 8px 22px; padding: 0; }
 .rich-content hr {
   border: none;
   border-top: 1.5px solid var(--color-border);

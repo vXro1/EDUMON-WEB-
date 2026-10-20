@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useContext } from "react";
 import CursoContext from "../../context/CursoContext";
 import { BookOpen, Eye, Pencil, Trash2, Upload } from "lucide-react";
 import { modulosGetByCurso, modulosCreate, modulosUpdate, modulosDelete } from "@/features/cursos/services/cursosService";
+import EdumonModulosSugerencias, { descripcionModuloHtml } from "@/features/edumon/components/EdumonModulosSugerencias";
 import { Button, Input, AppModal, Badge, Toast, CsvUploadModal, RichTextEditor, useConfirm } from "@/components";
 import { Sk, EmptyState, Field, InfoBlock, IconBtn } from "../shared/ui";
 import { makeNotify } from "../shared/helpers";
@@ -211,18 +212,27 @@ export default function ModulosTab({ cursoId: cursoIdProp, canManage: canManageP
       {/* ══════════════════════════════════════════════
           Modal — Crear / Editar módulo
       ══════════════════════════════════════════════ */}
-      <AppModal isOpen={modalOpen} onClose={() => setModalOpen(false)} size="sm">
+      <AppModal isOpen={modalOpen} onClose={() => setModalOpen(false)} size={editTarget ? "sm" : "md"}>
         <AppModal.Header
           title={editTarget ? "Editar módulo" : "Nuevo módulo"}
           onClose={() => setModalOpen(false)}
         />
         <AppModal.Body>
           <form id="modulos-form" onSubmit={handleSave}>
+            {/* Edumon IA sugiere módulos de escuela de padres (solo al crear) */}
+            {!editTarget && (
+              <div style={{ marginBottom: 14 }}>
+                <EdumonModulosSugerencias
+                  cursoId={cursoId}
+                  onUsar={(m) => setForm({ titulo: m.titulo, descripcion: descripcionModuloHtml(m) })}
+                />
+              </div>
+            )}
             <Field label="Título *">
               <Input
                 value={form.titulo}
                 onChange={(e) => setForm((f) => ({ ...f, titulo: e.target.value }))}
-                placeholder="Ej: Introducción"
+                placeholder="Ej: Crianza respetuosa"
                 required
               />
             </Field>

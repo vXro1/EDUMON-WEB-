@@ -1,4 +1,6 @@
 import { useRef, useEffect, useState } from "react";
+import EdumonRetoAsistente from "@/features/edumon/components/EdumonRetoAsistente";
+import RecomendarConEdumon from "@/features/edumon/components/RecomendarConEdumon";
 import { FileText, Upload, X, Globe, Users, Link2, Calendar, Clock, Eye, ZoomIn, ZoomOut, RotateCcw, ExternalLink, Check, Trash2 } from "lucide-react";
 import { Input, Select, Checkbox, RichTextEditor } from "@/components";
 import { Field, Sk } from "../shared/ui";
@@ -63,6 +65,15 @@ function formatFechaBonita(value) {
     hour: "numeric", minute: "2-digit", hour12: true,
   }).format(d);
   return texto.charAt(0).toUpperCase() + texto.slice(1);
+}
+
+// valor de datetime-local para dentro de N días a las 11:59 p. m. (hora local)
+function fechaEnDias(dias) {
+  const d = new Date();
+  d.setDate(d.getDate() + dias);
+  d.setHours(23, 59, 0, 0);
+  const dos = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${dos(d.getMonth() + 1)}-${dos(d.getDate())}T${dos(d.getHours())}:${dos(d.getMinutes())}`;
 }
 
 // antepone https:// si falta protocolo
@@ -592,6 +603,7 @@ export default function TareaForm({
   participantesCurso, loadingParts,
   modulos = [], loadingModulos = false,
   onSubmit,
+  cursoId, cursoNombre, abrirAsistente = false,
 }) {
   const fileRef = useRef(null);
   const esEdicion = Boolean(editTarget);
@@ -663,6 +675,31 @@ export default function TareaForm({
         onSubmit={onSubmit}
         style={{ display: "flex", flexDirection: "column", gap: 14 }}
       >
+        {/* Edumon diseña retos de escuela de padres (solo al crear) */}
+        {!esEdicion && (
+          <EdumonRetoAsistente
+            key={abrirAsistente ? "edumon" : "manual"}
+            abiertoInicial={abrirAsistente}
+            cursoId={cursoId}
+            moduloId={form.moduloId}
+            contexto={[cursoNombre, modulos.find(m => (m._id ?? m.id) === form.moduloId)?.titulo].filter(Boolean).join(" · ")}
+            modulos={modulos}
+            onAplicar={(b) => setForm(f => ({
+              ...f,
+              titulo: b.titulo,
+              descripcion: b.descripcionHtml,
+              criterios: b.criteriosHtml,
+              etiquetas: [...new Set([...(f.etiquetas ?? []), "escuela-de-padres"])],
+              escuelaPadres: { eje: b.eje, subtema: b.subtema, tema: b.tema },
+              // la familia entrega una reflexión escrita
+              tipoEntrega: "texto",
+              // lo que el docente ya eligió se respeta; si falta, va lo que propone Edumon
+              moduloId: f.moduloId || (modulos.some(m => (m._id ?? m.id) === b.moduloIdSugerido) ? b.moduloIdSugerido : ""),
+              fechaEntrega: f.fechaEntrega || fechaEnDias(b.duracionDias ?? 7),
+            }))}
+          />
+        )}
+
         {/* Título */}
         <div>
           <Input
@@ -695,6 +732,12 @@ export default function TareaForm({
           <FieldError message={errors.criterios} />
         </div>
 
+        <RecomendarConEdumon
+          que="este reto"
+          value={form.escuelaPadres ?? null}
+          onChange={(v) => setForm(f => ({ ...f, escuelaPadres: v }))}
+        />
+
         <Field label="Etiquetas">
           <TagsInput
             tags={form.etiquetas ?? []}
@@ -706,8 +749,8 @@ export default function TareaForm({
           </p>
         </Field>
 
-        {/* Módulo + Fecha */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        {/* Módulo + Fecha (en el teléfono, uno debajo del otro) */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 12 }}>
           <div>
             <Select
               label={esEdicion ? "Módulo" : "Módulo *"}
