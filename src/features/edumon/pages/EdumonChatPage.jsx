@@ -12,6 +12,7 @@ import ConsentimientoModal from "../components/ConsentimientoModal";
 import EdumonMascota from "../components/EdumonMascota";
 import RespuestaAcciones from "../components/RespuestaAcciones";
 import BotonNotaVoz, { notasDeVozSoportadas } from "../components/BotonNotaVoz";
+import { detenerLectura } from "../components/BotonEscuchar";
 import "../edumon-ia.css";
 import {
   edumonGetConsentimiento, edumonAceptarConsentimiento, edumonRevocarConsentimiento,
@@ -201,6 +202,16 @@ function TarjetaPedirAyuda({ oferta, onPedirAyuda }) {
   );
 }
 
+// lo que lee "Escuchar": el texto principal y, en riesgo, las líneas de ayuda que no estén ya en él
+function textoLectura(mensaje, esRiesgo) {
+  const texto = mensaje.contenido ?? "";
+  if (!esRiesgo) return texto;
+  const faltan = LINEAS_AYUDA.filter((l) => !texto.includes(l.numero));
+  if (!faltan.length) return texto;
+  return `${texto}
+Líneas de ayuda gratuitas: ${faltan.map((l) => `${l.nombre}, ${l.numero}: ${l.detalle}`).join(". ")}.`;
+}
+
 function MensajeBot({ mensaje, onPedirAyuda, conversacionId, avisar }) {
   const esRiesgo = mensaje.tipo === "riesgo" || mensaje.esRespuestaRiesgo;
   const recomienda = mensaje.retoSugerido || mensaje.eventoSugerido;
@@ -282,7 +293,7 @@ function MensajeBot({ mensaje, onPedirAyuda, conversacionId, avisar }) {
         </div>
       )}
 
-      <RespuestaAcciones conversacionId={conversacionId} mensaje={mensaje} avisar={avisar} />
+      <RespuestaAcciones conversacionId={conversacionId} mensaje={mensaje} avisar={avisar} textoLectura={textoLectura(mensaje, esRiesgo)} />
     </FilaBot>
   );
 }
@@ -410,6 +421,9 @@ export default function EdumonChatPage() {
       if (!pedirConsentimientoSiFalta(err)) avisar(humanizeError(err), "error");
     }
   };
+
+  // la lectura en voz alta no sigue sonando al salir del chat
+  useEffect(() => () => detenerLectura(), []);
 
   useEffect(() => {
     (async () => {
