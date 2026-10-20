@@ -10,10 +10,13 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { humanizeError } from "@/utils/humanizeError";
 import ConsentimientoModal from "../components/ConsentimientoModal";
 import EdumonMascota from "../components/EdumonMascota";
+import RespuestaAcciones from "../components/RespuestaAcciones";
+import "../edumon-ia.css";
 import {
   edumonGetConsentimiento, edumonAceptarConsentimiento, edumonRevocarConsentimiento,
   edumonGetConversaciones, edumonCrearConversacion, edumonGetConversacion,
   edumonEliminarConversacion, edumonEnviarMensaje, esConsentimientoRequerido, edumonPedirAyuda,
+  mensajeErrorIA, esLimiteIA,
 } from "../services/edumonService";
 
 // ideas para empezar: se muestran 4 distintas en cada conversación nueva
@@ -67,11 +70,11 @@ function NombreBot({ fecha }) {
 function BurbujaBot({ children, tono = "normal" }) {
   const tonos = {
     normal: { background: "var(--color-surface)", border: "1px solid var(--color-border)" },
-    riesgo: { background: "#FEF2F2", border: "1px solid #FCA5A5" },
+    riesgo: { background: "#FEF2F2", border: "2px solid #DC2626", fontSize: 17 },
   };
   return (
     <div style={{
-      padding: "11px 15px", borderRadius: 18, borderTopLeftRadius: 6, fontSize: 14, lineHeight: 1.6,
+      padding: "12px 16px", borderRadius: 18, borderTopLeftRadius: 6, fontSize: 16, lineHeight: 1.6,
       whiteSpace: "pre-wrap", wordBreak: "break-word", boxShadow: "0 1px 2px rgba(15,23,42,0.06)",
       color: "var(--color-text)", ...tonos[tono],
     }}>
@@ -130,31 +133,31 @@ const LINEAS_AYUDA = [
 // en riesgo: Edumon al teléfono con botones para llamar directo
 function TarjetaLlamar() {
   return (
-    <div style={{
-      display: "flex", gap: 12, alignItems: "center", padding: 12, borderRadius: 14,
-      background: "#FFF7ED", border: "1px solid #FDBA74",
+    <section aria-label="Líneas de ayuda" style={{
+      display: "flex", gap: 12, alignItems: "center", padding: 14, borderRadius: 14,
+      background: "#FFF7ED", border: "2px solid #EA580C",
     }}>
       <EdumonMascota size={86} expresion="llamar" />
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 12, fontWeight: 800, color: "#C2410C", letterSpacing: "0.02em", marginBottom: 6 }}>
-          LLAMA AHORA · ES GRATIS
-        </div>
+        <h3 style={{ fontSize: 16, fontWeight: 900, color: "#9A3412", letterSpacing: "0.02em", margin: "0 0 8px" }}>
+          LLAMA AHORA · ES GRATIS Y CONFIDENCIAL
+        </h3>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 6 }}>
           {LINEAS_AYUDA.map((l) => (
-            <a key={l.numero} href={`tel:${l.numero}`} title={l.detalle} style={{
-              display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderRadius: 10, textDecoration: "none",
-              background: "#fff", border: "1px solid #FED7AA", color: "var(--color-text)",
+            <a key={l.numero} href={`tel:${l.numero}`} title={l.detalle} className="eia-focus" aria-label={`Llamar al ${l.numero}, ${l.nombre}: ${l.detalle}`} style={{
+              display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 10, textDecoration: "none",
+              background: "#fff", border: "1.5px solid #FDBA74", color: "#1F2937",
             }}>
-              <Phone size={15} color="#EA580C" />
-              <span style={{ lineHeight: 1.2 }}>
-                <strong style={{ fontSize: 15 }}>{l.numero}</strong>
-                <span style={{ display: "block", fontSize: 11, color: "var(--color-text-muted)" }}>{l.nombre}</span>
+              <Phone size={17} color="#C2410C" aria-hidden="true" />
+              <span style={{ lineHeight: 1.25 }}>
+                <strong style={{ fontSize: 20 }}>{l.numero}</strong>
+                <span style={{ display: "block", fontSize: 13, color: "#374151" }}>{l.nombre}</span>
               </span>
             </a>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -194,7 +197,7 @@ function TarjetaPedirAyuda({ oferta, onPedirAyuda }) {
   );
 }
 
-function MensajeBot({ mensaje, onPedirAyuda }) {
+function MensajeBot({ mensaje, onPedirAyuda, conversacionId, avisar }) {
   const esRiesgo = mensaje.tipo === "riesgo" || mensaje.esRespuestaRiesgo;
   const recomienda = mensaje.retoSugerido || mensaje.eventoSugerido;
 
@@ -265,15 +268,17 @@ function MensajeBot({ mensaje, onPedirAyuda }) {
       )}
 
       {mensaje.fuentes?.length > 0 && (
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6, fontSize: 11.5, color: "var(--color-text-muted)" }}>
-          <BookOpen size={12} /> Basado en:
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6, fontSize: 13.5, color: "var(--color-text-muted)" }}>
+          <BookOpen size={14} aria-hidden="true" /> Basado en:
           {mensaje.fuentes.map((f) => (
             <span key={f.nombre} style={{ padding: "2px 8px", borderRadius: 999, background: "var(--color-bg)", border: "1px solid var(--color-border)" }}>
-              {f.url ? <a href={f.url} target="_blank" rel="noreferrer">{f.nombre}</a> : f.nombre}
+              {f.url ? <a href={f.url} target="_blank" rel="noreferrer" className="eia-focus">{f.nombre}</a> : f.nombre}
             </span>
           ))}
         </div>
       )}
+
+      <RespuestaAcciones conversacionId={conversacionId} mensaje={mensaje} avisar={avisar} />
     </FilaBot>
   );
 }
@@ -283,7 +288,7 @@ function MensajeUsuario({ mensaje, usuario }) {
     <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, alignItems: "flex-end", animation: "edumon-aparecer 0.25s ease-out both" }}>
       <div style={{
         maxWidth: "min(75%, 520px)", padding: "10px 15px", borderRadius: 18, borderBottomRightRadius: 6,
-        background: `linear-gradient(135deg, ${AZUL}, #2563EB)`, color: "#fff", fontSize: 14, lineHeight: 1.55,
+        background: `linear-gradient(135deg, ${AZUL}, #2563EB)`, color: "#fff", fontSize: 16, lineHeight: 1.55,
         whiteSpace: "pre-wrap", wordBreak: "break-word", boxShadow: "0 2px 6px rgba(37,99,235,0.25)",
       }}>
         {mensaje.contenido}
@@ -294,17 +299,25 @@ function MensajeUsuario({ mensaje, usuario }) {
   );
 }
 
+// la respuesta real tarda entre 3 y 10 s: pasados 8 s se tranquiliza a la familia
+const ESPERA_LARGA_MS = 8000;
+
 function Escribiendo() {
+  const [larga, setLarga] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setLarga(true), ESPERA_LARGA_MS);
+    return () => clearTimeout(t);
+  }, []);
   return (
     <FilaBot expresion="pensando" animarExpresion>
       <BurbujaBot>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "var(--color-text-muted)" }}>
+        <span role="status" aria-live="polite" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "var(--color-text-muted)" }}>
           <span style={{ display: "inline-flex", gap: 4 }}>
             {[0, 1, 2].map((i) => (
               <span key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: AZUL, animation: `edumon-puntos 1.2s ${i * 0.15}s infinite ease-in-out` }} />
             ))}
           </span>
-          Edumon IA está pensando…
+          {larga ? "Sigue pensando, ya casi…" : "Edumon está pensando…"}
         </span>
       </BurbujaBot>
     </FilaBot>
@@ -355,6 +368,7 @@ export default function EdumonChatPage() {
   const [texto, setTexto] = useState("");
   const [enviando, setEnviando] = useState(false);
   const [toast, setToast] = useState({ msg: "", type: "success" });
+  const [aviso, setAviso] = useState(""); // error que no debe desaparecer solo (ej. 429 LIMITE_IA)
   const finRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -483,6 +497,7 @@ export default function EdumonChatPage() {
 
     setEnviando(true);
     setTexto("");
+    setAviso("");
     try {
       let conversacion = activa;
       if (!conversacion) {
@@ -502,7 +517,11 @@ export default function EdumonChatPage() {
     } catch (err) {
       setTexto(limpio);
       setActiva((a) => (a ? { ...a, mensajes: a.mensajes.filter((m) => m._id !== "pendiente") } : a));
-      if (!pedirConsentimientoSiFalta(err)) avisar(humanizeError(err), "error");
+      if (!pedirConsentimientoSiFalta(err)) {
+        const msg = mensajeErrorIA(err, "Edumon no pudo responder en este momento. Tu mensaje sigue en el cuadro: intenta enviarlo de nuevo.");
+        if (esLimiteIA(err)) setAviso(msg);
+        else avisar(msg, "error");
+      }
     } finally {
       setEnviando(false);
       inputRef.current?.focus();
@@ -576,23 +595,32 @@ export default function EdumonChatPage() {
           {conversaciones.map((c) => (
             <div
               key={c._id}
-              onClick={() => abrir(c._id)}
               style={{
-                display: "flex", alignItems: "center", gap: 8, padding: "9px 10px", borderRadius: 10, cursor: "pointer",
+                display: "flex", alignItems: "center", gap: 4, borderRadius: 10,
                 background: activa?._id === c._id ? "rgba(2,132,199,0.10)" : "transparent",
               }}
             >
-              <MessageCircle size={15} color="var(--color-text-muted)" style={{ flexShrink: 0 }} />
-              <span style={{ flex: 1, fontSize: 13, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                {c.titulo}
-              </span>
               <button
                 type="button"
-                onClick={(e) => { e.stopPropagation(); eliminar(c._id); }}
-                aria-label="Eliminar conversación"
-                style={{ background: "none", border: "none", cursor: "pointer", padding: 2, color: "var(--color-text-muted)" }}
+                className="eia-item"
+                onClick={() => abrir(c._id)}
+                aria-current={activa?._id === c._id ? "true" : undefined}
+                style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 8, padding: "9px 10px", borderRadius: 10, cursor: "pointer", background: "transparent" }}
               >
-                <Trash2 size={14} />
+                <MessageCircle size={16} color="var(--color-text-muted)" style={{ flexShrink: 0 }} aria-hidden="true" />
+                <span style={{ flex: 1, fontSize: 14.5, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {c.titulo}
+                </span>
+              </button>
+              <button
+                type="button"
+                className="eia-focus"
+                onClick={() => eliminar(c._id)}
+                aria-label={`Eliminar la conversación «${c.titulo}»`}
+                title="Eliminar conversación"
+                style={{ background: "none", border: "none", cursor: "pointer", padding: 6, borderRadius: 8, color: "var(--color-text-muted)" }}
+              >
+                <Trash2 size={16} aria-hidden="true" />
               </button>
             </div>
           ))}
@@ -600,7 +628,7 @@ export default function EdumonChatPage() {
             <span style={{ fontSize: 11.5, color: "var(--color-text-muted)", display: "flex", gap: 6, alignItems: "center" }}>
               <Lock size={12} /> Privado · se borra a los 30 días
             </span>
-            <button type="button" onClick={revocar} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 11.5, color: "var(--color-error-hover)", textAlign: "left" }}>
+            <button type="button" className="eia-focus" onClick={revocar} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 13, color: "var(--color-error-hover)", textAlign: "left" }}>
               Retirar autorización
             </button>
           </div>
@@ -626,6 +654,8 @@ export default function EdumonChatPage() {
               type="button"
               onClick={nueva}
               title="Nueva conversación"
+              aria-label="Nueva conversación"
+              className="eia-focus"
               style={{ background: "rgba(255,255,255,0.18)", border: "none", borderRadius: 10, padding: 8, cursor: "pointer", color: "#fff", display: "flex" }}
             >
               <Plus size={18} />
@@ -639,12 +669,18 @@ export default function EdumonChatPage() {
             <Bienvenida sugerencias={sugerencias} onElegir={enviar} deshabilitado={enviando || mensajes.length > 0} />
             {mensajes.map((m, i) => (m.rol === "usuario"
               ? <MensajeUsuario key={m._id || i} mensaje={m} usuario={user} />
-              : <MensajeBot key={m._id || i} mensaje={m} onPedirAyuda={pedirAyuda} />))}
+              : <MensajeBot key={m._id || i} mensaje={m} onPedirAyuda={pedirAyuda} conversacionId={activa?._id} avisar={avisar} />))}
             {enviando && <Escribiendo />}
             <div ref={finRef} />
           </div>
 
           <div style={{ padding: "10px 14px 8px", borderTop: "1px solid var(--color-border)", background: "var(--color-surface)" }}>
+            {aviso && (
+              <div role="alert" style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 8, padding: "10px 12px", borderRadius: 12, background: "#FFFBEB", border: "1.5px solid #F59E0B", color: "#78350F", fontSize: 15 }}>
+                <span style={{ flex: 1 }}>{aviso}</span>
+                <button type="button" className="eia-link" onClick={() => setAviso("")} style={{ color: "#78350F" }}>Entendido</button>
+              </div>
+            )}
             <div style={{
               display: "flex", gap: 8, alignItems: "flex-end", padding: "6px 6px 6px 14px", borderRadius: 22,
               border: `1.5px solid ${texto.trim() ? AZUL : "var(--color-border)"}`, background: "var(--color-bg)",
@@ -655,11 +691,12 @@ export default function EdumonChatPage() {
                 onChange={(e) => setTexto(e.target.value)}
                 onKeyDown={onKeyDown}
                 placeholder="Escríbele a Edumon IA…"
+                aria-label="Mensaje para Edumon"
                 rows={1}
                 maxLength={2000}
                 disabled={enviando}
                 style={{
-                  flex: 1, resize: "none", fontSize: 14, padding: "8px 0", border: "none", outline: "none",
+                  flex: 1, resize: "none", fontSize: 16, padding: "8px 0", border: "none", outline: "none",
                   background: "transparent", color: "var(--color-text)", fontFamily: "inherit", maxHeight: 120,
                   overflowY: "auto",
                 }}
@@ -668,7 +705,8 @@ export default function EdumonChatPage() {
                 type="button"
                 onClick={() => enviar()}
                 disabled={!texto.trim() || enviando}
-                aria-label="Enviar"
+                aria-label={enviando ? "Esperando la respuesta de Edumon" : "Enviar mensaje"}
+                className="eia-focus"
                 style={{
                   width: 40, height: 40, borderRadius: "50%", border: "none", flexShrink: 0,
                   cursor: texto.trim() && !enviando ? "pointer" : "default",
@@ -679,7 +717,7 @@ export default function EdumonChatPage() {
                 <Send size={17} />
               </button>
             </div>
-            <p style={{ margin: "6px 0 0", fontSize: 11, color: "var(--color-text-muted)", textAlign: "center" }}>
+            <p style={{ margin: "6px 0 0", fontSize: 13, color: "var(--color-text-muted)", textAlign: "center" }}>
               Edumon IA puede equivocarse y no reemplaza a orientación escolar ni a profesionales de salud.
             </p>
           </div>
