@@ -3,8 +3,9 @@ import {
   Plus, Search, Building2, Edit2, X, Loader2,
   Phone, Mail, MapPin, Hash, User, RefreshCw,
   Eye, ExternalLink, Globe, Calendar, Shield,
+  Trash2, AlertCircle,
 } from "lucide-react";
-import { institucionesGetAll, institucionesCreate, institucionesUpdate } from "@/services/institucionesService";
+import { institucionesGetAll, institucionesCreate, institucionesUpdate, institucionesDelete } from "@/services/institucionesService";
 import { usersGetById } from "@/services/usersService";
 import { Modal, Toast, Button } from "@/components";
 import { Input, PhoneInput } from "@/components";
@@ -126,6 +127,8 @@ export default function InstitucionesPage() {
   const [toast, setToast] = useState({ msg: "", type: "success" });
   const [showCreate, setShowCreate] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [detailInst, setDetailInst] = useState(null);
   const [detailAdmin, setDetailAdmin] = useState(null);
   const [loadingAdmin, setLoadingAdmin] = useState(false);
@@ -253,6 +256,23 @@ export default function InstitucionesPage() {
     finally { setSaving(false); }
   };
 
+  const openDelete = (inst) => {
+    setDeleteTarget(inst);
+    setDeleteConfirmText("");
+  };
+
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
+    setSaving(true);
+    try {
+      await institucionesDelete(deleteTarget._id);
+      notify("Institución eliminada: sus datos se conservaron, pero ya nadie de ahí puede usar la aplicación");
+      setDeleteTarget(null);
+      load();
+    } catch (err) { notify(humanizeError(err, "Error al eliminar institución"), "error"); }
+    finally { setSaving(false); }
+  };
+
   const f = (key) => (e) => setForm((p) => ({ ...p, [key]: e.target.value }));
   const ef = (key) => (e) => setEditForm((p) => ({ ...p, [key]: e.target.value }));
 
@@ -324,7 +344,7 @@ export default function InstitucionesPage() {
                 <Empty search={search} onClear={() => setSearch("")} />
               ) : (
                 filtered.map((inst) => (
-                  <InstitRow key={inst._id} inst={inst} onView={openDetail} onEdit={openEdit} />
+                  <InstitRow key={inst._id} inst={inst} onView={openDetail} onEdit={openEdit} onDelete={openDelete} />
                 ))
               )}
             </tbody>
@@ -541,12 +561,47 @@ export default function InstitucionesPage() {
           </div>
         </form>
       </Modal>
+
+      {/* ══ DELETE CONFIRM ══ */}
+      <Modal isOpen={Boolean(deleteTarget)} onClose={() => setDeleteTarget(null)} title="Eliminar institución" size="sm">
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 16, padding: "12px 14px", borderRadius: 10, background: "rgba(220,38,38,0.06)", border: "1px solid rgba(220,38,38,0.2)" }}>
+          <AlertCircle style={{ width: 18, height: 18, color: "var(--color-error-hover)", flexShrink: 0, marginTop: 1 }} />
+          <p style={{ fontSize: 13, color: "var(--color-text)", margin: 0 }}>
+            Esto <strong>no borra</strong> ningún dato, pero deja inutilizable la institución <strong>{deleteTarget?.nombre}</strong>: nadie podrá iniciar sesión (sus docentes, administradores y los padres sin hijos en otra institución quedan suspendidos) y sus cursos quedan archivados. Se puede revertir después activando la institución y reactivando a cada usuario.
+          </p>
+        </div>
+        <label style={{ fontSize: 12.5, color: "var(--color-text-muted)", display: "block", marginBottom: 6 }}>
+          Para confirmar, escribe el nombre exacto: <strong style={{ color: "var(--color-text)" }}>{deleteTarget?.nombre}</strong>
+        </label>
+        <Input
+          value={deleteConfirmText}
+          onChange={(e) => setDeleteConfirmText(e.target.value)}
+          placeholder="Nombre de la institución"
+        />
+        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 20 }}>
+          <Button variant="ghost" type="button" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
+          <button
+            onClick={handleDelete}
+            disabled={saving || deleteConfirmText.trim() !== (deleteTarget?.nombre ?? "").trim()}
+            style={{
+              padding: "9px 20px", borderRadius: 10, border: "none",
+              background: (saving || deleteConfirmText.trim() !== (deleteTarget?.nombre ?? "").trim()) ? "#fca5a5" : "var(--color-error-hover)",
+              color: "white", fontSize: 13.5, fontWeight: 700,
+              cursor: (saving || deleteConfirmText.trim() !== (deleteTarget?.nombre ?? "").trim()) ? "not-allowed" : "pointer",
+              display: "flex", alignItems: "center", gap: 8,
+            }}
+          >
+            {saving && <Loader2 style={{ width: 14, height: 14, animation: "edu-spin 0.6s linear infinite" }} />}
+            {saving ? "Eliminando..." : "Eliminar institución"}
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 }
 
 // ── Fila de tabla ─────────────────────────────────────────────
-function InstitRow({ inst, onView, onEdit }) {
+function InstitRow({ inst, onView, onEdit, onDelete }) {
   return (
     <tr style={{ borderBottom: "1px solid var(--color-border)", transition: "background 150ms" }}
       onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-bg)"; }}
@@ -595,6 +650,12 @@ function InstitRow({ inst, onView, onEdit }) {
           </Button>
           <Button variant="outline" size="sm" onClick={() => onEdit(inst)} title="Editar">
             <Edit2 style={{ width: 13, height: 13 }} /> Editar
+          </Button>
+          <Button
+            variant="outline" size="sm" onClick={() => onDelete(inst)} title="Eliminar"
+            style={{ color: "var(--color-error-hover)", borderColor: "rgba(220,38,38,0.3)" }}
+          >
+            <Trash2 style={{ width: 13, height: 13 }} />
           </Button>
         </div>
       </td>
