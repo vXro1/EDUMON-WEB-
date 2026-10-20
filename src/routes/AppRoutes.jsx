@@ -61,6 +61,7 @@ const EdumonChatPage         = lazy(() => import("../features/edumon/pages/Edumo
 const AlertasConvivenciaPage = lazy(() => import("../features/edumon/pages/AlertasConvivenciaPage"));
 const AlertaDetallePage      = lazy(() => import("../features/edumon/pages/AlertaDetallePage"));
 const LineamientosEscuelaPadresPage = lazy(() => import("../features/edumon/pages/LineamientosEscuelaPadresPage"));
+const CicloEdumonPage        = lazy(() => import("../features/edumon/pages/CicloEdumonPage"));
 
 // ── Universal ─────────────────────────────────────────────────────
 const PerfilPage         = lazy(() => import("../features/perfil/pages/PerfilPage"));
@@ -145,6 +146,7 @@ export default function AppRoutes() {
             <Route path="/convivencia/alertas"    element={<ProtectedRoute allowedRoles={["administrador","docente"]}><AlertasConvivenciaPage /></ProtectedRoute>} />
             <Route path="/convivencia/alertas/:id" element={<ProtectedRoute allowedRoles={["administrador","docente"]}><AlertaDetallePage /></ProtectedRoute>} />
             <Route path="/escuela-padres/lineamientos" element={<ProtectedRoute allowedRoles={["administrador","docente"]}><LineamientosEscuelaPadresPage /></ProtectedRoute>} />
+            <Route path="/escuela-padres/ciclo" element={<ProtectedRoute allowedRoles={["administrador","docente"]}><CicloEdumonPage /></ProtectedRoute>} />
 
             {/* Universal */}
             <Route path="/perfil"         element={<ProtectedRoute><PerfilPage /></ProtectedRoute>} />
