@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import CursoContext from "../../context/CursoContext";
 import { ClipboardList, Clock, Eye, Pencil, Lock, Layers } from "lucide-react";
 
@@ -21,6 +21,8 @@ import { fmt, fmtHour, esPasada, makeNotify } from "../shared/helpers";
 
 import TareaDetalle from "./TareaDetalle";
 import TareaForm from "./TareaForm";
+import EdumonMascota from "@/features/edumon/components/EdumonMascota";
+import { camposEscuelaPadres } from "@/features/edumon/components/RecomendarConEdumon";
 
 
 const emptyForm = () => ({
@@ -37,6 +39,7 @@ const emptyForm = () => ({
   archivosEliminar: [],
   enlacesNuevos: [],
   enlacesExistentes: [],
+  escuelaPadres: null,
   // no existe "enlacesEliminar" — el backend no soporta borrar un enlace existente
 });
 
@@ -125,7 +128,10 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
   }, [cursoId]);
 
   // ── MODALES ────────────────────────────────────────────────────────
-  const openCreate = async () => {
+  // conEdumon: se abre desde "Crear reto con Edumon IA" (asistente ya desplegado)
+  const [conEdumon, setConEdumon] = useState(false);
+  const openCreate = async (desdeEdumon = false) => {
+    setConEdumon(desdeEdumon === true);
     setCreating(true);
     setEditTarget(null);
     setViewTarget(null);
@@ -134,6 +140,14 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
     setModalOpen(true);
     await Promise.all([loadParticipantes(), loadModulos()]);
   };
+
+  // ?edumon=1 (desde los lineamientos de escuela de padres): abre "crear reto con Edumon";
+  // el parámetro se quita al cerrar el modal (si se quitara al abrir, un remontaje lo perdería)
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pideEdumon = searchParams.get("edumon") === "1";
+  useEffect(() => {
+    if (pideEdumon && canManage && !modalOpen) openCreate(true);
+  }, [pideEdumon, canManage]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // reutilizada: primero con el dato de la lista, luego con el fetch fresco
   const buildEditForm = (t) => {
@@ -158,6 +172,7 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
       archivosEliminar: [],
       enlacesNuevos: [],
       enlacesExistentes,
+      escuelaPadres: t.escuelaPadres ?? null,
     };
   };
 
@@ -195,6 +210,11 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
   };
 
   const handleClose = () => {
+    if (pideEdumon) {
+      const siguiente = new URLSearchParams(searchParams);
+      siguiente.delete("edumon");
+      setSearchParams(siguiente, { replace: true });
+    }
     setModalOpen(false);
     setViewTarget(null);
     setEditTarget(null);
@@ -257,6 +277,9 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
       }
 
       form.archivosNuevos.forEach(f => fd.append("archivos", f));
+
+      // reto de escuela de padres: tema que Edumon recomienda en el chat
+      Object.entries(camposEscuelaPadres(form.escuelaPadres)).forEach(([k, v]) => fd.append(k, v));
 
       // estos campos no tienen isArray() en el validator, así que JSON.stringify() funciona
       if (editTarget && form.archivosEliminar.length > 0) {
@@ -331,8 +354,24 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
 
       <SectionHeader
         title="Retos"
-        action={canManage ? { label: "Nuevo reto", onClick: openCreate } : null}
+        action={canManage ? { label: "Nuevo reto", onClick: () => openCreate(false) } : null}
       />
+
+      {canManage && (
+        <div style={{
+          display: "flex", alignItems: "center", gap: 12, padding: "10px 14px", marginBottom: 14, borderRadius: 14,
+          border: "1px solid rgba(14,165,233,0.4)", background: "linear-gradient(120deg, rgba(14,165,233,0.08), rgba(99,102,241,0.08))",
+        }}>
+          <EdumonMascota size={50} expresion="saludo" />
+          <div style={{ flex: 1, fontSize: 13, lineHeight: 1.45 }}>
+            <strong>Edumon IA te ayuda a crear retos de escuela de padres</strong>
+            <div style={{ color: "var(--color-text-muted)", fontSize: 12.5 }}>
+              Escribe un tema y te propone la actividad para las familias, las preguntas de reflexión y los criterios.
+            </div>
+          </div>
+          <Button size="sm" onClick={() => openCreate(true)}>Crear reto con Edumon IA</Button>
+        </div>
+      )}
 
       {/* LISTA */}
       {loading ? (
@@ -344,7 +383,7 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
           icon={ClipboardList}
           title="Sin retos"
           desc={canManage ? "Crea el primer reto del curso." : "No hay retos asignados aún."}
-          action={canManage ? { label: "Crear reto", onClick: openCreate } : null}
+          action={canManage ? { label: "Crear reto", onClick: () => openCreate(false) } : null}
         />
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -415,7 +454,7 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
       <AppModal
         isOpen={modalOpen}
         onClose={handleClose}
-        size="md"
+        size={creating || editTarget ? "lg" : "md"}
       >
         <AppModal.Header title={modalTitle} onClose={handleClose} />
 
@@ -446,6 +485,9 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
               modulos={modulos}
               loadingModulos={loadingModulos}
               onSubmit={handleSave}
+              cursoId={cursoId}
+              cursoNombre={ctx?.curso?.nombre}
+              abrirAsistente={conEdumon}
             />
           )}
         </AppModal.Body>

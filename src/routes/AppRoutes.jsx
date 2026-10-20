@@ -56,6 +56,12 @@ const FamiliaEntregasPage   = lazy(() => import("../features/familia/pages/Famil
 const FamiliaEntregaDetallePage = lazy(() => import("../features/familia/pages/FamiliaEntregaDetallePage"));
 const FamiliaForosPage      = lazy(() => import("../features/familia/pages/FamiliaForosPage"));
 
+// ── Edumon (IA) ───────────────────────────────────────────────────
+const EdumonChatPage         = lazy(() => import("../features/edumon/pages/EdumonChatPage"));
+const AlertasConvivenciaPage = lazy(() => import("../features/edumon/pages/AlertasConvivenciaPage"));
+const AlertaDetallePage      = lazy(() => import("../features/edumon/pages/AlertaDetallePage"));
+const LineamientosEscuelaPadresPage = lazy(() => import("../features/edumon/pages/LineamientosEscuelaPadresPage"));
+
 // ── Universal ─────────────────────────────────────────────────────
 const PerfilPage         = lazy(() => import("../features/perfil/pages/PerfilPage"));
 const NotificacionesPage = lazy(() => import("../features/notificaciones/pages/NotificacionesPage"));
@@ -133,6 +139,12 @@ export default function AppRoutes() {
             <Route path="/familia/entregas/:tareaId" element={<ProtectedRoute allowedRoles={["padre","padre/tutor"]}><FamiliaEntregaDetallePage /></ProtectedRoute>} />
             <Route path="/familia/foros"      element={<ProtectedRoute allowedRoles={["padre","padre/tutor"]}><FamiliaForosPage /></ProtectedRoute>} />
             <Route path="/familia/calendario" element={<Navigate to="/calendario" replace />} />
+
+            {/* Edumon (IA): acompañante de crianza y alertas de convivencia */}
+            <Route path="/familia/edumon"         element={<ProtectedRoute allowedRoles={["padre","padre/tutor"]}><EdumonChatPage /></ProtectedRoute>} />
+            <Route path="/convivencia/alertas"    element={<ProtectedRoute allowedRoles={["administrador","docente"]}><AlertasConvivenciaPage /></ProtectedRoute>} />
+            <Route path="/convivencia/alertas/:id" element={<ProtectedRoute allowedRoles={["administrador","docente"]}><AlertaDetallePage /></ProtectedRoute>} />
+            <Route path="/escuela-padres/lineamientos" element={<ProtectedRoute allowedRoles={["administrador","docente"]}><LineamientosEscuelaPadresPage /></ProtectedRoute>} />
 
             {/* Universal */}
             <Route path="/perfil"         element={<ProtectedRoute><PerfilPage /></ProtectedRoute>} />
