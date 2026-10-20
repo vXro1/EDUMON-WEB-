@@ -6,10 +6,10 @@ Se despliega la rama `feature/modulo-ia`. El backend va primero (ver `Backend/DE
 
 ## 1. Antes de desplegar: poner la URL del backend
 
-En `vercel.json`, reemplazar **las 3 apariciones** de `https://REEMPLAZAR-BACKEND.onrender.com` por la URL real del Web Service de Render (por ejemplo `https://edumon-backend-demo.onrender.com`), sin barra final. Hacer commit y push a `feature/modulo-ia`.
+`vercel.json` ya apunta al backend desplegado: **`https://backend-edumon-ia.onrender.com`** (3 apariciones). Si el backend cambia de URL, reemplazarlas, hacer commit y push a `feature/modulo-ia`.
 
 ```bash
-grep -n "REEMPLAZAR-BACKEND" vercel.json   # debe quedar vacío después del cambio
+grep -n "onrender.com" vercel.json   # las 3 rutas apuntan al mismo backend
 ```
 
 Qué hace `vercel.json`:

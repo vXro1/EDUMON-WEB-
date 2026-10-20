@@ -4,9 +4,9 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://REEMPLAZAR-BACKEND.onrender.com/api/:path*" },
-    { "source": "/uploads/:path*", "destination": "https://REEMPLAZAR-BACKEND.onrender.com/uploads/:path*" },
-    { "source": "/static/:path*", "destination": "https://REEMPLAZAR-BACKEND.onrender.com/static/:path*" },
+    { "source": "/api/:path*", "destination": "https://backend-edumon-ia.onrender.com/api/:path*" },
+    { "source": "/uploads/:path*", "destination": "https://backend-edumon-ia.onrender.com/uploads/:path*" },
+    { "source": "/static/:path*", "destination": "https://backend-edumon-ia.onrender.com/static/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
