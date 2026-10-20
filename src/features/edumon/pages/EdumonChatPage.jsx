@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
 import {
-  Send, Plus, Trash2, ShieldCheck, Lightbulb, BookOpen, MessageCircle,
+  Send, Plus, Trash2, ShieldCheck, Lightbulb, BookOpen, MessageCircle, Mic,
   CalendarDays, ClipboardList, ArrowRight, Lock, Sparkles, HeartHandshake,
   PlayCircle, FileText, Ban, Phone, HandHeart,
 } from "lucide-react";
@@ -11,13 +11,17 @@ import { humanizeError } from "@/utils/humanizeError";
 import ConsentimientoModal from "../components/ConsentimientoModal";
 import EdumonMascota from "../components/EdumonMascota";
 import RespuestaAcciones from "../components/RespuestaAcciones";
+import BotonNotaVoz, { notasDeVozSoportadas } from "../components/BotonNotaVoz";
 import "../edumon-ia.css";
 import {
   edumonGetConsentimiento, edumonAceptarConsentimiento, edumonRevocarConsentimiento,
   edumonGetConversaciones, edumonCrearConversacion, edumonGetConversacion,
   edumonEliminarConversacion, edumonEnviarMensaje, esConsentimientoRequerido, edumonPedirAyuda,
-  mensajeErrorIA, esLimiteIA,
+  mensajeErrorIA, esLimiteIA, edumonEnviarAudio,
 } from "../services/edumonService";
+
+// códigos con los que el micrófono se oculta y se pide escribir
+const VOZ_NO_DISPONIBLE = ["NOTAS_VOZ_DESACTIVADAS", "TRANSCRIPCION_NO_DISPONIBLE"];
 
 // ideas para empezar: se muestran 4 distintas en cada conversación nueva
 const SUGERENCIAS = [
@@ -284,6 +288,7 @@ function MensajeBot({ mensaje, onPedirAyuda, conversacionId, avisar }) {
 }
 
 function MensajeUsuario({ mensaje, usuario }) {
+  const esVoz = mensaje.entrada === "voz";
   return (
     <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, alignItems: "flex-end", animation: "edumon-aparecer 0.25s ease-out both" }}>
       <div style={{
@@ -291,6 +296,11 @@ function MensajeUsuario({ mensaje, usuario }) {
         background: `linear-gradient(135deg, ${AZUL}, #2563EB)`, color: "#fff", fontSize: 16, lineHeight: 1.55,
         whiteSpace: "pre-wrap", wordBreak: "break-word", boxShadow: "0 2px 6px rgba(37,99,235,0.25)",
       }}>
+        {esVoz && (
+          <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, fontWeight: 800, opacity: 0.95, marginBottom: 2 }}>
+            <Mic size={13} aria-hidden="true" /> Nota de voz · transcripción
+          </span>
+        )}
         {mensaje.contenido}
       </div>
       {/* el avatar que la persona eligió en su perfil */}
@@ -369,6 +379,7 @@ export default function EdumonChatPage() {
   const [enviando, setEnviando] = useState(false);
   const [toast, setToast] = useState({ msg: "", type: "success" });
   const [aviso, setAviso] = useState(""); // error que no debe desaparecer solo (ej. 429 LIMITE_IA)
+  const [vozDisponible, setVozDisponible] = useState(notasDeVozSoportadas);
   const finRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -491,12 +502,9 @@ export default function EdumonChatPage() {
     }
   };
 
-  const enviar = async (contenido = texto) => {
-    const limpio = contenido.trim();
-    if (!limpio || enviando) return;
-
+  // texto y nota de voz comparten el flujo: conversación (se crea si falta) → mensaje optimista → respuesta
+  const procesar = async ({ optimista, llamar, alFallar }) => {
     setEnviando(true);
-    setTexto("");
     setAviso("");
     try {
       let conversacion = activa;
@@ -505,9 +513,9 @@ export default function EdumonChatPage() {
         conversacion = { ...conversacion, mensajes: [] };
       }
       // optimista: el mensaje del padre aparece de inmediato
-      setActiva({ ...conversacion, mensajes: [...conversacion.mensajes, { _id: "pendiente", rol: "usuario", contenido: limpio }] });
+      setActiva({ ...conversacion, mensajes: [...conversacion.mensajes, { _id: "pendiente", rol: "usuario", ...optimista }] });
 
-      const { mensajeUsuario, respuesta, conversacion: meta } = await edumonEnviarMensaje(conversacion._id, limpio);
+      const { mensajeUsuario, respuesta, conversacion: meta } = await llamar(conversacion._id);
       const actualizada = { ...conversacion, ...meta, mensajes: [...conversacion.mensajes, mensajeUsuario, respuesta] };
       setActiva(actualizada);
       setConversaciones((cs) => [
@@ -515,17 +523,41 @@ export default function EdumonChatPage() {
         ...cs.filter((c) => c._id !== actualizada._id),
       ]);
     } catch (err) {
-      setTexto(limpio);
       setActiva((a) => (a ? { ...a, mensajes: a.mensajes.filter((m) => m._id !== "pendiente") } : a));
-      if (!pedirConsentimientoSiFalta(err)) {
-        const msg = mensajeErrorIA(err, "Edumon no pudo responder en este momento. Tu mensaje sigue en el cuadro: intenta enviarlo de nuevo.");
-        if (esLimiteIA(err)) setAviso(msg);
-        else avisar(msg, "error");
-      }
+      if (!pedirConsentimientoSiFalta(err)) alFallar(err);
     } finally {
       setEnviando(false);
       inputRef.current?.focus();
     }
+  };
+
+  const enviar = async (contenido = texto) => {
+    const limpio = contenido.trim();
+    if (!limpio || enviando) return;
+    setTexto("");
+    await procesar({
+      optimista: { contenido: limpio },
+      llamar: (id) => edumonEnviarMensaje(id, limpio),
+      alFallar: (err) => {
+        setTexto(limpio);
+        const msg = mensajeErrorIA(err, "Edumon no pudo responder en este momento. Tu mensaje sigue en el cuadro: intenta enviarlo de nuevo.");
+        if (esLimiteIA(err)) setAviso(msg);
+        else avisar(msg, "error");
+      },
+    });
+  };
+
+  const enviarNotaDeVoz = async (archivo) => {
+    if (enviando) return;
+    await procesar({
+      optimista: { contenido: "Transcribiendo tu nota de voz…", entrada: "voz" },
+      llamar: (id) => edumonEnviarAudio(id, archivo),
+      alFallar: (err) => {
+        // 404 (función apagada) o 503 (sin transcripción): se oculta el micrófono y se pide escribir
+        if (VOZ_NO_DISPONIBLE.includes(err?.data?.code)) setVozDisponible(false);
+        setAviso(mensajeErrorIA(err, "No pudimos enviar la nota de voz. Escribe tu mensaje, por favor."));
+      },
+    });
   };
 
   const onKeyDown = (e) => {
@@ -701,6 +733,9 @@ export default function EdumonChatPage() {
                   overflowY: "auto",
                 }}
               />
+              {vozDisponible && (
+                <BotonNotaVoz onAudio={enviarNotaDeVoz} onError={setAviso} deshabilitado={enviando} />
+              )}
               <button
                 type="button"
                 onClick={() => enviar()}
