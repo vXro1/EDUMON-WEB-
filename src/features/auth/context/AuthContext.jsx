@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }) => {
 
     const url = reason === 'expired'    ? '/login?expired=1'
               : reason === 'inactivity' ? '/login?inactivity=1'
+              : reason === 'feria'      ? '/feria#pruebalo'
               : '/login';
 
     window.location.replace(url);

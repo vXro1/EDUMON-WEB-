@@ -421,14 +421,12 @@
 .ech-recursos__tipo { font-size: 12px; color: var(--ech-suave); }
 
 .ech-fuentes {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px;
   margin: 0;
   font-size: 13px;
+  line-height: 1.45;
   color: var(--ech-suave);
 }
+.ech-fuentes svg { display: inline; vertical-align: -2px; margin-right: 5px; }
 .ech-fuentes a { color: inherit; }
 
 .ech-llamar {
@@ -605,6 +603,50 @@
   line-height: 1.45;
   overflow-y: auto;
 }
+.ech-mic {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid var(--ech-borde);
+  border-radius: 50%;
+  background: var(--ech-superficie);
+  color: var(--ech-texto);
+  cursor: pointer;
+}
+.ech-mic:hover:not(:disabled) { border-color: var(--ech-primario); color: var(--ech-primario); }
+.ech-mic:disabled { opacity: 0.5; cursor: default; }
+.ech-mic--activo,
+.ech-mic--activo:hover:not(:disabled) { background: #DC2626; border-color: #DC2626; color: #fff; }
+
+.ech-campo--dictando,
+.ech-campo--dictando:focus-within { border-color: #DC2626; background: #FEF2F2; }
+
+.ech-dictado {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 780px;
+  margin: 0 auto 8px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #FEF2F2;
+  color: #991B1B;
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+.ech-dictado svg { vertical-align: -2px; }
+.ech-dictado__punto {
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #DC2626;
+  animation: ech-pulso 1.4s ease-out infinite;
+}
+
 .ech-enviar {
   flex-shrink: 0;
   display: inline-flex;

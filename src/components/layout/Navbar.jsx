@@ -1,8 +1,9 @@
 import { memo, useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Bell, BookOpen, ChevronDown, ClipboardList, LogOut, Menu, Search, User, X,
+  Bell, BookOpen, ChevronDown, ClipboardList, LogOut, Menu, Search, User, X, Repeat,
 } from "lucide-react";
+import { esSesionFeria } from "@/features/feria/sesionFeria";
 import { UserAvatar } from "@/components";
 import { useSearch } from "@/context/SearchContext";
 import { ROLE_LABELS } from "@/config/navigation/navGroups";
@@ -99,6 +100,18 @@ export const Navbar = memo(function Navbar({ user, logout, drawerOpen, onToggleD
       </div>
 
       <div className="nav-actions">
+        {esSesionFeria() && (
+          <button
+            type="button"
+            className="nav-feria-btn"
+            onClick={() => logout("feria")}
+            title="Volver a la feria y entrar con otro usuario"
+            aria-label="Cambiar de usuario: volver a la página de la feria"
+          >
+            <Repeat size={16} aria-hidden="true" />
+            <span>Cambiar de usuario</span>
+          </button>
+        )}
         <button
           className="nav-icon-btn"
           onClick={() => navigate("/notificaciones")}

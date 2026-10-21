@@ -17,6 +17,8 @@ import soporte from "@/assets/img/edumon-mascota-buzon-soporte.svg";
 import mascotasEquipo from "@/assets/img/edumon-mascotas-jugando.webp";
 import edumonIA from "@/assets/img/edumon/edumon-ia.webp";
 import edumonIALogo from "@/assets/img/edumon/edumon-ia-logo.webp";
+import edumonSaludo from "@/assets/img/edumon/edumon-saludo.webp";
+import { MODO_DEMO } from "@/features/feria/sesionFeria";
 
 /* ─── Burbujas decorativas (assets reales) ─── */
 import circulo1 from "@/assets/img/circulos/circulo1.svg";
@@ -1139,6 +1141,29 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {MODO_DEMO && (
+        <section className="landing-feria" aria-labelledby="landing-feria-titulo">
+          <Link to="/feria" className="landing-feria__card">
+            <img src={edumonSaludo} alt="" aria-hidden="true" className="landing-feria__mascota" width={480} height={480} />
+            <div className="landing-feria__texto">
+              <span className="landing-feria__badge">
+                <IconSparkles size={12} /> Feria de innovación 2026
+              </span>
+              <h2 id="landing-feria-titulo" className="landing-feria__titulo">
+                ¿Estás en la feria de innovación y quieres conocer nuestra página?
+              </h2>
+              <p className="landing-feria__desc">
+                Te mostramos en pocos minutos cómo piensa Edumon IA y puedes probarlo
+                con familias, docentes y rectoría de demostración, sin registrarte.
+              </p>
+            </div>
+            <span className="landing-feria__cta">
+              Conocer Edumon <IconArrowRight size={18} />
+            </span>
+          </Link>
+        </section>
+      )}
 
       <section
         id="pilares"
