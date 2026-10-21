@@ -10,6 +10,26 @@ export function marcarSesionFeria() {
   }
 }
 
+const CLAVE_BORRADOR = "edumon-borrador-chat";
+
+export function guardarBorradorChat(texto) {
+  try {
+    window.sessionStorage.setItem(CLAVE_BORRADOR, texto.slice(0, 2000));
+  } catch {
+    return;
+  }
+}
+
+export function tomarBorradorChat() {
+  try {
+    const texto = window.sessionStorage.getItem(CLAVE_BORRADOR);
+    window.sessionStorage.removeItem(CLAVE_BORRADOR);
+    return texto ?? "";
+  } catch {
+    return "";
+  }
+}
+
 export function esSesionFeria() {
   if (!MODO_DEMO) return false;
   try {

@@ -17,7 +17,7 @@ import circulo9 from "@/assets/img/circulos/circulo9.svg";
 import circulo11 from "@/assets/img/circulos/circulo11.svg";
 import { CIFRAS, ROLES, GRUPOS_ROLES, EJEMPLOS, CICLO, BITACORA_INICIAL, FUENTES, NORMAS } from "./feriaDatos";
 import { encadenar, verificar } from "./bitacora";
-import { MODO_DEMO, marcarSesionFeria } from "./sesionFeria";
+import { MODO_DEMO, marcarSesionFeria, guardarBorradorChat } from "./sesionFeria";
 import "./feria.css";
 
 const CLAVE_DEMO = import.meta.env.VITE_DEMO_PASSWORD ?? "";
@@ -135,7 +135,6 @@ function AsiPiensa({ entrar, cargando, error }) {
   const [visibles, setVisibles] = useState(0);
   const [ronda, setRonda] = useState(0);
   const [propio, setPropio] = useState("");
-  const [copiado, setCopiado] = useState("");
   const idPropio = useId();
   const ej = EJEMPLOS.find((e) => e.id === elegido);
 
@@ -156,8 +155,7 @@ function AsiPiensa({ entrar, cargando, error }) {
     e.preventDefault();
     const texto = propio.trim();
     if (!texto) return;
-    try { await navigator.clipboard?.writeText(texto); setCopiado("Copiamos tu mensaje: en el chat, pégalo y envíalo."); }
-    catch { setCopiado("En el chat, escribe tu mensaje y envíalo."); }
+    guardarBorradorChat(texto);
     await entrar(rolPorId("familia"));
   };
 
@@ -193,12 +191,12 @@ function AsiPiensa({ entrar, cargando, error }) {
       </div>
 
       <form className="fe-propio" onSubmit={llevarAlChat}>
-        <label htmlFor={idPropio}>Escribe tu propio mensaje (una situación inventada) y llévalo al chat</label>
+        <label htmlFor={idPropio}>Escribe tu propia pregunta y pruébala en el chat</label>
         <input id={idPropio} value={propio} onChange={(e) => setPropio(e.target.value)} maxLength={500} placeholder="Ej.: mi hijo de 10 años no quiere ir al colegio" />
         <button type="submit" className="fe-btn fe-btn-pri" disabled={!propio.trim() || cargando === "familia"}>
-          <Send size={18} aria-hidden="true" /> {cargando === "familia" ? "Entrando…" : "Llévalo al chat"}
+          <Send size={18} aria-hidden="true" /> {cargando === "familia" ? "Entrando…" : "Llevar al chat"}
         </button>
-        {copiado && <p role="status" className="fe-nota-ok">{copiado}</p>}
+        <p className="fe-propio-ayuda">Entrarás como Laura y tu pregunta quedará escrita en el chat, lista para enviar.</p>
         {error.familia && <p className="fe-error" role="alert">{error.familia}</p>}
       </form>
     </>
@@ -332,7 +330,7 @@ const PESTANAS = [
   { id: "piensa", titulo: "Cómo responde la IA", icono: Sparkles, intro: "Elige un mensaje y mira, paso a paso, qué hace Edumon: la crianza se responde con fuentes oficiales y el riesgo sigue la ruta del colegio." },
   { id: "bitacora", titulo: "Alertas selladas", icono: ShieldCheck, intro: "Cada paso de una alerta queda sellado con el anterior. Si alguien edita uno, la cadena se rompe desde ahí." },
   { id: "ciclo", titulo: "Ciclo Edumon", icono: HeartHandshake, intro: "Lo que preguntan las familias se vuelve escuela de padres. Toca cada paso para verlo." },
-  { id: "cifras", titulo: "En números", icono: BarChart3, intro: "Medido con la plataforma real, no estimado." },
+  { id: "cifras", titulo: "En números", icono: BarChart3, intro: "Lo que medimos con la plataforma real: costo, velocidad y seguridad." },
 ];
 
 function PorDentro({ sesion }) {
@@ -442,7 +440,7 @@ export default function FeriaPage() {
                 Escuela de padres con retos en casa, y un asistente con inteligencia artificial que acompaña la crianza
                 y avisa al colegio cuando hay riesgo.
               </p>
-              <p className="fe-hero-pregunta">¿Cómo quieres conocerla?</p>
+              <p className="fe-hero-pregunta">¿Cómo quieres conocer EDUMON?</p>
               <div className="fe-hero-btns">
                 {rapidos.map((r, i) => (
                   <button key={r.id} type="button" className={`fe-btn ${i === 0 ? "fe-btn-pri" : "fe-btn-ver"} fe-btn-grande`}
@@ -556,7 +554,7 @@ export default function FeriaPage() {
             <p><b>Normas:</b> {NORMAS.join(" · ")}</p>
           </div>
         </div>
-        <p className="fe-aviso">Datos de demostración: usuarios y situaciones inventadas.</p>
+        <p className="fe-aviso">Usuarios de demostración creados para conocer EDUMON en la feria.</p>
       </footer>
     </div>
   );

@@ -4,7 +4,7 @@
 
 export const CIFRAS = [
   { valor: 0.00084, decimales: 5, prefijo: "US$ ", sufijo: "", titulo: "por mensaje del chat", detalle: "Costo medido con tokens reales de Groq y precios oficiales" },
-  { valor: 2.53, decimales: 2, prefijo: "US$ ", sufijo: "", titulo: "al mes para un colegio de 300 familias", detalle: "Suponiendo 10 mensajes por familia al mes" },
+  { valor: 2.53, decimales: 2, prefijo: "US$ ", sufijo: "", titulo: "al mes para un colegio de 300 familias", detalle: "Proyección con el costo medido y 10 mensajes por familia al mes" },
   { valor: 95, decimales: 0, prefijo: "", sufijo: " %", titulo: "de casos graves detectados", detalle: "19 de 20 en pruebas de desarrollo con Groq, con 5,4 % de falsas alarmas" },
   { valor: 3.9, decimales: 1, prefijo: "", sufijo: " s", titulo: "de respuesta promedio con IA", detalle: "10 mensajes reales con Groq (p95: 10 s)" },
 ];
@@ -58,7 +58,7 @@ export const EJEMPLOS = [
       { titulo: "Clasifica el tema", detalle: "Tema: rabietas · edad: 4 años. Sin señales de riesgo.", mascota: "pensando" },
       { titulo: "Busca la ficha curada", detalle: "«Rabietas en niños pequeños», de UNICEF — Crianza positiva.", mascota: "pensando" },
       { titulo: "Responde citando la fuente", detalle: "Ideas para su etapa, una práctica de 5 minutos para la semana y «Basado en: UNICEF».", mascota: "ia" },
-      { titulo: "«¿Por qué Edumon dijo esto?»", detalle: "Un toque muestra quién decidió, qué ficha usó y si la redactó un modelo o es la ficha tal cual.", mascota: "saludo" },
+      { titulo: "«¿Por qué Edumon respondió esto?»", detalle: "Un toque en el ícono de ayuda muestra quién decidió, qué ficha usó y si la redactó un modelo o es la ficha tal cual.", mascota: "saludo" },
     ],
   },
   {
