@@ -18,6 +18,7 @@ import AjustesVoz from "../components/AjustesVoz";
 import ModoVoz from "../components/ModoVoz";
 import { detenerLectura } from "../voz/lectorVoz";
 import { dictar, reconocimientoSoportado, mensajeErrorVoz } from "../voz/reconocimientoVoz";
+import { tomarBorradorChat } from "@/features/feria/sesionFeria";
 import { clasificarErrorChat } from "../utils/erroresChat";
 import { pideRecursos, parrafos, trozosConEnlaces } from "../utils/textoChat";
 import "../edumon-ia.css";
@@ -416,6 +417,8 @@ export default function EdumonChatPage() {
 
   useEffect(() => {
     precargarExpresiones();
+    const borrador = tomarBorradorChat();
+    if (borrador) setTexto(borrador);
     return () => {
       detenerLectura();
       dictado.current?.cancelar();

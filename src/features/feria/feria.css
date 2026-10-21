@@ -214,6 +214,8 @@
 .fe-cifra strong { display: block; margin-top: 6px; font-size: 16px; }
 .fe-cifra small { display: block; margin-top: 4px; font-size: 13.5px; color: var(--fe-suave); }
 
+.fe-propio-ayuda { width: 100%; margin: 0; font-size: 14px; color: var(--fe-suave); }
+
 .fe-honesto { display: flex; gap: 10px; align-items: flex-start; margin: 16px 0 0; padding: 12px 16px; border-radius: 14px; background: var(--fe-amarillo-suave); border: 1.5px solid var(--fe-amarillo); font-size: 15px; color: var(--fe-texto); }
 .fe-honesto svg { flex-shrink: 0; margin-top: 2px; color: var(--fe-amarillo-osc); }
 
