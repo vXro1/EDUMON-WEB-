@@ -172,7 +172,7 @@ function Metricas({ datos }) {
       </div>
       {ultimas.some((u) => u.gravesPerdidos?.length || u.falsasAlarmas?.length) && (
         <details>
-          <summary className="eia-focus" style={{ cursor: "pointer", fontSize: 15, fontWeight: 700 }}>Ver los casos que fallaron (textos ficticios de evaluación)</summary>
+          <summary className="eia-focus" style={{ cursor: "pointer", fontSize: 15, fontWeight: 700 }}>Ver los casos de prueba que fallaron</summary>
           <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 10, fontSize: 14.5 }}>
             {ultimas.map((u) => (u.gravesPerdidos?.length || u.falsasAlarmas?.length ? (
               <div key={`f-${u.conjunto}-${u.modo}`}>
