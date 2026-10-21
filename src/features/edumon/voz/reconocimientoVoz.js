@@ -13,6 +13,49 @@ const MENSAJES = {
 
 export const mensajeErrorVoz = (codigo) => MENSAJES[codigo] ?? "No pude entender el audio. Inténtalo de nuevo o escribe tu mensaje.";
 
+export function dictar({ lang = "es-CO", onTexto, onFin, onError } = {}) {
+  const Reconocedor = Clase();
+  if (!Reconocedor) throw Object.assign(new Error("no_soportado"), { codigo: "service-not-allowed" });
+
+  const rec = new Reconocedor();
+  rec.lang = lang;
+  rec.interimResults = true;
+  rec.continuous = true;
+  rec.maxAlternatives = 1;
+
+  let finales = "";
+  let parcial = "";
+  const actual = () => `${finales} ${parcial}`.replace(/\s+/g, " ").trim();
+
+  rec.onresult = (e) => {
+    parcial = "";
+    for (let i = e.resultIndex; i < e.results.length; i += 1) {
+      const r = e.results[i];
+      if (r.isFinal) finales += ` ${r[0].transcript}`;
+      else parcial += ` ${r[0].transcript}`;
+    }
+    onTexto?.(actual());
+  };
+  rec.onerror = (e) => {
+    if (e.error === "aborted" || e.error === "no-speech") return;
+    onError?.(e.error);
+  };
+  rec.onend = () => onFin?.(actual());
+
+  rec.start();
+
+  return {
+    detener: () => {
+      try { rec.stop(); } catch { onFin?.(actual()); }
+    },
+    cancelar: () => {
+      rec.onend = null;
+      rec.onresult = null;
+      try { rec.abort(); } catch { return; }
+    },
+  };
+}
+
 export function escucharFrase({ lang = "es-CO", onParcial } = {}) {
   const Reconocedor = Clase();
   if (!Reconocedor) {

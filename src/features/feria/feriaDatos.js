@@ -5,20 +5,46 @@
 export const CIFRAS = [
   { valor: 0.00084, decimales: 5, prefijo: "US$ ", sufijo: "", titulo: "por mensaje del chat", detalle: "Costo medido con tokens reales de Groq y precios oficiales" },
   { valor: 2.53, decimales: 2, prefijo: "US$ ", sufijo: "", titulo: "al mes para un colegio de 300 familias", detalle: "Suponiendo 10 mensajes por familia al mes" },
-  { valor: 0, decimales: 0, prefijo: "", sufijo: " %", titulo: "de errores en la prueba de carga", detalle: "182 solicitudes al chat y a las alertas" },
+  { valor: 95, decimales: 0, prefijo: "", sufijo: " %", titulo: "de casos graves detectados", detalle: "19 de 20 en pruebas de desarrollo con Groq, con 5,4 % de falsas alarmas" },
   { valor: 3.9, decimales: 1, prefijo: "", sufijo: " s", titulo: "de respuesta promedio con IA", detalle: "10 mensajes reales con Groq (p95: 10 s)" },
 ];
 
-// Usuarios del seed de demo (Backend/DEMO-BACKEND.md). La contraseña viene de VITE_DEMO_PASSWORD.
 export const ROLES = [
-  { id: "familia", rol: "Familia", telefono: "+573009990006", local: "3009990006", destino: "/familia/edumon",
-    linea: "Habla o escribe a Edumon, escucha la respuesta y mira por qué respondió eso.", color: "var(--edu-blue-500)" },
-  { id: "orientadora", rol: "Orientadora", telefono: "+573009990002", local: "3009990002", destino: "/convivencia/alertas",
-    linea: "Alertas con su ruta de la Ley 1620 y verificación de integridad de la bitácora.", color: "var(--edu-pink-600)" },
-  { id: "docente", rol: "Docente", telefono: "+573009990003", local: "3009990003", destino: "/escuela-padres/ciclo",
-    linea: "El Ciclo Edumon de Grado Quinto A: qué preguntan las familias y qué reto proponer.", color: "var(--edu-green-600)" },
-  { id: "rectora", rol: "Rectora", telefono: "+573009990001", local: "3009990001", destino: "/edumon-ia/panel",
-    linea: "Panel: IA activa, seguridad, costo, impacto y opinión de las familias.", color: "var(--edu-yellow-600)" },
+  {
+    id: "familia", grupo: "familias", nombre: "Laura Gómez", rol: "Mamá en Quinto A y Tercero B",
+    telefono: "+573009990006", local: "300 999 0006", destino: "/familia/edumon", color: "#0C6AC4",
+    ver: "Conversa con Edumon IA, por texto o por voz",
+  },
+  {
+    id: "familia2", grupo: "familias", nombre: "Carlos Herrera", rol: "Papá en Quinto A",
+    telefono: "+573009990007", local: "300 999 0007", destino: "/familia/tareas", color: "#0DC5E2",
+    ver: "Entrega un reto y mira cómo lo califican",
+  },
+  {
+    id: "docente", grupo: "colegio", nombre: "Andrés Felipe Ramírez", rol: "Docente de Quinto A",
+    telefono: "+573009990003", local: "300 999 0003", destino: "/escuela-padres/ciclo", color: "#2FBD45",
+    ver: "Descubre qué preocupa a las familias de su curso",
+  },
+  {
+    id: "docente2", grupo: "colegio", nombre: "Paola Andrea Vélez", rol: "Docente de Tercero B",
+    telefono: "+573009990004", local: "300 999 0004", destino: "/tareas", color: "#F23D7F",
+    ver: "Crea un reto con ayuda de la IA y califica entregas",
+  },
+  {
+    id: "orientadora", grupo: "colegio", nombre: "Diana Patricia Muñoz", rol: "Orientadora · convivencia",
+    telefono: "+573009990002", local: "300 999 0002", destino: "/convivencia/alertas", color: "#B45309",
+    ver: "Atiende alertas de convivencia con su ruta legal",
+  },
+  {
+    id: "rectora", grupo: "colegio", nombre: "Marcela Ríos Castaño", rol: "Rectora",
+    telefono: "+573009990001", local: "300 999 0001", destino: "/edumon-ia/panel", color: "#0B3A6E",
+    ver: "Mira el impacto en todo el colegio",
+  },
+];
+
+export const GRUPOS_ROLES = [
+  { id: "familias", titulo: "Familias" },
+  { id: "colegio", titulo: "Colegio" },
 ];
 
 // "Así piensa Edumon": pasos verificados con las respuestas reales del backend
