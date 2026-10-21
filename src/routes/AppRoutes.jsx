@@ -9,6 +9,7 @@ import MainLayout                                        from "../components/lay
 
 // ── Páginas públicas ──────────────────────────────────────────────
 const LandingPage    = lazy(() => import("../pages/LandingPage"));
+const FeriaPage      = lazy(() => import("../features/feria/FeriaPage"));
 const NotFoundPage   = lazy(() => import("../pages/NotFoundPage"));
 const DemoPage       = lazy(() => import("../pages/DemoPage"));
 const TutorialesPage = lazy(() => import("../pages/TutorialesPage"));
@@ -87,6 +88,8 @@ export default function AppRoutes() {
 
           {/* ── DEMO — vista previa del dashboard sin iniciar sesión ── */}
           <Route path="/demo" element={<DemoPage />} />
+          {/* carta de presentación de la feria (solo con VITE_MODO_DEMO=true) */}
+          <Route path="/feria" element={<FeriaPage />} />
 
           <Route path="/tutoriales" element={<TutorialesPage />} />
 
