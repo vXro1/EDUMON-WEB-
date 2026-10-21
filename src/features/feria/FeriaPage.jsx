@@ -400,7 +400,10 @@ export default function FeriaPage() {
 
   useEffect(() => {
     const destino = window.location.hash.slice(1);
-    if (!destino) return undefined;
+    if (!destino) {
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      return undefined;
+    }
     const llevar = () => document.getElementById(destino)?.scrollIntoView({ block: "start" });
     const tiempos = [100, 600, 1400].map((ms) => setTimeout(llevar, ms));
     return () => tiempos.forEach(clearTimeout);
