@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   Send, Plus, ShieldCheck, BookOpen, Mic, CalendarDays, ClipboardList, ArrowRight, Lock, Sparkles,
-  HeartHandshake, PlayCircle, FileText, Ban, Phone, HandHeart, History, AudioLines, AlertCircle, ChevronDown,
+  HeartHandshake, PlayCircle, FileText, Ban, Phone, HandHeart, History, AudioLines, AlertCircle, ChevronDown, Pause,
 } from "lucide-react";
 import { Toast, Button, UserAvatar } from "@/components";
 import { useAuth } from "@/features/auth/hooks/useAuth";
@@ -17,6 +17,7 @@ import ErrorRespuesta from "../components/ErrorRespuesta";
 import AjustesVoz from "../components/AjustesVoz";
 import ModoVoz from "../components/ModoVoz";
 import { detenerLectura } from "../voz/lectorVoz";
+import { dictar, reconocimientoSoportado, mensajeErrorVoz } from "../voz/reconocimientoVoz";
 import { clasificarErrorChat } from "../utils/erroresChat";
 import { pideRecursos, parrafos, trozosConEnlaces } from "../utils/textoChat";
 import "../edumon-ia.css";
@@ -369,6 +370,12 @@ export default function EdumonChatPage() {
   const [vozDisponible, setVozDisponible] = useState(notasDeVozSoportadas);
   const [modoVoz, setModoVoz] = useState(false);
   const [historialAbierto, setHistorialAbierto] = useState(false);
+  const [dictando, setDictando] = useState(false);
+  const [dictadoDisponible] = useState(reconocimientoSoportado);
+  const dictado = useRef(null);
+  const baseDictado = useRef("");
+  const accionDictado = useRef("editar");
+  const enviarRef = useRef(null);
   const raizRef = useRef(null);
   const finRef = useRef(null);
   const inputRef = useRef(null);
@@ -409,7 +416,10 @@ export default function EdumonChatPage() {
 
   useEffect(() => {
     precargarExpresiones();
-    return () => detenerLectura();
+    return () => {
+      detenerLectura();
+      dictado.current?.cancelar();
+    };
   }, []);
 
   useEffect(() => {
@@ -601,6 +611,49 @@ export default function EdumonChatPage() {
     return respuesta ? { id: respuesta._id, texto: textoLectura(respuesta) } : null;
   };
 
+  enviarRef.current = enviar;
+
+  const unirTexto = (base, dicho) => [base.trim(), dicho].filter(Boolean).join(" ");
+
+  const empezarDictado = () => {
+    if (dictado.current || enviando) return;
+    detenerLectura();
+    setAviso("");
+    baseDictado.current = texto;
+    accionDictado.current = "editar";
+    try {
+      dictado.current = dictar({
+        onTexto: (dicho) => setTexto(unirTexto(baseDictado.current, dicho)),
+        onError: (codigo) => setAviso(mensajeErrorVoz(codigo)),
+        onFin: (dicho) => {
+          const final = unirTexto(baseDictado.current, dicho);
+          dictado.current = null;
+          setDictando(false);
+          if (accionDictado.current === "enviar" && final.trim()) {
+            enviarRef.current?.(final);
+          } else {
+            setTexto(final);
+            setTimeout(() => inputRef.current?.focus(), 0);
+          }
+        },
+      });
+      setDictando(true);
+    } catch (err) {
+      dictado.current = null;
+      setAviso(mensajeErrorVoz(err.codigo));
+    }
+  };
+
+  const pausarDictado = () => {
+    accionDictado.current = "editar";
+    dictado.current?.detener();
+  };
+
+  const enviarDictado = () => {
+    accionDictado.current = "enviar";
+    dictado.current?.detener();
+  };
+
   const reintentar = () => {
     if (!fallo || enviando) return;
     const { optimista, llamar, alFallarEspecial } = fallo;
@@ -635,7 +688,8 @@ export default function EdumonChatPage() {
   const onKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
-      enviar();
+      if (dictando) enviarDictado();
+      else enviar();
     }
   };
 
@@ -736,7 +790,7 @@ export default function EdumonChatPage() {
           <button
             type="button"
             className={`ech-head__btn${modoVoz ? " ech-head__btn--activo" : ""}`}
-            onClick={() => { detenerLectura(); setModoVoz((v) => !v); }}
+            onClick={() => { detenerLectura(); dictado.current?.cancelar(); dictado.current = null; setDictando(false); setModoVoz((v) => !v); }}
             aria-pressed={modoVoz}
             aria-label={modoVoz ? "Salir del modo voz" : "Hablar con Edumon por voz"}
             title="Modo voz"
@@ -801,31 +855,54 @@ export default function EdumonChatPage() {
           {modoVoz ? (
             <ModoVoz onEnviar={enviar} onSalir={() => setModoVoz(false)} ocupado={enviando} />
           ) : (
-            <div className={`ech-campo${texto.trim() ? " ech-campo--lleno" : ""}`}>
-              <textarea
-                ref={inputRef}
-                value={texto}
-                onChange={(e) => setTexto(e.target.value)}
-                onKeyDown={onKeyDown}
-                placeholder="Escríbele a Edumon…"
-                aria-label="Mensaje para Edumon"
-                rows={1}
-                maxLength={2000}
-                enterKeyHint="send"
-              />
-              {vozDisponible && (
-                <BotonNotaVoz onAudio={enviarNotaDeVoz} onError={setAviso} deshabilitado={enviando} />
+            <>
+              {dictando && (
+                <div className="ech-dictado" role="status" aria-live="polite">
+                  <span className="ech-dictado__punto" aria-hidden="true" />
+                  <span>
+                    <strong>Te escucho…</strong> Pausa para revisar el texto o envíalo directo.
+                  </span>
+                </div>
               )}
-              <button
-                type="button"
-                className="ech-enviar"
-                onClick={() => enviar()}
-                disabled={!puedeEnviar}
-                aria-label={enviando ? "Esperando la respuesta de Edumon" : "Enviar mensaje"}
-              >
-                <Send size={18} aria-hidden="true" />
-              </button>
-            </div>
+              <div className={`ech-campo${texto.trim() ? " ech-campo--lleno" : ""}${dictando ? " ech-campo--dictando" : ""}`}>
+                <textarea
+                  ref={inputRef}
+                  value={texto}
+                  onChange={(e) => setTexto(e.target.value)}
+                  onKeyDown={onKeyDown}
+                  placeholder={dictando ? "Habla, aquí aparece lo que dices…" : "Escríbele a Edumon…"}
+                  aria-label="Mensaje para Edumon"
+                  rows={1}
+                  maxLength={2000}
+                  enterKeyHint="send"
+                  readOnly={dictando}
+                />
+                {dictadoDisponible ? (
+                  <button
+                    type="button"
+                    className={`ech-mic${dictando ? " ech-mic--activo" : ""}`}
+                    onClick={dictando ? pausarDictado : empezarDictado}
+                    disabled={enviando && !dictando}
+                    aria-pressed={dictando}
+                    aria-label={dictando ? "Pausar y revisar el texto dictado" : "Dictar un mensaje con la voz"}
+                    title={dictando ? "Pausar y revisar" : "Dictar con la voz"}
+                  >
+                    {dictando ? <Pause size={18} aria-hidden="true" /> : <Mic size={18} aria-hidden="true" />}
+                  </button>
+                ) : vozDisponible && (
+                  <BotonNotaVoz onAudio={enviarNotaDeVoz} onError={setAviso} deshabilitado={enviando} />
+                )}
+                <button
+                  type="button"
+                  className="ech-enviar"
+                  onClick={() => (dictando ? enviarDictado() : enviar())}
+                  disabled={dictando ? enviando : !puedeEnviar}
+                  aria-label={dictando ? "Terminar de dictar y enviar" : enviando ? "Esperando la respuesta de Edumon" : "Enviar mensaje"}
+                >
+                  <Send size={18} aria-hidden="true" />
+                </button>
+              </div>
+            </>
           )}
           <p className="ech-descargo">
             Edumon IA puede equivocarse y no reemplaza a orientación escolar ni a profesionales de salud.
