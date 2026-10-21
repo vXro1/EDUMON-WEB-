@@ -15,6 +15,8 @@ import edumonLetras from "@/assets/img/edumon-letras-sm.webp";
 import mascota from "@/assets/img/edumon-mascota.svg";
 import soporte from "@/assets/img/edumon-mascota-buzon-soporte.svg";
 import mascotasEquipo from "@/assets/img/edumon-mascotas-jugando.webp";
+import edumonIA from "@/assets/img/edumon/edumon-ia.webp";
+import edumonIALogo from "@/assets/img/edumon/edumon-ia-logo.webp";
 
 /* ─── Burbujas decorativas (assets reales) ─── */
 import circulo1 from "@/assets/img/circulos/circulo1.svg";
@@ -274,12 +276,21 @@ const CONTACTO = {
   youtubeHandle: "@EDUMONEduca",
 };
 
-const Letras = () => <img src={edumonLetras} alt="EDUMON" className="edumon-letras" width={480} height={189} />;
+const IconVolume = ({ size = 24 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none"
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+    <path d="M15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14" />
+  </svg>
+);
+
+const Letras = () =><img src={edumonLetras} alt="EDUMON" className="edumon-letras" width={480} height={189} />;
 
 const NAV_LINKS = [
   { label: "Inicio", href: "#inicio" },
   { label: "Pilares", href: "#pilares" },
   { label: "Aprende", href: "#aprende" },
+  { label: "Edumon IA", href: "#edumon-ia" },
   { label: "Quiénes somos", href: "#quienes" },
   { label: "Contáctanos", href: "#contacto" },
   { label: "App", href: "#app" },
@@ -427,6 +438,66 @@ const TUTORIALES_BUBBLES = [
   { circulo: 11, top: "6%", right: "3%", size: "70px", opacity: 0.22, anim: "b", delay: "0.4s" },
   { circulo: 1, bottom: "6%", left: "3%", size: "58px", opacity: 0.2, anim: "a", delay: "1.3s" },
 ];
+
+const IA_BUBBLES = [
+  { circulo: 2, top: "4%", left: "2%", size: "72px", opacity: 0.24, anim: "a", delay: "0.2s" },
+  { circulo: 10, top: "38%", right: "2%", size: "58px", opacity: 0.22, anim: "c", delay: "0.9s" },
+  { circulo: 5, bottom: "4%", left: "6%", size: "64px", opacity: 0.22, anim: "b", delay: "1.4s" },
+];
+
+const IA_GRUPOS = [
+  {
+    id: "familias",
+    tono: "blue",
+    titulo: "Para las familias",
+    items: [
+      { icon: "chat", titulo: "Resuelve tus dudas de crianza", texto: "Pregunta por rabietas, pantallas, tareas, sueño, emociones y más de 19 temas, a cualquier hora." },
+      { icon: "shield", titulo: "Consejos de fuentes confiables", texto: "Responde con fichas basadas en guías de UNICEF, OMS, ICBF y MinEducación, y siempre te muestra la fuente." },
+      { icon: "sprout", titulo: "Una práctica para esta semana", texto: "Cada respuesta trae una actividad corta adaptada a la edad de tu hijo o hija." },
+      { icon: "volume", titulo: "Escucha las respuestas", texto: "Con el botón Escuchar, Edumon lee la respuesta en voz alta." },
+      { icon: "heart", titulo: "Apoyo cuando más lo necesitas", texto: "Si cuentas una situación difícil, Edumon te ofrece contactar al colegio. En casos graves avisa al responsable de convivencia." },
+    ],
+  },
+  {
+    id: "colegio",
+    tono: "green",
+    titulo: "Para el colegio",
+    items: [
+      { icon: "puzzle", titulo: "Retos de escuela de padres", texto: "Crea en minutos retos para las familias según el grado, basados en fichas curadas." },
+      { icon: "compass", titulo: "Lineamientos desde la circular", texto: "Convierte el comunicado del Ministerio o la Secretaría en indicaciones claras para los docentes." },
+      { icon: "repeat", titulo: "Ciclo Edumon", texto: "Muestra de forma anónima los temas que más preocupan a las familias de cada curso y sugiere el próximo módulo y reto." },
+      { icon: "users", titulo: "Alertas con ruta de atención", texto: "Cada alerta sigue la ruta de convivencia, con una bitácora que se puede verificar." },
+      { icon: "award", titulo: "Métricas de impacto", texto: "Uso, participación en retos y tiempos de atención de alertas, en un solo panel." },
+    ],
+  },
+];
+
+const IA_PASOS = [
+  { titulo: "Acepta el consentimiento", texto: "La primera vez lees y aceptas cómo Edumon cuida tus datos." },
+  { titulo: "Cuenta lo que pasa", texto: "Escribe tu pregunta como se la contarías a un amigo." },
+  { titulo: "Edumon revisa y busca", texto: "Revisa si hay una señal de riesgo y busca en la biblioteca de fichas curadas." },
+  { titulo: "Recibe tu respuesta", texto: "Ideas concretas, una práctica para la semana y la fuente. Si hay riesgo, te conecta con el colegio." },
+];
+
+const IA_GARANTIAS = [
+  "Tus conversaciones se borran solas a los 30 días.",
+  "No diagnostica ni reemplaza a un profesional de salud.",
+  "No hace las tareas: te ayuda a acompañar a tu hijo.",
+  "Nunca recomienda castigo físico ni humillación.",
+];
+
+const IA_ICONOS = {
+  chat: IconMessageCircle,
+  shield: IconShieldCheck,
+  sprout: IconSprout,
+  volume: IconVolume,
+  heart: IconHeartHandshake,
+  puzzle: IconPuzzle,
+  compass: IconCompass,
+  repeat: IconRepeat,
+  users: IconUsers,
+  award: IconAward,
+};
 
 const APP_BUBBLES = [
   { circulo: 4, top: "8%", left: "3%", size: "64px", opacity: 0.24, anim: "a", delay: "0.3s" },
@@ -859,6 +930,7 @@ export default function LandingPage() {
   const appRef = useRef(null);
   const tutorialesRef = useRef(null);
   const contactoRef = useRef(null);
+  const iaRef = useRef(null);
 
   const pilaresVis = useIntersect(pilaresRef);
   const aprendeVis = useIntersect(aprendeRef);
@@ -866,6 +938,7 @@ export default function LandingPage() {
   const appVis = useIntersect(appRef);
   const tutorialesVis = useIntersect(tutorialesRef);
   const contactoVis = useIntersect(contactoRef);
+  const iaVis = useIntersect(iaRef);
 
   useEffect(() => {
     if (!hash) return;
@@ -1138,6 +1211,122 @@ export default function LandingPage() {
 
           <ModuloCarousel />
 
+        </div>
+      </section>
+
+      <section
+        id="edumon-ia"
+        ref={iaRef}
+        className="landing-ia"
+        style={{
+          transform: iaVis ? "none" : "translateY(12px)",
+          transition: "transform 0.6s ease",
+        }}
+      >
+        <DecoBubbles items={IA_BUBBLES} />
+
+        <div className="landing-ia__inner">
+          <div className="landing-ia__head">
+            <span className="landing-ia__badge">
+              <IconSparkles size={12} />
+              Nuevo · Inteligencia artificial
+            </span>
+            <h2 className="landing-ia__title">
+              <Letras /> IA, <span className="landing-ia__mark">el acompañante de tu familia</span>
+            </h2>
+            <p className="landing-ia__text">
+              Un asistente de crianza dentro de Edumon que responde con información
+              confiable, en lenguaje sencillo y sin juzgar. Y al colegio le ayuda a
+              organizar la escuela de padres y a atender a tiempo a las familias que
+              necesitan apoyo.
+            </p>
+          </div>
+
+          <div className="landing-ia__demo">
+            <div className="landing-ia__mascota">
+              <img src={edumonIA} alt="Edumon IA, la mascota de inteligencia artificial de EDUMON" width={480} height={480} loading="lazy" />
+            </div>
+
+            <div className="ia-chat" role="img" aria-label="Ejemplo de conversación con Edumon IA">
+              <div className="ia-chat__bar">
+                <img src={edumonIALogo} alt="" width={40} height={40} loading="lazy" />
+                <div>
+                  <strong>Edumon IA</strong>
+                  <span>Acompañante de crianza</span>
+                </div>
+              </div>
+              <p className="ia-chat__msg ia-chat__msg--user">
+                Mi hija de 6 años hace pataleta todas las mañanas para vestirse y llegamos tarde.
+              </p>
+              <div className="ia-chat__msg ia-chat__msg--bot">
+                <p>
+                  Qué desgaste empezar así cada día. A los 6 años las mañanas cuestan
+                  porque son muchos pasos seguidos. Te puede ayudar dejar la ropa lista
+                  la noche anterior y que ella escoja entre dos opciones.
+                </p>
+                <div className="ia-chat__practica">
+                  <strong>Práctica de la semana</strong>
+                  Hagan juntas una lista con dibujos de los pasos de la mañana y péguenla donde la vea.
+                </div>
+                <div className="ia-chat__chips">
+                  <span>Fuente: UNICEF</span>
+                  <span><IconVolume size={13} /> Escuchar</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="landing-ia__grupos">
+            {IA_GRUPOS.map((g) => (
+              <div key={g.id} className={`ia-grupo ia-grupo--${g.tono}`}>
+                <h3 className="ia-grupo__title">{g.titulo}</h3>
+                <ul className="ia-grupo__grid">
+                  {g.items.map((it) => {
+                    const Icono = IA_ICONOS[it.icon];
+                    return (
+                      <li key={it.titulo} className="ia-card">
+                        <span className="ia-card__icon"><Icono size={22} /></span>
+                        <div>
+                          <h4 className="ia-card__title">{it.titulo}</h4>
+                          <p className="ia-card__text">{it.texto}</p>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div className="ia-pasos">
+            <h3 className="ia-pasos__title">¿Cómo funciona?</h3>
+            <ol className="ia-pasos__list">
+              {IA_PASOS.map((p, i) => (
+                <li key={p.titulo} className="ia-paso">
+                  <span className="ia-paso__num">{i + 1}</span>
+                  <h4 className="ia-paso__title">{p.titulo}</h4>
+                  <p className="ia-paso__text">{p.texto}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <div className="landing-ia__cierre">
+            <div className="ia-garantias">
+              <h3 className="ia-garantias__title">
+                <IconShieldCheck size={20} />
+                Pensado para cuidar a tu familia
+              </h3>
+              <ul>
+                {IA_GARANTIAS.map((g) => (
+                  <li key={g}>
+                    <IconCheck size={14} />
+                    {g}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 

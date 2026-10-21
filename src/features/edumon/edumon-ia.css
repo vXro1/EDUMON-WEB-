@@ -61,3 +61,92 @@
 @media (max-width: 640px) {
   .eia-kpi { font-size: 24px; }
 }
+
+.eia-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin-top: -2px;
+}
+
+.eia-accion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 10px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text-muted);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.eia-accion:hover:not(:disabled) { background: var(--color-surface); border-color: var(--color-border); color: var(--color-text); }
+.eia-accion:disabled { opacity: 0.55; cursor: default; }
+.eia-accion--icono { width: 36px; padding: 0; }
+.eia-accion[aria-pressed="true"] { color: #047857; background: #ECFDF5; border-color: #A7F3D0; }
+.eia-accion[data-tono="no"][aria-pressed="true"] { color: #991B1B; background: #FEF2F2; border-color: #FECACA; }
+.eia-accion--peligro { color: #B91C1C; }
+.eia-accion:focus-visible { outline: 3px solid var(--color-primary, #0c6ac4); outline-offset: 2px; }
+
+@media (pointer: coarse) {
+  .eia-accion { min-height: 44px; }
+  .eia-accion--icono { width: 44px; }
+}
+
+.eia-voto { display: inline-flex; align-items: center; gap: 2px; }
+.eia-gracias { margin-left: 4px; font-size: 13px; font-weight: 700; color: #047857; }
+
+.eia-comentario {
+  flex: 1 1 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 520px;
+  margin-top: 4px;
+}
+
+.eia-lectura {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 2px 0 10px;
+  border-radius: 999px;
+  background: var(--color-primary-light, #EFF8FE);
+}
+.eia-lectura__estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary, #0c6ac4);
+}
+
+.eia-onda { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; }
+.eia-onda i {
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background: currentColor;
+  animation: eia-onda 0.9s ease-in-out infinite;
+  transform-origin: bottom;
+}
+.eia-onda i:nth-child(2) { animation-delay: 0.15s; }
+.eia-onda i:nth-child(3) { animation-delay: 0.3s; }
+.eia-onda--pausa i { animation-play-state: paused; transform: scaleY(0.4); }
+
+@keyframes eia-onda {
+  0%, 100% { transform: scaleY(0.35); }
+  50% { transform: scaleY(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eia-onda i { animation: none; transform: scaleY(0.7); }
+}

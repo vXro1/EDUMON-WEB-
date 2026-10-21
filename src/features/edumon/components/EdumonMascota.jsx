@@ -10,6 +10,11 @@ import llamar from "@/assets/img/edumon/edumon-llamar.webp";
 // las demás son expresiones con las que reacciona en el chat
 export const EXPRESIONES = { ia, logo, saludo, pensando, alerta, no, llamar };
 
+export function precargarExpresiones() {
+  if (typeof window === "undefined" || !window.Image) return;
+  Object.values(EXPRESIONES).forEach((src) => { new window.Image().src = src; });
+}
+
 const ALT = {
   ia: "Edumon IA",
   logo: "Edumon IA",
@@ -46,17 +51,17 @@ const ANIMACIONES = {
  * animacion: "flotar" | "pensar" | "aparecer" | null
  * circulo: la cabeza de Edumon IA dentro de un círculo (avatar de chat)
  */
-export default function EdumonMascota({ size = 120, expresion = "ia", animacion = null, circulo = false, enLinea = false, style }) {
+export default function EdumonMascota({ size = 120, expresion = "ia", animacion = null, circulo = false, enLinea = false, style, className, decorativa = false }) {
   if (circulo) {
     return (
-      <div style={{ position: "relative", width: size, height: size, flexShrink: 0, ...style }}>
+      <div className={className} style={{ position: "relative", width: size, height: size, flexShrink: 0, ...style }}>
         <div style={{
           width: size, height: size, borderRadius: "50%", overflow: "hidden",
           background: "radial-gradient(circle at 50% 35%, #E0F2FE, #BAE6FD 70%)",
           border: "2px solid rgba(14,165,233,0.45)",
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
-          <img src={logo} alt="Edumon IA" draggable={false} style={{ width: "92%", height: "92%", objectFit: "contain" }} />
+          <img src={logo} alt={decorativa ? "" : "Edumon IA"} aria-hidden={decorativa || undefined} draggable={false} style={{ width: "92%", height: "92%", objectFit: "contain" }} />
         </div>
         {enLinea && (
           <span title="En línea" style={{
@@ -71,8 +76,10 @@ export default function EdumonMascota({ size = 120, expresion = "ia", animacion 
   return (
     <img
       src={EXPRESIONES[expresion] ?? ia}
-      alt={ALT[expresion] ?? "Edumon IA"}
+      alt={decorativa ? "" : (ALT[expresion] ?? "Edumon IA")}
+      aria-hidden={decorativa || undefined}
       draggable={false}
+      className={className}
       style={{
         width: size, height: size, objectFit: "contain", flexShrink: 0,
         animation: animacion ? ANIMACIONES[animacion] : undefined,

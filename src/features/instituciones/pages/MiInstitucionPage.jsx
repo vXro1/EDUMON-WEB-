@@ -174,9 +174,9 @@ export default function MiInstitucionPage() {
                 <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg, var(--color-primary), #1D4ED8)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 800, color: "white", flexShrink: 0 }}>
                   {user?.nombre?.[0]?.toUpperCase() ?? "A"}
                 </div>
-                <div>
+                <div style={{ minWidth: 0 }}>
                   <p style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text)", margin: 0 }}>{user?.nombre} {user?.apellido}</p>
-                  <p style={{ fontSize: 12.5, color: "var(--color-text-muted)", margin: 0 }}>{user?.correo}</p>
+                  <p style={{ fontSize: 12.5, color: "var(--color-text-muted)", margin: 0, overflowWrap: "anywhere" }}>{user?.correo}</p>
                   <div style={{ marginTop: 4 }}>
                     <Badge variant="info" size="sm">Administrador</Badge>
                   </div>

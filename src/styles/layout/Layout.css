@@ -612,6 +612,9 @@
   .page-head { align-items: flex-end; }
 }
 
+.page-head > * { min-width: 0; max-width: 100%; }
+.page-head > div:not(:first-child) { flex-wrap: wrap; }
+
 .page-head-actions {
   display: flex;
   align-items: center;
@@ -661,8 +664,11 @@
 /* Grilla de 2 col en móvil → auto-fill en ≥640px — para grillas de cards de acción */
 .grid-2-auto {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3);
+}
+@media (max-width: 479px) {
+  .grid-2-auto { grid-template-columns: minmax(0, 1fr); }
 }
 @media (min-width: 640px) {
   .grid-2-auto {
@@ -674,20 +680,20 @@
 /* Grilla de estadísticas — 2 cols en móvil → 4 cols en escritorio */
 .grid-stats {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-3);
 }
 @media (min-width: 640px) {
   .grid-stats { gap: var(--space-4); }
 }
 @media (min-width: 1024px) {
-  .grid-stats { grid-template-columns: repeat(4, 1fr); }
+  .grid-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 /* Diseño de dos paneles (principal + aside) — se apila en móvil */
 .layout-split {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-5);
   align-items: start;  /* evita estirar el panel lateral para igualar alturas */
 }
@@ -849,7 +855,15 @@
   gap: var(--space-3);
   box-shadow: var(--clay-card);
   cursor: default;
+  min-width: 0;
 }
+
+@media (max-width: 479px) {
+  .stat-card { flex-direction: column; gap: var(--space-2); padding: var(--space-4); }
+  .stat-card-icon { width: 38px; height: 38px; }
+}
+
+.stat-card-label { overflow-wrap: anywhere; }
 
 .stat-card-icon {
   width: 44px;

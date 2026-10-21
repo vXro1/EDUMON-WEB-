@@ -475,7 +475,7 @@ export default function DocentesPage() {
           <p className="page-subtitle">{total} docentes registrados</p>
         </div>
         <div style={{ display: "flex", gap: "var(--space-2)" }}>
-          <Button variant="ghost" size="sm" onClick={load} title="Recargar">
+          <Button variant="ghost" size="sm" onClick={load} title="Recargar" aria-label="Recargar docentes">
             <RefreshCw size={15} />
           </Button>
           <Button variant="outline" size="sm" onClick={() => { setShowCsv(true); resetCsv(); }}>
