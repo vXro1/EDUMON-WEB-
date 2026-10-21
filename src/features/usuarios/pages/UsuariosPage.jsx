@@ -444,7 +444,7 @@ export default function UsuariosPage() {
         <Search style={{ width: 16, height: 16, color: "var(--color-text-muted)", flexShrink: 0 }} />
         <input type="search" placeholder="Buscar por nombre, correo, cédula o teléfono..." value={search} onChange={e => setSearch(e.target.value)}
           style={{ flex: 1, minWidth: 200, border: "none", outline: "none", fontSize: 13.5, color: "var(--color-text)", background: "transparent" }} />
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", maxWidth: "100%" }}>
           <Filter style={{ width: 14, height: 14, color: "var(--color-text-muted)" }} />
           <select value={rolFilter} onChange={e => setRolF(e.target.value)}
             style={{ border: "1px solid var(--color-border)", borderRadius: 8, padding: "5px 10px", fontSize: 12.5, background: "var(--color-surface)", color: "var(--color-text)", cursor: "pointer", outline: "none" }}>

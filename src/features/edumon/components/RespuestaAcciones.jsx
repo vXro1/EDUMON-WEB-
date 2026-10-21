@@ -64,22 +64,21 @@ function Calificacion({ conversacionId, mensajeId, avisar }) {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <div role="group" aria-label="¿Te sirvió esta respuesta?" style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-        <span style={{ fontSize: 14, color: "var(--color-text-muted)" }}>¿Te sirvió?</span>
-        <button type="button" className="eia-btn" aria-pressed={util === true} disabled={enviando} onClick={() => votar(true)} aria-label="Sí, me sirvió">
-          <ThumbsUp size={16} aria-hidden="true" /> Sí
+    <>
+      <span role="group" aria-label="¿Te sirvió esta respuesta?" className="eia-voto">
+        <button type="button" className="eia-accion eia-accion--icono" aria-pressed={util === true} disabled={enviando} onClick={() => votar(true)} aria-label="Me sirvió esta respuesta" title="Me sirvió">
+          <ThumbsUp size={16} aria-hidden="true" />
         </button>
-        <button type="button" className="eia-btn" data-tono="no" aria-pressed={util === false} disabled={enviando} onClick={() => votar(false)} aria-label="No me sirvió">
-          <ThumbsDown size={16} aria-hidden="true" /> No
+        <button type="button" className="eia-accion eia-accion--icono" data-tono="no" aria-pressed={util === false} disabled={enviando} onClick={() => votar(false)} aria-label="No me sirvió esta respuesta" title="No me sirvió">
+          <ThumbsDown size={16} aria-hidden="true" />
         </button>
         {gracias && pendiente === null && (
-          <span role="status" style={{ fontSize: 14, color: "#047857", fontWeight: 700 }}>¡Gracias! Tu opinión nos ayuda a mejorar.</span>
+          <span role="status" className="eia-gracias">¡Gracias!</span>
         )}
-      </div>
+      </span>
 
       {pendiente !== null && (
-        <form onSubmit={enviarComentario} style={{ display: "flex", flexDirection: "column", gap: 6, maxWidth: 520 }}>
+        <form onSubmit={enviarComentario} className="eia-comentario">
           <label htmlFor={idComentario} style={{ fontSize: 14, fontWeight: 700 }}>
             {pendiente ? "¡Gracias! ¿Quieres contarnos algo más? (opcional)" : "Gracias. ¿Qué le faltó a la respuesta? (opcional)"}
           </label>
@@ -92,13 +91,13 @@ function Calificacion({ conversacionId, mensajeId, avisar }) {
             rows={2}
             style={{ fontSize: 15, padding: "8px 10px", borderRadius: 10, fontFamily: "inherit", border: "1.5px solid var(--color-border)", background: "var(--color-surface)", color: "var(--color-text)", resize: "vertical" }}
           />
-          <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <Button type="submit" size="sm" loading={enviando} disabled={!comentario.trim()}>Enviar comentario</Button>
             <Button type="button" size="sm" variant="ghost" onClick={() => setPendiente(null)} disabled={enviando}>Omitir</Button>
           </div>
         </form>
       )}
-    </div>
+    </>
   );
 }
 
@@ -224,8 +223,15 @@ function BotonPorQue({ conversacionId, mensajeId }) {
 
   return (
     <>
-      <button type="button" className="eia-link" onClick={abrir} style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
-        <HelpCircle size={15} aria-hidden="true" /> ¿Por qué Edumon dijo esto?
+      <button
+        type="button"
+        className="eia-accion eia-accion--icono"
+        onClick={abrir}
+        aria-haspopup="dialog"
+        aria-label="¿Por qué Edumon respondió esto? Ver cómo se generó la respuesta"
+        title="¿Por qué Edumon respondió esto?"
+      >
+        <HelpCircle size={17} aria-hidden="true" />
       </button>
       <AppModal isOpen={abierto} onClose={() => setAbierto(false)} size="lg" labelledBy={tituloId}>
         <AppModal.Header title="¿Por qué Edumon dijo esto?" titleId={tituloId} onClose={() => setAbierto(false)} />
@@ -247,17 +253,14 @@ function BotonPorQue({ conversacionId, mensajeId }) {
   );
 }
 
-/** Pie de cada respuesta de Edumon: modo, 👍/👎 y explicación. Solo para mensajes ya guardados. */
-export default function RespuestaAcciones({ conversacionId, mensaje, avisar, textoLectura }) {
+export default function RespuestaAcciones({ conversacionId, mensaje, avisar, textoLectura, compacta = false }) {
   if (!conversacionId || !mensaje?._id) return null;
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 2 }}>
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "4px 14px" }}>
-        <BotonEscuchar id={mensaje._id} texto={textoLectura ?? mensaje.contenido} />
-        <BotonPorQue conversacionId={conversacionId} mensajeId={mensaje._id} />
-        <ModoEtiqueta ia={mensaje.ia} />
-      </div>
-      <Calificacion conversacionId={conversacionId} mensajeId={mensaje._id} avisar={avisar} />
+    <div className="eia-acciones">
+      <BotonEscuchar id={mensaje._id} texto={textoLectura ?? mensaje.contenido} />
+      {!compacta && <Calificacion conversacionId={conversacionId} mensajeId={mensaje._id} avisar={avisar} />}
+      {!compacta && <BotonPorQue conversacionId={conversacionId} mensajeId={mensaje._id} />}
+      {!compacta && <ModoEtiqueta ia={mensaje.ia} />}
     </div>
   );
 }

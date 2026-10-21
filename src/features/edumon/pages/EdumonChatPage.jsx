@@ -1,30 +1,35 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
-  Send, Plus, Trash2, ShieldCheck, Lightbulb, BookOpen, MessageCircle, Mic,
-  CalendarDays, ClipboardList, ArrowRight, Lock, Sparkles, HeartHandshake,
-  PlayCircle, FileText, Ban, Phone, HandHeart,
+  Send, Plus, ShieldCheck, BookOpen, Mic, CalendarDays, ClipboardList, ArrowRight, Lock, Sparkles,
+  HeartHandshake, PlayCircle, FileText, Ban, Phone, HandHeart, History, AudioLines, AlertCircle, ChevronDown,
 } from "lucide-react";
 import { Toast, Button, UserAvatar } from "@/components";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useConfirm } from "@/context/ConfirmContext";
 import { humanizeError } from "@/utils/humanizeError";
 import ConsentimientoModal from "../components/ConsentimientoModal";
-import EdumonMascota from "../components/EdumonMascota";
+import EdumonMascota, { precargarExpresiones } from "../components/EdumonMascota";
 import RespuestaAcciones from "../components/RespuestaAcciones";
 import BotonNotaVoz, { notasDeVozSoportadas } from "../components/BotonNotaVoz";
-import { detenerLectura } from "../components/BotonEscuchar";
+import HistorialConversaciones from "../components/HistorialConversaciones";
+import ErrorRespuesta from "../components/ErrorRespuesta";
+import AjustesVoz from "../components/AjustesVoz";
+import ModoVoz from "../components/ModoVoz";
+import { detenerLectura } from "../voz/lectorVoz";
+import { clasificarErrorChat } from "../utils/erroresChat";
+import { pideRecursos, parrafos, trozosConEnlaces } from "../utils/textoChat";
 import "../edumon-ia.css";
+import "../edumon-chat.css";
 import {
   edumonGetConsentimiento, edumonAceptarConsentimiento, edumonRevocarConsentimiento,
   edumonGetConversaciones, edumonCrearConversacion, edumonGetConversacion,
   edumonEliminarConversacion, edumonEnviarMensaje, esConsentimientoRequerido, edumonPedirAyuda,
-  mensajeErrorIA, esLimiteIA, edumonEnviarAudio,
+  mensajeErrorIA, edumonEnviarAudio,
 } from "../services/edumonService";
 
-// códigos con los que el micrófono se oculta y se pide escribir
 const VOZ_NO_DISPONIBLE = ["NOTAS_VOZ_DESACTIVADAS", "TRANSCRIPCION_NO_DISPONIBLE"];
 
-// ideas para empezar: se muestran 4 distintas en cada conversación nueva
 const SUGERENCIAS = [
   "Mi hijo no suelta el celular", "Mi hija de 4 años hace rabietas muy fuertes", "No quiere ir al colegio",
   "¿Cómo hablo de sexualidad con mi hijo de 11?", "Mis hijos pelean todo el tiempo", "No quiere hacer las tareas",
@@ -37,95 +42,26 @@ const SUGERENCIAS = [
   "Va a tener un hermanito y está celoso", "Se le olvidan siempre los cuadernos",
 ];
 
-const AZUL = "#0284C7";
-
-const card = {
-  background: "var(--color-surface)", borderRadius: 18,
-  border: "1px solid var(--color-border)", boxShadow: "var(--clay-card)",
-};
+const TIPOS_SIN_EXTRAS = ["charla", "pedir_edad", "fuera_alcance", "no_tareas"];
 
 const fechaLarga = (fecha) => new Date(fecha).toLocaleDateString("es-CO", { weekday: "long", day: "numeric", month: "long" });
-const hora = (fecha) => (fecha ? new Date(fecha).toLocaleTimeString("es-CO", { hour: "2-digit", minute: "2-digit" }) : "");
+const hora = (fecha) => (fecha ? new Date(fecha).toLocaleTimeString("es-CO", { hour: "numeric", minute: "2-digit" }) : "");
+const primerNombre = (u) => (u?.nombre ?? "").trim().split(/\s+/)[0] ?? "";
 
-// expresión de Edumon según el tipo de respuesta (mensajes viejos sin "tipo": se deduce)
-function expresionDe(m) {
-  const tipo = m.tipo
+function tipoDe(m) {
+  return m.tipo
     ?? (m.esRespuestaRiesgo ? "riesgo"
       : m.contenido?.startsWith("¿Qué edad") ? "pedir_edad"
         : m.contenido?.startsWith("Todavía no tengo") ? "fuera_alcance" : "respuesta");
+}
+
+function expresionDe(m) {
+  const tipo = tipoDe(m);
   if (tipo === "riesgo" || m.atencion) return "alerta";
   if (tipo === "pedir_edad") return "pensando";
   if (tipo === "fuera_alcance" || tipo === "no_tareas") return "no";
   if (tipo === "charla") return "saludo";
   return "ia";
-}
-
-// ─── Piezas del chat ─────────────────────────────────────────────────────────
-
-function NombreBot({ fecha }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11.5, color: "var(--color-text-muted)", margin: "0 0 4px 2px" }}>
-      <strong style={{ color: AZUL }}>Edumon IA</strong>
-      <span style={{ fontSize: 9.5, fontWeight: 800, padding: "1px 6px", borderRadius: 999, background: "rgba(2,132,199,0.12)", color: AZUL }}>IA</span>
-      {fecha && <span>{hora(fecha)}</span>}
-    </div>
-  );
-}
-
-function BurbujaBot({ children, tono = "normal" }) {
-  const tonos = {
-    normal: { background: "var(--color-surface)", border: "1px solid var(--color-border)" },
-    riesgo: { background: "#FEF2F2", border: "2px solid #DC2626", fontSize: 17 },
-  };
-  return (
-    <div style={{
-      padding: "12px 16px", borderRadius: 18, borderTopLeftRadius: 6, fontSize: 16, lineHeight: 1.6,
-      whiteSpace: "pre-wrap", wordBreak: "break-word", boxShadow: "0 1px 2px rgba(15,23,42,0.06)",
-      color: "var(--color-text)", ...tonos[tono],
-    }}>
-      {children}
-    </div>
-  );
-}
-
-function FilaBot({ expresion = "ia", fecha, children, animarExpresion = false }) {
-  return (
-    <div style={{ display: "flex", gap: 10, alignItems: "flex-start", animation: "edumon-aparecer 0.35s ease-out both" }}>
-      <EdumonMascota size={58} expresion={expresion} animacion={animarExpresion ? "pensar" : null} style={{ marginTop: 2 }} />
-      <div style={{ maxWidth: "min(82%, 600px)", display: "flex", flexDirection: "column", gap: 8, minWidth: 0 }}>
-        <NombreBot fecha={fecha} />
-        {children}
-      </div>
-    </div>
-  );
-}
-
-// tarjeta "rica" dentro del chat (práctica, reto, evento)
-function TarjetaChat({ icono: Icono, color, etiqueta, titulo, children, accion }) {
-  return (
-    <div style={{
-      borderRadius: 14, overflow: "hidden", background: "var(--color-surface)",
-      border: `1px solid ${color}55`, boxShadow: "0 1px 3px rgba(15,23,42,0.06)",
-    }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 7, padding: "7px 12px", background: `${color}14`, color, fontSize: 12, fontWeight: 800, letterSpacing: "0.02em" }}>
-        <Icono size={14} /> {etiqueta}
-      </div>
-      <div style={{ padding: "10px 12px", fontSize: 13.5, lineHeight: 1.55 }}>
-        {titulo && <div style={{ fontWeight: 700, marginBottom: 2 }}>{titulo}</div>}
-        {children}
-        {accion && (
-          <div style={{ marginTop: 9 }}>
-            <Link to={accion.to} style={{
-              display: "inline-flex", alignItems: "center", gap: 6, padding: "6px 14px", borderRadius: 999,
-              background: color, color: "#fff", fontSize: 12.5, fontWeight: 700, textDecoration: "none",
-            }}>
-              {accion.texto} <ArrowRight size={13} />
-            </Link>
-          </div>
-        )}
-      </div>
-    </div>
-  );
 }
 
 const LINEAS_AYUDA = [
@@ -135,28 +71,39 @@ const LINEAS_AYUDA = [
   { numero: "123", nombre: "Emergencias", detalle: "Si hay peligro inmediato" },
 ];
 
-// en riesgo: Edumon al teléfono con botones para llamar directo
+function textoLectura(mensaje) {
+  const tipo = tipoDe(mensaje);
+  let texto = mensaje.contenido ?? "";
+  if (mensaje.practica) texto += `\nPara esta semana: ${mensaje.practica}`;
+  if (tipo !== "riesgo" && !(tipo === "apoyo" && mensaje.ofrecerAyuda)) return texto;
+  const faltan = LINEAS_AYUDA.filter((l) => !texto.includes(l.numero));
+  if (!faltan.length) return texto;
+  return `${texto}\nLíneas de ayuda gratuitas: ${faltan.map((l) => `${l.nombre}, ${l.numero}: ${l.detalle}`).join(". ")}.`;
+}
+
+function TextoConEnlaces({ texto }) {
+  return trozosConEnlaces(texto).map((t, i) => (t.tipo === "enlace"
+    ? <a key={i} href={t.valor} target="_blank" rel="noreferrer">{t.valor}<span className="sr-only"> (se abre en una pestaña nueva)</span></a>
+    : <span key={i}>{t.valor}</span>));
+}
+
+function Contenido({ texto }) {
+  return parrafos(texto).map((p, i) => <p key={i}><TextoConEnlaces texto={p} /></p>);
+}
+
 function TarjetaLlamar() {
   return (
-    <section aria-label="Líneas de ayuda" style={{
-      display: "flex", gap: 12, alignItems: "center", padding: 14, borderRadius: 14,
-      background: "#FFF7ED", border: "2px solid #EA580C",
-    }}>
-      <EdumonMascota size={86} expresion="llamar" />
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <h3 style={{ fontSize: 16, fontWeight: 900, color: "#9A3412", letterSpacing: "0.02em", margin: "0 0 8px" }}>
-          LLAMA AHORA · ES GRATIS Y CONFIDENCIAL
-        </h3>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 6 }}>
+    <section className="ech-llamar" aria-label="Líneas de ayuda">
+      <EdumonMascota size={72} expresion="llamar" decorativa className="ech-llamar__mascota" />
+      <div className="ech-llamar__cuerpo">
+        <h3>Llama ahora · es gratis y confidencial</h3>
+        <div className="ech-llamar__lineas">
           {LINEAS_AYUDA.map((l) => (
-            <a key={l.numero} href={`tel:${l.numero}`} title={l.detalle} className="eia-focus" aria-label={`Llamar al ${l.numero}, ${l.nombre}: ${l.detalle}`} style={{
-              display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", borderRadius: 10, textDecoration: "none",
-              background: "#fff", border: "1.5px solid #FDBA74", color: "#1F2937",
-            }}>
-              <Phone size={17} color="#C2410C" aria-hidden="true" />
-              <span style={{ lineHeight: 1.25 }}>
-                <strong style={{ fontSize: 20 }}>{l.numero}</strong>
-                <span style={{ display: "block", fontSize: 13, color: "#374151" }}>{l.nombre}</span>
+            <a key={l.numero} href={`tel:${l.numero}`} title={l.detalle} aria-label={`Llamar al ${l.numero}, ${l.nombre}: ${l.detalle}`}>
+              <Phone size={17} aria-hidden="true" />
+              <span>
+                <strong>{l.numero}</strong>
+                <span>{l.nombre}</span>
               </span>
             </a>
           ))}
@@ -166,16 +113,15 @@ function TarjetaLlamar() {
   );
 }
 
-// nivel 2: la familia decide si quiere que la contacten (sin su permiso no se avisa a nadie)
 function TarjetaPedirAyuda({ oferta, onPedirAyuda }) {
   const [enviando, setEnviando] = useState(false);
   const [descartada, setDescartada] = useState(false);
 
   if (oferta.solicitada) {
     return (
-      <div style={{ fontSize: 12.5, color: "#047857", display: "flex", alignItems: "center", gap: 6, margin: "0 0 0 2px" }}>
-        <ShieldCheck size={14} /> Pediste apoyo: orientación escolar y tu docente te van a contactar.
-      </div>
+      <p className="ech-ayuda-ok">
+        <ShieldCheck size={15} aria-hidden="true" /> Pediste apoyo: orientación escolar y tu docente te van a contactar.
+      </p>
     );
   }
   if (descartada) return null;
@@ -186,15 +132,13 @@ function TarjetaPedirAyuda({ oferta, onPedirAyuda }) {
   };
 
   return (
-    <div style={{ padding: 12, borderRadius: 14, background: "#F0F9FF", border: "1px solid #7DD3FC" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 7, fontWeight: 800, fontSize: 13, color: "#0369A1", marginBottom: 4 }}>
-        <HandHeart size={16} /> ¿Quieres que te acompañen?
-      </div>
-      <div style={{ fontSize: 13, lineHeight: 1.5, marginBottom: 10 }}>
+    <div className="ech-ayuda">
+      <p className="ech-ayuda__titulo"><HandHeart size={16} aria-hidden="true" /> ¿Quieres que te acompañen?</p>
+      <p className="ech-ayuda__texto">
         Si quieres, aviso a orientación escolar y a tu docente para que te contacten y te apoyen.
         <strong> Solo lo haré si tú lo pides</strong>; no verán tu conversación, solo el tipo de situación y el mensaje que la originó.
-      </div>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+      </p>
+      <div className="ech-ayuda__acciones">
         <Button size="sm" onClick={pedir} loading={enviando}>Sí, quiero que me contacten</Button>
         <Button size="sm" variant="ghost" onClick={() => setDescartada(true)} disabled={enviando}>Ahora no</Button>
       </div>
@@ -202,207 +146,245 @@ function TarjetaPedirAyuda({ oferta, onPedirAyuda }) {
   );
 }
 
-// lo que lee "Escuchar": el texto principal y, en riesgo, las líneas de ayuda que no estén ya en él
-function textoLectura(mensaje, esRiesgo) {
-  const texto = mensaje.contenido ?? "";
-  if (!esRiesgo) return texto;
-  const faltan = LINEAS_AYUDA.filter((l) => !texto.includes(l.numero));
-  if (!faltan.length) return texto;
-  return `${texto}
-Líneas de ayuda gratuitas: ${faltan.map((l) => `${l.nombre}, ${l.numero}: ${l.detalle}`).join(". ")}.`;
+function Recursos({ recursos, abiertoInicial }) {
+  return (
+    <details className="ech-recursos" open={abiertoInicial || undefined}>
+      <summary>
+        <PlayCircle size={16} aria-hidden="true" />
+        <span>Videos y artículos para profundizar ({recursos.length})</span>
+        <ChevronDown size={16} className="ech-recursos__flecha" aria-hidden="true" />
+      </summary>
+      <ul>
+        {recursos.map((r) => (
+          <li key={r.url}>
+            <a href={r.url} target="_blank" rel="noreferrer">
+              {r.tipo === "video" ? <PlayCircle size={17} aria-hidden="true" /> : <FileText size={17} aria-hidden="true" />}
+              <span className="ech-recursos__titulo">{r.titulo}</span>
+              <span className="ech-recursos__tipo">
+                {r.tipo === "video" ? (r.esBusqueda ? "Buscar en YouTube" : "Ver video") : (r.esBusqueda ? "Buscar artículos" : "Leer artículo")}
+              </span>
+              <span className="sr-only"> (se abre en una pestaña nueva)</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
 }
 
-function MensajeBot({ mensaje, onPedirAyuda, conversacionId, avisar }) {
-  const esRiesgo = mensaje.tipo === "riesgo" || mensaje.esRespuestaRiesgo;
-  const recomienda = mensaje.retoSugerido || mensaje.eventoSugerido;
+function DelColegio({ mensaje }) {
+  const { retoSugerido: reto, eventoSugerido: evento } = mensaje;
+  if (!reto && !evento) return null;
+  return (
+    <div className="ech-colegio">
+      <p className="ech-colegio__intro">En tu colegio hay algo que te puede servir:</p>
+      {reto && (
+        <Link to={`/familia/entregas/${reto.tareaId}`} className="ech-colegio__item">
+          <ClipboardList size={18} aria-hidden="true" />
+          <span>
+            <strong>{reto.titulo}</strong>
+            <span>Reto de escuela de padres · entrega hasta el {fechaLarga(reto.fechaEntrega)}</span>
+          </span>
+          <ArrowRight size={16} aria-hidden="true" />
+        </Link>
+      )}
+      {evento && (
+        <Link to="/calendario" className="ech-colegio__item">
+          <CalendarDays size={18} aria-hidden="true" />
+          <span>
+            <strong>{evento.titulo}</strong>
+            <span>
+              {fechaLarga(evento.fechaInicio)}
+              {evento.hora && ` · ${evento.hora}`}
+              {evento.ubicacion && ` · ${evento.ubicacion}`}
+            </span>
+          </span>
+          <ArrowRight size={16} aria-hidden="true" />
+        </Link>
+      )}
+    </div>
+  );
+}
+
+function MensajeBot({ mensaje, pidioRecursos, onPedirAyuda, conversacionId, avisar }) {
+  const tipo = tipoDe(mensaje);
+  const esRiesgo = tipo === "riesgo";
+  const sinExtras = TIPOS_SIN_EXTRAS.includes(tipo);
 
   return (
-    <FilaBot expresion={expresionDe(mensaje)} fecha={mensaje.creadoEn}>
-      <BurbujaBot tono={esRiesgo ? "riesgo" : "normal"}>{mensaje.contenido}</BurbujaBot>
+    <article className="ech-fila ech-fila--bot" aria-label="Respuesta de Edumon">
+      <div className="ech-autor">
+        <EdumonMascota size={34} expresion={expresionDe(mensaje)} decorativa className="ech-autor__avatar" />
+        <strong>Edumon</strong>
+        {mensaje.creadoEn && <time dateTime={mensaje.creadoEn}>{hora(mensaje.creadoEn)}</time>}
+      </div>
 
-      {(esRiesgo || mensaje.tipo === "apoyo" && mensaje.ofrecerAyuda) && <TarjetaLlamar />}
+      <div className={`ech-burbuja ech-burbuja--bot${esRiesgo ? " ech-burbuja--riesgo" : ""}`}>
+        <Contenido texto={mensaje.contenido} />
+        {mensaje.practica && !sinExtras && (
+          <div className="ech-practica">
+            <strong>Para esta semana</strong>
+            <p>{mensaje.practica}</p>
+          </div>
+        )}
+      </div>
 
+      {(esRiesgo || (tipo === "apoyo" && mensaje.ofrecerAyuda)) && <TarjetaLlamar />}
       {mensaje.ofrecerAyuda && <TarjetaPedirAyuda oferta={mensaje.ofrecerAyuda} onPedirAyuda={onPedirAyuda} />}
 
-      {mensaje.practica && (
-        <TarjetaChat icono={Lightbulb} color="#059669" etiqueta="PRÁCTICA DE ESTA SEMANA · 5 MIN">
-          {mensaje.practica}
-        </TarjetaChat>
-      )}
+      {!sinExtras && <DelColegio mensaje={mensaje} />}
+      {!sinExtras && mensaje.recursos?.length > 0 && <Recursos recursos={mensaje.recursos} abiertoInicial={pidioRecursos} />}
 
-      {recomienda && (
-        <div style={{ fontSize: 13, color: "var(--color-text-muted)", margin: "2px 0 -2px 2px" }}>
-          Además, en tu colegio hay algo que te puede servir:
-        </div>
-      )}
-
-      {mensaje.retoSugerido && (
-        <TarjetaChat
-          icono={ClipboardList} color={AZUL} etiqueta="RETO DE ESCUELA DE PADRES"
-          titulo={mensaje.retoSugerido.titulo}
-          accion={{ to: `/familia/entregas/${mensaje.retoSugerido.tareaId}`, texto: "Ir al reto" }}
-        >
-          <span style={{ color: "var(--color-text-muted)", fontSize: 12.5 }}>
-            Tu docente lo dejó para hacer en casa · entrega hasta el {fechaLarga(mensaje.retoSugerido.fechaEntrega)}
-          </span>
-        </TarjetaChat>
-      )}
-
-      {mensaje.eventoSugerido && (
-        <TarjetaChat
-          icono={CalendarDays} color="#7C3AED" etiqueta="EVENTO RECOMENDADO"
-          titulo={mensaje.eventoSugerido.titulo}
-          accion={{ to: "/calendario", texto: "Ver en el calendario" }}
-        >
-          <span style={{ color: "var(--color-text-muted)", fontSize: 12.5 }}>
-            {fechaLarga(mensaje.eventoSugerido.fechaInicio)}
-            {mensaje.eventoSugerido.hora && ` · ${mensaje.eventoSugerido.hora}`}
-            {mensaje.eventoSugerido.ubicacion && ` · ${mensaje.eventoSugerido.ubicacion}`}
-          </span>
-        </TarjetaChat>
-      )}
-
-      {mensaje.recursos?.length > 0 && (
-        <TarjetaChat icono={PlayCircle} color="#DC2626" etiqueta="VIDEOS Y ARTÍCULOS PARA PROFUNDIZAR">
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            {mensaje.recursos.map((r) => (
-              <a key={r.url} href={r.url} target="_blank" rel="noreferrer" style={{
-                display: "flex", alignItems: "center", gap: 8, padding: "7px 10px", borderRadius: 10, textDecoration: "none",
-                border: "1px solid var(--color-border)", background: "var(--color-bg)", color: "var(--color-text)", fontSize: 13,
-              }}>
-                {r.tipo === "video" ? <PlayCircle size={16} color="#DC2626" /> : <FileText size={16} color="#0284C7" />}
-                <span style={{ flex: 1 }}>{r.titulo}</span>
-                <span style={{ fontSize: 11, color: "var(--color-text-muted)" }}>
-                  {r.tipo === "video" ? (r.esBusqueda ? "Buscar en YouTube" : "Ver video") : (r.esBusqueda ? "Buscar artículos" : "Leer artículo")}
-                </span>
-                <ArrowRight size={13} color="var(--color-text-muted)" />
-              </a>
-            ))}
-          </div>
-        </TarjetaChat>
-      )}
-
-      {mensaje.fuentes?.length > 0 && (
-        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6, fontSize: 13.5, color: "var(--color-text-muted)" }}>
-          <BookOpen size={14} aria-hidden="true" /> Basado en:
-          {mensaje.fuentes.map((f) => (
-            <span key={f.nombre} style={{ padding: "2px 8px", borderRadius: 999, background: "var(--color-bg)", border: "1px solid var(--color-border)" }}>
-              {f.url ? <a href={f.url} target="_blank" rel="noreferrer" className="eia-focus">{f.nombre}</a> : f.nombre}
+      {!sinExtras && mensaje.fuentes?.length > 0 && (
+        <p className="ech-fuentes">
+          <BookOpen size={14} aria-hidden="true" />
+          <span>Basado en </span>
+          {mensaje.fuentes.map((f, i) => (
+            <span key={f.nombre}>
+              {i > 0 && ", "}
+              {f.url ? <a href={f.url} target="_blank" rel="noreferrer">{f.nombre}</a> : f.nombre}
             </span>
           ))}
-        </div>
+        </p>
       )}
 
-      <RespuestaAcciones conversacionId={conversacionId} mensaje={mensaje} avisar={avisar} textoLectura={textoLectura(mensaje, esRiesgo)} />
-    </FilaBot>
+      <RespuestaAcciones
+        conversacionId={conversacionId}
+        mensaje={mensaje}
+        avisar={avisar}
+        textoLectura={textoLectura(mensaje)}
+        compacta={sinExtras}
+      />
+    </article>
   );
 }
 
 function MensajeUsuario({ mensaje, usuario }) {
   const esVoz = mensaje.entrada === "voz";
+  const fallido = mensaje.estado === "fallido";
   return (
-    <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, alignItems: "flex-end", animation: "edumon-aparecer 0.25s ease-out both" }}>
-      <div style={{
-        maxWidth: "min(75%, 520px)", padding: "10px 15px", borderRadius: 18, borderBottomRightRadius: 6,
-        background: `linear-gradient(135deg, ${AZUL}, #2563EB)`, color: "#fff", fontSize: 16, lineHeight: 1.55,
-        whiteSpace: "pre-wrap", wordBreak: "break-word", boxShadow: "0 2px 6px rgba(37,99,235,0.25)",
-      }}>
+    <article className={`ech-fila ech-fila--usuario${fallido ? " ech-fila--fallido" : ""}`} aria-label={fallido ? "Tu mensaje (no se envió)" : "Tu mensaje"}>
+      <div className="ech-burbuja ech-burbuja--usuario">
         {esVoz && (
-          <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 13, fontWeight: 800, opacity: 0.95, marginBottom: 2 }}>
-            <Mic size={13} aria-hidden="true" /> Nota de voz · transcripción
-          </span>
+          <span className="ech-burbuja__voz"><Mic size={13} aria-hidden="true" /> Nota de voz · transcripción</span>
         )}
-        {mensaje.contenido}
+        <Contenido texto={mensaje.contenido} />
       </div>
-      {/* el avatar que la persona eligió en su perfil */}
-      <UserAvatar user={usuario} size={34} />
+      <div className="ech-usuario-pie">
+        {fallido
+          ? <span className="ech-no-enviado"><AlertCircle size={14} aria-hidden="true" /> No se envió</span>
+          : mensaje.creadoEn && <time dateTime={mensaje.creadoEn}>{hora(mensaje.creadoEn)}</time>}
+        <UserAvatar user={usuario} size={26} />
+      </div>
+    </article>
+  );
+}
+
+const ESPERA_LARGA_MS = 8000;
+const ESPERA_MUY_LARGA_MS = 25000;
+
+function Escribiendo() {
+  const [fase, setFase] = useState(0);
+  useEffect(() => {
+    const t1 = setTimeout(() => setFase(1), ESPERA_LARGA_MS);
+    const t2 = setTimeout(() => setFase(2), ESPERA_MUY_LARGA_MS);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, []);
+  const texto = ["Edumon está pensando…", "Sigue pensando, ya casi…", "Está tardando más de lo normal. Seguimos esperando la respuesta…"][fase];
+  return (
+    <div className="ech-fila ech-fila--bot">
+      <div className="ech-autor">
+        <EdumonMascota size={34} expresion="pensando" animacion="pensar" decorativa className="ech-autor__avatar" />
+        <strong>Edumon</strong>
+      </div>
+      <div className="ech-burbuja ech-burbuja--bot ech-escribiendo" role="status" aria-live="polite">
+        <span className="ech-puntos" aria-hidden="true"><i /><i /><i /></span>
+        <span>{texto}</span>
+      </div>
     </div>
   );
 }
 
-// la respuesta real tarda entre 3 y 10 s: pasados 8 s se tranquiliza a la familia
-const ESPERA_LARGA_MS = 8000;
-
-function Escribiendo() {
-  const [larga, setLarga] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setLarga(true), ESPERA_LARGA_MS);
-    return () => clearTimeout(t);
-  }, []);
+function Bienvenida({ nombre, sugerencias, onElegir, deshabilitado }) {
   return (
-    <FilaBot expresion="pensando" animarExpresion>
-      <BurbujaBot>
-        <span role="status" aria-live="polite" style={{ display: "inline-flex", alignItems: "center", gap: 8, color: "var(--color-text-muted)" }}>
-          <span style={{ display: "inline-flex", gap: 4 }}>
-            {[0, 1, 2].map((i) => (
-              <span key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: AZUL, animation: `edumon-puntos 1.2s ${i * 0.15}s infinite ease-in-out` }} />
-            ))}
-          </span>
-          {larga ? "Sigue pensando, ya casi…" : "Edumon está pensando…"}
-        </span>
-      </BurbujaBot>
-    </FilaBot>
-  );
-}
-
-function Bienvenida({ sugerencias, onElegir, deshabilitado }) {
-  return (
-    <FilaBot expresion="saludo">
-      <BurbujaBot>
-        ¡Hola! Soy <strong>Edumon</strong>, tu asistente con inteligencia artificial. 💙{"\n"}
-        Te acompaño con lo que viven tus hijos en casa y en el colegio: emociones, organización y rutinas,
-        alimentación, convivencia, hermanos, cambios en la familia y la relación con el colegio. Te doy ideas
-        basadas en guías de UNICEF, OMS, ICBF y MinEducación, una práctica corta para la semana y videos o artículos para profundizar.
-        Si me cuentas la edad de tu hijo o hija, mis ideas serán más precisas.
-      </BurbujaBot>
-      <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "var(--color-text-muted)", margin: "2px 0 0 2px" }}>
-        <Ban size={13} /> No hago tareas académicas (matemáticas, física, etc.): te ayudo a acompañar a tu hijo para que las haga.
-      </div>
-      <div style={{ fontSize: 12, color: "var(--color-text-muted)", margin: "2px 0 0 2px" }}>Puedes empezar con una de estas:</div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+    <div className="ech-bienvenida">
+      <EdumonMascota size={112} expresion="saludo" decorativa className="ech-bienvenida__mascota" />
+      <h1 className="ech-bienvenida__titulo">{nombre ? `¡Hola, ${nombre}!` : "¡Hola!"} Soy Edumon</h1>
+      <p className="ech-bienvenida__texto">
+        Cuéntame qué está pasando con tu hijo o hija y te doy ideas basadas en guías de UNICEF, OMS, ICBF y MinEducación.
+        Si me dices su edad, mis ideas serán más precisas.
+      </p>
+      <p className="ech-bienvenida__label" id="ech-sugerencias">Puedes empezar con una de estas:</p>
+      <div className="ech-sugerencias" role="group" aria-labelledby="ech-sugerencias">
         {sugerencias.map((s) => (
-          <button
-            key={s}
-            type="button"
-            onClick={() => onElegir(s)}
-            disabled={deshabilitado}
-            style={{
-              fontSize: 13, padding: "7px 13px", borderRadius: 999, cursor: "pointer", fontWeight: 600,
-              border: `1.5px solid ${AZUL}`, background: "rgba(2,132,199,0.06)", color: AZUL,
-            }}
-          >
-            {s}
-          </button>
+          <button key={s} type="button" onClick={() => onElegir(s)} disabled={deshabilitado}>{s}</button>
         ))}
       </div>
-    </FilaBot>
+      <p className="ech-bienvenida__nota">
+        <Ban size={13} aria-hidden="true" /> No hago tareas académicas: te ayudo a acompañar a tu hijo para que las haga.
+      </p>
+    </div>
   );
 }
 
-// ─── Página ──────────────────────────────────────────────────────────────────
+function useEnLinea() {
+  const [enLinea, setEnLinea] = useState(() => (typeof navigator === "undefined" ? true : navigator.onLine !== false));
+  useEffect(() => {
+    const on = () => setEnLinea(true);
+    const off = () => setEnLinea(false);
+    window.addEventListener("online", on);
+    window.addEventListener("offline", off);
+    return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
+  }, []);
+  return enLinea;
+}
+
+function useAlturaVisible(ref, activo) {
+  useEffect(() => {
+    const vv = window.visualViewport;
+    const el = ref.current;
+    if (!activo || !vv || !el) return undefined;
+    const ajustar = () => el.style.setProperty("--ech-vvh", `${Math.round(vv.height)}px`);
+    ajustar();
+    vv.addEventListener("resize", ajustar);
+    return () => vv.removeEventListener("resize", ajustar);
+  }, [ref, activo]);
+}
+
 export default function EdumonChatPage() {
   const { user } = useAuth();
-  const [consentimiento, setConsentimiento] = useState(null); // { versionVigente, aceptado }
+  const confirmar = useConfirm();
+  const enLinea = useEnLinea();
+  const [consentimiento, setConsentimiento] = useState(null);
   const [mostrarConsentimiento, setMostrarConsentimiento] = useState(false);
   const [conversaciones, setConversaciones] = useState([]);
-  const [activa, setActiva] = useState(null); // conversación completa
+  const [cargandoLista, setCargandoLista] = useState(true);
+  const [activa, setActiva] = useState(null);
+  const [abriendoId, setAbriendoId] = useState(null);
   const [texto, setTexto] = useState("");
   const [enviando, setEnviando] = useState(false);
+  const [fallo, setFallo] = useState(null);
   const [toast, setToast] = useState({ msg: "", type: "success" });
-  const [aviso, setAviso] = useState(""); // error que no debe desaparecer solo (ej. 429 LIMITE_IA)
+  const [aviso, setAviso] = useState("");
   const [vozDisponible, setVozDisponible] = useState(notasDeVozSoportadas);
+  const [modoVoz, setModoVoz] = useState(false);
+  const [historialAbierto, setHistorialAbierto] = useState(false);
+  const raizRef = useRef(null);
   const finRef = useRef(null);
   const inputRef = useRef(null);
+  const botonHistorialRef = useRef(null);
+
+  useAlturaVisible(raizRef, Boolean(consentimiento?.aceptado));
 
   const sugerencias = useMemo(
     () => [...SUGERENCIAS].sort(() => Math.random() - 0.5).slice(0, 4),
     [activa?._id], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
-  const avisar = (msg, type = "success") => {
+  const avisar = useCallback((msg, type = "success") => {
     setToast({ msg, type });
     setTimeout(() => setToast({ msg: "", type: "success" }), 3500);
-  };
+  }, []);
 
   const pedirConsentimientoSiFalta = (err) => {
     if (esConsentimientoRequerido(err)) {
@@ -414,16 +396,21 @@ export default function EdumonChatPage() {
   };
 
   const cargarConversaciones = async () => {
+    setCargandoLista(true);
     try {
       const { conversaciones } = await edumonGetConversaciones();
       setConversaciones(conversaciones);
     } catch (err) {
       if (!pedirConsentimientoSiFalta(err)) avisar(humanizeError(err), "error");
+    } finally {
+      setCargandoLista(false);
     }
   };
 
-  // la lectura en voz alta no sigue sonando al salir del chat
-  useEffect(() => () => detenerLectura(), []);
+  useEffect(() => {
+    precargarExpresiones();
+    return () => detenerLectura();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -440,15 +427,26 @@ export default function EdumonChatPage() {
 
   useEffect(() => {
     finRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [activa?.mensajes?.length, enviando]);
+  }, [activa?.mensajes?.length, enviando, fallo]);
 
-  // el cuadro de texto crece con el mensaje (hasta su maxHeight)
   useEffect(() => {
     const el = inputRef.current;
     if (!el) return;
     el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
   }, [texto]);
+
+  useEffect(() => {
+    if (!historialAbierto) return undefined;
+    const escape = (e) => { if (e.key === "Escape") cerrarHistorial(); };
+    document.addEventListener("keydown", escape);
+    return () => document.removeEventListener("keydown", escape);
+  }, [historialAbierto]);
+
+  const cerrarHistorial = () => {
+    setHistorialAbierto(false);
+    botonHistorialRef.current?.focus();
+  };
 
   const aceptarConsentimiento = async () => {
     try {
@@ -462,11 +460,18 @@ export default function EdumonChatPage() {
   };
 
   const revocar = async () => {
-    if (!window.confirm("¿Retirar la autorización? Se borrarán todas tus conversaciones con Edumon.")) return;
+    const ok = await confirmar({
+      title: "¿Retirar la autorización?",
+      message: "Se borrarán todas tus conversaciones con Edumon y no podrás usarlo hasta que vuelvas a aceptar.",
+      confirmLabel: "Retirar y borrar",
+      danger: true,
+    });
+    if (!ok) return;
     try {
       await edumonRevocarConsentimiento();
       setConversaciones([]);
       setActiva(null);
+      setFallo(null);
       setConsentimiento((c) => ({ ...c, aceptado: false }));
       avisar("Autorización retirada y conversaciones eliminadas");
     } catch (err) {
@@ -475,11 +480,19 @@ export default function EdumonChatPage() {
   };
 
   const abrir = async (id) => {
+    setHistorialAbierto(false);
+    if (activa?._id === id && !fallo) return;
+    detenerLectura();
+    setAbriendoId(id);
     try {
       const { conversacion } = await edumonGetConversacion(id);
       setActiva(conversacion);
+      setFallo(null);
+      setAviso("");
     } catch (err) {
       if (!pedirConsentimientoSiFalta(err)) avisar(humanizeError(err), "error");
+    } finally {
+      setAbriendoId(null);
     }
   };
 
@@ -501,64 +514,105 @@ export default function EdumonChatPage() {
   };
 
   const nueva = () => {
+    detenerLectura();
     setActiva(null);
-    inputRef.current?.focus();
+    setFallo(null);
+    setAviso("");
+    setHistorialAbierto(false);
+    setTimeout(() => inputRef.current?.focus(), 0);
   };
 
-  const eliminar = async (id) => {
-    if (!window.confirm("¿Eliminar esta conversación?")) return;
+  const eliminar = async (c) => {
+    const ok = await confirmar({
+      title: "¿Eliminar esta conversación?",
+      message: `«${c.titulo || "Conversación"}» se borrará y no se puede recuperar.`,
+      confirmLabel: "Eliminar",
+      danger: true,
+    });
+    if (!ok) return;
     try {
-      await edumonEliminarConversacion(id);
-      setConversaciones((cs) => cs.filter((c) => c._id !== id));
-      if (activa?._id === id) setActiva(null);
+      await edumonEliminarConversacion(c._id);
+      setConversaciones((cs) => cs.filter((x) => x._id !== c._id));
+      if (activa?._id === c._id) { setActiva(null); setFallo(null); }
     } catch (err) {
       avisar(humanizeError(err), "error");
     }
   };
 
-  // texto y nota de voz comparten el flujo: conversación (se crea si falta) → mensaje optimista → respuesta
-  const procesar = async ({ optimista, llamar, alFallar }) => {
+  const procesar = async ({ optimista, llamar, alFallarEspecial }) => {
     setEnviando(true);
     setAviso("");
+    setFallo(null);
+    let conversacion = activa;
     try {
-      let conversacion = activa;
-      if (!conversacion) {
+      if (!conversacion?._id) {
         ({ conversacion } = await edumonCrearConversacion());
         conversacion = { ...conversacion, mensajes: [] };
       }
-      // optimista: el mensaje del padre aparece de inmediato
-      setActiva({ ...conversacion, mensajes: [...conversacion.mensajes, { _id: "pendiente", rol: "usuario", ...optimista }] });
+      const base = conversacion.mensajes.filter((m) => m.estado !== "fallido");
+      conversacion = { ...conversacion, mensajes: base };
+      setActiva({ ...conversacion, mensajes: [...base, { _id: "pendiente", rol: "usuario", ...optimista }] });
 
       const { mensajeUsuario, respuesta, conversacion: meta } = await llamar(conversacion._id);
-      const actualizada = { ...conversacion, ...meta, mensajes: [...conversacion.mensajes, mensajeUsuario, respuesta] };
+      const actualizada = { ...conversacion, ...meta, mensajes: [...base, mensajeUsuario, respuesta] };
       setActiva(actualizada);
       setConversaciones((cs) => [
-        { _id: actualizada._id, titulo: actualizada.titulo, ultimaActividad: new Date().toISOString() },
+        { _id: actualizada._id, titulo: actualizada.titulo, edadHijo: actualizada.edadHijo, ultimaActividad: new Date().toISOString() },
         ...cs.filter((c) => c._id !== actualizada._id),
       ]);
+      return respuesta;
     } catch (err) {
-      setActiva((a) => (a ? { ...a, mensajes: a.mensajes.filter((m) => m._id !== "pendiente") } : a));
-      if (!pedirConsentimientoSiFalta(err)) alFallar(err);
+      if (pedirConsentimientoSiFalta(err)) {
+        setActiva((a) => (a ? { ...a, mensajes: a.mensajes.filter((m) => m._id !== "pendiente") } : a));
+        return null;
+      }
+      if (alFallarEspecial?.(err)) {
+        setActiva((a) => (a ? { ...a, mensajes: a.mensajes.filter((m) => m._id !== "pendiente") } : a));
+        return null;
+      }
+      setActiva((a) => {
+        const actual = a ?? { _id: null, titulo: "Nueva conversación", mensajes: [] };
+        const mensajes = actual.mensajes.some((m) => m._id === "pendiente")
+          ? actual.mensajes.map((m) => (m._id === "pendiente" ? { ...m, _id: "fallido", estado: "fallido" } : m))
+          : [...actual.mensajes, { _id: "fallido", rol: "usuario", estado: "fallido", ...optimista }];
+        return { ...actual, mensajes };
+      });
+      setFallo({
+        error: clasificarErrorChat(err, { enLinea: typeof navigator === "undefined" || navigator.onLine !== false }),
+        optimista,
+        llamar,
+        alFallarEspecial,
+      });
+      return null;
     } finally {
       setEnviando(false);
-      inputRef.current?.focus();
+      if (!modoVoz) inputRef.current?.focus();
     }
   };
 
   const enviar = async (contenido = texto) => {
     const limpio = contenido.trim();
-    if (!limpio || enviando) return;
+    if (!limpio || enviando) return null;
     setTexto("");
-    await procesar({
+    const respuesta = await procesar({
       optimista: { contenido: limpio },
       llamar: (id) => edumonEnviarMensaje(id, limpio),
-      alFallar: (err) => {
-        setTexto(limpio);
-        const msg = mensajeErrorIA(err, "Edumon no pudo responder en este momento. Tu mensaje sigue en el cuadro: intenta enviarlo de nuevo.");
-        if (esLimiteIA(err)) setAviso(msg);
-        else avisar(msg, "error");
-      },
     });
+    return respuesta ? { id: respuesta._id, texto: textoLectura(respuesta) } : null;
+  };
+
+  const reintentar = () => {
+    if (!fallo || enviando) return;
+    const { optimista, llamar, alFallarEspecial } = fallo;
+    procesar({ optimista, llamar, alFallarEspecial });
+  };
+
+  const editarFallido = () => {
+    if (!fallo) return;
+    setTexto(fallo.optimista.contenido ?? "");
+    setFallo(null);
+    setActiva((a) => (a ? { ...a, mensajes: a.mensajes.filter((m) => m.estado !== "fallido") } : a));
+    setTimeout(() => inputRef.current?.focus(), 0);
   };
 
   const enviarNotaDeVoz = async (archivo) => {
@@ -566,23 +620,36 @@ export default function EdumonChatPage() {
     await procesar({
       optimista: { contenido: "Transcribiendo tu nota de voz…", entrada: "voz" },
       llamar: (id) => edumonEnviarAudio(id, archivo),
-      alFallar: (err) => {
-        // 404 (función apagada) o 503 (sin transcripción): se oculta el micrófono y se pide escribir
-        if (VOZ_NO_DISPONIBLE.includes(err?.data?.code)) setVozDisponible(false);
-        setAviso(mensajeErrorIA(err, "No pudimos enviar la nota de voz. Escribe tu mensaje, por favor."));
+      alFallarEspecial: (err) => {
+        const codigo = err?.data?.code;
+        if (VOZ_NO_DISPONIBLE.includes(codigo)) setVozDisponible(false);
+        if (codigo && (VOZ_NO_DISPONIBLE.includes(codigo) || codigo.startsWith("AUDIO_"))) {
+          setAviso(mensajeErrorIA(err, "No pudimos enviar la nota de voz. Escribe tu mensaje, por favor."));
+          return true;
+        }
+        return false;
       },
     });
   };
 
   const onKeyDown = (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
       e.preventDefault();
       enviar();
     }
   };
 
-  // ── Sin consentimiento: presentación de Edumon IA ──
-  if (consentimiento && !consentimiento.aceptado) {
+  if (!consentimiento) {
+    return (
+      <div className="ech-cargando" role="status">
+        <Toast msg={toast.msg} type={toast.type} />
+        <EdumonMascota size={80} expresion="pensando" animacion="pensar" decorativa />
+        <span>Cargando Edumon…</span>
+      </div>
+    );
+  }
+
+  if (!consentimiento.aceptado) {
     return (
       <div>
         <Toast msg={toast.msg} type={toast.type} />
@@ -592,30 +659,26 @@ export default function EdumonChatPage() {
           onAceptar={aceptarConsentimiento}
           onCancelar={() => setMostrarConsentimiento(false)}
         />
-        <div style={{
-          ...card, maxWidth: 820, margin: "24px auto", padding: "28px 32px", display: "flex", gap: 28,
-          alignItems: "center", flexWrap: "wrap", justifyContent: "center",
-          background: "linear-gradient(135deg, rgba(14,165,233,0.10), rgba(99,102,241,0.08)), var(--color-surface)",
-        }}>
-          <EdumonMascota size={230} expresion="ia" animacion="flotar" />
-          <div style={{ flex: "1 1 320px", minWidth: 0 }}>
-            <span style={{ fontSize: 11.5, fontWeight: 800, color: AZUL, letterSpacing: "0.06em" }}>ASISTENTE CON INTELIGENCIA ARTIFICIAL</span>
-            <h1 style={{ fontSize: 26, fontWeight: 900, margin: "4px 0 8px" }}>Conoce a Edumon IA</h1>
-            <p style={{ fontSize: 14.5, color: "var(--color-text-muted)", margin: "0 0 14px", lineHeight: 1.6 }}>
+        <div className="ech-intro">
+          <EdumonMascota size={200} expresion="ia" animacion="flotar" className="ech-intro__mascota" />
+          <div className="ech-intro__cuerpo">
+            <span className="ech-intro__etiqueta">Asistente con inteligencia artificial</span>
+            <h1>Conoce a Edumon IA</h1>
+            <p>
               Tu acompañante para la vida de tus hijos en casa y en el colegio: emociones, organización, alimentación,
               convivencia y crianza. Pregúntale a cualquier hora y recibe ideas basadas en guías de UNICEF, OMS, ICBF y MinEducación.
             </p>
-            {[
-              [HeartHandshake, "Respuestas basadas en UNICEF, ICBF, OMS y el Ministerio de Educación"],
-              [Sparkles, "Una práctica corta para la semana, y videos y artículos para profundizar"],
-              [Ban, "No hace tareas académicas: te ayuda a acompañar a tu hijo"],
-              [Lock, "Conversaciones privadas: tu colegio no puede leerlas"],
-            ].map(([Icono, txt]) => (
-              <div key={txt} style={{ display: "flex", gap: 10, alignItems: "center", fontSize: 13.5, marginBottom: 8 }}>
-                <Icono size={17} color={AZUL} style={{ flexShrink: 0 }} /> {txt}
-              </div>
-            ))}
-            <Button onClick={() => setMostrarConsentimiento(true)} leftIcon={<ShieldCheck size={16} />} style={{ marginTop: 8 }}>
+            <ul>
+              {[
+                [HeartHandshake, "Respuestas basadas en UNICEF, ICBF, OMS y el Ministerio de Educación"],
+                [Sparkles, "Una práctica corta para la semana, y videos y artículos si quieres profundizar"],
+                [Ban, "No hace tareas académicas: te ayuda a acompañar a tu hijo"],
+                [Lock, "Conversaciones privadas: tu colegio no puede leerlas"],
+              ].map(([Icono, txt]) => (
+                <li key={txt}><Icono size={18} aria-hidden="true" /> {txt}</li>
+              ))}
+            </ul>
+            <Button onClick={() => setMostrarConsentimiento(true)} leftIcon={<ShieldCheck size={16} />}>
               Leer autorización y empezar
             </Button>
           </div>
@@ -625,153 +688,150 @@ export default function EdumonChatPage() {
   }
 
   const mensajes = activa?.mensajes ?? [];
+  const nombre = primerNombre(user);
+  const puedeEnviar = Boolean(texto.trim()) && !enviando;
 
   return (
-    <div>
+    <div className="ech" ref={raizRef}>
       <Toast msg={toast.msg} type={toast.type} />
 
-      <div style={{ display: "flex", gap: 16, alignItems: "stretch", flexWrap: "wrap" }}>
-        {/* Historial */}
-        <aside style={{ ...card, flex: "1 1 220px", maxWidth: 290, padding: 12, display: "flex", flexDirection: "column", gap: 6, height: "fit-content" }}>
-          <Button size="sm" fullWidth onClick={nueva} leftIcon={<Plus size={15} />}>Nueva conversación</Button>
-          <div style={{ fontSize: 11, fontWeight: 800, color: "var(--color-text-muted)", letterSpacing: "0.06em", margin: "10px 6px 2px" }}>HISTORIAL</div>
-          {conversaciones.length === 0 && (
-            <p style={{ fontSize: 12.5, color: "var(--color-text-muted)", margin: "4px 6px" }}>Aún no tienes conversaciones.</p>
-          )}
-          {conversaciones.map((c) => (
-            <div
-              key={c._id}
-              style={{
-                display: "flex", alignItems: "center", gap: 4, borderRadius: 10,
-                background: activa?._id === c._id ? "rgba(2,132,199,0.10)" : "transparent",
-              }}
-            >
-              <button
-                type="button"
-                className="eia-item"
-                onClick={() => abrir(c._id)}
-                aria-current={activa?._id === c._id ? "true" : undefined}
-                style={{ flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 8, padding: "9px 10px", borderRadius: 10, cursor: "pointer", background: "transparent" }}
-              >
-                <MessageCircle size={16} color="var(--color-text-muted)" style={{ flexShrink: 0 }} aria-hidden="true" />
-                <span style={{ flex: 1, fontSize: 14.5, fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                  {c.titulo}
-                </span>
-              </button>
-              <button
-                type="button"
-                className="eia-focus"
-                onClick={() => eliminar(c._id)}
-                aria-label={`Eliminar la conversación «${c.titulo}»`}
-                title="Eliminar conversación"
-                style={{ background: "none", border: "none", cursor: "pointer", padding: 6, borderRadius: 8, color: "var(--color-text-muted)" }}
-              >
-                <Trash2 size={16} aria-hidden="true" />
-              </button>
-            </div>
-          ))}
-          <div style={{ borderTop: "1px solid var(--color-border)", marginTop: 8, paddingTop: 8, display: "flex", flexDirection: "column", gap: 4 }}>
-            <span style={{ fontSize: 11.5, color: "var(--color-text-muted)", display: "flex", gap: 6, alignItems: "center" }}>
-              <Lock size={12} /> Privado · se borra a los 30 días
-            </span>
-            <button type="button" className="eia-focus" onClick={revocar} style={{ background: "none", border: "none", padding: 0, cursor: "pointer", fontSize: 13, color: "var(--color-error-hover)", textAlign: "left" }}>
-              Retirar autorización
-            </button>
+      <aside className={`ech-historial${historialAbierto ? " ech-historial--abierto" : ""}`}>
+        <HistorialConversaciones
+          id="ech-historial"
+          conversaciones={conversaciones}
+          cargando={cargandoLista}
+          activaId={activa?._id}
+          abriendoId={abriendoId}
+          onAbrir={abrir}
+          onNueva={nueva}
+          onEliminar={eliminar}
+          onRevocar={revocar}
+          onCerrar={cerrarHistorial}
+        />
+      </aside>
+      {historialAbierto && <div className="ech-velo" onClick={cerrarHistorial} aria-hidden="true" />}
+
+      <section className="ech-chat" aria-label="Conversación con Edumon IA">
+        <header className="ech-head">
+          <button
+            ref={botonHistorialRef}
+            type="button"
+            className="ech-head__btn ech-head__historial"
+            onClick={() => setHistorialAbierto(true)}
+            aria-expanded={historialAbierto}
+            aria-controls="ech-historial"
+            aria-label="Ver historial de conversaciones"
+            title="Historial"
+          >
+            <History size={19} aria-hidden="true" />
+          </button>
+          <EdumonMascota size={38} circulo enLinea={enLinea} decorativa className="ech-head__avatar" />
+          <div className="ech-head__info">
+            <p className="ech-head__nombre">Edumon IA</p>
+            <p className="ech-head__estado">
+              {!enLinea ? "Sin conexión" : enviando ? "Escribiendo…" : activa?.titulo && activa.titulo !== "Nueva conversación" ? activa.titulo : "Asistente para familias"}
+            </p>
           </div>
-        </aside>
+          <AjustesVoz />
+          <button
+            type="button"
+            className={`ech-head__btn${modoVoz ? " ech-head__btn--activo" : ""}`}
+            onClick={() => { detenerLectura(); setModoVoz((v) => !v); }}
+            aria-pressed={modoVoz}
+            aria-label={modoVoz ? "Salir del modo voz" : "Hablar con Edumon por voz"}
+            title="Modo voz"
+          >
+            <AudioLines size={19} aria-hidden="true" />
+          </button>
+          <button type="button" className="ech-head__btn" onClick={nueva} aria-label="Nueva conversación" title="Nueva conversación">
+            <Plus size={20} aria-hidden="true" />
+          </button>
+        </header>
 
-        {/* Ventana del chatbot */}
-        <section style={{ ...card, flex: "3 1 440px", display: "flex", flexDirection: "column", height: "calc(100vh - 150px)", minHeight: 520, overflow: "hidden" }}>
-          <header style={{
-            display: "flex", alignItems: "center", gap: 12, padding: "12px 16px",
-            background: `linear-gradient(120deg, ${AZUL}, #4F46E5)`, color: "#fff",
-          }}>
-            <EdumonMascota size={46} circulo enLinea />
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 16, fontWeight: 800 }}>
-                Edumon IA
-                <span style={{ fontSize: 10, fontWeight: 800, padding: "2px 7px", borderRadius: 999, background: "rgba(255,255,255,0.22)" }}>IA</span>
-              </div>
-              <div style={{ fontSize: 12, opacity: 0.9 }}>
-                {enviando ? "Escribiendo…" : "Asistente para familias · En línea"}
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={nueva}
-              title="Nueva conversación"
-              aria-label="Nueva conversación"
-              className="eia-focus"
-              style={{ background: "rgba(255,255,255,0.18)", border: "none", borderRadius: 10, padding: 8, cursor: "pointer", color: "#fff", display: "flex" }}
-            >
-              <Plus size={18} />
-            </button>
-          </header>
+        {!enLinea && (
+          <p className="ech-offline" role="status">
+            Estás sin conexión. Puedes leer la conversación; para enviar mensajes necesitas internet.
+          </p>
+        )}
 
-          <div style={{
-            flex: 1, overflowY: "auto", padding: "18px 18px 8px", display: "flex", flexDirection: "column", gap: 16,
-            background: "radial-gradient(circle at 20% 0%, rgba(14,165,233,0.07), transparent 45%), radial-gradient(circle at 90% 100%, rgba(99,102,241,0.07), transparent 40%), var(--color-bg)",
-          }}>
-            <Bienvenida sugerencias={sugerencias} onElegir={enviar} deshabilitado={enviando || mensajes.length > 0} />
-            {mensajes.map((m, i) => (m.rol === "usuario"
-              ? <MensajeUsuario key={m._id || i} mensaje={m} usuario={user} />
-              : <MensajeBot key={m._id || i} mensaje={m} onPedirAyuda={pedirAyuda} conversacionId={activa?._id} avisar={avisar} />))}
+        <div className="ech-mensajes" aria-busy={Boolean(abriendoId) || undefined}>
+          <div className="ech-mensajes__inner" role="log" aria-live="polite" aria-relevant="additions" aria-label="Mensajes">
+            {mensajes.length === 0 && !abriendoId && (
+              <Bienvenida nombre={nombre} sugerencias={sugerencias} onElegir={enviar} deshabilitado={enviando} />
+            )}
+            {abriendoId && mensajes.length === 0 && (
+              <p className="ech-abriendo" role="status">Abriendo la conversación…</p>
+            )}
+            {mensajes.map((m, i) => {
+              if (m.rol === "usuario") return <MensajeUsuario key={m._id || i} mensaje={m} usuario={user} />;
+              const anterior = mensajes.slice(0, i).reverse().find((x) => x.rol === "usuario");
+              return (
+                <MensajeBot
+                  key={m._id || i}
+                  mensaje={m}
+                  pidioRecursos={pideRecursos(anterior?.contenido)}
+                  onPedirAyuda={pedirAyuda}
+                  conversacionId={activa?._id}
+                  avisar={avisar}
+                />
+              );
+            })}
             {enviando && <Escribiendo />}
+            {fallo && !enviando && (
+              <ErrorRespuesta
+                error={fallo.error}
+                enLinea={enLinea}
+                reintentando={enviando}
+                onReintentar={reintentar}
+                onEditar={fallo.optimista.entrada === "voz" ? null : editarFallido}
+              />
+            )}
             <div ref={finRef} />
           </div>
+        </div>
 
-          <div style={{ padding: "10px 14px 8px", borderTop: "1px solid var(--color-border)", background: "var(--color-surface)" }}>
-            {aviso && (
-              <div role="alert" style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 8, padding: "10px 12px", borderRadius: 12, background: "#FFFBEB", border: "1.5px solid #F59E0B", color: "#78350F", fontSize: 15 }}>
-                <span style={{ flex: 1 }}>{aviso}</span>
-                <button type="button" className="eia-link" onClick={() => setAviso("")} style={{ color: "#78350F" }}>Entendido</button>
-              </div>
-            )}
-            <div className="eia-campo" style={{
-              display: "flex", gap: 8, alignItems: "flex-end", padding: "6px 6px 6px 14px", borderRadius: 22,
-              border: `1.5px solid ${texto.trim() ? AZUL : "var(--color-border)"}`, background: "var(--color-bg)",
-            }}>
+        <footer className="ech-composer">
+          {aviso && (
+            <div role="alert" className="ech-aviso">
+              <span>{aviso}</span>
+              <button type="button" className="ech-enlace" onClick={() => setAviso("")}>Entendido</button>
+            </div>
+          )}
+
+          {modoVoz ? (
+            <ModoVoz onEnviar={enviar} onSalir={() => setModoVoz(false)} ocupado={enviando} />
+          ) : (
+            <div className={`ech-campo${texto.trim() ? " ech-campo--lleno" : ""}`}>
               <textarea
                 ref={inputRef}
                 value={texto}
                 onChange={(e) => setTexto(e.target.value)}
                 onKeyDown={onKeyDown}
-                placeholder="Escríbele a Edumon IA…"
+                placeholder="Escríbele a Edumon…"
                 aria-label="Mensaje para Edumon"
                 rows={1}
                 maxLength={2000}
-                disabled={enviando}
-                style={{
-                  flex: 1, resize: "none", fontSize: 16, padding: "8px 0", border: "none", outline: "none",
-                  background: "transparent", color: "var(--color-text)", fontFamily: "inherit", maxHeight: 120,
-                  overflowY: "auto",
-                }}
+                enterKeyHint="send"
               />
               {vozDisponible && (
                 <BotonNotaVoz onAudio={enviarNotaDeVoz} onError={setAviso} deshabilitado={enviando} />
               )}
               <button
                 type="button"
+                className="ech-enviar"
                 onClick={() => enviar()}
-                disabled={!texto.trim() || enviando}
+                disabled={!puedeEnviar}
                 aria-label={enviando ? "Esperando la respuesta de Edumon" : "Enviar mensaje"}
-                className="eia-focus"
-                style={{
-                  width: 40, height: 40, borderRadius: "50%", border: "none", flexShrink: 0,
-                  cursor: texto.trim() && !enviando ? "pointer" : "default",
-                  background: texto.trim() && !enviando ? `linear-gradient(135deg, ${AZUL}, #4F46E5)` : "var(--color-border)",
-                  color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
-                }}
               >
-                <Send size={17} />
+                <Send size={18} aria-hidden="true" />
               </button>
             </div>
-            <p style={{ margin: "6px 0 0", fontSize: 13, color: "var(--color-text-muted)", textAlign: "center" }}>
-              Edumon IA puede equivocarse y no reemplaza a orientación escolar ni a profesionales de salud.
-            </p>
-          </div>
-        </section>
-      </div>
+          )}
+          <p className="ech-descargo">
+            Edumon IA puede equivocarse y no reemplaza a orientación escolar ni a profesionales de salud.
+          </p>
+        </footer>
+      </section>
     </div>
   );
 }
