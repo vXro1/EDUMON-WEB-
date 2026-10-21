@@ -566,12 +566,13 @@ export default function TareasPage() {
           </p>
         </div>
 
-        <div style={{ display: "flex", gap: 10 }}>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
           <Button
             variant="secondary"
             size="sm"
             onClick={load}
             title="Actualizar"
+            aria-label="Actualizar retos"
           >
             <RefreshCw style={{ width: 15, height: 15 }} />
           </Button>
@@ -1346,7 +1347,7 @@ function TareaCard({ tarea: t, onVerEntregas, onEditar, onCerrar, onDelete }) {
         border: `1px solid ${hov ? "color-mix(in srgb, var(--color-primary) 20%, transparent)" : "var(--color-border)"}`,
         boxShadow: hov ? "var(--clay-card-hover)" : "var(--clay-card)",
         padding: "16px 20px",
-        display: "flex", alignItems: "center", gap: 16,
+        display: "flex", alignItems: "center", gap: "12px 16px", flexWrap: "wrap",
         transition: "all 180ms",
       }}
     >
@@ -1360,7 +1361,7 @@ function TareaCard({ tarea: t, onVerEntregas, onEditar, onCerrar, onDelete }) {
       </div>
 
       {/* Contenido */}
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ flex: "1 1 220px", minWidth: 0 }}>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
           <p style={{ fontWeight: 700, margin: 0, fontSize: 14, color: "var(--color-text)" }}>
             {t.titulo}
@@ -1401,7 +1402,7 @@ function TareaCard({ tarea: t, onVerEntregas, onEditar, onCerrar, onDelete }) {
       </div>
 
       {/* Acciones */}
-      <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap", maxWidth: "100%" }}>
         <Button variant="ghost" size="sm" onClick={onVerEntregas} style={{ color: "var(--color-primary)" }}>
           Entregas <ChevronRight size={13} />
         </Button>
@@ -1417,7 +1418,7 @@ function TareaCard({ tarea: t, onVerEntregas, onEditar, onCerrar, onDelete }) {
         )}
 
         {/* a diferencia de "Cerrar", este también borra los archivos adjuntos */}
-        <Button variant="ghost-danger" size="sm" onClick={onDelete} title="Cerrar reto y eliminar sus archivos adjuntos">
+        <Button variant="ghost-danger" size="sm" onClick={onDelete} title="Cerrar reto y eliminar sus archivos adjuntos" aria-label="Eliminar reto y sus archivos adjuntos">
           <Trash2 size={13} />
         </Button>
       </div>
