@@ -5,7 +5,7 @@ import {
   Shield, Calendar, Clock, Eye,
 } from "lucide-react";
 import {
-  cursosGetParticipantes,
+  cursosGetAllParticipantes,
   cursosAddParticipante,
   cursosRemoveParticipante,
   cursosAddParticipantesCsv,
@@ -99,7 +99,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await cursosGetParticipantes(cursoId, { limit: 100 });
+      const res = await cursosGetAllParticipantes(cursoId);
       setParts(
         (res.participantes ?? res.data ?? []).map((p) => ({
           ...p,
