@@ -28,7 +28,7 @@ import {
   cursosCreate,
   cursosUpdate,
   cursosDelete,
-  cursosGetParticipantes,
+  cursosGetAllParticipantes,
   cursosAddParticipante,
   cursosRemoveParticipante,
 } from "@/features/cursos/services/cursosService";
@@ -315,7 +315,7 @@ export default function CursosPage() {
   const loadParts = useCallback(async (id) => {
     setPartsLoading(true);
     try {
-      const res = await cursosGetParticipantes(id, { limit: 100 });
+      const res = await cursosGetAllParticipantes(id);
       setParts(
         (res.participantes ?? res.data ?? []).map(p => ({
           ...p,

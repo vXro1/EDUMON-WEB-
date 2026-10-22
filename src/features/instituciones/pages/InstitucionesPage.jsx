@@ -169,7 +169,7 @@ export default function InstitucionesPage() {
     if (inst.adminId) {
       setLoadingAdmin(true);
       try {
-        const res = await usersGetById(typeof inst.adminId === "object" ? inst.adminId._id : inst.adminId);
+        const res = await usersGetById(typeof inst.adminId === "object" ? inst.adminId?._id : inst.adminId);
         setDetailAdmin(normalizeUser(res.user ?? res));
       } catch { /* opcional */ }
       finally { setLoadingAdmin(false); }
