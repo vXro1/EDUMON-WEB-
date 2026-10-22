@@ -2509,12 +2509,60 @@ a.landing-app__icon:focus-visible .landing-app__icon-tile { box-shadow: var(--fo
 .landing-tutoriales__cta:hover { transform: translateY(-2px); box-shadow: 0 7px 0 var(--edumon-warning-dark), 0 18px 30px rgba(4, 42, 84, 0.16); }
 .landing-tutoriales__cta:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--edumon-warning-dark); }
 
+.landing-tutoriales__title { overflow-wrap: anywhere; }
+.tuto-teaser { min-width: 0; }
+.tuto-teaser__media img { display: block; }
+.tuto-teaser__title { overflow-wrap: anywhere; }
+
+@media (max-width: 900px) {
+  .tuto-teaser__peek { right: 20px; width: 84px; }
+  .tuto-teaser__title { font-size: 1.15rem; }
+}
 @media (max-width: 760px) {
-  .landing-tutoriales__grid { grid-template-columns: 1fr; row-gap: 96px; }
+  .landing-tutoriales__grid {
+    grid-template-columns: 1fr;
+    row-gap: 56px;
+    max-width: 440px;
+    margin: 64px auto 28px;
+  }
   .landing-tutoriales .deco-bubbles { display: none; }
 }
-@media (max-width: 480px) {
-  .landing-tutoriales__cta { width: 100%; }
+@media (max-width: 600px) {
+  .landing-tutoriales__title { font-size: 1.5rem; margin: 14px 0 8px; }
+  .landing-tutoriales__mark { white-space: normal; }
+  .landing-tutoriales__text { font-size: 0.92rem; line-height: 1.6; }
+  .landing-tutoriales__badge { font-size: 0.72rem; padding: 6px 12px; }
+
+  .landing-tutoriales__grid { row-gap: 18px; margin-top: 28px; }
+  .tuto-teaser {
+    flex-direction: row;
+    align-items: center;
+    border-radius: 18px;
+    border-width: 2px;
+    box-shadow: 0 5px 0 color-mix(in srgb, var(--tt-c1) 25%, transparent),
+                0 12px 22px rgba(14, 50, 100, 0.08);
+  }
+  .tuto-teaser:hover { transform: none; }
+  .tuto-teaser__peek { display: none; }
+  .tuto-teaser__media {
+    flex: 0 0 42%;
+    margin: 8px;
+    border-radius: 12px;
+    box-shadow: none;
+  }
+  .tuto-teaser__play { width: 32px; height: 32px; right: 6px; bottom: 6px; border-width: 2px; }
+  .tuto-teaser__play svg { width: 14px; height: 14px; }
+  .tuto-teaser__body { flex: 1; min-width: 0; gap: 6px; padding: 8px 12px 8px 4px; }
+  .tuto-teaser__chips { gap: 4px; }
+  .tuto-teaser__chips span { font-size: 0.64rem; padding: 2px 8px; border-width: 1.5px; }
+  .tuto-teaser__title { font-size: 0.95rem; }
+  .tuto-teaser__more { font-size: 0.78rem; }
+
+  .landing-tutoriales__cta { width: 100%; max-width: 440px; height: 48px; padding: 0 20px; font-size: 0.92rem; }
+}
+@media (max-width: 360px) {
+  .tuto-teaser__chips { display: none; }
+  .tuto-teaser__media { flex-basis: 38%; }
 }
 
 .edumon-letras {
