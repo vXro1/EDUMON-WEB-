@@ -26,7 +26,23 @@ export const cursosGetParticipantes = (id, params = {}) => {
   return apiFetch(`/cursos/${id}/participantes${qs ? `?${qs}` : ''}`);
 };
 
-export const cursosUpdate = (id, formData) =>
+export const cursosGetAllParticipantes = async (id) => {
+  const limit = 500;
+  let page = 1;
+  let first = null;
+  let participantes = [];
+  for (;;) {
+    const res = await cursosGetParticipantes(id, { page, limit });
+    first ??= res;
+    const lote = res.participantes ?? res.data ?? [];
+    participantes = participantes.concat(lote);
+    if (!res.pagination?.hasNextPage || lote.length === 0) break;
+    page += 1;
+  }
+  return { ...first, participantes };
+};
+
+export const cursosUpdate =(id, formData) =>
   apiFetchFormData(`/cursos/${id}`, { method: 'PUT', body: formData });
 
 export const cursosDelete = (id) =>

@@ -4,7 +4,7 @@ import CursoContext from "../../context/CursoContext";
 import { ClipboardList, Clock, Eye, Pencil, Lock, Layers } from "lucide-react";
 
 import { tareasGetAll, tareasGetById, tareasCreate, tareasUpdate, tareasDelete } from "@/features/cursos/services/tareasService";
-import { cursosGetParticipantes, modulosGetByCurso } from "@/features/cursos/services/cursosService";
+import { cursosGetAllParticipantes, modulosGetByCurso } from "@/features/cursos/services/cursosService";
 
 import { AppModal, Button, Toast, IconActionButton, useConfirm } from "@/components";
 import {
@@ -89,7 +89,7 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
   const loadParticipantes = useCallback(async () => {
     setLoadingParts(true);
     try {
-      const res = await cursosGetParticipantes(cursoId, { limit: 200 });
+      const res = await cursosGetAllParticipantes(cursoId);
       const lista = res.participantes ?? res.data ?? [];
       setParticipantesCurso(
         lista
@@ -138,7 +138,7 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
   // reutilizada: primero con el dato de la lista, luego con el fetch fresco
   const buildEditForm = (t) => {
     const selIds = (t.participantesSeleccionados ?? [])
-      .map(p => String(typeof p === "object" ? p._id ?? "" : p))
+      .map(p => String(typeof p === "object" ? p?._id ?? "" : p))
       .filter(Boolean);
 
     const enlacesExistentes = (t.adjuntos ?? t.archivosAdjuntos ?? [])
