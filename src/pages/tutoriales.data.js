@@ -1,7 +1,7 @@
 import bannerPadres from "@/assets/img/tutoriales/edumon-tutorial-app-padres.webp";
 import bannerDocentes from "@/assets/img/tutoriales/edumon-tutorial-app-docentes.webp";
-import avatarVerde from "@/assets/img/avatars/Avatar5.svg";
-import avatarProfe from "@/assets/img/avatars/Avatar3.svg";
+import avatarVerde from "@/assets/img/avatars/avatar5.svg";
+import avatarProfe from "@/assets/img/avatars/avatar3.svg";
 
 export const TUTORIALES = [
   {
