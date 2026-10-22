@@ -5,7 +5,7 @@ import {
   Shield, Calendar, Clock, Eye,
 } from "lucide-react";
 import {
-  cursosGetParticipantes,
+  cursosGetAllParticipantes,
   cursosAddParticipante,
   cursosRemoveParticipante,
   cursosAddParticipantesCsv,
@@ -13,6 +13,7 @@ import {
 import { usersGetById } from "@/services/usersService";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { normalizeUser } from "@/lib/normalizers";
+import { humanizeError } from "@/utils/humanizeError";
 import { Badge, Button, Input, AppModal, UserAvatar, Toast, CsvUploadModal, PhoneInput } from "@/components";
 import { Sk, EmptyState, Field, iconBtn } from "../shared/ui";
 import { makeNotify } from "../shared/helpers";
@@ -98,7 +99,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await cursosGetParticipantes(cursoId, { limit: 100 });
+      const res = await cursosGetAllParticipantes(cursoId);
       setParts(
         (res.participantes ?? res.data ?? []).map((p) => ({
           ...p,
@@ -140,7 +141,12 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
       notify(`Participante agregado. Contraseña inicial: ${contrasenaInicial(cedula)}`);
       closeAddModal();
       load();
-    } catch { notify("Error al agregar participante", "error"); }
+    } catch (err) {
+      // antes se mostraba un genérico fijo que escondía el motivo real -- ej.
+      // "El usuario ya está inscrito en este curso" (si se repite por error) o
+      // "Ya existe un usuario con este correo", que sí ayudan a entender qué pasó
+      notify(humanizeError(err, "Error al agregar participante"), "error");
+    }
     finally { setSaving(false); }
   };
 
@@ -185,7 +191,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
       notify("Participante eliminado");
       setRemoveTarget(null);
       load();
-    } catch { notify("Error al eliminar", "error"); }
+    } catch (err) { notify(humanizeError(err, "Error al eliminar"), "error"); }
     finally { setRemoving(false); }
   };
 
@@ -362,7 +368,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
               </Field>
             </div>
             <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: "4px 0 0" }}>
-              Si el padre no existe, se creará automáticamente. {TEXTO_CONTRASENA_INICIAL}
+              Si la cédula ya pertenece a un padre existente (ej. de otro curso), se agrega ese mismo, sin crear una cuenta nueva. Si no existe, se crea. {TEXTO_CONTRASENA_INICIAL}
             </p>
           </form>
         </AppModal.Body>
