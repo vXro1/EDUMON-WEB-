@@ -198,18 +198,22 @@ export default function TareaDetalle({
   const archivos = todosAdjuntos.filter((a) => a.tipo !== "enlace");
   const enlaces = todosAdjuntos.filter((a) => a.tipo === "enlace");
 
+  const docenteObj = t.docenteId && typeof t.docenteId === "object" ? t.docenteId : null;
+  const cursoObj = t.cursoId && typeof t.cursoId === "object" ? t.cursoId : null;
+  const moduloObj = t.moduloId && typeof t.moduloId === "object" ? t.moduloId : null;
+
   const docente = t.docente
     ? nombreCompleto(t.docente)
-    : typeof t.docenteId === "object"
-      ? nombreCompleto(t.docenteId)
+    : docenteObj
+      ? nombreCompleto(docenteObj)
       : "";
-  const docenteCorreo = typeof t.docenteId === "object" ? t.docenteId.correo : t.docente?.correo;
+  const docenteCorreo = docenteObj?.correo ?? t.docente?.correo ?? "";
 
-  const curso = t.curso?.nombre ?? (typeof t.cursoId === "object" ? t.cursoId.nombre : "");
-  const cursoNivel = typeof t.cursoId === "object" ? t.cursoId.nivel : "";
+  const curso = t.curso?.nombre ?? cursoObj?.nombre ?? "";
+  const cursoNivel = cursoObj?.nivel ?? "";
 
-  const moduloTitulo = t.modulo?.titulo ?? (typeof t.moduloId === "object" ? t.moduloId.titulo : "");
-  const moduloDescripcion = t.modulo?.descripcion ?? (typeof t.moduloId === "object" ? t.moduloId.descripcion : "");
+  const moduloTitulo = t.modulo?.titulo ?? moduloObj?.titulo ?? "";
+  const moduloDescripcion = t.modulo?.descripcion ?? moduloObj?.descripcion ?? "";
 
   const fechaEntrega = t.fechaEntrega ?? t.fechaVencimiento;
   const vencida = esPasada(fechaEntrega);

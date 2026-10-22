@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 
 // API
-import { cursosGetMine, cursosGetParticipantes, modulosGetByCurso } from "@/features/cursos/services/cursosService";
+import { cursosGetMine, cursosGetAllParticipantes, modulosGetByCurso } from "@/features/cursos/services/cursosService";
 import { tareasGetAll, tareasGetById, tareasCreate, tareasUpdate, tareasCerrar, tareasDelete } from "@/features/cursos/services/tareasService";
 
 // Hooks & Context
@@ -231,7 +231,7 @@ export default function TareasPage() {
     modulosGetByCurso(form.cursoId)
       .then(d => setModulos(d.modulos ?? d ?? []))
       .catch(() => setModulos([]));
-    cursosGetParticipantes(form.cursoId)
+    cursosGetAllParticipantes(form.cursoId)
       .then(d => setParticipantes(d.participantes ?? []))
       .catch(() => setParticipantes([]));
   }, [form.cursoId]);
@@ -245,7 +245,7 @@ export default function TareasPage() {
     modulosGetByCurso(editForm.cursoId)
       .then(d => setEditModulos(d.modulos ?? d ?? []))
       .catch(() => setEditModulos([]));
-    cursosGetParticipantes(editForm.cursoId)
+    cursosGetAllParticipantes(editForm.cursoId)
       .then(d => setEditParticipantesList(d.participantes ?? []))
       .catch(() => setEditParticipantesList([]));
   }, [editForm.cursoId]);
@@ -406,7 +406,7 @@ export default function TareasPage() {
     });
 
     const seleccionadosIds = (t.participantesSeleccionados ?? [])
-      .map(p => (typeof p === "object" ? p._id : p));
+      .map(p => (typeof p === "object" ? p?._id : p));
     setEditParticipantesSeleccionados(seleccionadosIds);
 
     // mezcla archivos y enlaces, distinguidos por "tipo"
