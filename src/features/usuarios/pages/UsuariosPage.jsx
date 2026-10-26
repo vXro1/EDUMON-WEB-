@@ -12,6 +12,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { normalizeUser }from "@/lib/normalizers";
 
 import { usersGetAll, usersGetById, usersCreate, usersUpdate, usersDelete } from "@/services/usersService";
+import CambiarContrasenaSeccion from "../components/CambiarContrasenaSeccion";
 import { institucionesGetMine, institucionesGetAll } from "@/services/institucionesService";
 
 import { Modal, Toast, UserAvatar, Badge, PhoneInput } from "@/components";
@@ -599,7 +600,7 @@ export default function UsuariosPage() {
               <PhoneInput size="sm" label={null} hint={null} value={form.telefono} onChange={f("telefono")} />
             </FieldGroup>
             <div style={{ gridColumn: "1 / -1" }}>
-              <FieldGroup label="Correo *"><StyledInput value={form.correo} onChange={f("correo")} type="email" placeholder="usuario@correo.com" required /></FieldGroup>
+              <FieldGroup label="Correo (opcional)"><StyledInput value={form.correo} onChange={f("correo")} type="email" placeholder="usuario@correo.com" /></FieldGroup>
             </div>
             <div style={{ gridColumn: "1 / -1" }}>
               <FieldGroup label="Rol *">
@@ -634,6 +635,10 @@ export default function UsuariosPage() {
             <BtnSave saving={saving}>{saving ? "Guardando..." : "Guardar cambios"}</BtnSave>
           </div>
         </form>
+        {/* contraseña aparte: se confirma y cierra las sesiones del usuario */}
+        {editTarget && (isSuperadmin || ["padre", "padre/tutor", "docente"].includes(editTarget.rol)) && (
+          <CambiarContrasenaSeccion key={editTarget._id} usuario={editTarget} notify={notify} />
+        )}
       </Modal>
 
       {/* ══ VIEW DETAIL MODAL ══ */}
