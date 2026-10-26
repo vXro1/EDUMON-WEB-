@@ -64,9 +64,14 @@ export const AuthProvider = ({ children }) => {
     });
   }, [logout]);
 
+  // padres y docentes no se desconectan por inactividad (su sesión dura un año y se
+  // renueva sola en el backend); administradores sí, porque manejan datos de todos
+  const sinCierrePorInactividad = ["padre", "padre/tutor", "docente"].includes(user?.rol);
+
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || sinCierrePorInactividad) {
       sessionManager.stop();
+      setShowWarning(false);
       return;
     }
 
@@ -77,7 +82,7 @@ export const AuthProvider = ({ children }) => {
     });
 
     return () => sessionManager.stop();
-  }, [isAuthenticated, logout]);
+  }, [isAuthenticated, sinCierrePorInactividad, logout]);
 
   // un solo socket compartido para toda la app; cada pantalla se suscribe con getSocket()?.on(...)
   useEffect(() => {

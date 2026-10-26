@@ -35,6 +35,11 @@ export const usersGetPadreInfo = (padreId) => apiFetch(`/users/padre/${padreId}/
 export const usersUpdate = (id, body) =>
   apiFetch(`/users/${id}`, { method: 'PUT', body: JSON.stringify(body) });
 
+// el administrador cambia ({ contraseña }) o restablece a la cédula ({ restablecer: true })
+// la contraseña de un padre o docente; cierra sus sesiones abiertas
+export const usersCambiarContrasena = (id, body) =>
+  apiFetch(`/users/${id}/contrasena`, { method: 'PATCH', body: JSON.stringify(body) });
+
 export const usersDelete = (id) =>
   apiFetch(`/users/${id}`, { method: 'DELETE' });
 
