@@ -16,15 +16,13 @@ const rolePermissions = {
 
   [ROLES.SUPERADMIN]: ALL,
 
-  // el aislamiento real de admin es por institucionId, no por tipo de acción
+  // el aislamiento real de admin es por institucionId, no por tipo de acción.
+  // Puede crear y editar retos, módulos, foros y eventos de los cursos de su colegio
+  // (panel del colegio, para cubrir emergencias); los retos quedan a nombre de la
+  // docente del curso. Solo los perfiles familiares siguen siendo de cada familia.
  [ROLES.ADMIN]: ALL.filter(
     (p) =>
       ![
-        PERMISSIONS.MANAGE_TASKS,   // no puede crear/editar tareas
-        PERMISSIONS.MANAGE_MODULES, // no puede crear/editar módulos
-        PERMISSIONS.CREATE_FORO,    // no puede crear foros
-        PERMISSIONS.MANAGE_FORO, // no puede editar/eliminar/cambiar estado de foros
-        PERMISSIONS.CREATE_EVENTS,   // no puede crear eventos
         PERMISSIONS.MANAGE_FAMILY_PROFILES, // no puede crear/editar perfiles familiares
       ].includes(p)
   ),
