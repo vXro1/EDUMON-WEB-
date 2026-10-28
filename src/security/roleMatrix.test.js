@@ -32,14 +32,15 @@ describe("getPermissionsForRole", () => {
     expect(getPermissionsForRole("superadmin")).toEqual(Object.values(PERMISSIONS));
   });
 
-  it("administrador gestiona usuarios pero no crea retos, módulos, foros ni eventos", () => {
+  it("administrador gestiona usuarios y, desde el panel del colegio, retos, módulos, foros y eventos", () => {
     const perms = getPermissionsForRole("administrador");
     expect(perms).toContain(PERMISSIONS.MANAGE_USERS);
     expect(perms).toContain(PERMISSIONS.VIEW_REPORTS);
-    expect(perms).not.toContain(PERMISSIONS.MANAGE_TASKS);
-    expect(perms).not.toContain(PERMISSIONS.MANAGE_MODULES);
-    expect(perms).not.toContain(PERMISSIONS.CREATE_FORO);
-    expect(perms).not.toContain(PERMISSIONS.CREATE_EVENTS);
+    expect(perms).toContain(PERMISSIONS.MANAGE_TASKS);
+    expect(perms).toContain(PERMISSIONS.MANAGE_MODULES);
+    expect(perms).toContain(PERMISSIONS.CREATE_FORO);
+    expect(perms).toContain(PERMISSIONS.CREATE_EVENTS);
+    expect(perms).not.toContain(PERMISSIONS.MANAGE_FAMILY_PROFILES);
   });
 
   it("docente gestiona retos y califica entregas pero no gestiona usuarios", () => {
