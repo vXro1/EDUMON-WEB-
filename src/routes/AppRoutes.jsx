@@ -28,6 +28,7 @@ const PadreHomePage   = lazy(() => import("../features/dashboard/padre/pages/Pad
 const InstitucionesPage = lazy(() => import("../features/instituciones/pages/InstitucionesPage"));
 const MiInstitucionPage = lazy(() => import("../features/instituciones/pages/MiInstitucionPage"));
 const UsuariosPage      = lazy(() => import("../features/usuarios/pages/UsuariosPage"));
+const PanelColegioPage = lazy(() => import("../features/colegio/pages/PanelColegioPage"));
 const DocentesPage      = lazy(() => import("../features/docentes/pages/DocentesPage"));
 const AppMovilPage      = lazy(() => import("../features/appMovil/pages/AppMovilPage"));
 
@@ -99,6 +100,7 @@ export default function AppRoutes() {
             <Route path="/instituciones" element={<ProtectedRoute allowedRoles={["superadmin"]}><InstitucionesPage /></ProtectedRoute>} />
             <Route path="/institucion"   element={<ProtectedRoute allowedRoles={["administrador","superadmin"]}><MiInstitucionPage /></ProtectedRoute>} />
             <Route path="/usuarios"      element={<ProtectedRoute allowedRoles={["administrador","superadmin"]}><UsuariosPage /></ProtectedRoute>} />
+            <Route path="/colegio"       element={<ProtectedRoute allowedRoles={["administrador","superadmin"]}><PanelColegioPage /></ProtectedRoute>} />
             <Route path="/docentes"      element={<ProtectedRoute allowedRoles={["administrador","superadmin"]}><DocentesPage /></ProtectedRoute>} />
             <Route path="/app-movil"     element={<ProtectedRoute allowedRoles={["superadmin"]}><AppMovilPage /></ProtectedRoute>} />
 
