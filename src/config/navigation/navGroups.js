@@ -39,6 +39,7 @@ export const NAV_GROUPS = {
       group: "Gestión global",
       items: [
         { label: "Instituciones", path: "/instituciones", icon: "building" },
+        { label: "Panel del colegio", path: "/colegio",   icon: "school" },
         { label: "Usuarios",      path: "/usuarios",      icon: "users" },
       ],
     },
@@ -59,9 +60,12 @@ export const NAV_GROUPS = {
     {
       group: "Mi institución",
       items: [
+        { label: "Panel del colegio", path: "/colegio",  icon: "building" },
         { label: "Institución", path: "/institucion", icon: "school" },
         { label: "Docentes",    path: "/docentes",    icon: "chalkboard-teacher" },
+        { label: "Usuarios",    path: "/usuarios",    icon: "users" },
         { label: "Cursos",      path: "/cursos",      icon: "layers" },
+        { label: "Eventos",     path: "/eventos",     icon: "file-text" },
         { label: "Calendario",  path: "/calendario",  icon: "calendar" },
       ],
     },
