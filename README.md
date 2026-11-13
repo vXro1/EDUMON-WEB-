@@ -19,7 +19,7 @@ npm run preview    # sirve el build anterior localmente
 npm run lint
 ```
 
-No hay `.env` versionado. Si se necesita apuntar a otro backend distinto del proxy por defecto de `vite.config.js`, definir `VITE_API_URL` en un `.env.local`.
+No hay `.env` versionado; las variables están documentadas en `.env.example`. En desarrollo el proxy de `vite.config.js` apunta por defecto al backend local (`http://localhost:4000`); para otro destino, definir `VITE_API_PROXY_TARGET` en un `.env.local`.
 
 ## Docker
 
