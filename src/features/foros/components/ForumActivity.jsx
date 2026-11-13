@@ -42,7 +42,7 @@ const MiniAvatar = ({ autor }) => {
         fontSize: 10, fontWeight: 700, color: c,
       }}>
       {src && !err
-        ? <img src={src} alt="" onError={() => setErr(true)}
+        ? <img loading="lazy" decoding="async" src={src} alt="" onError={() => setErr(true)}
             style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         : init
       }

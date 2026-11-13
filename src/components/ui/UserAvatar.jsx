@@ -118,9 +118,11 @@ const UserAvatar = memo(function UserAvatar({
       onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
     >
       {hasPhoto ? (
-        <img
+        <img loading="lazy" decoding="async"
           src={user.fotoPerfilUrl}
           alt={tooltip}
+          width={size}
+          height={size}
           onError={() => setError(true)}
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />

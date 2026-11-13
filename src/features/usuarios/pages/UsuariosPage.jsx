@@ -683,7 +683,7 @@ export default function UsuariosPage() {
               <div style={{ marginBottom: 4 }}>
                 <p style={{ fontSize: 11, fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 }}>Foto de perfil</p>
                 <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-                  <img src={d.fotoPerfilUrl} alt="Foto de perfil" style={{ width: 80, height: 80, borderRadius: 12, objectFit: "cover", border: "2px solid var(--color-border)" }} />
+                  <img loading="lazy" decoding="async" src={d.fotoPerfilUrl} alt="Foto de perfil" style={{ width: 80, height: 80, borderRadius: 12, objectFit: "cover", border: "2px solid var(--color-border)" }} />
                   <a href={d.fotoPerfilUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12.5, color: "var(--color-primary)", fontWeight: 600, textDecoration: "none", display: "flex", alignItems: "center", gap: 4 }}>
                     <Eye style={{ width: 13, height: 13 }} /> Ver imagen completa
                   </a>

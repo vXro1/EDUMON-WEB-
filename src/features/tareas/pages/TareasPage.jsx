@@ -44,7 +44,7 @@ function FileChip({ file, onRemove }) {
       boxShadow: "var(--clay-pill)",
     }}>
       {isImage ? (
-        <img
+        <img loading="lazy" decoding="async"
           src={url}
           alt={file.name}
           style={{ width: 72, height: 72, objectFit: "cover", borderRadius: 8, flexShrink: 0 }}

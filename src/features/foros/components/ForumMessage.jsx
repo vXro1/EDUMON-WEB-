@@ -52,7 +52,7 @@ const FilePreview = ({ archivo }) => {
 
   if (isImg) return (
     <a href={archivo.url} target="_blank" rel="noreferrer" style={{ display: 'block', marginTop: 6 }}>
-      <img src={archivo.url} alt={archivo.nombre}
+      <img loading="lazy" decoding="async" src={archivo.url} alt={archivo.nombre}
         style={{ maxWidth: 280, maxHeight: 200, borderRadius: 8, objectFit: 'cover',
           border: '1px solid var(--color-border)' }} />
     </a>

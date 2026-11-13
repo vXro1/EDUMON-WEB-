@@ -287,7 +287,7 @@ export default function EventosPage() {
                 display: "flex",
               }}>
                 {portadaUrl && (
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={portadaUrl} alt={ev.titulo}
                     style={{ width: 90, objectFit: "cover", flexShrink: 0 }}
                   />

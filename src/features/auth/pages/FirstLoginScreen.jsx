@@ -685,7 +685,7 @@ function StepAvatar({ currentPhotoUrl, onComplete }) {
                 }}
               >
                 <span style={{ display: "block", width: "100%", height: "100%", borderRadius: "50%", overflow: "hidden" }}>
-                  <img
+                  <img loading="lazy" decoding="async"
                     src={foto.url}
                     alt={foto.nombre}
                     style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
