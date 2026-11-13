@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCursosListado } from "@/features/cursos/hooks/useListados";
 import { queryKeys } from "@/services/queryKeys";
 
 import {
@@ -24,8 +25,6 @@ import {
 } from "@/utils/credenciales";
 
 import {
-  cursosGetAll,
-  cursosGetMine,
   cursosGetById,
   cursosCreate,
   cursosUpdate,
@@ -255,16 +254,10 @@ export default function CursosPage() {
     data: cursosData,
     isLoading: loading,
     isError: cursosError,
-  } = useQuery({
-    queryKey: queryKeys.cursos.list({ alcance: isDocente ? "mios" : "todos", ...listParams }),
-    queryFn: async () => {
-      const res = isDocente ? await cursosGetMine(listParams) : await cursosGetAll(listParams);
-      const raw = (res.cursos ?? res.data ?? []).map(normalizeCurso);
-      return { cursos: raw, total: res.pagination?.total ?? raw.length };
-    },
+  } = useCursosListado({
+    alcance: isDocente ? "mios" : "todos",
+    params: listParams,
     enabled: Boolean(user),
-    placeholderData: keepPreviousData,
-    staleTime: 30_000,
   });
   const cursos = cursosData?.cursos ?? SIN_CURSOS;
   const total = cursosData?.total ?? 0;

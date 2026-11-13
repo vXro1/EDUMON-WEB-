@@ -13,6 +13,7 @@ export const queryKeys = {
   // ─── Tareas ───────────────────────────────────────────────────────────────
   tareas: {
     all:     ()         => ["tareas"],
+    list:    (params)   => ["tareas", "list", params ?? {}],
     byCurso: (cursoId)  => ["tareas", "curso", cursoId],
     detail:  (id)       => ["tareas", id],
   },
