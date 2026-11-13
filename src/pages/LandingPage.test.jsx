@@ -32,7 +32,8 @@ describe("LandingPage", () => {
   it("renderiza y carga el carrusel de módulos desde su chunk", async () => {
     renderPagina(<LandingPage />);
     // al "verse" la sección, CargarAlVer descarga y monta el carrusel
-    expect((await screen.findAllByText("Mi familia y mi identidad")).length).toBeGreaterThan(0);
+    // chunk diferido: con la suite en paralelo puede tardar más de 1 s
+    expect((await screen.findAllByText("Mi familia y mi identidad", {}, { timeout: 5000 })).length).toBeGreaterThan(0);
     expect(screen.getAllByText("Familia que dialoga").length).toBeGreaterThan(0);
   });
 });
