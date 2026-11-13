@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { usersGetDefaultPhotos, usersUpdateMyPhoto, usersUpdateMyProfile } from "@/services/usersService";
+import { usersUpdateMyPhoto, usersUpdateMyProfile } from "@/services/usersService";
+import { useFotosPredeterminadas } from "@/features/usuarios/hooks/useUsuariosListado";
 import { authChangePassword } from "@/services/authService";
 import { humanizeError } from "@/utils/humanizeError";
 import { assetUrl } from "@/utils/assetUrl";
@@ -528,34 +529,28 @@ function PrimaryButton({ onClick, disabled, loading, children }) {
 /* ══════════════════════════════════════════════════════════════
    Paso 1 — Selección de avatar
    ══════════════════════════════════════════════════════════════ */
+const SIN_FOTOS = [];
+
 function StepAvatar({ currentPhotoUrl, onComplete }) {
-  const [defaultPhotos, setDefaultPhotos] = useState([]);
-  const [loadingPhotos, setLoadingPhotos] = useState(true);
-  const [photosError,   setPhotosError]   = useState(false);
   const [selected,      setSelected]      = useState(null); // cadena URL
   const [previewUrl,    setPreviewUrl]    = useState(currentPhotoUrl ?? null);
   const [saving,        setSaving]        = useState(false);
   const [error,         setError]         = useState("");
 
-  const fetchPhotos = useCallback(async () => {
-    setLoadingPhotos(true);
-    setPhotosError(false);
-    try {
-      const data = await usersGetDefaultPhotos();
-      const fotos = data.fotos ?? [];
-      setDefaultPhotos(fotos);
-      if (currentPhotoUrl) {
-        const match = fotos.find(f => f.url === currentPhotoUrl);
-        if (match) setSelected(match.url);
-      }
-    } catch {
-      setPhotosError(true);
-    } finally {
-      setLoadingPhotos(false);
-    }
-  }, [currentPhotoUrl]);
+  const {
+    data: fotosData,
+    isLoading: loadingPhotos,
+    isError: photosError,
+    refetch: fetchPhotos,
+  } = useFotosPredeterminadas();
+  const defaultPhotos = fotosData ?? SIN_FOTOS;
 
-  useEffect(() => { fetchPhotos(); }, [fetchPhotos]);
+  // marcar como elegido el avatar actual si es uno de los predeterminados
+  useEffect(() => {
+    if (!currentPhotoUrl || !fotosData) return;
+    const match = fotosData.find(f => f.url === currentPhotoUrl);
+    if (match) setSelected(match.url);
+  }, [fotosData, currentPhotoUrl]);
 
   const handleSelectDefault = (url) => {
     setSelected(prev => prev === url ? null : url);
@@ -650,7 +645,7 @@ function StepAvatar({ currentPhotoUrl, onComplete }) {
           </p>
           <button
             type="button"
-            onClick={fetchPhotos}
+            onClick={() => fetchPhotos()}
             style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 12.5, fontWeight: 600, color: "#6366F1", background: "none", border: "none", cursor: "pointer", padding: 0 }}
           >
             <RefreshCw style={{ width: 13, height: 13 }} /> Reintentar
