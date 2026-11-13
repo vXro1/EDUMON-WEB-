@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/services/queryKeys";
 import {
   Users, Plus, Edit2, Trash2, Check,
   Star, AlertCircle, UserCircle,
@@ -209,21 +211,25 @@ export default function FamiliaPerfilesPage() {
     setTimeout(() => setToast({ msg: "", type: "success" }), 3500);
   };
 
-  const load = async () => {
+  const queryClient = useQueryClient();
+
+  const load = useCallback(async () => {
     setLoading(true);
     setApiError(false);
     try {
       const res = await perfilesGetAll();
       setTitular(res?.titular ?? null);
       setPerfiles(res?.perfiles ?? []);
+      // mantiene al día la lista en caché que muestra Mi perfil
+      queryClient.setQueryData(queryKeys.perfiles.all(), res?.perfiles ?? []);
     } catch {
       setApiError(true);
     } finally {
       setLoading(false);
     }
-  };
+  }, [queryClient]);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const openCreate = () => {
     setForm({ nombre: "", avatarUrl: "" });
