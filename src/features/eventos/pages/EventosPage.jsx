@@ -169,12 +169,41 @@ export default function EventosPage() {
       setErrors({ cursosIds: "Selecciona al menos un curso" });
       return;
     }
+    // Al editar solo se envía lo que cambió: el PUT corre los validadores del
+    // modelo y reenviar fechaInicio sin cambios hacía fallar con 400 ("debe ser
+    // futura") cualquier edición de un evento ya iniciado
+    let campos = form;
+    let enviarCursos = true;
+    if (editTarget) {
+      const original = {
+        titulo:      editTarget.titulo      ?? "",
+        descripcion: editTarget.descripcion ?? "",
+        fechaInicio: toLocalInput(editTarget.fechaInicio),
+        fechaFin:    toLocalInput(editTarget.fechaFin),
+        hora:        editTarget.hora        ?? "",
+        ubicacion:   editTarget.ubicacion   ?? "",
+        categoria:   CATEGORIA_FORM_OPTIONS.includes(editTarget.categoria) ? editTarget.categoria : "institucional",
+      };
+      campos = Object.fromEntries(Object.entries(form).filter(([k, v]) => v !== original[k]));
+      // el validador compara fechaFin con la fechaInicio del body: van juntas
+      if ("fechaInicio" in campos || "fechaFin" in campos) {
+        campos.fechaInicio = form.fechaInicio;
+        campos.fechaFin = form.fechaFin;
+      }
+      const cursosOriginales = (editTarget.cursosIds ?? editTarget.cursos ?? []).map(c => c._id ?? c);
+      enviarCursos = cursosOriginales.length !== cursosIds.length
+        || cursosIds.some(id => !cursosOriginales.includes(id));
+      if (Object.keys(campos).length === 0 && !enviarCursos && !imagenPortada && !adjunto) {
+        setShowForm(false);
+        return;
+      }
+    }
     setSaving(true);
     setErrors({});
     try {
       const fd = new FormData();
-      Object.entries(form).forEach(([k, v]) => { if (v) fd.append(k, v); });
-      cursosIds.forEach(id => fd.append("cursosIds[]", id));
+      Object.entries(campos).forEach(([k, v]) => { if (v) fd.append(k, v); });
+      if (enviarCursos) cursosIds.forEach(id => fd.append("cursosIds[]", id));
       if (imagenPortada) fd.append("imagenPortada", imagenPortada);
       if (adjunto)       fd.append("adjunto", adjunto);
 
