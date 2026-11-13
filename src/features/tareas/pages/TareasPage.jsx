@@ -6,14 +6,16 @@ import {
 } from "lucide-react";
 
 // API
-import { cursosGetMine, cursosGetAllParticipantes, modulosGetByCurso } from "@/features/cursos/services/cursosService";
-import { tareasGetAll, tareasGetById, tareasCreate, tareasUpdate, tareasCerrar, tareasDelete } from "@/features/cursos/services/tareasService";
+import { cursosGetAllParticipantes, modulosGetByCurso } from "@/features/cursos/services/cursosService";
+import { tareasGetById, tareasCreate, tareasUpdate, tareasCerrar, tareasDelete } from "@/features/cursos/services/tareasService";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/services/queryKeys";
+import { useCursosListado, useTareasListado } from "@/features/cursos/hooks/useListados";
 
 // Hooks & Context
 import { useSearch } from "@/context/SearchContext";
 
 // Utils
-import { normalizeCurso } from "@/lib/normalizers/curso";
 import { normalizeTarea } from "@/lib/normalizers/tarea";
 import { humanizeError } from "@/utils/humanizeError";
 import { sanitizeRichText, isRichTextEmpty } from "@/utils/richText";
@@ -24,6 +26,8 @@ import { Sk, EmptyState, Field } from "../../cursos/components/shared/ui";
 import { makeNotify } from "@/features/cursos/components/shared/helpers";
 
 /* ── Preview de archivo adjunto (nuevo, aún no subido) ──────────────── */
+const SIN_DATOS = [];
+
 function FileChip({ file, onRemove }) {
   const isImage = file.type.startsWith("image/");
   const [url, setUrl] = useState(null);
@@ -169,11 +173,8 @@ export default function TareasPage() {
   const navigate = useNavigate();
   const { registerSearchHandler } = useSearch();
 
-  const [tareas,        setTareas]        = useState([]);
-  const [cursos,        setCursos]        = useState([]);
   const [modulos,       setModulos]       = useState([]);
   const [participantes, setParticipantes] = useState([]);
-  const [loading,       setLoading]       = useState(true);
   const [search,        setSearch]        = useState("");
   const [filterCurso,   setFilterCurso]   = useState("");
   const [filterEstado,  setFilterEstado]  = useState("");
@@ -215,12 +216,9 @@ export default function TareasPage() {
     []
   );
 
-  // ── Cursos del usuario ────────────────────────────────────────────────────
-  useEffect(() => {
-    cursosGetMine({ limit: 50 })
-      .then(d => setCursos((d.cursos ?? []).map(normalizeCurso)))
-      .catch(() => {});
-  }, []);
+  // ── Cursos del usuario (misma caché que el resto de listados de cursos) ───
+  const { data: cursosData } = useCursosListado({ alcance: "mios", params: { limit: 50 } });
+  const cursos = cursosData?.cursos ?? SIN_DATOS;
 
   // ── Módulos y participantes al cambiar curso en el form de CREAR ──────────
   useEffect(() => {
@@ -251,19 +249,19 @@ export default function TareasPage() {
   }, [editForm.cursoId]);
 
   // ── Carga de tareas ───────────────────────────────────────────────────────
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const data = await tareasGetAll({ limit: 200 });
-      setTareas((data.tareas ?? []).map(normalizeTarea));
-    } catch {
-      notify("Error al cargar retos", "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [notify]);
+  const queryClient = useQueryClient();
+  const { data: tareasData, isLoading: loading, isError: tareasError } = useTareasListado({ limit: 200 });
+  const tareas = tareasData ?? SIN_DATOS;
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    if (tareasError) notify("Error al cargar retos", "error");
+  }, [tareasError, notify]);
+
+  // tras crear/editar/cerrar/eliminar: invalida todos los listados de retos en caché
+  const load = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: queryKeys.tareas.all() }),
+    [queryClient]
+  );
 
   // ── Búsqueda global ───────────────────────────────────────────────────────
   useEffect(() => {
