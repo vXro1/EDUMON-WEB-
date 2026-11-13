@@ -114,7 +114,7 @@ export default AuthLayout;
    crudo --edu-blue-500/700/900 (var(--color-primary) resolvería al
    morado de :root, no al azul del dashboard).
 ───────────────────────────────────────────── */
-export const AUTH_CSS = `
+const AUTH_CSS = `
 .auth-root {
   position: relative;
   height: 100vh;

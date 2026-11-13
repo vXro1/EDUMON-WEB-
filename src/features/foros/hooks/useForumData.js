@@ -1,15 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import {
-  forosGetById,
-  forosGetByCurso,
-  forosCambiarEstado,
-  forosDashboard,
-  mensajesForoGetByForo,
-  mensajesForoCreate,
-  mensajesForoToggleLike,
-  mensajesForoDelete,
-  mensajesForoUpdate,
-} from '@/features/foros/services/forosService';
+import { forosGetById, forosGetByCurso, forosCambiarEstado, mensajesForoGetByForo, mensajesForoCreate, mensajesForoToggleLike, mensajesForoDelete, mensajesForoUpdate } from '@/features/foros/services/forosService';
 import { normalizeForo, normalizeMensajes } from '@/lib/normalizers/foro';
 import { queryKeys } from '@/services/queryKeys';
 
@@ -55,19 +45,6 @@ export const forosPorCursoQuery = (cursoId) => ({
 });
 
 export const useForumsByCourse = (cursoId) => useQuery(forosPorCursoQuery(cursoId));
-
-// Dashboard: degradación elegante si el endpoint del backend aún no existe.
-export const useForumDashboard = (foroId) =>
-  useQuery({
-    queryKey:  queryKeys.foros.dashboard(foroId),
-    queryFn:   async () => {
-      try { return await forosDashboard(foroId); }
-      catch { return null; }
-    },
-    enabled:   !!foroId,
-    staleTime: 60_000,
-    retry:     false,
-  });
 
 // ─── Mutaciones ───────────────────────────────────────────────────────────────
 

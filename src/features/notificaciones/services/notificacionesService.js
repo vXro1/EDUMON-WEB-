@@ -1,8 +1,5 @@
 import { apiFetch } from '@/services/core/apiClient';
 
-export const notificacionesCreate = (body) =>
-  apiFetch('/notificaciones', { method: 'POST', body: JSON.stringify(body) });
-
 // aviso del colegio (push + app) a un curso o a todo el colegio; ver PanelColegioPage
 export const notificacionesEnviarAviso = (body) =>
   apiFetch('/notificaciones/enviar', { method: 'POST', body: JSON.stringify(body), timeoutMs: 120_000 });
@@ -15,14 +12,8 @@ export const notificacionesGetAll = (params = {}) => {
 export const notificacionesGetConteoNoLeidas = () =>
   apiFetch('/notificaciones/conteo-no-leidas');
 
-export const notificacionesGetById = (id) =>
-  apiFetch(`/notificaciones/${id}`);
-
 export const notificacionesMarcarLeida = (id) =>
   apiFetch(`/notificaciones/${id}/leer`, { method: 'PATCH' });
-
-export const notificacionesMarcarMultiplesLeidas = (body) =>
-  apiFetch('/notificaciones/leer-multiples', { method: 'PATCH', body: JSON.stringify(body) });
 
 export const notificacionesMarcarTodasLeidas = () =>
   apiFetch('/notificaciones/leer-todas', { method: 'PATCH' });

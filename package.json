@@ -15,7 +15,6 @@
     "dompurify": "^3.4.14",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
-    "firebase": "^12.13.0",
     "lucide-react": "^0.469.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",

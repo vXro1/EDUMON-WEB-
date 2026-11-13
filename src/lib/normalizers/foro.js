@@ -4,7 +4,7 @@ import { assetUrl } from "@/utils/assetUrl";
 /**
  * Normaliza archivos del foro
  */
-export function normalizeArchivosForo(archivos) {
+function normalizeArchivosForo(archivos) {
   if (!Array.isArray(archivos)) return [];
 
   return archivos.map((archivo, index) => ({
@@ -55,7 +55,7 @@ export function normalizeArchivosForo(archivos) {
 
 // currentUserId: el listado no trae yaLeDioLike (solo la respuesta del toggle
 // individual la tiene), así que se deriva comparando contra likedBy
-export function normalizeMensaje(mensaje, currentUserId = null) {
+function normalizeMensaje(mensaje, currentUserId = null) {
   if (!mensaje) return null;
 
   const likedBy = Array.isArray(mensaje.likedBy) ? mensaje.likedBy : [];
@@ -247,10 +247,3 @@ export function normalizeForo(foro) {
   };
 }
 
-/**
- * Normaliza múltiples foros
- */
-export function normalizeForos(foros) {
-  if (!Array.isArray(foros)) return [];
-  return foros.map(normalizeForo).filter(Boolean);
-}

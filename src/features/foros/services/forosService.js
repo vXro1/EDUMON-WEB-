@@ -10,11 +10,6 @@ export const forosGetByCurso = (cursoId) =>
 
 export const forosGetById = (id) => apiFetch(`/foros/${id}`);
 
-export const forosDashboard = (id) => apiFetch(`/foros/${id}/dashboard`);
-
-export const forosUpdate = (id, body) =>
-  apiFetch(`/foros/${id}`, { method: 'PUT', body: JSON.stringify(body) });
-
 export const forosCambiarEstado = (id, body) =>
   apiFetch(`/foros/${id}/estado`, { method: 'PATCH', body: JSON.stringify(body) });
 

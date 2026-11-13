@@ -199,7 +199,7 @@ function buildSheetXml(rows, { dataNormalXfId, dataZebraXfId, colWidths }) {
  * @param {string} [sheetName]
  * @returns {Uint8Array}
  */
-export function buildXlsxBytes(rows, sheetName = "Hoja1") {
+function buildXlsxBytes(rows, sheetName = "Hoja1") {
   const numCols = rows.reduce((max, row) => Math.max(max, row.length), 0);
   const { xml: styles, dataNormalXfId, dataZebraXfId } = buildStylesXml(numCols);
   const colWidths = computeColWidths(rows);

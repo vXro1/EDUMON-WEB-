@@ -161,36 +161,3 @@ export default function Badge({
   );
 }
 
-/* ════════════════════════════════════════════════════════════════════════
-   NotifBadge — contador de notificaciones (el punto rojo del ícono)
-════════════════════════════════════════════════════════════════════════ */
-export function NotifBadge({ count = 0, variant = "error" }) {
-  injectOnce();
-  const p = PALETTE[variant] ?? PALETTE.error;
-  const label = count > 99 ? "99+" : String(count);
-
-  return (
-    <span
-      aria-label={`${label} notificaciones`}
-      style={{
-        display:        "inline-flex",
-        alignItems:     "center",
-        justifyContent: "center",
-        minWidth:       "18px",
-        height:         "18px",
-        padding:        "0 4px",
-        borderRadius:   "100px",
-        background:     p.ring,
-        boxShadow:      "var(--clay-pill)",
-        color:          "#fff",
-        fontSize:       "10px",
-        fontWeight:     700,
-        lineHeight:     1,
-        fontFamily:     "var(--font-sans)",
-        animation:      "badge-in 150ms ease both",
-      }}
-    >
-      {label}
-    </span>
-  );
-}

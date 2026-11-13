@@ -14,8 +14,6 @@ export const eventosGetAll = (params = {}) => {
 
 export const eventosGetHoy = () => apiFetch('/eventos/hoy');
 
-export const eventosGetById = (id) => apiFetch(`/eventos/${id}`);
-
 export const eventosUpdate = (id, formData) =>
   apiFetchFormData(`/eventos/${id}`, { method: 'PUT', body: formData });
 

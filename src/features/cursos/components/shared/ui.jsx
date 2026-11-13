@@ -63,22 +63,6 @@ export function Field({ label, children }) {
   );
 }
 
-export function StTextarea({ ...props }) {
-  return (
-    <textarea
-      {...props}
-      style={{
-        width: "100%", padding: "9px 12px", borderRadius: 8,
-        border: "1.5px solid var(--color-border)", background: "var(--color-bg)",
-        color: "var(--color-text)", fontSize: 13.5, outline: "none",
-        resize: "vertical", fontFamily: "inherit", boxSizing: "border-box",
-      }}
-      onFocus={(e) => (e.target.style.borderColor = "var(--color-primary)")}
-      onBlur={(e)  => (e.target.style.borderColor = "var(--color-border)")}
-    />
-  );
-}
-
 export function InfoBlock({ label, children }) {
   return (
     <div style={{

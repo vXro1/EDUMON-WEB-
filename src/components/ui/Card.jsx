@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 /* ─── BADGE ─── */
-export function EdumonBadge({ children, className = "" }) {
+function EdumonBadge({ children, className = "" }) {
   return (
     <span
       className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${className}`}
@@ -12,49 +12,6 @@ export function EdumonBadge({ children, className = "" }) {
     >
       {children}
     </span>
-  );
-}
-
-/* ─── PROGRESS ─── */
-export function EdumonProgress({ value = 0 }) {
-  const pct = Math.min(100, Math.max(0, value));
-
-  const barColor =
-    pct >= 80
-      ? "var(--color-success)"
-      : pct >= 50
-      ? "var(--color-primary)"
-      : "var(--color-secondary)";
-
-  return (
-    <div className="mt-3">
-      <div
-        className="flex justify-between text-xs mb-1.5"
-        style={{ color: "var(--color-text-muted)" }}
-      >
-        <span>Progreso</span>
-        <span className="font-semibold" style={{ color: barColor }}>
-          {pct}%
-        </span>
-      </div>
-
-      <div
-        className="w-full h-1.5 rounded-full overflow-hidden"
-        style={{ background: "var(--color-border)" }}
-        role="progressbar"
-        aria-valuenow={pct}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      >
-        <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{
-            width: `${pct}%`,
-            background: barColor,
-          }}
-        />
-      </div>
-    </div>
   );
 }
 

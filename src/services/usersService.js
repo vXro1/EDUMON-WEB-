@@ -30,8 +30,6 @@ export const usersGetDefaultPhotos = async () => {
 
 export const usersGetById = (id) => apiFetch(`/users/${id}`);
 
-export const usersGetPadreInfo = (padreId) => apiFetch(`/users/padre/${padreId}/info`);
-
 export const usersUpdate = (id, body) =>
   apiFetch(`/users/${id}`, { method: 'PUT', body: JSON.stringify(body) });
 
@@ -46,5 +44,3 @@ export const usersReactivate = (id) =>
 export const usersDelete = (id) =>
   apiFetch(`/users/${id}`, { method: 'DELETE' });
 
-export const usersUpdateFcmToken = (body) =>
-  apiFetch('/users/me/fcm-token', { method: 'PUT', body: JSON.stringify(body) });

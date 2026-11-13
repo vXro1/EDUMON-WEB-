@@ -7,10 +7,7 @@ export function contrasenaInicial(cedula) {
 export const TEXTO_CONTRASENA_INICIAL =
   "La contraseña inicial es la cédula del usuario. Se le pedirá cambiarla en su primer ingreso.";
 
-export const TEXTO_CONTRASENA_INICIAL_CORTO =
-  "Contraseña inicial: la cédula del usuario.";
-
-export const CEDULA_REGEX = /^\d{6,10}$/;
+const CEDULA_REGEX = /^\d{6,10}$/;
 
 export const CEDULA_ERROR = "La cédula debe tener entre 6 y 10 dígitos numéricos";
 
@@ -23,8 +20,8 @@ export function isValidCedula(value) {
 }
 
 // contraseña nueva: mismas reglas que el backend — 6-128 caracteres, mayúscula, minúscula, número
-export const PASSWORD_MIN = 6;
-export const PASSWORD_MAX = 128;
+const PASSWORD_MIN = 6;
+const PASSWORD_MAX = 128;
 
 export const PASSWORD_RULES = [
   { label: `${PASSWORD_MIN}+ caracteres`, test: (p) => p.length >= PASSWORD_MIN },
