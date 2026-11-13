@@ -5,7 +5,10 @@ import {
   Eye, ExternalLink, Globe, Calendar, Shield,
   Trash2, AlertCircle,
 } from "lucide-react";
-import { institucionesGetAll, institucionesCreate, institucionesUpdate, institucionesDelete } from "@/services/institucionesService";
+import { institucionesCreate, institucionesUpdate, institucionesDelete } from "@/services/institucionesService";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/services/queryKeys";
+import { useInstituciones } from "@/features/instituciones/hooks/useInstituciones";
 import { usersGetById } from "@/services/usersService";
 import { Modal, Toast, Button } from "@/components";
 import { Input, PhoneInput } from "@/components";
@@ -19,6 +22,8 @@ import {
 } from "@/utils/credenciales";
 
 // ── Fila esqueleto ────────────────────────────────────────────
+const SIN_INSTITUCIONES = [];
+
 function SkRow() {
   return (
     <tr>
@@ -121,8 +126,6 @@ const INIT_EDIT = { nombre: "", direccion: "", telefono: "", correo: "" };
 
 // ─────────────────────────────────────────────────────────────
 export default function InstitucionesPage() {
-  const [instituciones, setInstituciones] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [toast, setToast] = useState({ msg: "", type: "success" });
   const [showCreate, setShowCreate] = useState(false);
@@ -141,16 +144,19 @@ export default function InstitucionesPage() {
     setTimeout(() => setToast({ msg: "", type: "success" }), 3500);
   };
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await institucionesGetAll();
-      setInstituciones(res.instituciones ?? []);
-    } catch { notify("Error al cargar instituciones", "error"); }
-    finally { setLoading(false); }
-  }, []);
+  const queryClient = useQueryClient();
+  const { data: institucionesData, isLoading: loading, isError: institucionesError } = useInstituciones();
+  const instituciones = institucionesData ?? SIN_INSTITUCIONES;
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    if (institucionesError) notify("Error al cargar instituciones", "error");
+  }, [institucionesError]);
+
+  // tras crear/editar/eliminar
+  const load = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: queryKeys.instituciones.all() }),
+    [queryClient]
+  );
 
   const filtered = instituciones.filter((inst) => {
     const q = search.toLowerCase();
