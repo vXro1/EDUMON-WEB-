@@ -11,7 +11,11 @@ import {
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { normalizeUser }from "@/lib/normalizers";
 
-import { usersGetAll, usersGetById, usersCreate, usersUpdate, usersDelete, usersReactivate } from "@/services/usersService";
+import { usersGetById, usersCreate, usersUpdate, usersDelete, usersReactivate } from "@/services/usersService";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/services/queryKeys";
+import { useUsuariosListado } from "@/features/usuarios/hooks/useUsuariosListado";
+import { usePaginaPorFiltros } from "@/hooks/usePaginaPorFiltros";
 import CambiarContrasenaSeccion from "../components/CambiarContrasenaSeccion";
 import { institucionesGetMine, institucionesGetAll } from "@/services/institucionesService";
 
@@ -117,6 +121,8 @@ const INIT = { nombre: "", apellido: "", cedula: "", correo: "", telefono: "", r
 // Maps frontend display role to the value the backend validator accepts
 const toApiRol = (rol) => rol === "padre/tutor" ? "padre" : rol;
 const LIMIT = 15;
+const SIN_USUARIOS = [];
+const PAGINACION_VACIA = { currentPage: 1, totalPages: 1, totalUsers: 0 };
 
 
 /* ══════════════════════════════════════════════════════════════
@@ -125,11 +131,8 @@ const LIMIT = 15;
 export default function UsuariosPage() {
   const { user: me } = useAuth();
   const isSuperadmin = me?.rol === "superadmin";
+  const queryClient = useQueryClient();
 
-  const [users,        setUsers]      = useState([]);
-  const [pagination,   setPag]        = useState({ currentPage: 1, totalPages: 1, totalUsers: 0 });
-  const [loading,      setLoading]    = useState(true);
-  const [page,         setPage]       = useState(1);
   const [search,       setSearch]     = useState("");
   const [debSearch,    setDebSearch]  = useState("");
   const [rolFilter,    setRolF]       = useState("");
@@ -191,28 +194,33 @@ export default function UsuariosPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      // When text-searching, fetch all matching users so client-side filter is complete
-      const params = debSearch ? { page: 1, limit: 1000 } : { page, limit: LIMIT };
-      if (rolFilter)    params.rol    = rolFilter;
-      if (estadoFilter) params.estado = estadoFilter;
-      const res = await usersGetAll(params);
-      const list = Array.isArray(res) ? res : (res.users ?? []);
-      setUsers(list.map((u) => normalizeUser(u)));
-      setPag(res.pagination ?? { currentPage: 1, totalPages: 1, totalUsers: list.length });
-    } catch {
-      notify("Error al cargar usuarios", "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [page, debSearch, rolFilter, estadoFilter]);
+  // la página vuelve a 1 al cambiar cualquier filtro (incluida la búsqueda)
+  const [page, setPage] = usePaginaPorFiltros(`${rolFilter}|${estadoFilter}|${debSearch}`);
 
-  useEffect(() => { load(); }, [load]);
+  // When text-searching, fetch all matching users so client-side filter is complete
+  const listParams = debSearch ? { page: 1, limit: 1000 } : { page, limit: LIMIT };
+  if (rolFilter)    listParams.rol    = rolFilter;
+  if (estadoFilter) listParams.estado = estadoFilter;
+  const { data: usersData, isLoading: loading, isError: usersError } = useUsuariosListado(listParams);
+  const users = usersData?.users ?? SIN_USUARIOS;
+  const pagination = usersData?.pagination ?? PAGINACION_VACIA;
 
-  // Reset page when any filter changes (including text search)
-  useEffect(() => { setPage(1); }, [rolFilter, estadoFilter, debSearch]);
+  useEffect(() => {
+    if (usersError) notify("Error al cargar usuarios", "error");
+  }, [usersError]);
+
+  // tras crear/editar: vuelve a pedir los listados de usuarios
+  const load = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: queryKeys.usuarios.all() }),
+    [queryClient]
+  );
+
+  // suspender/activar: refleja el estado al instante en los listados en caché
+  const marcarEstado = (id, estado) => {
+    queryClient.setQueriesData({ queryKey: [...queryKeys.usuarios.all(), "list"] }, (old) =>
+      old ? { ...old, users: old.users.map((u) => (u._id === id ? { ...u, estado } : u)) } : old
+    );
+  };
 
   const filtered = users.filter((u) => {
     const q = search.toLowerCase();
@@ -390,11 +398,7 @@ export default function UsuariosPage() {
     setSaving(true);
     try {
       await usersDelete(delTarget._id);
-      setUsers((prev) =>
-        prev.map((u) =>
-          u._id === delTarget._id ? { ...u, estado: "suspendido" } : u
-        )
-      );
+      marcarEstado(delTarget._id, "suspendido");
       notify("Usuario suspendido");
       setDelTarget(null);
     } catch (err) {
@@ -411,11 +415,7 @@ export default function UsuariosPage() {
     try {
       // el backend rechaza "estado" en PUT /users/:id; reactivar tiene su propia ruta
       await usersReactivate(activTarget._id);
-      setUsers((prev) =>
-        prev.map((u) =>
-          u._id === activTarget._id ? { ...u, estado: "activo" } : u
-        )
-      );
+      marcarEstado(activTarget._id, "activo");
       notify("Usuario activado correctamente");
       setActivTarget(null);
     } catch (err) {

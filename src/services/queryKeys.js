@@ -50,8 +50,9 @@ export const queryKeys = {
 
   // ─── Usuarios ─────────────────────────────────────────────────────────────
   usuarios: {
-    all:    ()   => ["usuarios"],
-    detail: (id) => ["usuarios", id],
+    all:    ()       => ["usuarios"],
+    list:   (params) => ["usuarios", "list", params ?? {}],
+    detail: (id)     => ["usuarios", id],
   },
 
   // ─── Sesiones ─────────────────────────────────────────────────────────────
