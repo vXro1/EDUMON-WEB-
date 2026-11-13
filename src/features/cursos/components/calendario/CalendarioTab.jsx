@@ -4,6 +4,7 @@ import { eventosDelete, eventosCreateSimple, eventosUpdateSimple } from "@/featu
 import CalendarWidget from "@/components/ui/CalendarWidget";
 import { AppModal, Button, Input, Textarea, Select } from "@/components";
 import { parseValidationErrors, summarizeValidationErrors } from "@/utils/parseValidationErrors";
+import { cuerpoEvento, cambiosEvento, validarEvento, formDesdeEvento } from "@/features/eventos/utils/eventoForm";
 
 const CATEGORIAS = [
   { value: "escuela_padres", label: "Escuela de padres" },
@@ -28,19 +29,8 @@ function FieldError({ message }) {
 // ─── Modal crear / editar evento ─────────────────────────────────────────
 function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
   const isEdit = !!evento;
-  const [form,   setForm]   = useState(
-    isEdit
-      ? {
-          titulo:      evento.titulo      ?? "",
-          descripcion: evento.descripcion ?? "",
-          fechaInicio: evento.fechaInicio ? evento.fechaInicio.slice(0, 10) : "",
-          fechaFin:    evento.fechaFin    ? evento.fechaFin.slice(0, 10)    : "",
-          hora:        evento.hora        ?? "",
-          ubicacion:   evento.ubicacion   ?? "",
-          categoria:   evento.categoria   ?? "institucional",
-        }
-      : EMPTY_FORM
-  );
+  const [original] = useState(() => (isEdit ? formDesdeEvento(evento) : EMPTY_FORM));
+  const [form,   setForm]   = useState(original);
   const [saving, setSaving] = useState(false);
   const [error,  setError]  = useState("");
   // Errores específicos por campo, ej: { fechaInicio: "La fecha de inicio debe ser futura" }
@@ -59,24 +49,15 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
   };
 
   const handleSave = async () => {
-    if (!form.titulo.trim() || !form.fechaInicio) {
-      setError("El título y la fecha de inicio son requeridos.");
-      return;
-    }
+    // editar: solo lo que cambió; crear: todo
+    const body = isEdit ? cambiosEvento(original, form) : { ...cuerpoEvento(form), cursosIds: [cursoId] };
+    if (isEdit && Object.keys(body).length === 0) { onClose(); return; }
+    const invalido = validarEvento(form, isEdit ? Object.keys(body) : null);
+    if (invalido) { setError(invalido); return; }
     setSaving(true);
     setError("");
     setFieldErrors({});
     try {
-      const body = {
-        titulo:      form.titulo.trim(),
-        descripcion: form.descripcion.trim(),
-        fechaInicio: form.fechaInicio,
-        fechaFin:    form.fechaFin || form.fechaInicio,
-        hora:        form.hora,
-        ubicacion:   form.ubicacion.trim(),
-        categoria:   form.categoria,
-      };
-      if (!isEdit) body.cursosIds = [cursoId];
 
       if (isEdit) {
         await eventosUpdateSimple(evento._id ?? evento.id, body);
