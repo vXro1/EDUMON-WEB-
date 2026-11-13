@@ -221,25 +221,3 @@ export function normalizeUser(user) {
   };
 }
 
-/**
- * Normaliza múltiples usuarios
- */
-export function normalizeUsers(users) {
-  if (!Array.isArray(users)) return [];
-  return users
-    .map(normalizeUser)
-    .filter(Boolean);
-}
-
-/**
- * Convierte usuarios a mapa por ID
- */
-export function normalizeUsersMap(users) {
-  return normalizeUsers(users).reduce(
-    (acc, user) => {
-      acc[user.id] = user;
-      return acc;
-    },
-    {}
-  );
-}

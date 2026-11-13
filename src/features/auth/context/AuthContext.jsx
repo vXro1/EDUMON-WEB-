@@ -13,7 +13,7 @@ import { sessionManager } from "../../../services/core/sessionManager";
 import { connectSocket, disconnectSocket } from "@/lib/socket";
 import { normalizeUser } from "@/lib/normalizers";
 
-export const UserContext = createContext(null);
+const UserContext = createContext(null);
 export const AuthContext = createContext(null);
 
 const PUBLIC_MARKETING_PATHS = ["/", "/tutoriales", "/demo"];

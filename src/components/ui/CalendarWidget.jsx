@@ -56,7 +56,7 @@ function urgency(fecha) {
   return           { variant: "success",  color: "#22c55e", label: "Próxima"    };
 }
 
-export function itemColor(item) {
+function itemColor(item) {
   if (item.tipo === "tarea") return urgency(item.fecha).color;
   return CATEGORIA_COLOR[item.categoria] ?? "#607D8B";
 }

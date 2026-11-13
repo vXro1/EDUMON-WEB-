@@ -7,7 +7,7 @@ const EJEMPLOS = [
   ["Práctica guiada",         "Ejercicios con acompañamiento docente"],
 ];
 
-export function generarContenidoCsvModulos() {
+function generarContenidoCsvModulos() {
   const encabezado = COLUMNAS.join(",");
   const filas = EJEMPLOS.map((fila) => fila.map((v) => `"${v}"`).join(","));
   // BOM UTF-8 → Excel en Windows lo detecta correctamente

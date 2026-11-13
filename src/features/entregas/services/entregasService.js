@@ -13,15 +13,8 @@ export const entregasGetByTarea = (tareaId, params = {}) => {
   return apiFetch(`/entregas/tarea/${tareaId}${qs ? `?${qs}` : ''}`);
 };
 
-export const entregasGetByPadre = (padreId, params = {}) => {
-  const qs = new URLSearchParams(params).toString();
-  return apiFetch(`/entregas/padre/${padreId}${qs ? `?${qs}` : ''}`);
-};
-
 export const entregasGetMineByTarea = (tareaId) =>
   apiFetch(`/entregas/mis-entregas/${tareaId}`);
-
-export const entregasGetById = (id) => apiFetch(`/entregas/${id}`);
 
 export const entregasUpdate = (id, formData) =>
   apiFetchFormData(`/entregas/${id}`, { method: 'PUT', body: formData });
@@ -31,12 +24,6 @@ export const entregasEnviar = (id) =>
 
 export const entregasCalificar = (id, body) =>
   apiFetch(`/entregas/${id}/calificar`, { method: 'PATCH', body: JSON.stringify(body) });
-
-export const entregasDelete = (id) =>
-  apiFetch(`/entregas/${id}`, { method: 'DELETE' });
-
-export const entregasDeleteArchivo = (entregaId, archivoId) =>
-  apiFetch(`/entregas/${entregaId}/archivos/${archivoId}`, { method: 'DELETE' });
 
 // Objeto compatible con el patrón anterior (CursoEntregasTab lo usa)
 const entregasServiceCompat = {

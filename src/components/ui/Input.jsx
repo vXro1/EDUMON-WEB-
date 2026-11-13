@@ -290,27 +290,4 @@ export const Checkbox = forwardRef(function Checkbox({
   );
 });
 
-/* ══════════════════════════════════════════════════════════════
-   BOTÓN DE OPCIÓN
-   ══════════════════════════════════════════════════════════════ */
-export const Radio = forwardRef(function Radio({
-  label,
-  disabled  = false,
-  className = "",
-  ...rest
-}, ref) {
-  return (
-    <label className={`check-label ${className}`}>
-      <input
-        ref={ref}
-        type="radio"
-        className="radio-input"
-        disabled={disabled}
-        {...rest}
-      />
-      {label && <span>{label}</span>}
-    </label>
-  );
-});
-
 export default Input;

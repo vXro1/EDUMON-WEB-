@@ -5,7 +5,7 @@ import { assetUrl } from "@/utils/assetUrl";
 /**
  * Normaliza archivos adjuntos
  */
-export function normalizeArchivos(archivos) {
+function normalizeArchivos(archivos) {
   if (!Array.isArray(archivos)) return [];
 
   return archivos.map((archivo, index) => ({
@@ -221,32 +221,6 @@ export function normalizeEntrega(data) {
 }
 
 /**
- * Normaliza y enriquece entrega con cache
- */
-export function normalizeAndEnrichEntrega(data, cache = {}) {
-  if (!data) return null;
-
-  const padreData = cache.padres?.[data.padreId];
-  const tareaData = cache.tareas?.[data.tareaId];
-  const docenteData = cache.docentes?.[data.calificacion?.docenteId];
-
-  return normalizeEntrega({
-    ...data,
-
-    padre: padreData || data.padre,
-
-    tarea: tareaData || data.tarea,
-
-    calificacion: data.calificacion
-      ? {
-          ...data.calificacion,
-          docente: docenteData || data.calificacion.docente,
-        }
-      : null,
-  });
-}
-
-/**
  * Normaliza múltiples entregas
  */
 export function normalizeEntregas(entregas) {
@@ -254,121 +228,3 @@ export function normalizeEntregas(entregas) {
   return entregas.map(normalizeEntrega).filter(Boolean);
 }
 
-/**
- * Enriquecer múltiples entregas usando cache externo
- */
-export function normalizeAndEnrichEntregas(entregas, cache = {}) {
-  if (!Array.isArray(entregas)) return [];
-  return entregas
-    .map((entrega) => normalizeAndEnrichEntrega(entrega, cache))
-    .filter(Boolean);
-}
-export async function enrichEntregasData(entregas) {
-  if (!Array.isArray(entregas) || entregas.length === 0) {
-    return [];
-  }
-
-  // Importación dinámica para evitar problemas de inicialización circular con Vite
-  const [{ usersGetById }, { tareasGetById }] = await Promise.all([
-    import("@/services/usersService"),
-    import("@/features/cursos/services/tareasService"),
-  ]);
-
-  const cache = {
-    padres: {},
-    tareas: {},
-    docentes: {},
-  };
-
-  try {
-    const padreIds = [
-      ...new Set(
-        entregas
-          .map((e) => e.padreId)
-          .filter((id) => id && typeof id === "string")
-      ),
-    ];
-
-    const tareaIds = [
-      ...new Set(
-        entregas
-          .map((e) => e.tareaId)
-          .filter((id) => id && typeof id === "string")
-      ),
-    ];
-
-    const docenteIds = [
-      ...new Set(
-        entregas
-          .flatMap((e) =>
-            e.calificacion?.docenteId
-              ? [e.calificacion.docenteId]
-              : []
-          )
-          .filter((id) => id && typeof id === "string")
-      ),
-    ];
-
-    const promises = [];
-
-    // Padres
-    for (const padreId of padreIds) {
-      promises.push(
-        usersGetById(padreId)
-          .then((data) => {
-            cache.padres[padreId] = data.user || data;
-          })
-          .catch(() => {
-            cache.padres[padreId] = null;
-          })
-      );
-    }
-
-    // Tareas
-    for (const tareaId of tareaIds) {
-      promises.push(
-        tareasGetById(tareaId)
-          .then((data) => {
-            cache.tareas[tareaId] = data.tarea || data;
-          })
-          .catch(() => {
-            cache.tareas[tareaId] = null;
-          })
-      );
-    }
-
-    // Docentes
-    for (const docenteId of docenteIds) {
-      promises.push(
-        usersGetById(docenteId)
-          .then((data) => {
-            cache.docentes[docenteId] = data.user || data;
-          })
-          .catch(() => {
-            cache.docentes[docenteId] = null;
-          })
-      );
-    }
-
-    await Promise.all(promises);
-
-    return entregas.map((entrega) =>
-      normalizeAndEnrichEntrega(
-        entrega,
-        cache
-      )
-    );
-  } catch (err) {
-    console.error(
-      "❌ Error en enrichEntregasData:",
-      err
-    );
-
-    return entregas.map((entrega) =>
-      normalizeAndEnrichEntrega(
-        entrega,
-        {}
-      )
-    );
-  }
-}

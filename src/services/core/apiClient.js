@@ -1,4 +1,4 @@
-import { queueRequest, makeKey, abortAll } from './requestQueue';
+import { queueRequest, makeKey } from './requestQueue';
 import { requestInterceptors, responseInterceptors } from './interceptors';
 
 // Solo utilidades base (SIN endpoints aquí)
@@ -15,8 +15,6 @@ let _handling401 = false;
 
 // El proveedor de token debe ser registrado por authService para evitar leer localStorage aquí
 let _tokenProvider = null;
-export const setTokenProvider = (fn) => { _tokenProvider = fn; };
-
 export const registerLogoutCallback = (cb) => {
   _logoutCallback = cb;
 };
@@ -206,4 +204,3 @@ export const apiFetchFormData = async (endpoint, options = {}) => {
   return apiFetch(endpoint, opts);
 };
 
-export function cancelAllRequests() { abortAll(); }

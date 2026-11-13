@@ -43,5 +43,3 @@ export const authService = {
 };
 
 export const authChangePassword = (body) => authService.changePassword(body);
-export const authCompleteRegistro = (body) =>
-  apiFetch('/auth/completar-registro', { method: 'POST', body: JSON.stringify(body) });

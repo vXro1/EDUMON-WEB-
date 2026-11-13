@@ -122,14 +122,3 @@ export function normalizeCurso(curso) {
   };
 }
 
-export function normalizeCursos(cursos) {
-  if (!Array.isArray(cursos)) return [];
-  return cursos.map(normalizeCurso).filter(Boolean);
-}
-
-export function normalizeCursosMap(cursos) {
-  return normalizeCursos(cursos).reduce((acc, curso) => {
-    acc[curso.id] = curso;
-    return acc;
-  }, {});
-}

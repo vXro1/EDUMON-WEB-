@@ -7,7 +7,7 @@ import { assetUrl } from "@/utils/assetUrl";
  * assetUrl deja intactas las URLs absolutas (enlaces) y antepone el origen del
  * API a las rutas relativas /uploads/… de los archivos.
  */
-export function normalizeArchivosTarea(archivos) {
+function normalizeArchivosTarea(archivos) {
   if (!Array.isArray(archivos)) return [];
 
   return archivos.map((archivo, index) => ({
@@ -369,15 +369,3 @@ export function normalizeTareas(tareas) {
     .filter(Boolean);
 }
 
-/**
- * Convierte tareas a mapa por ID.
- */
-export function normalizeTareasMap(tareas) {
-  return normalizeTareas(tareas).reduce(
-    (acc, tarea) => {
-      acc[tarea.id] = tarea;
-      return acc;
-    },
-    {}
-  );
-}

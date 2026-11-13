@@ -29,13 +29,3 @@ export function isValidPhone(value) {
   return normalizePhone(value) !== null;
 }
 
-// alias histórico de toLocalPhone, se conserva por compatibilidad
-export function stripCountryCode(value) {
-  return toLocalPhone(value);
-}
-
-export function formatPhone(value) {
-  const local = toLocalPhone(value);
-  if (!/^\d{10}$/.test(local)) return value ? String(value) : "—";
-  return `${PHONE_PREFIX} ${local.slice(0, 3)} ${local.slice(3, 6)} ${local.slice(6)}`;
-}
