@@ -14,7 +14,17 @@ if grep -rlq -- "$PLACEHOLDER" /usr/share/nginx/html 2>/dev/null; then
   grep -rl -- "$PLACEHOLDER" /usr/share/nginx/html | xargs sed -i "s#$PLACEHOLDER#$RUNTIME_API_URL#g"
 fi
 
-# 2) Resuelve BACKEND_INTERNAL_URL dentro del server block de nginx.
+# 2) Precomprime los estáticos con gzip -9 para gzip_static (ver
+#    nginx.conf.template): nginx sirve el .gz ya hecho en vez de comprimir al
+#    vuelo con nivel 1. Va DESPUÉS del paso 1 a propósito: si se comprimiera en
+#    el build, los .gz guardarían el placeholder sin sustituir.
+find /usr/share/nginx/html -type f \
+  \( -name '*.js' -o -name '*.css' -o -name '*.html' -o -name '*.svg' -o -name '*.json' -o -name '*.txt' -o -name '*.xml' \) \
+  -size +1k | while read -r f; do
+  gzip -9 -c "$f" > "$f.gz"
+done
+
+# 3) Resuelve BACKEND_INTERNAL_URL dentro del server block de nginx.
 #    Restringido a esta única variable a propósito: envsubst sin lista
 #    explícita reemplazaría también las variables propias de nginx
 #    ($uri, $host, $remote_addr, etc.) por cadenas vacías y rompería el
