@@ -1,35 +1,57 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from 'react';
 import {
-  Plus, Search, GraduationCap, X, Loader2, RefreshCw,
-  Upload, CheckCircle2, AlertCircle, Download, FileSpreadsheet,
-  User, Hash, Mail, Filter, Eye, Edit2, UserX, UserCheck, Phone, Calendar, Clock,
-} from "lucide-react";
+  Plus,
+  Search,
+  GraduationCap,
+  X,
+  Loader2,
+  RefreshCw,
+  Upload,
+  CheckCircle2,
+  AlertCircle,
+  Download,
+  FileSpreadsheet,
+  User,
+  Hash,
+  Mail,
+  Filter,
+  Eye,
+  Edit2,
+  UserX,
+  UserCheck,
+  Phone,
+  Calendar,
+  Clock,
+} from 'lucide-react';
 
-import { usersGetById, usersUpdate, usersDelete, usersReactivate } from "@/services/usersService";
-import { useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/services/queryKeys";
-import { useUsuariosListado, useMarcarEstadoUsuario } from "@/features/usuarios/hooks/useUsuariosListado";
-import { usePaginaPorFiltros } from "@/hooks/usePaginaPorFiltros";
-import { institucionesCreateDocente, institucionesCreateDocentesCsv } from "@/services/institucionesService";
-import { Modal, UserAvatar, Toast, Button, Badge, Input, PhoneInput } from "@/components";
-import { Sk, EmptyState } from "@/features/cursos/components/shared/ui";
-import { normalizeUser } from "@/lib/normalizers";
-import useUserStore from "@/store/useUserStore";
-import { humanizeError, humanizeCursosActivosError } from "@/utils/humanizeError";
-import { normalizePhone, isValidPhone, PHONE_ERROR } from "@/utils/normalizePhone";
+import { usersGetById, usersUpdate, usersDelete, usersReactivate } from '@/services/usersService';
+import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/services/queryKeys';
+import { useUsuariosListado, useMarcarEstadoUsuario } from '@/features/usuarios/hooks/useUsuariosListado';
+import { usePaginaPorFiltros } from '@/hooks/usePaginaPorFiltros';
+import { institucionesCreateDocente, institucionesCreateDocentesCsv } from '@/services/institucionesService';
+import { Modal, UserAvatar, Toast, Button, Badge, Input, PhoneInput } from '@/components';
+import { Sk, EmptyState } from '@/features/cursos/components/shared/ui';
+import { normalizeUser } from '@/lib/normalizers';
+import useUserStore from '@/store/useUserStore';
+import { humanizeError, humanizeCursosActivosError } from '@/utils/humanizeError';
+import { normalizePhone, isValidPhone, PHONE_ERROR } from '@/utils/normalizePhone';
 import {
-  contrasenaInicial, TEXTO_CONTRASENA_INICIAL,
-  isValidCedula, CEDULA_ERROR, toCedula,
-} from "@/utils/credenciales";
-import { descargarPlantillaDocentesCSV, CSV_COLUMNAS_DOCENTES } from "@/components/ui/DocentesCsvTemplate";
-import { HEADER_PALETTE } from "@/utils/xlsxWriter";
+  contrasenaInicial,
+  TEXTO_CONTRASENA_INICIAL,
+  isValidCedula,
+  CEDULA_ERROR,
+  toCedula,
+} from '@/utils/credenciales';
+import { descargarPlantillaDocentesCSV, CSV_COLUMNAS_DOCENTES } from '@/components/ui/DocentesCsvTemplate';
+import { HEADER_PALETTE } from '@/utils/xlsxWriter';
 
 /* ── Fila esqueleto ─────────────────────────────────────────────────── */
 function SkRow() {
   return (
     <tr>
       {[200, 160, 140, 110, 130].map((w, i) => (
-        <td key={i} style={{ padding: "13px 16px" }}>
+        <td key={i} style={{ padding: '13px 16px' }}>
           <Sk h={14} w={w} />
         </td>
       ))}
@@ -38,10 +60,10 @@ function SkRow() {
 }
 
 function EstadoBadge({ estado }) {
-  const ok = estado === "activo";
+  const ok = estado === 'activo';
   return (
-    <Badge variant={ok ? "success" : "error"} size="sm" dot>
-      {ok ? "Activo" : "Suspendido"}
+    <Badge variant={ok ? 'success' : 'error'} size="sm" dot>
+      {ok ? 'Activo' : 'Suspendido'}
     </Badge>
   );
 }
@@ -55,12 +77,20 @@ function ActionIconBtn({ icon: Icon, title, color, bg, onClick }) {
       onMouseLeave={() => setHov(false)}
       title={title}
       style={{
-        height: 32, padding: "0 10px", borderRadius: 8,
-        border: `1px solid ${hov ? color : "var(--color-border)"}`,
-        background: hov ? bg : "var(--color-surface)",
-        color: hov ? color : "var(--color-text-muted)",
-        cursor: "pointer", display: "flex", alignItems: "center", gap: 6,
-        fontSize: 12, fontWeight: 700, whiteSpace: "nowrap", transition: "all 150ms",
+        height: 32,
+        padding: '0 10px',
+        borderRadius: 8,
+        border: `1px solid ${hov ? color : 'var(--color-border)'}`,
+        background: hov ? bg : 'var(--color-surface)',
+        color: hov ? color : 'var(--color-text-muted)',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 6,
+        fontSize: 12,
+        fontWeight: 700,
+        whiteSpace: 'nowrap',
+        transition: 'all 150ms',
       }}
     >
       <Icon style={{ width: 14, height: 14, flexShrink: 0 }} />
@@ -71,43 +101,56 @@ function ActionIconBtn({ icon: Icon, title, color, bg, onClick }) {
 
 /* ── Fila de docente ────────────────────────────────────────────────── */
 function DocenteRow({ docente: d, onView, onEdit, onSuspend, onActivate }) {
-  const suspendido = d.estado && d.estado !== "activo";
+  const suspendido = d.estado && d.estado !== 'activo';
   return (
     <tr
-      style={{ transition: "background var(--transition-fast)" }}
-      onMouseEnter={e => (e.currentTarget.style.background = "var(--color-surface-2)")}
-      onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
+      style={{ transition: 'background var(--transition-fast)' }}
+      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-surface-2)')}
+      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
     >
-      <td style={{ padding: "12px 16px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <td style={{ padding: '12px 16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <UserAvatar user={d} size={32} />
           <div>
-            <p style={{ margin: 0, fontSize: 13.5, fontWeight: 600, color: "var(--color-text)" }}>
+            <p style={{ margin: 0, fontSize: 13.5, fontWeight: 600, color: 'var(--color-text)' }}>
               {d.nombre} {d.apellido}
             </p>
-            <p style={{ margin: 0, fontSize: 11.5, color: "var(--color-text-muted)" }}>
-              {d.cedula ?? "—"}
-            </p>
+            <p style={{ margin: 0, fontSize: 11.5, color: 'var(--color-text-muted)' }}>{d.cedula ?? '—'}</p>
           </div>
         </div>
       </td>
-      <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--color-text-muted)" }}>
-        {d.correo}
-      </td>
-      <td style={{ padding: "12px 16px", fontSize: 13, color: "var(--color-text-muted)" }}>
-        {d.telefono ?? "—"}
-      </td>
-      <td style={{ padding: "12px 16px" }}>
+      <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--color-text-muted)' }}>{d.correo}</td>
+      <td style={{ padding: '12px 16px', fontSize: 13, color: 'var(--color-text-muted)' }}>{d.telefono ?? '—'}</td>
+      <td style={{ padding: '12px 16px' }}>
         <EstadoBadge estado={d.estado} />
       </td>
-      <td style={{ padding: "12px 16px" }}>
-        <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+      <td style={{ padding: '12px 16px' }}>
+        <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
           <ActionIconBtn icon={Eye} title="Ver" color="#6366F1" bg="rgba(99,102,241,0.08)" onClick={onView} />
-          <ActionIconBtn icon={Edit2} title="Editar" color="var(--color-primary)" bg="rgba(12,106,196,0.08)" onClick={onEdit} />
-          {suspendido
-            ? <ActionIconBtn icon={UserCheck} title="Activar" color="var(--edu-green-600)" bg="rgba(22,163,74,0.08)" onClick={onActivate} />
-            : <ActionIconBtn icon={UserX} title="Suspender" color="var(--color-error-hover)" bg="rgba(220,38,38,0.08)" onClick={onSuspend} />
-          }
+          <ActionIconBtn
+            icon={Edit2}
+            title="Editar"
+            color="var(--color-primary)"
+            bg="rgba(12,106,196,0.08)"
+            onClick={onEdit}
+          />
+          {suspendido ? (
+            <ActionIconBtn
+              icon={UserCheck}
+              title="Activar"
+              color="var(--edu-green-600)"
+              bg="rgba(22,163,74,0.08)"
+              onClick={onActivate}
+            />
+          ) : (
+            <ActionIconBtn
+              icon={UserX}
+              title="Suspender"
+              color="var(--color-error-hover)"
+              bg="rgba(220,38,38,0.08)"
+              onClick={onSuspend}
+            />
+          )}
         </div>
       </td>
     </tr>
@@ -117,20 +160,28 @@ function DocenteRow({ docente: d, onView, onEdit, onSuspend, onActivate }) {
 /* ── Tabla de referencia del formato CSV ───────────────────────────── */
 function CsvFormatoTable() {
   return (
-    <div style={{
-      border: "1px solid var(--color-border)", borderRadius: "var(--radius-md)",
-      overflow: "hidden",
-    }}>
-      <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12.5 }}>
+    <div
+      style={{
+        border: '1px solid var(--color-border)',
+        borderRadius: 'var(--radius-md)',
+        overflow: 'hidden',
+      }}
+    >
+      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
         <thead>
           <tr>
             {CSV_COLUMNAS_DOCENTES.map((col, i) => (
-              <th key={col} style={{
-                padding: "8px 12px", textAlign: "left",
-                fontWeight: 700, color: "#fff",
-                background: `#${HEADER_PALETTE[i % HEADER_PALETTE.length]}`,
-                borderRight: i < CSV_COLUMNAS_DOCENTES.length - 1 ? "1px solid rgba(255,255,255,0.35)" : "none",
-              }}>
+              <th
+                key={col}
+                style={{
+                  padding: '8px 12px',
+                  textAlign: 'left',
+                  fontWeight: 700,
+                  color: '#fff',
+                  background: `#${HEADER_PALETTE[i % HEADER_PALETTE.length]}`,
+                  borderRight: i < CSV_COLUMNAS_DOCENTES.length - 1 ? '1px solid rgba(255,255,255,0.35)' : 'none',
+                }}
+              >
                 {i + 1}. {col}
               </th>
             ))}
@@ -138,16 +189,20 @@ function CsvFormatoTable() {
         </thead>
         <tbody>
           {[
-            ["María", "González", "3001234567", "1020304050"],
-            ["Carlos", "Ramírez", "3009876543", "1098765432"],
+            ['María', 'González', '3001234567', '1020304050'],
+            ['Carlos', 'Ramírez', '3009876543', '1098765432'],
           ].map((fila, r) => (
             <tr key={r}>
               {fila.map((val, i) => (
-                <td key={i} style={{
-                  padding: "7px 12px", color: "var(--color-text-muted)",
-                  borderRight: i < fila.length - 1 ? "1px solid var(--color-border)" : "none",
-                  borderTop: "1px solid var(--color-border)",
-                }}>
+                <td
+                  key={i}
+                  style={{
+                    padding: '7px 12px',
+                    color: 'var(--color-text-muted)',
+                    borderRight: i < fila.length - 1 ? '1px solid var(--color-border)' : 'none',
+                    borderTop: '1px solid var(--color-border)',
+                  }}
+                >
                   {val}
                 </td>
               ))}
@@ -160,7 +215,7 @@ function CsvFormatoTable() {
 }
 
 /* ── Constantes ─────────────────────────────────────────────────────── */
-const INIT = { nombre: "", apellido: "", cedula: "", telefono: "", correo: "" };
+const INIT = { nombre: '', apellido: '', cedula: '', telefono: '', correo: '' };
 const LIMIT = 15;
 const SIN_DOCENTES = [];
 
@@ -168,35 +223,35 @@ const SIN_DOCENTES = [];
    PÁGINA
    ══════════════════════════════════════════════════════════════════════ */
 export default function DocentesPage() {
-  const setUsers = useUserStore(s => s.setUsers);
+  const setUsers = useUserStore((s) => s.setUsers);
 
-  const [search,     setSearch]     = useState("");
-  const [debSearch,  setDebSearch]  = useState("");
-  const [estadoFilter, setEstadoFilter] = useState("");
-  const [toast,    setToast]    = useState({ msg: "", type: "success" });
-  const [saving,   setSaving]   = useState(false);
+  const [search, setSearch] = useState('');
+  const [debSearch, setDebSearch] = useState('');
+  const [estadoFilter, setEstadoFilter] = useState('');
+  const [toast, setToast] = useState({ msg: '', type: 'success' });
+  const [saving, setSaving] = useState(false);
 
   const [showCreate, setShowCreate] = useState(false);
-  const [showCsv,    setShowCsv]   = useState(false);
-  const [form,       setForm]      = useState(INIT);
+  const [showCsv, setShowCsv] = useState(false);
+  const [form, setForm] = useState(INIT);
   const [createErrors, setCreateErrors] = useState({});
 
-  const [editTarget,  setEditTarget]  = useState(null);
-  const [delTarget,   setDelTarget]   = useState(null);
+  const [editTarget, setEditTarget] = useState(null);
+  const [delTarget, setDelTarget] = useState(null);
   const [activTarget, setActivTarget] = useState(null);
-  const [viewTarget,  setViewTarget]  = useState(null);
+  const [viewTarget, setViewTarget] = useState(null);
   const [viewLoading, setViewLoading] = useState(false);
-  const [viewDetail,  setViewDetail]  = useState(null);
+  const [viewDetail, setViewDetail] = useState(null);
 
-  const fileRef   = useRef(null);
-  const [csvFile,    setCsvFile]   = useState(null);
-  const [csvLoading, setCsvLoading]= useState(false);
-  const [csvResult,  setCsvResult] = useState(null);
+  const fileRef = useRef(null);
+  const [csvFile, setCsvFile] = useState(null);
+  const [csvLoading, setCsvLoading] = useState(false);
+  const [csvResult, setCsvResult] = useState(null);
 
   /* ── Auxiliares ── */
-  const notify = (msg, type = "success") => {
+  const notify = (msg, type = 'success') => {
     setToast({ msg, type });
-    setTimeout(() => setToast({ msg: "", type: "success" }), 3500);
+    setTimeout(() => setToast({ msg: '', type: 'success' }), 3500);
   };
 
   // Retraso en la búsqueda para no llamar a la API en cada tecla
@@ -209,9 +264,7 @@ export default function DocentesPage() {
   const [page, setPage] = usePaginaPorFiltros(`${debSearch}|${estadoFilter}`);
 
   // al buscar, traer todos los docentes para que el filtro cliente sea completo
-  const listParams = debSearch
-    ? { rol: "docente", page: 1, limit: 1000 }
-    : { rol: "docente", page, limit: LIMIT };
+  const listParams = debSearch ? { rol: 'docente', page: 1, limit: 1000 } : { rol: 'docente', page, limit: LIMIT };
   if (estadoFilter) listParams.estado = estadoFilter;
   const { data: docentesData, isLoading: loading, isError: docentesError } = useUsuariosListado(listParams);
   const docentes = docentesData?.users ?? SIN_DOCENTES;
@@ -222,52 +275,51 @@ export default function DocentesPage() {
   }, [docentesData, setUsers]);
 
   useEffect(() => {
-    if (docentesError) notify("Error al cargar docentes", "error");
+    if (docentesError) notify('Error al cargar docentes', 'error');
   }, [docentesError]);
 
   const queryClient = useQueryClient();
   const marcarEstado = useMarcarEstadoUsuario();
   // tras crear/editar/importar: vuelve a pedir los listados de usuarios
-  const load = useCallback(
-    () => queryClient.invalidateQueries({ queryKey: queryKeys.usuarios.all() }),
-    [queryClient]
-  );
+  const load = useCallback(() => queryClient.invalidateQueries({ queryKey: queryKeys.usuarios.all() }), [queryClient]);
 
   /* ── Filtro ── */
-  const filtered = docentes.filter(d => {
+  const filtered = docentes.filter((d) => {
     const q = search.toLowerCase();
-    return !q
-      || d.nombre?.toLowerCase().includes(q)
-      || d.apellido?.toLowerCase().includes(q)
-      || d.correo?.toLowerCase().includes(q)
-      || d.cedula?.includes(q);
+    return (
+      !q ||
+      d.nombre?.toLowerCase().includes(q) ||
+      d.apellido?.toLowerCase().includes(q) ||
+      d.correo?.toLowerCase().includes(q) ||
+      d.cedula?.includes(q)
+    );
   });
 
   /* ── Crear ── */
-  const f = key => e => {
-    setForm(p => ({ ...p, [key]: e.target.value }));
-    if (createErrors[key]) setCreateErrors(p => ({ ...p, [key]: "" }));
+  const f = (key) => (e) => {
+    setForm((p) => ({ ...p, [key]: e.target.value }));
+    if (createErrors[key]) setCreateErrors((p) => ({ ...p, [key]: '' }));
   };
-  const fCedula = e => {
-    setForm(p => ({ ...p, cedula: toCedula(e.target.value) }));
-    if (createErrors.cedula) setCreateErrors(p => ({ ...p, cedula: "" }));
+  const fCedula = (e) => {
+    setForm((p) => ({ ...p, cedula: toCedula(e.target.value) }));
+    if (createErrors.cedula) setCreateErrors((p) => ({ ...p, cedula: '' }));
   };
 
-  const handleCreate = async e => {
+  const handleCreate = async (e) => {
     e.preventDefault();
 
     const cedula = form.cedula.trim();
     const errors = {};
-    if (!form.nombre.trim())              errors.nombre   = "El nombre es requerido";
-    if (!form.apellido.trim())            errors.apellido = "El apellido es requerido";
-    if (!cedula || !isValidCedula(cedula)) errors.cedula   = CEDULA_ERROR;
-    if (!isValidPhone(form.telefono))      errors.telefono = PHONE_ERROR;
-    if (!form.correo.trim())                            errors.correo = "El correo es requerido";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.correo.trim())) errors.correo = "Ingresa un correo válido";
+    if (!form.nombre.trim()) errors.nombre = 'El nombre es requerido';
+    if (!form.apellido.trim()) errors.apellido = 'El apellido es requerido';
+    if (!cedula || !isValidCedula(cedula)) errors.cedula = CEDULA_ERROR;
+    if (!isValidPhone(form.telefono)) errors.telefono = PHONE_ERROR;
+    if (!form.correo.trim()) errors.correo = 'El correo es requerido';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.correo.trim())) errors.correo = 'Ingresa un correo válido';
 
     if (Object.keys(errors).length) {
       setCreateErrors(errors);
-      notify("Corrige los campos marcados en rojo", "error");
+      notify('Corrige los campos marcados en rojo', 'error');
       return;
     }
 
@@ -290,7 +342,7 @@ export default function DocentesPage() {
         for (const ve of err.validationErrors) serverErrors[ve.path] = ve.msg;
         setCreateErrors(serverErrors);
       }
-      notify(humanizeError(err, "Error al registrar docente"), "error");
+      notify(humanizeError(err, 'Error al registrar docente'), 'error');
     } finally {
       setSaving(false);
     }
@@ -314,20 +366,23 @@ export default function DocentesPage() {
   /* ── Editar ── */
   const [editForm, setEditForm] = useState(INIT);
   const [editErrors, setEditErrors] = useState({});
-  const ef = key => e => {
-    setEditForm(p => ({ ...p, [key]: e.target.value }));
-    if (editErrors[key]) setEditErrors(p => ({ ...p, [key]: "" }));
+  const ef = (key) => (e) => {
+    setEditForm((p) => ({ ...p, [key]: e.target.value }));
+    if (editErrors[key]) setEditErrors((p) => ({ ...p, [key]: '' }));
   };
-  const efCedula = e => {
-    setEditForm(p => ({ ...p, cedula: toCedula(e.target.value) }));
-    if (editErrors.cedula) setEditErrors(p => ({ ...p, cedula: "" }));
+  const efCedula = (e) => {
+    setEditForm((p) => ({ ...p, cedula: toCedula(e.target.value) }));
+    if (editErrors.cedula) setEditErrors((p) => ({ ...p, cedula: '' }));
   };
 
   const openEdit = (d) => {
     setEditTarget(d);
     setEditForm({
-      nombre: d.nombre ?? "", apellido: d.apellido ?? "",
-      cedula: d.cedula ?? "", telefono: d.telefono ?? "", correo: d.correo ?? "",
+      nombre: d.nombre ?? '',
+      apellido: d.apellido ?? '',
+      cedula: d.cedula ?? '',
+      telefono: d.telefono ?? '',
+      correo: d.correo ?? '',
     });
     setEditErrors({});
   };
@@ -338,16 +393,16 @@ export default function DocentesPage() {
 
     const cedula = editForm.cedula.trim();
     const errors = {};
-    if (!editForm.nombre.trim())   errors.nombre = "El nombre es requerido";
-    if (!editForm.apellido.trim()) errors.apellido = "El apellido es requerido";
+    if (!editForm.nombre.trim()) errors.nombre = 'El nombre es requerido';
+    if (!editForm.apellido.trim()) errors.apellido = 'El apellido es requerido';
     if (cedula && !isValidCedula(cedula)) errors.cedula = CEDULA_ERROR;
     if (editForm.telefono.trim() && !isValidPhone(editForm.telefono)) errors.telefono = PHONE_ERROR;
-    if (!editForm.correo.trim()) errors.correo = "El correo es requerido";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editForm.correo.trim())) errors.correo = "Ingresa un correo válido";
+    if (!editForm.correo.trim()) errors.correo = 'El correo es requerido';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editForm.correo.trim())) errors.correo = 'Ingresa un correo válido';
 
     if (Object.keys(errors).length) {
       setEditErrors(errors);
-      notify("Corrige los campos marcados en rojo", "error");
+      notify('Corrige los campos marcados en rojo', 'error');
       return;
     }
 
@@ -357,19 +412,22 @@ export default function DocentesPage() {
       // el validador (p. ej. un apellido antiguo) bloqueaba con 400 cualquier
       // cambio, incluso solo el correo
       const nuevos = {
-        nombre: editForm.nombre.trim(), apellido: editForm.apellido.trim(),
-        cedula, correo: editForm.correo.trim(),
+        nombre: editForm.nombre.trim(),
+        apellido: editForm.apellido.trim(),
+        cedula,
+        correo: editForm.correo.trim(),
       };
       const telefono = normalizePhone(editForm.telefono);
       if (telefono) nuevos.telefono = telefono;
-      const body = Object.fromEntries(
-        Object.entries(nuevos).filter(([k, v]) => v !== (editTarget[k] ?? ""))
-      );
-      if (Object.keys(body).length === 0) { setEditTarget(null); return; }
+      const body = Object.fromEntries(Object.entries(nuevos).filter(([k, v]) => v !== (editTarget[k] ?? '')));
+      if (Object.keys(body).length === 0) {
+        setEditTarget(null);
+        return;
+      }
       await usersUpdate(editTarget._id, body);
-      notify("Docente actualizado");
+      notify('Docente actualizado');
       setEditTarget(null);
-      if (viewTarget?._id === editTarget._id) setViewDetail(d => d ? { ...d, ...body } : d);
+      if (viewTarget?._id === editTarget._id) setViewDetail((d) => (d ? { ...d, ...body } : d));
       load();
     } catch (err) {
       if (err.validationErrors?.length) {
@@ -377,7 +435,7 @@ export default function DocentesPage() {
         for (const ve of err.validationErrors) serverErrors[ve.path] = ve.msg;
         setEditErrors(serverErrors);
       }
-      notify(humanizeError(err, "Error al actualizar docente"), "error");
+      notify(humanizeError(err, 'Error al actualizar docente'), 'error');
     } finally {
       setSaving(false);
     }
@@ -389,11 +447,11 @@ export default function DocentesPage() {
     setSaving(true);
     try {
       await usersDelete(delTarget._id);
-      marcarEstado(delTarget._id, "suspendido");
-      notify("Docente suspendido");
+      marcarEstado(delTarget._id, 'suspendido');
+      notify('Docente suspendido');
       setDelTarget(null);
     } catch (err) {
-      notify(humanizeCursosActivosError(err) ?? humanizeError(err, "Error al suspender docente"), "error");
+      notify(humanizeCursosActivosError(err) ?? humanizeError(err, 'Error al suspender docente'), 'error');
     } finally {
       setSaving(false);
     }
@@ -406,11 +464,11 @@ export default function DocentesPage() {
     try {
       // el backend rechaza "estado" en PUT /users/:id; reactivar tiene su propia ruta
       await usersReactivate(activTarget._id);
-      marcarEstado(activTarget._id, "activo");
-      notify("Docente activado");
+      marcarEstado(activTarget._id, 'activo');
+      notify('Docente activado');
       setActivTarget(null);
     } catch (err) {
-      notify(humanizeError(err, "Error al activar docente"), "error");
+      notify(humanizeError(err, 'Error al activar docente'), 'error');
     } finally {
       setSaving(false);
     }
@@ -429,25 +487,23 @@ export default function DocentesPage() {
     // atributo accept del input ya filtra la mayoría de los casos, pero no
     // todos los navegadores/SO lo respetan estrictamente en el selector.
     const nombreArchivo = csvFile.name.toLowerCase();
-    if (!nombreArchivo.endsWith(".xlsx") && !nombreArchivo.endsWith(".xlsm")) {
-      notify("Solo se permiten archivos Excel (.xlsx, .xlsm)", "error");
+    if (!nombreArchivo.endsWith('.xlsx') && !nombreArchivo.endsWith('.xlsm')) {
+      notify('Solo se permiten archivos Excel (.xlsx, .xlsm)', 'error');
       return;
     }
     setCsvLoading(true);
     try {
       const fd = new FormData();
-      fd.append("archivoCSV", csvFile);
+      fd.append('archivoCSV', csvFile);
       const res = await institucionesCreateDocentesCsv(fd);
 
-      const resumen  = res?.resumen ?? {};
+      const resumen = res?.resumen ?? {};
       const detalles = res?.detalles ?? {};
       const errores = [
         ...(detalles.errores ?? []).map((e) =>
-          `${e.datos?.nombre ?? "Registro"} ${e.datos?.apellido ?? ""}: ${e.error ?? "Error al crear el docente."}`.trim()
+          `${e.datos?.nombre ?? 'Registro'} ${e.datos?.apellido ?? ''}: ${e.error ?? 'Error al crear el docente.'}`.trim(),
         ),
-        ...(detalles.duplicados ?? []).map((d) =>
-          `${d.nombre ?? "Registro"}: ${d.motivo ?? "Duplicado."}`
-        ),
+        ...(detalles.duplicados ?? []).map((d) => `${d.nombre ?? 'Registro'}: ${d.motivo ?? 'Duplicado.'}`),
       ];
 
       const resultado = {
@@ -460,7 +516,7 @@ export default function DocentesPage() {
       notify(`Importación completada: ${resultado.exitosos} exitosos`);
       if (resultado.exitosos > 0) load();
     } catch (err) {
-      notify(humanizeError(err, "Error en la importación"), "error");
+      notify(humanizeError(err, 'Error en la importación'), 'error');
     } finally {
       setCsvLoading(false);
     }
@@ -469,7 +525,7 @@ export default function DocentesPage() {
   const resetCsv = () => {
     setCsvFile(null);
     setCsvResult(null);
-    if (fileRef.current) fileRef.current.value = "";
+    if (fileRef.current) fileRef.current.value = '';
   };
 
   const totalPages = debSearch ? 0 : Math.ceil(total / LIMIT);
@@ -478,7 +534,7 @@ export default function DocentesPage() {
      RENDERIZADO
      ══════════════════════════════════════════════════════════════════ */
   return (
-    <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto' }}>
       <Toast msg={toast.msg} type={toast.type} />
 
       {/* ── Header ── */}
@@ -487,51 +543,82 @@ export default function DocentesPage() {
           <h1 className="page-title">Docentes</h1>
           <p className="page-subtitle">{total} docentes registrados</p>
         </div>
-        <div style={{ display: "flex", gap: "var(--space-2)" }}>
+        <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
           <Button variant="ghost" size="sm" onClick={load} title="Recargar">
             <RefreshCw size={15} />
           </Button>
-          <Button variant="outline" size="sm" onClick={() => { setShowCsv(true); resetCsv(); }}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setShowCsv(true);
+              resetCsv();
+            }}
+          >
             <Upload size={15} /> Agregar varios docentes
           </Button>
-          <Button size="sm" onClick={() => { setForm(INIT); setCreateErrors({}); setShowCreate(true); }}>
+          <Button
+            size="sm"
+            onClick={() => {
+              setForm(INIT);
+              setCreateErrors({});
+              setShowCreate(true);
+            }}
+          >
             <Plus size={15} /> Registrar docente
           </Button>
         </div>
       </div>
 
       {/* ── Search + filtro de estado ── */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: "var(--space-5)" }}>
-        <div style={{ position: "relative", maxWidth: 360, flex: 1, minWidth: 220 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 'var(--space-5)' }}>
+        <div style={{ position: 'relative', maxWidth: 360, flex: 1, minWidth: 220 }}>
           <Search
             size={15}
             style={{
-              position: "absolute", left: 12, top: "50%",
-              transform: "translateY(-50%)", color: "var(--color-text-subtle)",
-              pointerEvents: "none",
+              position: 'absolute',
+              left: 12,
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: 'var(--color-text-subtle)',
+              pointerEvents: 'none',
             }}
           />
           <input
             value={search}
-            onChange={e => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por nombre, correo o cédula…"
             style={{
-              width: "100%", height: 38, paddingLeft: 36, paddingRight: search ? 36 : 12,
-              borderRadius: "var(--radius-md)", border: "1.5px solid var(--color-border)",
-              background: "var(--color-surface)", color: "var(--color-text)",
-              fontSize: 13, outline: "none", boxSizing: "border-box",
-              transition: "border-color var(--transition-fast)",
+              width: '100%',
+              height: 38,
+              paddingLeft: 36,
+              paddingRight: search ? 36 : 12,
+              borderRadius: 'var(--radius-md)',
+              border: '1.5px solid var(--color-border)',
+              background: 'var(--color-surface)',
+              color: 'var(--color-text)',
+              fontSize: 13,
+              outline: 'none',
+              boxSizing: 'border-box',
+              transition: 'border-color var(--transition-fast)',
             }}
-            onFocus={e  => (e.target.style.borderColor = "var(--color-primary)")}
-            onBlur={e   => (e.target.style.borderColor = "var(--color-border)")}
+            onFocus={(e) => (e.target.style.borderColor = 'var(--color-primary)')}
+            onBlur={(e) => (e.target.style.borderColor = 'var(--color-border)')}
           />
           {search && (
             <button
-              onClick={() => setSearch("")}
+              onClick={() => setSearch('')}
               style={{
-                position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)",
-                background: "none", border: "none", cursor: "pointer",
-                color: "var(--color-text-muted)", display: "flex", padding: 2,
+                position: 'absolute',
+                right: 8,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--color-text-muted)',
+                display: 'flex',
+                padding: 2,
               }}
             >
               <X size={14} />
@@ -539,15 +626,21 @@ export default function DocentesPage() {
           )}
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
-          <Filter style={{ width: 14, height: 14, color: "var(--color-text-muted)" }} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+          <Filter style={{ width: 14, height: 14, color: 'var(--color-text-muted)' }} />
           <select
             value={estadoFilter}
-            onChange={e => setEstadoFilter(e.target.value)}
+            onChange={(e) => setEstadoFilter(e.target.value)}
             style={{
-              height: 38, border: "1.5px solid var(--color-border)", borderRadius: "var(--radius-md)",
-              padding: "0 10px", fontSize: 13, background: "var(--color-surface)",
-              color: "var(--color-text)", cursor: "pointer", outline: "none",
+              height: 38,
+              border: '1.5px solid var(--color-border)',
+              borderRadius: 'var(--radius-md)',
+              padding: '0 10px',
+              fontSize: 13,
+              background: 'var(--color-surface)',
+              color: 'var(--color-text)',
+              cursor: 'pointer',
+              outline: 'none',
             }}
           >
             <option value="">Todos los estados</option>
@@ -558,32 +651,52 @@ export default function DocentesPage() {
       </div>
 
       {/* ── Table ── */}
-      <div style={{
-        background: "var(--color-surface)",
-        border: "1px solid var(--color-border)",
-        borderRadius: "var(--radius-xl)",
-        boxShadow: "var(--clay-card)",
-        overflow: "hidden",
-      }}>
+      <div
+        style={{
+          background: 'var(--color-surface)',
+          border: '1px solid var(--color-border)',
+          borderRadius: 'var(--radius-xl)',
+          boxShadow: 'var(--clay-card)',
+          overflow: 'hidden',
+        }}
+      >
         {!loading && filtered.length === 0 ? (
           <EmptyState
             icon={GraduationCap}
             title="No hay docentes"
-            desc={search ? "Ningún docente coincide con la búsqueda." : "Registra el primer docente de la institución."}
-            action={!search ? { label: "Registrar docente", onClick: () => { setForm(INIT); setCreateErrors({}); setShowCreate(true); } } : undefined}
+            desc={search ? 'Ningún docente coincide con la búsqueda.' : 'Registra el primer docente de la institución.'}
+            action={
+              !search
+                ? {
+                    label: 'Registrar docente',
+                    onClick: () => {
+                      setForm(INIT);
+                      setCreateErrors({});
+                      setShowCreate(true);
+                    },
+                  }
+                : undefined
+            }
           />
         ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
               <thead>
-                <tr style={{ background: "var(--color-surface-2)", borderBottom: "1px solid var(--color-border)" }}>
-                  {["Docente", "Correo", "Teléfono", "Estado", "Acciones"].map(h => (
-                    <th key={h} style={{
-                      padding: "10px 16px", textAlign: "left",
-                      fontSize: 11, fontWeight: 700, textTransform: "uppercase",
-                      letterSpacing: "0.06em", color: "var(--color-text-muted)",
-                      whiteSpace: "nowrap",
-                    }}>
+                <tr style={{ background: 'var(--color-surface-2)', borderBottom: '1px solid var(--color-border)' }}>
+                  {['Docente', 'Correo', 'Teléfono', 'Estado', 'Acciones'].map((h) => (
+                    <th
+                      key={h}
+                      style={{
+                        padding: '10px 16px',
+                        textAlign: 'left',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                        color: 'var(--color-text-muted)',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
                       {h}
                     </th>
                   ))}
@@ -591,8 +704,8 @@ export default function DocentesPage() {
               </thead>
               <tbody>
                 {loading
-                  ? [0, 1, 2, 3, 4].map(i => <SkRow key={i} />)
-                  : filtered.map(d => (
+                  ? [0, 1, 2, 3, 4].map((i) => <SkRow key={i} />)
+                  : filtered.map((d) => (
                       <DocenteRow
                         key={d._id}
                         docente={d}
@@ -601,8 +714,7 @@ export default function DocentesPage() {
                         onSuspend={() => setDelTarget(d)}
                         onActivate={() => setActivTarget(d)}
                       />
-                    ))
-                }
+                    ))}
               </tbody>
             </table>
           </div>
@@ -611,14 +723,14 @@ export default function DocentesPage() {
 
       {/* ── Pagination ── */}
       {totalPages > 1 && (
-        <div style={{ display: "flex", justifyContent: "center", gap: "var(--space-2)", marginTop: "var(--space-5)" }}>
-          <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(p => p - 1)}>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-5)' }}>
+          <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
             Anterior
           </Button>
-          <span style={{ fontSize: 13, color: "var(--color-text-muted)", alignSelf: "center" }}>
+          <span style={{ fontSize: 13, color: 'var(--color-text-muted)', alignSelf: 'center' }}>
             {page} / {totalPages}
           </span>
-          <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage(p => p + 1)}>
+          <Button variant="outline" size="sm" disabled={page === totalPages} onClick={() => setPage((p) => p + 1)}>
             Siguiente
           </Button>
         </div>
@@ -633,55 +745,86 @@ export default function DocentesPage() {
         size="md"
       >
         <form onSubmit={handleCreate} noValidate>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
             <Input
-              label="Nombre" required
-              value={form.nombre} onChange={f("nombre")}
-              placeholder="Ej. María" leftIcon={<User size={16} />}
+              label="Nombre"
+              required
+              value={form.nombre}
+              onChange={f('nombre')}
+              placeholder="Ej. María"
+              leftIcon={<User size={16} />}
               error={createErrors.nombre}
             />
             <Input
-              label="Apellido" required
-              value={form.apellido} onChange={f("apellido")}
-              placeholder="Ej. García" leftIcon={<User size={16} />}
+              label="Apellido"
+              required
+              value={form.apellido}
+              onChange={f('apellido')}
+              placeholder="Ej. García"
+              leftIcon={<User size={16} />}
               error={createErrors.apellido}
             />
             <Input
-              label="Cédula" required
-              value={form.cedula} onChange={fCedula}
-              placeholder="1020304050" inputMode="numeric" leftIcon={<Hash size={16} />}
+              label="Cédula"
+              required
+              value={form.cedula}
+              onChange={fCedula}
+              placeholder="1020304050"
+              inputMode="numeric"
+              leftIcon={<Hash size={16} />}
               error={createErrors.cedula}
             />
             <PhoneInput
-              label="Teléfono" required
-              value={form.telefono} onChange={f("telefono")}
+              label="Teléfono"
+              required
+              value={form.telefono}
+              onChange={f('telefono')}
               error={createErrors.telefono}
             />
           </div>
-          <div style={{ marginTop: "var(--space-4)" }}>
+          <div style={{ marginTop: 'var(--space-4)' }}>
             <Input
-              label="Correo electrónico" required
-              value={form.correo} onChange={f("correo")}
-              placeholder="correo@institución.edu" type="email" leftIcon={<Mail size={16} />}
+              label="Correo electrónico"
+              required
+              value={form.correo}
+              onChange={f('correo')}
+              placeholder="correo@institución.edu"
+              type="email"
+              leftIcon={<Mail size={16} />}
               error={createErrors.correo}
             />
           </div>
-          <div style={{
-            display: "flex", alignItems: "center", gap: 6, marginTop: "var(--space-4)",
-            padding: "10px 12px", borderRadius: 9,
-            background: "rgba(12,106,196,0.06)", border: "1px solid rgba(12,106,196,0.15)",
-          }}>
-            <Hash style={{ width: 13, height: 13, color: "var(--color-primary)", flexShrink: 0 }} />
-            <p style={{ fontSize: 12.5, color: "var(--color-primary)", margin: 0 }}>
-              {TEXTO_CONTRASENA_INICIAL} Ej: <strong>{contrasenaInicial(form.cedula) || "12345678"}</strong>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              marginTop: 'var(--space-4)',
+              padding: '10px 12px',
+              borderRadius: 9,
+              background: 'rgba(12,106,196,0.06)',
+              border: '1px solid rgba(12,106,196,0.15)',
+            }}
+          >
+            <Hash style={{ width: 13, height: 13, color: 'var(--color-primary)', flexShrink: 0 }} />
+            <p style={{ fontSize: 12.5, color: 'var(--color-primary)', margin: 0 }}>
+              {TEXTO_CONTRASENA_INICIAL} Ej: <strong>{contrasenaInicial(form.cedula) || '12345678'}</strong>
             </p>
           </div>
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: "var(--space-2)", marginTop: "var(--space-6)" }}>
+          <div
+            style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-6)' }}
+          >
             <Button variant="outline" type="button" onClick={() => setShowCreate(false)}>
               Cancelar
             </Button>
             <Button type="submit" disabled={saving}>
-              {saving ? <><Loader2 size={14} className="animate-spin" /> Registrando…</> : "Registrar docente"}
+              {saving ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" /> Registrando…
+                </>
+              ) : (
+                'Registrar docente'
+              )}
             </Button>
           </div>
         </form>
@@ -690,45 +833,58 @@ export default function DocentesPage() {
       {/* ══ MODAL: Importar CSV ══ */}
       <Modal
         isOpen={showCsv}
-        onClose={() => { setShowCsv(false); resetCsv(); }}
+        onClose={() => {
+          setShowCsv(false);
+          resetCsv();
+        }}
         title="Agregar varios docentes"
         description="Sube un archivo con la lista de docentes. El correo de acceso se genera automáticamente a partir de la cédula; no se incluye en el archivo."
         size="md"
       >
         {!csvResult ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
-
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
             {/* Formato esperado + descarga de plantilla */}
-            <div style={{
-              background: "var(--color-surface-2)", borderRadius: "var(--radius-lg)",
-              padding: "var(--space-4)", display: "flex", flexDirection: "column", gap: "var(--space-3)",
-            }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "var(--space-2)" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)" }}>
-                  <FileSpreadsheet size={16} style={{ color: "var(--color-primary)" }} />
-                  <span style={{ fontSize: 13, fontWeight: 700, color: "var(--color-text)" }}>
-                    Formato requerido
-                  </span>
+            <div
+              style={{
+                background: 'var(--color-surface-2)',
+                borderRadius: 'var(--radius-lg)',
+                padding: 'var(--space-4)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 'var(--space-3)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  flexWrap: 'wrap',
+                  gap: 'var(--space-2)',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+                  <FileSpreadsheet size={16} style={{ color: 'var(--color-primary)' }} />
+                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--color-text)' }}>Formato requerido</span>
                 </div>
                 <Button variant="outline" size="sm" onClick={descargarPlantillaDocentesCSV}>
                   <Download size={14} /> Descargar plantilla
                 </Button>
               </div>
 
-              <p style={{ fontSize: 12, color: "var(--color-text)", margin: 0, lineHeight: 1.5 }}>
-                La plantilla se descarga lista para usar: cada columna tiene un color
-                distinto (igual que abajo) para que sea más fácil ver dónde va cada dato.
+              <p style={{ fontSize: 12, color: 'var(--color-text)', margin: 0, lineHeight: 1.5 }}>
+                La plantilla se descarga lista para usar: cada columna tiene un color distinto (igual que abajo) para
+                que sea más fácil ver dónde va cada dato.
               </p>
 
               <CsvFormatoTable />
 
-              <p style={{ fontSize: 11.5, color: "var(--color-text-muted)", margin: 0, lineHeight: 1.5 }}>
-                Archivo Excel (.xlsx/.xlsm, máx 5MB). La fila de encabezado es opcional (se
-                detecta y se salta sola); las columnas van en este orden: <code>nombre, apellido, telefono, cedula</code>.
-                El teléfono va en 10 dígitos (el +57 se agrega automáticamente) y es opcional aquí.
-                Formatea cedula y telefono como <strong>Texto</strong> en Excel para no perder ceros a la izquierda.
-                No incluyas una columna de correo: el sistema la genera automáticamente
-                con la cédula. {TEXTO_CONTRASENA_INICIAL}
+              <p style={{ fontSize: 11.5, color: 'var(--color-text-muted)', margin: 0, lineHeight: 1.5 }}>
+                Archivo Excel (.xlsx/.xlsm, máx 5MB). La fila de encabezado es opcional (se detecta y se salta sola);
+                las columnas van en este orden: <code>nombre, apellido, telefono, cedula</code>. El teléfono va en 10
+                dígitos (el +57 se agrega automáticamente) y es opcional aquí. Formatea cedula y telefono como{' '}
+                <strong>Texto</strong> en Excel para no perder ceros a la izquierda. No incluyas una columna de correo:
+                el sistema la genera automáticamente con la cédula. {TEXTO_CONTRASENA_INICIAL}
               </p>
             </div>
 
@@ -736,21 +892,21 @@ export default function DocentesPage() {
             <div
               onClick={() => fileRef.current?.click()}
               style={{
-                border: `2px dashed ${csvFile ? "var(--color-primary)" : "var(--color-border)"}`,
-                borderRadius: "var(--radius-lg)",
-                padding: "var(--space-8)",
-                textAlign: "center",
-                cursor: "pointer",
-                background: csvFile ? "var(--color-primary-subtle)" : "var(--color-surface-2)",
-                transition: "all var(--transition-fast)",
+                border: `2px dashed ${csvFile ? 'var(--color-primary)' : 'var(--color-border)'}`,
+                borderRadius: 'var(--radius-lg)',
+                padding: 'var(--space-8)',
+                textAlign: 'center',
+                cursor: 'pointer',
+                background: csvFile ? 'var(--color-primary-subtle)' : 'var(--color-surface-2)',
+                transition: 'all var(--transition-fast)',
               }}
             >
-              <Upload size={24} style={{ margin: "0 auto var(--space-2)", color: "var(--color-text-muted)" }} />
-              <p style={{ fontSize: 13.5, fontWeight: 600, color: "var(--color-text)", margin: 0 }}>
-                {csvFile ? csvFile.name : "Haz clic para seleccionar un archivo Excel"}
+              <Upload size={24} style={{ margin: '0 auto var(--space-2)', color: 'var(--color-text-muted)' }} />
+              <p style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--color-text)', margin: 0 }}>
+                {csvFile ? csvFile.name : 'Haz clic para seleccionar un archivo Excel'}
               </p>
               {!csvFile && (
-                <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: "var(--space-1) 0 0" }}>
+                <p style={{ fontSize: 12, color: 'var(--color-text-muted)', margin: 'var(--space-1) 0 0' }}>
                   Solo archivos Excel (.xlsx, .xlsm)
                 </p>
               )}
@@ -758,65 +914,100 @@ export default function DocentesPage() {
                 ref={fileRef}
                 type="file"
                 accept=".xlsx,.xlsm"
-                style={{ display: "none" }}
-                onChange={e => setCsvFile(e.target.files[0] ?? null)}
+                style={{ display: 'none' }}
+                onChange={(e) => setCsvFile(e.target.files[0] ?? null)}
               />
             </div>
 
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "var(--space-2)" }}>
-              <Button variant="outline" onClick={() => { setShowCsv(false); resetCsv(); }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)' }}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCsv(false);
+                  resetCsv();
+                }}
+              >
                 Cancelar
               </Button>
               <Button onClick={handleCsvUpload} disabled={!csvFile || csvLoading}>
-                {csvLoading ? <><Loader2 size={14} className="animate-spin" /> Importando…</> : "Importar"}
+                {csvLoading ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" /> Importando…
+                  </>
+                ) : (
+                  'Importar'
+                )}
               </Button>
             </div>
           </div>
         ) : (
           /* Resultado */
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
-            <div style={{ display: "flex", gap: "var(--space-3)" }}>
-              <div style={{
-                flex: 1, padding: "var(--space-4)", borderRadius: "var(--radius-lg)",
-                background: "var(--color-success-light)", textAlign: "center",
-              }}>
-                <CheckCircle2 size={20} style={{ color: "var(--color-success)", margin: "0 auto var(--space-1)" }} />
-                <p style={{ fontSize: 22, fontWeight: 800, color: "var(--color-success)", margin: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-4)' }}>
+            <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+              <div
+                style={{
+                  flex: 1,
+                  padding: 'var(--space-4)',
+                  borderRadius: 'var(--radius-lg)',
+                  background: 'var(--color-success-light)',
+                  textAlign: 'center',
+                }}
+              >
+                <CheckCircle2 size={20} style={{ color: 'var(--color-success)', margin: '0 auto var(--space-1)' }} />
+                <p style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-success)', margin: 0 }}>
                   {csvResult.exitosos}
                 </p>
-                <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: 0 }}>Exitosos</p>
+                <p style={{ fontSize: 12, color: 'var(--color-text-muted)', margin: 0 }}>Exitosos</p>
               </div>
               {csvResult.fallidos > 0 && (
-                <div style={{
-                  flex: 1, padding: "var(--space-4)", borderRadius: "var(--radius-lg)",
-                  background: "var(--color-error-light)", textAlign: "center",
-                }}>
-                  <AlertCircle size={20} style={{ color: "var(--color-error)", margin: "0 auto var(--space-1)" }} />
-                  <p style={{ fontSize: 22, fontWeight: 800, color: "var(--color-error)", margin: 0 }}>
+                <div
+                  style={{
+                    flex: 1,
+                    padding: 'var(--space-4)',
+                    borderRadius: 'var(--radius-lg)',
+                    background: 'var(--color-error-light)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <AlertCircle size={20} style={{ color: 'var(--color-error)', margin: '0 auto var(--space-1)' }} />
+                  <p style={{ fontSize: 22, fontWeight: 800, color: 'var(--color-error)', margin: 0 }}>
                     {csvResult.fallidos}
                   </p>
-                  <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: 0 }}>Fallidos</p>
+                  <p style={{ fontSize: 12, color: 'var(--color-text-muted)', margin: 0 }}>Fallidos</p>
                 </div>
               )}
             </div>
 
             {csvResult.errores?.length > 0 && (
-              <div style={{
-                background: "var(--color-surface-2)", borderRadius: "var(--radius-md)",
-                padding: "var(--space-3)", maxHeight: 180, overflowY: "auto",
-                fontSize: 12, color: "var(--color-text-muted)",
-              }}>
+              <div
+                style={{
+                  background: 'var(--color-surface-2)',
+                  borderRadius: 'var(--radius-md)',
+                  padding: 'var(--space-3)',
+                  maxHeight: 180,
+                  overflowY: 'auto',
+                  fontSize: 12,
+                  color: 'var(--color-text-muted)',
+                }}
+              >
                 {csvResult.errores.map((e, i) => (
-                  <p key={i} style={{ margin: "0 0 var(--space-1)" }}>• {e}</p>
+                  <p key={i} style={{ margin: '0 0 var(--space-1)' }}>
+                    • {e}
+                  </p>
                 ))}
               </div>
             )}
 
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: "var(--space-2)" }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)' }}>
               <Button variant="outline" onClick={resetCsv}>
                 Importar otro archivo
               </Button>
-              <Button onClick={() => { setShowCsv(false); resetCsv(); }}>
+              <Button
+                onClick={() => {
+                  setShowCsv(false);
+                  resetCsv();
+                }}
+              >
                 Cerrar
               </Button>
             </div>
@@ -829,49 +1020,71 @@ export default function DocentesPage() {
         isOpen={Boolean(editTarget)}
         onClose={() => setEditTarget(null)}
         title="Editar docente"
-        description={`${editTarget?.nombre ?? ""} ${editTarget?.apellido ?? ""}`}
+        description={`${editTarget?.nombre ?? ''} ${editTarget?.apellido ?? ''}`}
         size="md"
       >
         <form onSubmit={handleEditSubmit} noValidate>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-4)" }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
             <Input
-              label="Nombre" required
-              value={editForm.nombre} onChange={ef("nombre")}
-              placeholder="Ej. María" leftIcon={<User size={16} />}
+              label="Nombre"
+              required
+              value={editForm.nombre}
+              onChange={ef('nombre')}
+              placeholder="Ej. María"
+              leftIcon={<User size={16} />}
               error={editErrors.nombre}
             />
             <Input
-              label="Apellido" required
-              value={editForm.apellido} onChange={ef("apellido")}
-              placeholder="Ej. García" leftIcon={<User size={16} />}
+              label="Apellido"
+              required
+              value={editForm.apellido}
+              onChange={ef('apellido')}
+              placeholder="Ej. García"
+              leftIcon={<User size={16} />}
               error={editErrors.apellido}
             />
             <Input
               label="Cédula"
-              value={editForm.cedula} onChange={efCedula}
-              placeholder="1020304050" inputMode="numeric" leftIcon={<Hash size={16} />}
+              value={editForm.cedula}
+              onChange={efCedula}
+              placeholder="1020304050"
+              inputMode="numeric"
+              leftIcon={<Hash size={16} />}
               error={editErrors.cedula}
             />
             <PhoneInput
               label="Teléfono"
-              value={editForm.telefono} onChange={ef("telefono")}
+              value={editForm.telefono}
+              onChange={ef('telefono')}
               error={editErrors.telefono}
             />
           </div>
-          <div style={{ marginTop: "var(--space-4)" }}>
+          <div style={{ marginTop: 'var(--space-4)' }}>
             <Input
-              label="Correo electrónico" required
-              value={editForm.correo} onChange={ef("correo")}
-              placeholder="correo@institución.edu" type="email" leftIcon={<Mail size={16} />}
+              label="Correo electrónico"
+              required
+              value={editForm.correo}
+              onChange={ef('correo')}
+              placeholder="correo@institución.edu"
+              type="email"
+              leftIcon={<Mail size={16} />}
               error={editErrors.correo}
             />
           </div>
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: "var(--space-2)", marginTop: "var(--space-6)" }}>
+          <div
+            style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-2)', marginTop: 'var(--space-6)' }}
+          >
             <Button variant="outline" type="button" onClick={() => setEditTarget(null)}>
               Cancelar
             </Button>
             <Button type="submit" disabled={saving}>
-              {saving ? <><Loader2 size={14} className="animate-spin" /> Guardando…</> : "Guardar cambios"}
+              {saving ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" /> Guardando…
+                </>
+              ) : (
+                'Guardar cambios'
+              )}
             </Button>
           </div>
         </form>
@@ -880,119 +1093,236 @@ export default function DocentesPage() {
       {/* ══ MODAL: Ver detalle ══ */}
       <Modal
         isOpen={Boolean(viewTarget)}
-        onClose={() => { setViewTarget(null); setViewDetail(null); }}
+        onClose={() => {
+          setViewTarget(null);
+          setViewDetail(null);
+        }}
         title="Detalle del docente"
         size="md"
       >
         {viewLoading ? (
-          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-            {[0, 1, 2, 3, 4].map(i => <Sk key={i} h={44} r={8} />)}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <Sk key={i} h={44} r={8} />
+            ))}
           </div>
-        ) : (viewDetail ?? viewTarget) ? (() => {
-          const d = viewDetail ?? viewTarget;
-          return (
-            <>
-              <div style={{
-                display: "flex", alignItems: "center", gap: 16,
-                padding: "4px 0 16px", borderBottom: "1px solid var(--color-border)", marginBottom: 12,
-              }}>
-                <UserAvatar user={d} size={64} />
-                <div>
-                  <p style={{ fontSize: 17, fontWeight: 800, color: "var(--color-text)", margin: 0 }}>
-                    {d.nombre} {d.apellido}
-                  </p>
-                  <div style={{ marginTop: 6 }}>
-                    <EstadoBadge estado={d.estado} />
-                  </div>
-                </div>
-              </div>
-
-              {[
-                { icon: Mail, label: "Correo", value: d.correo },
-                { icon: Phone, label: "Teléfono", value: d.telefono },
-                { icon: Hash, label: "Cédula", value: d.cedula },
-                { icon: Calendar, label: "Registro", value: d.fechaRegistro || d.createdAt ? new Date(d.fechaRegistro ?? d.createdAt).toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" }) : null },
-                { icon: Clock, label: "Último acceso", value: d.ultimoAcceso ? new Date(d.ultimoAcceso).toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" }) : null },
-              ].filter(row => row.value).map(row => (
-                <div key={row.label} style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "10px 0", borderBottom: "1px solid var(--color-border)" }}>
-                  <div style={{ width: 30, height: 30, borderRadius: 8, background: "rgba(12,106,196,0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                    <row.icon style={{ width: 13, height: 13, color: "var(--color-primary)" }} />
-                  </div>
+        ) : (viewDetail ?? viewTarget) ? (
+          (() => {
+            const d = viewDetail ?? viewTarget;
+            return (
+              <>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 16,
+                    padding: '4px 0 16px',
+                    borderBottom: '1px solid var(--color-border)',
+                    marginBottom: 12,
+                  }}
+                >
+                  <UserAvatar user={d} size={64} />
                   <div>
-                    <p style={{ fontSize: 10.5, fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", margin: 0 }}>{row.label}</p>
-                    <p style={{ fontSize: 13.5, fontWeight: 500, color: "var(--color-text)", margin: "2px 0 0" }}>{row.value}</p>
+                    <p style={{ fontSize: 17, fontWeight: 800, color: 'var(--color-text)', margin: 0 }}>
+                      {d.nombre} {d.apellido}
+                    </p>
+                    <div style={{ marginTop: 6 }}>
+                      <EstadoBadge estado={d.estado} />
+                    </div>
                   </div>
                 </div>
-              ))}
 
-              <div style={{ display: "flex", gap: 10, marginTop: 18, justifyContent: "flex-end" }}>
-                <Button variant="outline" onClick={() => { setViewTarget(null); openEdit(d); }}>
-                  <Edit2 size={13} /> Editar
-                </Button>
-                {d.estado && d.estado !== "activo" ? (
-                  <Button onClick={() => { setViewTarget(null); setActivTarget(d); }} style={{ background: "var(--edu-green-600)" }}>
-                    <UserCheck size={13} /> Activar
+                {[
+                  { icon: Mail, label: 'Correo', value: d.correo },
+                  { icon: Phone, label: 'Teléfono', value: d.telefono },
+                  { icon: Hash, label: 'Cédula', value: d.cedula },
+                  {
+                    icon: Calendar,
+                    label: 'Registro',
+                    value:
+                      d.fechaRegistro || d.createdAt
+                        ? new Date(d.fechaRegistro ?? d.createdAt).toLocaleDateString('es-CO', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric',
+                          })
+                        : null,
+                  },
+                  {
+                    icon: Clock,
+                    label: 'Último acceso',
+                    value: d.ultimoAcceso
+                      ? new Date(d.ultimoAcceso).toLocaleDateString('es-CO', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
+                        })
+                      : null,
+                  },
+                ]
+                  .filter((row) => row.value)
+                  .map((row) => (
+                    <div
+                      key={row.label}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'flex-start',
+                        gap: 10,
+                        padding: '10px 0',
+                        borderBottom: '1px solid var(--color-border)',
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: 30,
+                          height: 30,
+                          borderRadius: 8,
+                          background: 'rgba(12,106,196,0.08)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                        }}
+                      >
+                        <row.icon style={{ width: 13, height: 13, color: 'var(--color-primary)' }} />
+                      </div>
+                      <div>
+                        <p
+                          style={{
+                            fontSize: 10.5,
+                            fontWeight: 700,
+                            color: 'var(--color-text-muted)',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.06em',
+                            margin: 0,
+                          }}
+                        >
+                          {row.label}
+                        </p>
+                        <p style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--color-text)', margin: '2px 0 0' }}>
+                          {row.value}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+
+                <div style={{ display: 'flex', gap: 10, marginTop: 18, justifyContent: 'flex-end' }}>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setViewTarget(null);
+                      openEdit(d);
+                    }}
+                  >
+                    <Edit2 size={13} /> Editar
                   </Button>
-                ) : (
-                  <Button onClick={() => { setViewTarget(null); setDelTarget(d); }} style={{ background: "var(--color-error-hover)" }}>
-                    <UserX size={13} /> Suspender
-                  </Button>
-                )}
-              </div>
-            </>
-          );
-        })() : null}
+                  {d.estado && d.estado !== 'activo' ? (
+                    <Button
+                      onClick={() => {
+                        setViewTarget(null);
+                        setActivTarget(d);
+                      }}
+                      style={{ background: 'var(--edu-green-600)' }}
+                    >
+                      <UserCheck size={13} /> Activar
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        setViewTarget(null);
+                        setDelTarget(d);
+                      }}
+                      style={{ background: 'var(--color-error-hover)' }}
+                    >
+                      <UserX size={13} /> Suspender
+                    </Button>
+                  )}
+                </div>
+              </>
+            );
+          })()
+        ) : null}
       </Modal>
 
       {/* ══ MODAL: Confirmar suspensión ══ */}
       <Modal isOpen={Boolean(delTarget)} onClose={() => setDelTarget(null)} title="Suspender docente" size="sm">
-        <div style={{
-          display: "flex", alignItems: "center", gap: 12, marginBottom: 16,
-          padding: "12px 14px", borderRadius: 10,
-          background: "rgba(220,38,38,0.06)", border: "1px solid rgba(220,38,38,0.15)",
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            marginBottom: 16,
+            padding: '12px 14px',
+            borderRadius: 10,
+            background: 'rgba(220,38,38,0.06)',
+            border: '1px solid rgba(220,38,38,0.15)',
+          }}
+        >
           <UserAvatar user={delTarget} size={40} />
           <div>
-            <p style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text)", margin: 0 }}>
+            <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text)', margin: 0 }}>
               {delTarget?.nombre} {delTarget?.apellido}
             </p>
-            <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: 0 }}>{delTarget?.correo}</p>
+            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', margin: 0 }}>{delTarget?.correo}</p>
           </div>
         </div>
-        <p style={{ fontSize: 13.5, color: "var(--color-text-muted)", marginBottom: 20 }}>
-          El docente <strong style={{ color: "var(--color-text)" }}>no podrá iniciar sesión</strong> mientras esté
+        <p style={{ fontSize: 13.5, color: 'var(--color-text-muted)', marginBottom: 20 }}>
+          El docente <strong style={{ color: 'var(--color-text)' }}>no podrá iniciar sesión</strong> mientras esté
           suspendido. Podrás reactivarlo en cualquier momento.
         </p>
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
-          <Button variant="outline" onClick={() => setDelTarget(null)}>Cancelar</Button>
-          <Button onClick={handleSuspend} disabled={saving} style={{ background: "var(--color-error-hover)" }}>
-            {saving ? <><Loader2 size={14} className="animate-spin" /> Suspendiendo…</> : "Suspender"}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+          <Button variant="outline" onClick={() => setDelTarget(null)}>
+            Cancelar
+          </Button>
+          <Button onClick={handleSuspend} disabled={saving} style={{ background: 'var(--color-error-hover)' }}>
+            {saving ? (
+              <>
+                <Loader2 size={14} className="animate-spin" /> Suspendiendo…
+              </>
+            ) : (
+              'Suspender'
+            )}
           </Button>
         </div>
       </Modal>
 
       {/* ══ MODAL: Confirmar activación ══ */}
       <Modal isOpen={Boolean(activTarget)} onClose={() => setActivTarget(null)} title="Activar docente" size="sm">
-        <div style={{
-          display: "flex", alignItems: "center", gap: 12, marginBottom: 16,
-          padding: "12px 14px", borderRadius: 10,
-          background: "rgba(22,163,74,0.06)", border: "1px solid rgba(22,163,74,0.2)",
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            marginBottom: 16,
+            padding: '12px 14px',
+            borderRadius: 10,
+            background: 'rgba(22,163,74,0.06)',
+            border: '1px solid rgba(22,163,74,0.2)',
+          }}
+        >
           <UserAvatar user={activTarget} size={40} />
           <div>
-            <p style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text)", margin: 0 }}>
+            <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text)', margin: 0 }}>
               {activTarget?.nombre} {activTarget?.apellido}
             </p>
-            <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: 0 }}>{activTarget?.correo}</p>
+            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', margin: 0 }}>{activTarget?.correo}</p>
           </div>
         </div>
-        <p style={{ fontSize: 13.5, color: "var(--color-text-muted)", marginBottom: 20 }}>
-          El docente podrá <strong style={{ color: "var(--color-text)" }}>volver a iniciar sesión</strong> normalmente.
+        <p style={{ fontSize: 13.5, color: 'var(--color-text-muted)', marginBottom: 20 }}>
+          El docente podrá <strong style={{ color: 'var(--color-text)' }}>volver a iniciar sesión</strong> normalmente.
         </p>
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10 }}>
-          <Button variant="outline" onClick={() => setActivTarget(null)}>Cancelar</Button>
-          <Button onClick={handleActivate} disabled={saving} style={{ background: "var(--edu-green-600)" }}>
-            {saving ? <><Loader2 size={14} className="animate-spin" /> Activando…</> : "Activar docente"}
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+          <Button variant="outline" onClick={() => setActivTarget(null)}>
+            Cancelar
+          </Button>
+          <Button onClick={handleActivate} disabled={saving} style={{ background: 'var(--edu-green-600)' }}>
+            {saving ? (
+              <>
+                <Loader2 size={14} className="animate-spin" /> Activando…
+              </>
+            ) : (
+              'Activar docente'
+            )}
           </Button>
         </div>
       </Modal>

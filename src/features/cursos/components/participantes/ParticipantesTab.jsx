@@ -1,73 +1,90 @@
-import { useState, useCallback, useContext } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/services/queryKeys";
-import CursoContext from "../../context/CursoContext";
-import {
-  Users, UserMinus, Upload, UserPlus, Mail, Phone, Hash,
-  Shield, Calendar, Clock, Eye,
-} from "lucide-react";
+import { useState, useCallback, useContext } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/services/queryKeys';
+import CursoContext from '../../context/CursoContext';
+import { Users, UserMinus, Upload, UserPlus, Mail, Phone, Hash, Shield, Calendar, Clock, Eye } from 'lucide-react';
 import {
   cursosGetAllParticipantes,
   cursosAddParticipante,
   cursosRemoveParticipante,
   cursosAddParticipantesCsv,
-} from "@/features/cursos/services/cursosService";
-import { usersGetById } from "@/services/usersService";
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { normalizeUser } from "@/lib/normalizers";
-import { humanizeError } from "@/utils/humanizeError";
-import { Badge, Button, Input, AppModal, UserAvatar, Toast, CsvUploadModal, PhoneInput } from "@/components";
-import { Sk, EmptyState, Field, iconBtn } from "../shared/ui";
-import { makeNotify } from "../shared/helpers";
-import { descargarPlantillaPadresCSV, CSV_COLUMNAS_PADRES } from "@/components/ui/PadresCsvTemplate";
-import { HEADER_PALETTE } from "@/utils/xlsxWriter";
-import { normalizePhone, isValidPhone, PHONE_ERROR } from "@/utils/normalizePhone";
+} from '@/features/cursos/services/cursosService';
+import { usersGetById } from '@/services/usersService';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { normalizeUser } from '@/lib/normalizers';
+import { humanizeError } from '@/utils/humanizeError';
+import { Badge, Button, Input, AppModal, UserAvatar, Toast, CsvUploadModal, PhoneInput } from '@/components';
+import { Sk, EmptyState, Field, iconBtn } from '../shared/ui';
+import { makeNotify } from '../shared/helpers';
+import { descargarPlantillaPadresCSV, CSV_COLUMNAS_PADRES } from '@/components/ui/PadresCsvTemplate';
+import { HEADER_PALETTE } from '@/utils/xlsxWriter';
+import { normalizePhone, isValidPhone, PHONE_ERROR } from '@/utils/normalizePhone';
 import {
-  contrasenaInicial, TEXTO_CONTRASENA_INICIAL,
-  isValidCedula, CEDULA_ERROR, toCedula,
-} from "@/utils/credenciales";
+  contrasenaInicial,
+  TEXTO_CONTRASENA_INICIAL,
+  isValidCedula,
+  CEDULA_ERROR,
+  toCedula,
+} from '@/utils/credenciales';
 
-const EMPTY_FORM = { nombre: "", apellido: "", cedula: "", telefono: "" };
+const EMPTY_FORM = { nombre: '', apellido: '', cedula: '', telefono: '' };
 const SIN_PARTICIPANTES = [];
 
 const ROL_META = {
-  superadmin: { label: "Super Admin", color: "#F87171" },
-  administrador: { label: "Administrador", color: "#60A5FA" },
-  docente: { label: "Docente", color: "#34D399" },
-  padre: { label: "Padre/Tutor", color: "#FBBF24" },
-  "padre/tutor": { label: "Padre/Tutor", color: "#FBBF24" },
+  superadmin: { label: 'Super Admin', color: '#F87171' },
+  administrador: { label: 'Administrador', color: '#60A5FA' },
+  docente: { label: 'Docente', color: '#34D399' },
+  padre: { label: 'Padre/Tutor', color: '#FBBF24' },
+  'padre/tutor': { label: 'Padre/Tutor', color: '#FBBF24' },
 };
 
 // null (no "—") cuando no hay fecha — InfoRow ya oculta filas con valor falsy
 function formatDate(iso) {
   if (!iso) return null;
-  return new Date(iso).toLocaleDateString("es-CO", { day: "2-digit", month: "short", year: "numeric" });
+  return new Date(iso).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
 /* ── Fila de información dentro del modal de detalle ─────────────── */
-function InfoRow({ icon: Icon, label, value, color = "var(--color-primary)" }) {
+function InfoRow({ icon: Icon, label, value, color = 'var(--color-primary)' }) {
   if (!value) return null;
   return (
-    <div style={{
-      display: "flex", alignItems: "flex-start", gap: 10,
-      padding: "10px 0", borderBottom: "1px solid var(--color-border)",
-    }}>
-      <div style={{
-        width: 30, height: 30, borderRadius: 8, background: "rgba(12,106,196,0.08)",
-        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-      }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 10,
+        padding: '10px 0',
+        borderBottom: '1px solid var(--color-border)',
+      }}
+    >
+      <div
+        style={{
+          width: 30,
+          height: 30,
+          borderRadius: 8,
+          background: 'rgba(12,106,196,0.08)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}
+      >
         <Icon style={{ width: 13, height: 13, color }} />
       </div>
       <div>
-        <p style={{
-          fontSize: 10.5, fontWeight: 700, color: "var(--color-text-muted)",
-          textTransform: "uppercase", letterSpacing: "0.06em", margin: 0,
-        }}>
+        <p
+          style={{
+            fontSize: 10.5,
+            fontWeight: 700,
+            color: 'var(--color-text-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+            margin: 0,
+          }}
+        >
           {label}
         </p>
-        <p style={{ fontSize: 13.5, fontWeight: 500, color: "var(--color-text)", margin: "2px 0 0" }}>
-          {value}
-        </p>
+        <p style={{ fontSize: 13.5, fontWeight: 500, color: 'var(--color-text)', margin: '2px 0 0' }}>{value}</p>
       </div>
     </div>
   );
@@ -79,12 +96,12 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
   const canManage = ctx?.canManageParticipants ?? canManageProp;
   const { user } = useAuth();
   // GET /api/users/:id está restringido a admin/superadmin — para otros roles ni se intenta
-  const puedeVerDetalleCompleto = user?.rol === "administrador" || user?.rol === "superadmin";
+  const puedeVerDetalleCompleto = user?.rol === 'administrador' || user?.rol === 'superadmin';
   const [addOpen, setAddOpen] = useState(false);
   const [csvOpen, setCsvOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
-  const [toast, setToast] = useState({ msg: "", type: "success" });
+  const [toast, setToast] = useState({ msg: '', type: 'success' });
   const notify = makeNotify(setToast);
 
   // Confirmación de eliminación (reemplaza al confirm() nativo del navegador)
@@ -115,7 +132,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
   // tras agregar/importar/quitar: participantes y datos del curso (conteos)
   const load = useCallback(
     () => queryClient.invalidateQueries({ queryKey: queryKeys.cursos.detail(cursoId) }),
-    [queryClient, cursoId]
+    [queryClient, cursoId],
   );
 
   const closeAddModal = () => {
@@ -132,16 +149,25 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
     const telefono = form.telefono.trim();
 
     if (!nombre || !apellido || !cedula || !telefono) {
-      notify("Todos los campos son requeridos", "error"); return;
+      notify('Todos los campos son requeridos', 'error');
+      return;
     }
-    if (!isValidCedula(cedula)) { notify(CEDULA_ERROR, "error"); return; }
-    if (!isValidPhone(telefono)) { notify(PHONE_ERROR, "error"); return; }
+    if (!isValidCedula(cedula)) {
+      notify(CEDULA_ERROR, 'error');
+      return;
+    }
+    if (!isValidPhone(telefono)) {
+      notify(PHONE_ERROR, 'error');
+      return;
+    }
 
     setSaving(true);
     try {
       // no se envía "contraseña" — el backend siempre usa la cédula como contraseña inicial
       await cursosAddParticipante(cursoId, {
-        nombre, apellido, cedula,
+        nombre,
+        apellido,
+        cedula,
         telefono: normalizePhone(telefono),
       });
       notify(`Participante agregado. Contraseña inicial: ${contrasenaInicial(cedula)}`);
@@ -151,9 +177,10 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
       // antes se mostraba un genérico fijo que escondía el motivo real -- ej.
       // "El usuario ya está inscrito en este curso" (si se repite por error) o
       // "Ya existe un usuario con este correo", que sí ayudan a entender qué pasó
-      notify(humanizeError(err, "Error al agregar participante"), "error");
+      notify(humanizeError(err, 'Error al agregar participante'), 'error');
+    } finally {
+      setSaving(false);
     }
-    finally { setSaving(false); }
   };
 
   // ── Carga masiva CSV ──────────────────────────────────────────────────────
@@ -161,25 +188,25 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
   // forma plana que espera SuccessPanel: { total, exitosos, fallidos, detalle[] }
   const handleCsvUpload = async (file) => {
     const formData = new FormData();
-    formData.append("archivoCSV", file);
+    formData.append('archivoCSV', file);
     const res = await cursosAddParticipantesCsv(cursoId, formData);
     load(); // refresca lista aunque haya errores parciales
 
-    const resumen  = res?.resumen ?? {};
+    const resumen = res?.resumen ?? {};
     const detalles = res?.detalles ?? {};
     const detalle = [
       ...(detalles.errores ?? []).map((e) => ({
-        fila: e.datos?.nombre ? `${e.datos.nombre} ${e.datos.apellido ?? ""}`.trim() : (e.datos?.cedula ?? "—"),
-        error: e.error ?? "Error al crear el usuario.",
+        fila: e.datos?.nombre ? `${e.datos.nombre} ${e.datos.apellido ?? ''}`.trim() : (e.datos?.cedula ?? '—'),
+        error: e.error ?? 'Error al crear el usuario.',
       })),
       ...(detalles.duplicados ?? []).map((d) => ({
-        fila: d.nombre ?? d.cedula ?? "—",
-        error: d.motivo ?? "Duplicado.",
+        fila: d.nombre ?? d.cedula ?? '—',
+        error: d.motivo ?? 'Duplicado.',
       })),
     ];
 
     return {
-      total:    resumen.total ?? 0,
+      total: resumen.total ?? 0,
       exitosos: resumen.exitosos ?? 0,
       fallidos: (resumen.errores ?? 0) + (resumen.duplicados ?? 0),
       detalle,
@@ -194,11 +221,14 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
     setRemoving(true);
     try {
       await cursosRemoveParticipante(cursoId, removeTarget.id);
-      notify("Participante eliminado");
+      notify('Participante eliminado');
       setRemoveTarget(null);
       load();
-    } catch (err) { notify(humanizeError(err, "Error al eliminar"), "error"); }
-    finally { setRemoving(false); }
+    } catch (err) {
+      notify(humanizeError(err, 'Error al eliminar'), 'error');
+    } finally {
+      setRemoving(false);
+    }
   };
 
   // ── Ver detalle completo del usuario ────────────────────────────────────
@@ -224,7 +254,10 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
     }
   };
 
-  const closeView = () => { setViewTarget(null); setViewDetail(null); };
+  const closeView = () => {
+    setViewTarget(null);
+    setViewDetail(null);
+  };
 
   const d = viewDetail ?? viewTarget; // lo que se muestra en el modal (fallback mientras carga)
 
@@ -233,26 +266,38 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
       <Toast {...toast} />
 
       {/* ── Encabezado con los dos botones de acción ── */}
-      <div style={{
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        flexWrap: "wrap", gap: 10, marginBottom: 16,
-      }}>
-        <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: "var(--color-text)" }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: 10,
+          marginBottom: 16,
+        }}
+      >
+        <h3 style={{ margin: 0, fontSize: 15, fontWeight: 600, color: 'var(--color-text)' }}>
           Participantes ({parts.length})
         </h3>
 
         {canManage && (
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
             {/* Botón: carga masiva */}
             <button
               onClick={() => setCsvOpen(true)}
               style={{
-                display: "inline-flex", alignItems: "center", gap: 6,
-                padding: "7px 13px", borderRadius: 8, fontSize: 13, fontWeight: 500,
-                border: "1px solid var(--color-border)",
-                background: "var(--color-surface)",
-                color: "var(--color-primary, var(--color-text-info, #2563eb))",
-                cursor: "pointer", transition: "background 0.15s",
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '7px 13px',
+                borderRadius: 8,
+                fontSize: 13,
+                fontWeight: 500,
+                border: '1px solid var(--color-border)',
+                background: 'var(--color-surface)',
+                color: 'var(--color-primary, var(--color-text-info, #2563eb))',
+                cursor: 'pointer',
+                transition: 'background 0.15s',
               }}
             >
               <Upload style={{ width: 14, height: 14 }} />
@@ -270,57 +315,82 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
 
       {/* ── Lista / skeleton / estado vacío ── */}
       {loading ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {[0, 1, 2, 3].map((i) => <Sk key={i} h={56} r={12} />)}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {[0, 1, 2, 3].map((i) => (
+            <Sk key={i} h={56} r={12} />
+          ))}
         </div>
       ) : parts.length === 0 ? (
         <EmptyState
           icon={Users}
           title="Sin participantes"
           desc="Agrega el primer participante al curso."
-          action={canManage ? { label: "Agregar", onClick: () => setAddOpen(true) } : null}
+          action={canManage ? { label: 'Agregar', onClick: () => setAddOpen(true) } : null}
         />
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {parts.map((p) => {
             const u = p.usuario ?? p;
-            const esDocente = p.etiqueta === "docente";
-            const nombreCompleto = `${u.nombre ?? ""} ${u.apellido ?? ""}`.trim();
+            const esDocente = p.etiqueta === 'docente';
+            const nombreCompleto = `${u.nombre ?? ''} ${u.apellido ?? ''}`.trim();
             return (
               <div
                 key={u._id ?? p._id}
                 onClick={() => openView(u)}
                 role="button"
                 tabIndex={0}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openView(u); } }}
-                style={{
-                  display: "flex", alignItems: "center", gap: 12,
-                  padding: "12px 16px", borderRadius: 12,
-                  background: "var(--color-surface)",
-                  border: "1px solid var(--color-border)",
-                  cursor: "pointer",
-                  transition: "background 0.12s, border-color 0.12s",
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openView(u);
+                  }
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = "var(--color-bg)"; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "var(--color-surface)"; }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                  padding: '12px 16px',
+                  borderRadius: 12,
+                  background: 'var(--color-surface)',
+                  border: '1px solid var(--color-border)',
+                  cursor: 'pointer',
+                  transition: 'background 0.12s, border-color 0.12s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'var(--color-bg)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'var(--color-surface)';
+                }}
               >
                 <UserAvatar user={u} size={38} />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: 13.5, fontWeight: 700, color: "var(--color-text)", margin: 0 }}>
+                  <p style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--color-text)', margin: 0 }}>
                     {nombreCompleto}
                   </p>
-                  <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: "2px 0 0" }}>
+                  <p style={{ fontSize: 12, color: 'var(--color-text-muted)', margin: '2px 0 0' }}>
                     {p.etiqueta ?? u.rol}
                   </p>
                 </div>
                 {esDocente && (
-                  <Badge variant="info" styleType="soft" size="sm">Docente</Badge>
+                  <Badge variant="info" styleType="soft" size="sm">
+                    Docente
+                  </Badge>
                 )}
-                <Eye style={{ width: 14, height: 14, color: "var(--color-text-subtle)", flexShrink: 0 }} />
+                <Eye style={{ width: 14, height: 14, color: 'var(--color-text-subtle)', flexShrink: 0 }} />
                 {canManage && !esDocente && (
                   <button
-                    onClick={(e) => { e.stopPropagation(); askRemove(u._id ?? p._id, nombreCompleto); }}
-                    style={{ ...iconBtn("var(--color-error)"), padding: "7px 10px", gap: 6, fontSize: 12, fontWeight: 700 }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      askRemove(u._id ?? p._id, nombreCompleto);
+                    }}
+                    style={{
+                      ...iconBtn('var(--color-error)'),
+                      padding: '7px 10px',
+                      gap: 6,
+                      fontSize: 12,
+                      fontWeight: 700,
+                    }}
                   >
                     <UserMinus style={{ width: 14, height: 14, flexShrink: 0 }} />
                     Eliminar
@@ -339,7 +409,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
         <AppModal.Header title="Agregar participante" onClose={closeAddModal} />
         <AppModal.Body>
           <form id="participante-form" onSubmit={handleAdd}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <Field label="Nombre *">
                 <Input
                   value={form.nombre}
@@ -373,15 +443,18 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
                 />
               </Field>
             </div>
-            <p style={{ fontSize: 12, color: "var(--color-text-muted)", margin: "4px 0 0" }}>
-              Si la cédula ya pertenece a un padre existente (ej. de otro curso), se agrega ese mismo, sin crear una cuenta nueva. Si no existe, se crea. {TEXTO_CONTRASENA_INICIAL}
+            <p style={{ fontSize: 12, color: 'var(--color-text-muted)', margin: '4px 0 0' }}>
+              Si la cédula ya pertenece a un padre existente (ej. de otro curso), se agrega ese mismo, sin crear una
+              cuenta nueva. Si no existe, se crea. {TEXTO_CONTRASENA_INICIAL}
             </p>
           </form>
         </AppModal.Body>
         <AppModal.Footer>
-          <Button variant="ghost" type="button" onClick={closeAddModal}>Cancelar</Button>
+          <Button variant="ghost" type="button" onClick={closeAddModal}>
+            Cancelar
+          </Button>
           <Button type="submit" form="participante-form" disabled={saving}>
-            {saving ? "Agregando..." : "Agregar"}
+            {saving ? 'Agregando...' : 'Agregar'}
           </Button>
         </AppModal.Footer>
       </AppModal>
@@ -399,7 +472,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
         templateLabel="Descargar plantilla"
         acceptedColumns={CSV_COLUMNAS_PADRES}
         columnColors={HEADER_PALETTE}
-        acceptExtensions={[".xlsx", ".xlsm"]}
+        acceptExtensions={['.xlsx', '.xlsm']}
         fileTypeLabel="Excel (.xlsx, .xlsm)"
         maxFileSizeMB={5}
       />
@@ -410,16 +483,16 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
       <AppModal isOpen={!!removeTarget} onClose={() => setRemoveTarget(null)} size="sm">
         <AppModal.Header title="Eliminar participante" onClose={() => setRemoveTarget(null)} />
         <AppModal.Body>
-          <p style={{ fontSize: 13.5, color: "var(--color-text-muted)", margin: 0 }}>
-            ¿Eliminar a{" "}
-            <strong style={{ color: "var(--color-text)" }}>{removeTarget?.nombre}</strong>{" "}
-            de este curso?
+          <p style={{ fontSize: 13.5, color: 'var(--color-text-muted)', margin: 0 }}>
+            ¿Eliminar a <strong style={{ color: 'var(--color-text)' }}>{removeTarget?.nombre}</strong> de este curso?
           </p>
         </AppModal.Body>
         <AppModal.Footer>
-          <Button variant="ghost" type="button" onClick={() => setRemoveTarget(null)}>Cancelar</Button>
+          <Button variant="ghost" type="button" onClick={() => setRemoveTarget(null)}>
+            Cancelar
+          </Button>
           <Button variant="danger" onClick={confirmRemove} disabled={removing}>
-            {removing ? "Eliminando..." : "Eliminar"}
+            {removing ? 'Eliminando...' : 'Eliminar'}
           </Button>
         </AppModal.Footer>
       </AppModal>
@@ -431,27 +504,35 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
         <AppModal.Header title="Detalle del participante" onClose={closeView} />
         <AppModal.Body>
           {viewLoading && !d ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {[0, 1, 2, 3, 4].map((i) => <Sk key={i} h={44} r={8} />)}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {[0, 1, 2, 3, 4].map((i) => (
+                <Sk key={i} h={44} r={8} />
+              ))}
             </div>
           ) : d ? (
             <>
               {/* Avatar + nombre */}
-              <div style={{
-                display: "flex", alignItems: "center", gap: 16,
-                padding: "4px 0 16px", borderBottom: "1px solid var(--color-border)", marginBottom: 4,
-              }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 16,
+                  padding: '4px 0 16px',
+                  borderBottom: '1px solid var(--color-border)',
+                  marginBottom: 4,
+                }}
+              >
                 <UserAvatar user={d} size={64} />
                 <div>
-                  <p style={{ fontSize: 17, fontWeight: 800, color: "var(--color-text)", margin: 0 }}>
+                  <p style={{ fontSize: 17, fontWeight: 800, color: 'var(--color-text)', margin: 0 }}>
                     {d.nombre} {d.apellido}
                   </p>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 6 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
                     <Badge variant="info" styleType="soft" size="sm">
                       {ROL_META[d.rol]?.label ?? d.rol}
                     </Badge>
                     {viewLoading && (
-                      <span style={{ fontSize: 11, color: "var(--color-text-muted)" }}>Actualizando...</span>
+                      <span style={{ fontSize: 11, color: 'var(--color-text-muted)' }}>Actualizando...</span>
                     )}
                   </div>
                 </div>
@@ -467,7 +548,9 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
           ) : null}
         </AppModal.Body>
         <AppModal.Footer>
-          <Button variant="ghost" type="button" onClick={closeView}>Cerrar</Button>
+          <Button variant="ghost" type="button" onClick={closeView}>
+            Cerrar
+          </Button>
         </AppModal.Footer>
       </AppModal>
     </div>

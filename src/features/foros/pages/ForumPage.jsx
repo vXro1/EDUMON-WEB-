@@ -4,7 +4,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { MessageSquare, Paperclip, X, FileText } from 'lucide-react';
 
 import { useAuthContext } from '../../../features/auth/context/AuthContext';
-import { useToast }       from '../../../context/ToastContext';
+import { useToast } from '../../../context/ToastContext';
 
 import {
   useForumDetail,
@@ -18,10 +18,10 @@ import {
 } from '../hooks/useForumData';
 import { useForumPermissions } from '../hooks/useForumPermissions';
 
-import ForumHeader   from '../components/ForumHeader';
-import ForumSidebar  from '../components/ForumSidebar';
-import ForumMessage  from '../components/ForumMessage';
-import ForumInput    from '../components/ForumInput';
+import ForumHeader from '../components/ForumHeader';
+import ForumSidebar from '../components/ForumSidebar';
+import ForumMessage from '../components/ForumMessage';
+import ForumInput from '../components/ForumInput';
 import ForumActivity from '../components/ForumActivity';
 import { Modal, Button, RichTextEditor } from '@/components';
 import { forosCreate } from '@/features/foros/services/forosService';
@@ -33,15 +33,46 @@ import { sanitizeRichText, stripHtml } from '@/utils/richText';
 
 const MsgSkeleton = () => (
   <div style={{ display: 'flex', gap: 12, padding: '10px 12px' }}>
-    <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--color-surface-2)',
-      flexShrink: 0, animation: 'fm-pulse 1.4s ease-in-out infinite' }} />
+    <div
+      style={{
+        width: 36,
+        height: 36,
+        borderRadius: '50%',
+        background: 'var(--color-surface-2)',
+        flexShrink: 0,
+        animation: 'fm-pulse 1.4s ease-in-out infinite',
+      }}
+    />
     <div style={{ flex: 1 }}>
-      <div style={{ width: '30%', height: 12, borderRadius: 4, background: 'var(--color-surface-2)',
-        marginBottom: 8, animation: 'fm-pulse 1.4s ease-in-out infinite' }} />
-      <div style={{ width: '80%', height: 13, borderRadius: 4, background: 'var(--color-surface-2)',
-        marginBottom: 5, animation: 'fm-pulse 1.4s ease-in-out infinite' }} />
-      <div style={{ width: '60%', height: 13, borderRadius: 4, background: 'var(--color-surface-2)',
-        animation: 'fm-pulse 1.4s ease-in-out infinite' }} />
+      <div
+        style={{
+          width: '30%',
+          height: 12,
+          borderRadius: 4,
+          background: 'var(--color-surface-2)',
+          marginBottom: 8,
+          animation: 'fm-pulse 1.4s ease-in-out infinite',
+        }}
+      />
+      <div
+        style={{
+          width: '80%',
+          height: 13,
+          borderRadius: 4,
+          background: 'var(--color-surface-2)',
+          marginBottom: 5,
+          animation: 'fm-pulse 1.4s ease-in-out infinite',
+        }}
+      />
+      <div
+        style={{
+          width: '60%',
+          height: 13,
+          borderRadius: 4,
+          background: 'var(--color-surface-2)',
+          animation: 'fm-pulse 1.4s ease-in-out infinite',
+        }}
+      />
     </div>
   </div>
 );
@@ -49,9 +80,7 @@ const MsgSkeleton = () => (
 const EmptyState = ({ canPost }) => (
   <div style={{ textAlign: 'center', padding: '64px 20px' }}>
     <MessageSquare size={40} style={{ color: 'var(--color-border)', margin: '0 auto 12px' }} />
-    <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text)', marginBottom: 6 }}>
-      Aún no hay mensajes
-    </p>
+    <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text)', marginBottom: 6 }}>Aún no hay mensajes</p>
     <p style={{ fontSize: 13.5, color: 'var(--color-text-muted)' }}>
       {canPost ? '¡Sé el primero en escribir en este foro!' : 'Próximamente habrá actividad en este foro.'}
     </p>
@@ -64,53 +93,77 @@ const MAX_MATERIALES = 5;
 
 // el backend acepta hasta 5 archivos de máx. 10MB: imágenes, video, PDF
 const MaterialPill = ({ file, onRemove }) => (
-  <div style={{
-    display: 'inline-flex', alignItems: 'center', gap: 5,
-    background: 'var(--color-surface-2, #f3f4f6)', border: '1px solid var(--color-border)',
-    borderRadius: 20, padding: '3px 10px', fontSize: 12,
-    boxShadow: 'var(--clay-pill)',
-  }}>
+  <div
+    style={{
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 5,
+      background: 'var(--color-surface-2, #f3f4f6)',
+      border: '1px solid var(--color-border)',
+      borderRadius: 20,
+      padding: '3px 10px',
+      fontSize: 12,
+      boxShadow: 'var(--clay-pill)',
+    }}
+  >
     <FileText size={11} style={{ flexShrink: 0 }} />
     <span style={{ maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
       {file.name}
     </span>
-    <button onClick={() => onRemove(file)} type="button"
-      style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0,
-        color: 'var(--color-text-muted)', display: 'flex', lineHeight: 1 }}>
+    <button
+      onClick={() => onRemove(file)}
+      type="button"
+      style={{
+        background: 'none',
+        border: 'none',
+        cursor: 'pointer',
+        padding: 0,
+        color: 'var(--color-text-muted)',
+        display: 'flex',
+        lineHeight: 1,
+      }}
+    >
       <X size={11} />
     </button>
   </div>
 );
 
 const CreateForumModal = ({ cursoId, onCreated, onClose }) => {
-  const [titulo,      setTitulo]      = useState('');
+  const [titulo, setTitulo] = useState('');
   const [descripcion, setDescripcion] = useState('');
-  const [materiales,  setMateriales]  = useState([]);
-  const [loading,     setLoading]     = useState(false);
-  const [error,       setError]       = useState('');
+  const [materiales, setMateriales] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const fileRef = useRef(null);
   const { notify } = useToast();
 
   const handleFileChange = (e) => {
     const picked = Array.from(e.target.files ?? []);
-    setMateriales(prev => [...prev, ...picked].slice(0, MAX_MATERIALES));
+    setMateriales((prev) => [...prev, ...picked].slice(0, MAX_MATERIALES));
     e.target.value = '';
   };
-  const removeMaterial = (file) => setMateriales(prev => prev.filter(f => f !== file));
+  const removeMaterial = (file) => setMateriales((prev) => prev.filter((f) => f !== file));
 
   const descripcionTexto = stripHtml(descripcion);
 
   const handleSubmit = async () => {
-    if (titulo.trim().length < 5)      { setError('El título debe tener al menos 5 caracteres.'); return; }
-    if (descripcionTexto.length < 10)  { setError('La descripción debe tener al menos 10 caracteres.'); return; }
-    setLoading(true); setError('');
+    if (titulo.trim().length < 5) {
+      setError('El título debe tener al menos 5 caracteres.');
+      return;
+    }
+    if (descripcionTexto.length < 10) {
+      setError('La descripción debe tener al menos 10 caracteres.');
+      return;
+    }
+    setLoading(true);
+    setError('');
     try {
       const fd = new FormData();
       fd.append('titulo', titulo.trim());
       fd.append('descripcion', sanitizeRichText(descripcion));
       fd.append('cursoId', cursoId);
       fd.append('publico', 'false');
-      materiales.forEach(f => fd.append('archivos', f));
+      materiales.forEach((f) => fd.append('archivos', f));
       await forosCreate(fd);
       notify('Foro creado correctamente', 'success');
       onCreated?.();
@@ -125,22 +178,41 @@ const CreateForumModal = ({ cursoId, onCreated, onClose }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {error && (
-        <div style={{ background: '#fee2e2', color: 'var(--color-error-hover)',
-          padding: '10px 14px', borderRadius: 8, fontSize: 13 }}>{error}</div>
+        <div
+          style={{
+            background: '#fee2e2',
+            color: 'var(--color-error-hover)',
+            padding: '10px 14px',
+            borderRadius: 8,
+            fontSize: 13,
+          }}
+        >
+          {error}
+        </div>
       )}
       <Field label="Título *">
-        <input value={titulo} onChange={e => setTitulo(e.target.value)}
+        <input
+          value={titulo}
+          onChange={(e) => setTitulo(e.target.value)}
           placeholder="Mínimo 5 caracteres (máx 200)"
           maxLength={200}
           style={{
-            width: '100%', padding: '9px 12px', border: '1.5px solid var(--color-border)',
-            borderRadius: 8, fontSize: 14, fontFamily: 'inherit', outline: 'none',
-            background: 'var(--color-surface)', boxSizing: 'border-box',
+            width: '100%',
+            padding: '9px 12px',
+            border: '1.5px solid var(--color-border)',
+            borderRadius: 8,
+            fontSize: 14,
+            fontFamily: 'inherit',
+            outline: 'none',
+            background: 'var(--color-surface)',
+            boxSizing: 'border-box',
           }}
-          onFocus={e => e.target.style.borderColor = 'var(--color-primary)'}
-          onBlur={e  => e.target.style.borderColor = 'var(--color-border)'}
+          onFocus={(e) => (e.target.style.borderColor = 'var(--color-primary)')}
+          onBlur={(e) => (e.target.style.borderColor = 'var(--color-border)')}
         />
-        <span style={{ fontSize: 11, color: titulo.length < 5 ? 'var(--color-error-hover)' : 'var(--color-text-muted)' }}>
+        <span
+          style={{ fontSize: 11, color: titulo.length < 5 ? 'var(--color-error-hover)' : 'var(--color-text-muted)' }}
+        >
           {titulo.length} / 200
         </span>
       </Field>
@@ -151,38 +223,66 @@ const CreateForumModal = ({ cursoId, onCreated, onClose }) => {
           minHeight={100}
           placeholder="Describe de qué trata el foro (mínimo 10 caracteres)"
         />
-        <span style={{ fontSize: 11, color: descripcionTexto.length < 10 ? 'var(--color-error-hover)' : 'var(--color-text-muted)' }}>
+        <span
+          style={{
+            fontSize: 11,
+            color: descripcionTexto.length < 10 ? 'var(--color-error-hover)' : 'var(--color-text-muted)',
+          }}
+        >
           {descripcionTexto.length} / 2000
         </span>
       </Field>
       <Field label="Materiales de apoyo (opcional)">
         {materiales.length > 0 && (
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
-            {materiales.map((f, i) => <MaterialPill key={i} file={f} onRemove={removeMaterial} />)}
+            {materiales.map((f, i) => (
+              <MaterialPill key={i} file={f} onRemove={removeMaterial} />
+            ))}
           </div>
         )}
-        <button type="button" onClick={() => fileRef.current?.click()}
+        <button
+          type="button"
+          onClick={() => fileRef.current?.click()}
           disabled={materiales.length >= MAX_MATERIALES}
           style={{
-            display: 'flex', alignItems: 'center', gap: 6,
-            background: 'none', border: '1.5px dashed var(--color-border)',
-            borderRadius: 8, padding: '8px 14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            background: 'none',
+            border: '1.5px dashed var(--color-border)',
+            borderRadius: 8,
+            padding: '8px 14px',
             cursor: materiales.length >= MAX_MATERIALES ? 'not-allowed' : 'pointer',
-            fontSize: 12.5, color: 'var(--color-text-muted)',
+            fontSize: 12.5,
+            color: 'var(--color-text-muted)',
             opacity: materiales.length >= MAX_MATERIALES ? 0.5 : 1,
-          }}>
+          }}
+        >
           <Paperclip size={13} />
           Adjuntar imágenes, video o PDF ({materiales.length}/{MAX_MATERIALES})
         </button>
-        <input ref={fileRef} type="file" style={{ display: 'none' }}
-          multiple accept="image/*,video/mp4,video/mpeg,video/quicktime,.pdf"
-          onChange={handleFileChange} />
+        <input
+          ref={fileRef}
+          type="file"
+          style={{ display: 'none' }}
+          multiple
+          accept="image/*,video/mp4,video/mpeg,video/quicktime,.pdf"
+          onChange={handleFileChange}
+        />
       </Field>
-      <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end',
-        paddingTop: 8, borderTop: '1px solid var(--color-border)' }}>
-        <Button variant="ghost" onClick={onClose} disabled={loading}>Cancelar</Button>
-        <Button onClick={handleSubmit}
-          disabled={loading || titulo.trim().length < 5 || descripcionTexto.length < 10}>
+      <div
+        style={{
+          display: 'flex',
+          gap: 10,
+          justifyContent: 'flex-end',
+          paddingTop: 8,
+          borderTop: '1px solid var(--color-border)',
+        }}
+      >
+        <Button variant="ghost" onClick={onClose} disabled={loading}>
+          Cancelar
+        </Button>
+        <Button onClick={handleSubmit} disabled={loading || titulo.trim().length < 5 || descripcionTexto.length < 10}>
           {loading ? 'Creando…' : 'Crear foro'}
         </Button>
       </div>
@@ -194,10 +294,10 @@ const CreateForumModal = ({ cursoId, onCreated, onClose }) => {
 
 const ForumPage = () => {
   const { cursoId, foroId } = useParams();
-  const navigate            = useNavigate();
-  const location            = useLocation();
-  const { user }            = useAuthContext();
-  const { notify }          = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuthContext();
+  const { notify } = useToast();
 
   // por debajo de 1100px no cabe el layout de 3 columnas; los paneles pasan a overlays
   const [isCompact, setIsCompact] = useState(() => window.innerWidth < 1100);
@@ -208,9 +308,9 @@ const ForumPage = () => {
   }, []);
 
   // ambos paneles arrancan cerrados — la vista inicial es solo el foro, se abren a pedido
-  const [sidebarOpen,  setSidebarOpen]  = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activityOpen, setActivityOpen] = useState(false);
-  const [showCreate,   setShowCreate]   = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
 
   // cerrar los paneles al cambiar de foro (evita overlay tapando el foro nuevo en angosto)
   useEffect(() => {
@@ -219,16 +319,18 @@ const ForumPage = () => {
   }, [foroId]);
 
   // en angosto solo un panel a la vez (overlay); en escritorio ambos pueden estar abiertos
-  const toggleSidebar = () => setSidebarOpen(prev => {
-    const next = !prev;
-    if (next && isCompact) setActivityOpen(false);
-    return next;
-  });
-  const toggleActivity = () => setActivityOpen(prev => {
-    const next = !prev;
-    if (next && isCompact) setSidebarOpen(false);
-    return next;
-  });
+  const toggleSidebar = () =>
+    setSidebarOpen((prev) => {
+      const next = !prev;
+      if (next && isCompact) setActivityOpen(false);
+      return next;
+    });
+  const toggleActivity = () =>
+    setActivityOpen((prev) => {
+      const next = !prev;
+      if (next && isCompact) setSidebarOpen(false);
+      return next;
+    });
 
   // Estado de respuesta / UI
   const [replyTo, setReplyTo] = useState(null);
@@ -238,15 +340,15 @@ const ForumPage = () => {
   const perms = useForumPermissions(user);
 
   // Datos
-  const { data: foro,     isLoading: foroLoading }    = useForumDetail(foroId);
+  const { data: foro, isLoading: foroLoading } = useForumDetail(foroId);
   const { data: mensajes = [], isLoading: msgLoading } = useForumMessages(foroId, perms.userId);
-  const { data: forums   = [], refetch: refetchForums } = useForumsByCourse(cursoId);
+  const { data: forums = [], refetch: refetchForums } = useForumsByCourse(cursoId);
 
   // Mutaciones
-  const postMutation   = usePostMessage(foroId);
-  const likeMutation   = useLikeMessage(foroId, perms.userId);
+  const postMutation = usePostMessage(foroId);
+  const likeMutation = useLikeMessage(foroId, perms.userId);
   const deleteMutation = useDeleteMessage(foroId);
-  const editMutation   = useEditMessage(foroId);
+  const editMutation = useEditMessage(foroId);
   const estadoMutation = useToggleEstado(foroId);
 
   // ─── Manejadores ─────────────────────────────────────────────────────────
@@ -255,17 +357,18 @@ const ForumPage = () => {
     fd.append('foroId', foroId);
     fd.append('contenido', contenido);
     if (respuestaA) fd.append('respuestaA', respuestaA);
-    files.forEach(f => fd.append('archivos', f));
+    files.forEach((f) => fd.append('archivos', f));
 
     postMutation.mutate(fd, {
       onSuccess: () => {
         setReplyTo(null);
         setTimeout(() => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 150);
       },
-      onError: (err) => notify(
-        humanizeError(err, 'No pudimos publicar tu mensaje. Comprueba tu conexión e intenta nuevamente.'),
-        'error'
-      ),
+      onError: (err) =>
+        notify(
+          humanizeError(err, 'No pudimos publicar tu mensaje. Comprueba tu conexión e intenta nuevamente.'),
+          'error',
+        ),
     });
   };
 
@@ -278,23 +381,30 @@ const ForumPage = () => {
   const handleDelete = (msgId) => {
     deleteMutation.mutate(msgId, {
       onSuccess: () => notify('Mensaje eliminado', 'info'),
-      onError:   (err) => notify(humanizeError(err, 'No pudimos eliminar el mensaje. Intenta de nuevo.'), 'error'),
+      onError: (err) => notify(humanizeError(err, 'No pudimos eliminar el mensaje. Intenta de nuevo.'), 'error'),
     });
   };
 
   const handleEdit = ({ id, contenido }) => {
-    editMutation.mutate({ id, contenido }, {
-      onSuccess: () => notify('Mensaje actualizado', 'success'),
-      onError:   (err) => notify(humanizeError(err, 'No pudimos guardar los cambios. Intenta de nuevo.'), 'error'),
-    });
+    editMutation.mutate(
+      { id, contenido },
+      {
+        onSuccess: () => notify('Mensaje actualizado', 'success'),
+        onError: (err) => notify(humanizeError(err, 'No pudimos guardar los cambios. Intenta de nuevo.'), 'error'),
+      },
+    );
   };
 
   const handleToggleEstado = () => {
     const nuevoEstado = foro?.estado === 'cerrado' ? 'abierto' : 'cerrado';
-    estadoMutation.mutate({ estado: nuevoEstado }, {
-      onSuccess: () => notify(`Foro ${nuevoEstado}`, 'success'),
-      onError:   (err) => notify(humanizeError(err, 'No pudimos cambiar el estado del foro. Intenta de nuevo.'), 'error'),
-    });
+    estadoMutation.mutate(
+      { estado: nuevoEstado },
+      {
+        onSuccess: () => notify(`Foro ${nuevoEstado}`, 'success'),
+        onError: (err) =>
+          notify(humanizeError(err, 'No pudimos cambiar el estado del foro. Intenta de nuevo.'), 'error'),
+      },
+    );
   };
 
   const cursoNombre = location.state?.cursoNombre ?? foro?.curso?.nombre ?? null;
@@ -337,27 +447,30 @@ const ForumPage = () => {
           <main className="fm-main">
             {msgLoading ? (
               <div className="fm-messages-scroll">
-                {Array.from({ length: 5 }).map((_, i) => <MsgSkeleton key={i} />)}
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <MsgSkeleton key={i} />
+                ))}
               </div>
             ) : (
               <div className="fm-messages-scroll">
-                {mensajes.length === 0
-                  ? <EmptyState canPost={perms.canPostMessage} />
-                  : mensajes.map(msg => (
-                      <ForumMessage
-                        key={msg._id}
-                        msg={msg}
-                        userId={perms.userId}
-                        canEdit={perms.canEditMessage(msg.autorId ?? msg.autor?._id)}
-                        canDelete={perms.canDeleteMessage(msg.autorId ?? msg.autor?._id)}
-                        canReply={perms.canPostMessage && perms.canReplyToMessage(msg.autor?.rol)}
-                        onReply={setReplyTo}
-                        onLike={handleLike}
-                        onDelete={handleDelete}
-                        onEdit={handleEdit}
-                      />
-                    ))
-                }
+                {mensajes.length === 0 ? (
+                  <EmptyState canPost={perms.canPostMessage} />
+                ) : (
+                  mensajes.map((msg) => (
+                    <ForumMessage
+                      key={msg._id}
+                      msg={msg}
+                      userId={perms.userId}
+                      canEdit={perms.canEditMessage(msg.autorId ?? msg.autor?._id)}
+                      canDelete={perms.canDeleteMessage(msg.autorId ?? msg.autor?._id)}
+                      canReply={perms.canPostMessage && perms.canReplyToMessage(msg.autor?.rol)}
+                      onReply={setReplyTo}
+                      onLike={handleLike}
+                      onDelete={handleDelete}
+                      onEdit={handleEdit}
+                    />
+                  ))
+                )}
                 <div ref={messagesEndRef} style={{ height: 1 }} />
               </div>
             )}
@@ -381,17 +494,8 @@ const ForumPage = () => {
       </div>
 
       {/* Modal de creación de foro */}
-      <Modal
-        isOpen={showCreate}
-        onClose={() => setShowCreate(false)}
-        title="Nuevo foro"
-        size="md"
-      >
-        <CreateForumModal
-          cursoId={cursoId}
-          onCreated={refetchForums}
-          onClose={() => setShowCreate(false)}
-        />
+      <Modal isOpen={showCreate} onClose={() => setShowCreate(false)} title="Nuevo foro" size="md">
+        <CreateForumModal cursoId={cursoId} onCreated={refetchForums} onClose={() => setShowCreate(false)} />
       </Modal>
     </>
   );

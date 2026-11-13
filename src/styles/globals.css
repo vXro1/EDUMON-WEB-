@@ -4,24 +4,24 @@
    ════════════════════════════════════════════════════════════════════ */
 
 /* ── 1. TOKENS ── */
-@import "./tokens/tokens.css";
+@import './tokens/tokens.css';
 
 /* ── 2. BASE ── */
-@import "./base/reset.css";
-@import "./base/theme.css";
+@import './base/reset.css';
+@import './base/theme.css';
 
 /* ── 3. COMPONENTS ── */
-@import "./components/buttons.css";
-@import "./components/forms.css";
-@import "./components/cards.css";
-@import "./components/modals.css";
-@import "./components/badges.css";
-@import "./components/avatar.css";
-@import "./components/toast.css";
-@import "./components/Dropdown.css";
-@import "./components/input.css";
-@import "./components/footer.css";
-@import "./components/skeleton.css";
+@import './components/buttons.css';
+@import './components/forms.css';
+@import './components/cards.css';
+@import './components/modals.css';
+@import './components/badges.css';
+@import './components/avatar.css';
+@import './components/toast.css';
+@import './components/Dropdown.css';
+@import './components/input.css';
+@import './components/footer.css';
+@import './components/skeleton.css';
 
 /* ── 4. PAGES ── */
 /* NOTA: rediseño de landing (paleta azul minimalista) vive en
@@ -32,12 +32,12 @@
    la responsividad. No importar ambos a la vez. */
 
 /* ── 5. LAYOUT ── */
-@import "./layout/Layout.css";
+@import './layout/Layout.css';
 
 /* ── 6. UTILITIES ── */
-@import "./utils/animations.css";
-@import "./utils/scrollbar.css";
-@import "./utils/accessibility.css";
+@import './utils/animations.css';
+@import './utils/scrollbar.css';
+@import './utils/accessibility.css';
 
 /* ── 7. TAILWIND ── */
 @custom-variant dark (&:is(.dark *));
@@ -45,4 +45,3 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-

@@ -1,21 +1,18 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  BookOpen, FileText, ClipboardList, Calendar, Bell,
-  ChevronRight, Users, Clock, Heart,
-} from "lucide-react";
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { cursosGetMine } from "@/features/cursos/services/cursosService";
-import { eventosGetHoy } from "@/features/eventos/services/eventosService";
-import { tareasGetAll } from "@/features/cursos/services/tareasService";
-import { entregasGetAll } from "@/features/entregas/services/entregasService";
-import { notificacionesGetConteoNoLeidas } from "@/features/notificaciones/services/notificacionesService";
-import { normalizeCurso, normalizeTarea } from "@/lib/normalizers";
-import CursoCard from "@/features/cursos/components/CursoCard";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { BookOpen, FileText, ClipboardList, Calendar, Bell, ChevronRight, Users, Clock, Heart } from 'lucide-react';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { cursosGetMine } from '@/features/cursos/services/cursosService';
+import { eventosGetHoy } from '@/features/eventos/services/eventosService';
+import { tareasGetAll } from '@/features/cursos/services/tareasService';
+import { entregasGetAll } from '@/features/entregas/services/entregasService';
+import { notificacionesGetConteoNoLeidas } from '@/features/notificaciones/services/notificacionesService';
+import { normalizeCurso, normalizeTarea } from '@/lib/normalizers';
+import CursoCard from '@/features/cursos/components/CursoCard';
 
 /* ── Esqueleto de carga ────────────────────────────────────────── */
-function Sk({ h = 14, w = "100%", r = "var(--radius-sm)" }) {
-  return <span className="skeleton" style={{ height: h, width: w, borderRadius: r, display: "block" }} />;
+function Sk({ h = 14, w = '100%', r = 'var(--radius-sm)' }) {
+  return <span className="skeleton" style={{ height: h, width: w, borderRadius: r, display: 'block' }} />;
 }
 
 /* ── Encabezado de sección ─────────────────────────────────────── */
@@ -43,7 +40,9 @@ function StatCard({ value, label, icon: Icon, colorClass, loading }) {
         {loading ? (
           <>
             <Sk h={26} w={50} r="var(--radius-sm)" />
-            <div style={{ marginTop: 6 }}><Sk h={11} w={90} /></div>
+            <div style={{ marginTop: 6 }}>
+              <Sk h={11} w={90} />
+            </div>
           </>
         ) : (
           <>
@@ -60,17 +59,14 @@ function StatCard({ value, label, icon: Icon, colorClass, loading }) {
 function EventItem({ evento }) {
   return (
     <div className="list-card-item">
-      <div
-        className="list-card-item-icon"
-        style={{ background: "var(--edu-blue-50)", color: "var(--edu-blue-500)" }}
-      >
+      <div className="list-card-item-icon" style={{ background: 'var(--edu-blue-50)', color: 'var(--edu-blue-500)' }}>
         <Calendar size={16} aria-hidden="true" />
       </div>
       <div className="list-card-item-body">
         <p className="list-card-item-title">{evento.titulo}</p>
         <p className="list-card-item-meta">
           <Clock size={10} aria-hidden="true" />
-          {evento.hora ?? "Todo el día"}
+          {evento.hora ?? 'Todo el día'}
         </p>
       </div>
     </div>
@@ -84,23 +80,34 @@ function QuickActionCard({ icon: Icon, label, desc, colorClass, onClick }) {
       onClick={onClick}
       className="card card-interactive"
       style={{
-        display: "flex", alignItems: "center", gap: "var(--space-3)",
-        padding: "var(--space-4)", textAlign: "left", width: "100%",
-        background: "var(--color-surface)", border: "1px solid var(--color-border)",
+        display: 'flex',
+        alignItems: 'center',
+        gap: 'var(--space-3)',
+        padding: 'var(--space-4)',
+        textAlign: 'left',
+        width: '100%',
+        background: 'var(--color-surface)',
+        border: '1px solid var(--color-border)',
       }}
     >
       <div className={`stat-card-icon ${colorClass}`} style={{ flexShrink: 0 }}>
         <Icon size={18} aria-hidden="true" />
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{ fontSize: "var(--text-sm)", fontWeight: "var(--font-semibold)", color: "var(--color-text)", margin: 0, lineHeight: 1.3 }}>
+        <p
+          style={{
+            fontSize: 'var(--text-sm)',
+            fontWeight: 'var(--font-semibold)',
+            color: 'var(--color-text)',
+            margin: 0,
+            lineHeight: 1.3,
+          }}
+        >
           {label}
         </p>
-        <p style={{ fontSize: "var(--text-xs)", color: "var(--color-text-muted)", margin: 0, marginTop: 2 }}>
-          {desc}
-        </p>
+        <p style={{ fontSize: 'var(--text-xs)', color: 'var(--color-text-muted)', margin: 0, marginTop: 2 }}>{desc}</p>
       </div>
-      <ChevronRight size={14} style={{ color: "var(--color-text-subtle)", flexShrink: 0 }} aria-hidden="true" />
+      <ChevronRight size={14} style={{ color: 'var(--color-text-subtle)', flexShrink: 0 }} aria-hidden="true" />
     </button>
   );
 }
@@ -109,7 +116,7 @@ function QuickActionCard({ icon: Icon, label, desc, colorClass, onClick }) {
 function CourseSkeletons() {
   return (
     <div className="grid-auto-sm">
-      {[0, 1, 2].map(i => (
+      {[0, 1, 2].map((i) => (
         <div key={i} className="skeleton-course-card">
           <div className="sk-cover skeleton" />
           <div className="sk-body">
@@ -127,14 +134,14 @@ function CourseSkeletons() {
    PÁGINA PRINCIPAL
    ══════════════════════════════════════════════════════════════════ */
 export default function PadreHomePage() {
-  const { user }   = useAuth();
-  const navigate   = useNavigate();
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
-  const [loading,     setLoading]     = useState(true);
-  const [cursos,      setCursos]      = useState([]);
-  const [eventos,     setEventos]     = useState([]);
-  const [noLeidas,    setNoLeidas]    = useState(0);
-  const [pendientes,  setPendientes]  = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [cursos, setCursos] = useState([]);
+  const [eventos, setEventos] = useState([]);
+  const [noLeidas, setNoLeidas] = useState(0);
+  const [pendientes, setPendientes] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -146,7 +153,7 @@ export default function PadreHomePage() {
           entregasGetAll({ limit: 100 }),
           notificacionesGetConteoNoLeidas(),
         ]);
-        setCursos((cursosRes.cursos   ?? []).map(normalizeCurso));
+        setCursos((cursosRes.cursos ?? []).map(normalizeCurso));
         setEventos(eventosRes.eventos ?? []);
         setNoLeidas(notifsRes?.noLeidas ?? 0);
 
@@ -154,48 +161,43 @@ export default function PadreHomePage() {
         // (entregasGetAll solo devuelve entregas ya enviadas/tarde, nunca
         // borradores ni las que faltan — hay que cruzarlo contra las tareas)
         const tareas = (tareasRes?.tareas ?? []).map(normalizeTarea);
-        const tareaIdsEnviadas = new Set(
-          (entregasRes?.entregas ?? []).map((e) => e.tareaId?._id ?? e.tareaId)
-        );
-        const abiertasSinEnviar = tareas.filter(
-          (t) => t.estado === "activa" && !tareaIdsEnviadas.has(t._id)
-        );
+        const tareaIdsEnviadas = new Set((entregasRes?.entregas ?? []).map((e) => e.tareaId?._id ?? e.tareaId));
+        const abiertasSinEnviar = tareas.filter((t) => t.estado === 'activa' && !tareaIdsEnviadas.has(t._id));
         setPendientes(abiertasSinEnviar.length);
-      } catch { /* silencioso */ }
-      finally  { setLoading(false); }
+      } catch {
+        /* silencioso */
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 
-  const hora   = new Date().getHours();
-  const saludo = hora < 12 ? "Buenos días" : hora < 19 ? "Buenas tardes" : "Buenas noches";
+  const hora = new Date().getHours();
+  const saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
 
   return (
-    <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-
+    <div style={{ maxWidth: 1100, margin: '0 auto' }}>
       {/* ── Banner de bienvenida ── */}
-      <div
-        className="welcome-banner edu-fade-in"
-        style={{ background: "var(--gradient-berry)" }}
-        role="banner"
-      >
-        <div style={{ position: "relative", zIndex: 1, width: "100%" }}>
+      <div className="welcome-banner edu-fade-in" style={{ background: 'var(--gradient-berry)' }} role="banner">
+        <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
           <span className="welcome-badge">
-            <Heart size={10} style={{ display: "inline", marginRight: 4 }} aria-hidden="true" />
+            <Heart size={10} style={{ display: 'inline', marginRight: 4 }} aria-hidden="true" />
             Padre / Tutor
           </span>
           <h1 className="welcome-title">
-            {saludo}{user?.nombre ? `, ${user.nombre}` : ""}
+            {saludo}
+            {user?.nombre ? `, ${user.nombre}` : ''}
           </h1>
           {!loading && (
-            <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap", marginTop: "var(--space-3)" }}>
+            <div style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap', marginTop: 'var(--space-3)' }}>
               {cursos.length > 0 && (
                 <span className="welcome-chip">
-                  {cursos.length} {cursos.length === 1 ? "curso activo" : "cursos activos"}
+                  {cursos.length} {cursos.length === 1 ? 'curso activo' : 'cursos activos'}
                 </span>
               )}
               {eventos.length > 0 && (
                 <span className="welcome-chip">
-                  {eventos.length} {eventos.length === 1 ? "evento hoy" : "eventos hoy"}
+                  {eventos.length} {eventos.length === 1 ? 'evento hoy' : 'eventos hoy'}
                 </span>
               )}
             </div>
@@ -204,45 +206,81 @@ export default function PadreHomePage() {
       </div>
 
       {/* ── Estadísticas ── */}
-      <section aria-label="Resumen familiar" style={{ marginBottom: "var(--space-6)" }}>
+      <section aria-label="Resumen familiar" style={{ marginBottom: 'var(--space-6)' }}>
         <SectionHeader title="Resumen" />
         <div className="grid-stats">
-          <StatCard value={cursos.length}  label="Cursos activos"      icon={BookOpen} colorClass="stat-icon-purple" loading={loading} />
-          <StatCard value={eventos.length} label="Eventos hoy"         icon={Calendar} colorClass="stat-icon-green"  loading={loading} />
-          <StatCard value={noLeidas}       label="Notificaciones"      icon={Bell}     colorClass="stat-icon-yellow" loading={loading} />
-          <StatCard value={pendientes}     label="Entregas pendientes" icon={FileText} colorClass="stat-icon-cyan"   loading={loading} />
+          <StatCard
+            value={cursos.length}
+            label="Cursos activos"
+            icon={BookOpen}
+            colorClass="stat-icon-purple"
+            loading={loading}
+          />
+          <StatCard
+            value={eventos.length}
+            label="Eventos hoy"
+            icon={Calendar}
+            colorClass="stat-icon-green"
+            loading={loading}
+          />
+          <StatCard
+            value={noLeidas}
+            label="Notificaciones"
+            icon={Bell}
+            colorClass="stat-icon-yellow"
+            loading={loading}
+          />
+          <StatCard
+            value={pendientes}
+            label="Entregas pendientes"
+            icon={FileText}
+            colorClass="stat-icon-cyan"
+            loading={loading}
+          />
         </div>
       </section>
 
       {/* ── Acciones rápidas ── */}
-      <section aria-label="Acciones rápidas" style={{ marginBottom: "var(--space-6)" }}>
+      <section aria-label="Acciones rápidas" style={{ marginBottom: 'var(--space-6)' }}>
         <SectionHeader title="Acciones rápidas" />
         <div className="grid-2-auto">
           <QuickActionCard
-            icon={Users}    label="Perfiles familiares" desc="Ver perfiles de tus hijos"
-            colorClass="stat-icon-purple" onClick={() => navigate("/familia/perfiles")}
+            icon={Users}
+            label="Perfiles familiares"
+            desc="Ver perfiles de tus hijos"
+            colorClass="stat-icon-purple"
+            onClick={() => navigate('/familia/perfiles')}
           />
           <QuickActionCard
-            icon={BookOpen} label="Ver cursos"          desc="Cursos de tus hijos"
-            colorClass="stat-icon-cyan"   onClick={() => navigate("/familia/cursos")}
+            icon={BookOpen}
+            label="Ver cursos"
+            desc="Cursos de tus hijos"
+            colorClass="stat-icon-cyan"
+            onClick={() => navigate('/familia/cursos')}
           />
           <QuickActionCard
-            icon={ClipboardList} label="Retos"        desc="Retos de tus hijos y sus entregas"
-            colorClass="stat-icon-green"  onClick={() => navigate("/familia/tareas")}
+            icon={ClipboardList}
+            label="Retos"
+            desc="Retos de tus hijos y sus entregas"
+            colorClass="stat-icon-green"
+            onClick={() => navigate('/familia/tareas')}
           />
           <QuickActionCard
-            icon={Calendar} label="Calendario"          desc="Eventos y actividades"
-            colorClass="stat-icon-yellow" onClick={() => navigate("/calendario")}
+            icon={Calendar}
+            label="Calendario"
+            desc="Eventos y actividades"
+            colorClass="stat-icon-yellow"
+            onClick={() => navigate('/calendario')}
           />
         </div>
       </section>
 
       {/* ── Cursos ── */}
-      <section aria-label="Cursos de mis hijos" style={{ marginBottom: "var(--space-6)" }}>
+      <section aria-label="Cursos de mis hijos" style={{ marginBottom: 'var(--space-6)' }}>
         <SectionHeader
           title="Cursos de mis hijos"
           actionLabel="Ver perfiles"
-          onAction={() => navigate("/familia/perfiles")}
+          onAction={() => navigate('/familia/perfiles')}
         />
         {loading ? (
           <CourseSkeletons />
@@ -252,20 +290,12 @@ export default function PadreHomePage() {
               <BookOpen size={24} aria-hidden="true" />
             </div>
             <p className="empty-state-title">Aún no hay cursos asignados</p>
-            <p className="empty-state-sub">
-              Contacta al docente o administrador para que te agreguen a un curso.
-            </p>
+            <p className="empty-state-sub">Contacta al docente o administrador para que te agreguen a un curso.</p>
           </div>
         ) : (
           <div className="grid-auto-sm">
             {cursos.map((c, i) => (
-              <CursoCard
-                key={c._id}
-                curso={c}
-                role="padre"
-                idx={i}
-                compact={true}
-              />
+              <CursoCard key={c._id} curso={c} role="padre" idx={i} compact={true} />
             ))}
           </div>
         )}
@@ -273,31 +303,31 @@ export default function PadreHomePage() {
 
       {/* sección permanente (con esqueleto/estado vacío), no desaparece sin eventos hoy */}
       <section aria-label="Eventos de hoy">
-        <SectionHeader
-          title="Eventos de hoy"
-          actionLabel="Ver calendario"
-          onAction={() => navigate("/calendario")}
-        />
+        <SectionHeader title="Eventos de hoy" actionLabel="Ver calendario" onAction={() => navigate('/calendario')} />
         <div className="list-card">
           {loading ? (
-            <div style={{ padding: "var(--space-4)" }}>
-              {[0, 1, 2].map(i => (
+            <div style={{ padding: 'var(--space-4)' }}>
+              {[0, 1, 2].map((i) => (
                 <div key={i} className="skeleton-list-item">
                   <Sk h={34} w={34} r="var(--radius-md)" />
                   <div style={{ flex: 1 }}>
                     <Sk h={12} w="75%" />
-                    <div style={{ marginTop: 5 }}><Sk h={10} w="50%" /></div>
+                    <div style={{ marginTop: 5 }}>
+                      <Sk h={10} w="50%" />
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : eventos.length === 0 ? (
-            <div className="empty-state" style={{ border: "none", borderRadius: 0 }}>
-              <div className="empty-state-icon"><Calendar size={22} aria-hidden="true" /></div>
+            <div className="empty-state" style={{ border: 'none', borderRadius: 0 }}>
+              <div className="empty-state-icon">
+                <Calendar size={22} aria-hidden="true" />
+              </div>
               <p className="empty-state-title">Sin eventos hoy</p>
             </div>
           ) : (
-            eventos.map(ev => <EventItem key={ev._id} evento={ev} />)
+            eventos.map((ev) => <EventItem key={ev._id} evento={ev} />)
           )}
         </div>
       </section>

@@ -7,9 +7,9 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 300;                     /* por encima del nav-dropdown (200) */
+  z-index: 300; /* por encima del nav-dropdown (200) */
   display: flex;
-  align-items: flex-end;            /* móvil: hoja desde abajo */
+  align-items: flex-end; /* móvil: hoja desde abajo */
   justify-content: center;
   padding: 0;
   background: rgba(0, 0, 0, 0.72);
@@ -49,28 +49,52 @@
     animation: edu-modal-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   }
 
-  .modal-panel.modal-sm { max-width: 420px; }
-  .modal-panel.modal-md { max-width: 560px; }
-  .modal-panel.modal-lg { max-width: 720px; }
-  .modal-panel.modal-xl { max-width: 900px; }
+  .modal-panel.modal-sm {
+    max-width: 420px;
+  }
+  .modal-panel.modal-md {
+    max-width: 560px;
+  }
+  .modal-panel.modal-lg {
+    max-width: 720px;
+  }
+  .modal-panel.modal-xl {
+    max-width: 900px;
+  }
 }
 
 /* Deslizamiento hacia arriba (hoja inferior móvil) */
 @keyframes modal-sheet-in {
-  from { opacity: 0.6; transform: translateY(100%); }
-  to   { opacity: 1;   transform: translateY(0); }
+  from {
+    opacity: 0.6;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Fade del backdrop */
 @keyframes edu-backdrop-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* Entrada del panel en desktop */
 @keyframes edu-modal-in {
-  from { opacity: 0; transform: scale(0.96) translateY(10px); }
-  to   { opacity: 1; transform: scale(1)    translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 /* ── Franja de color (acento de marca) ──────────────────────────────────── */
@@ -90,7 +114,11 @@
   margin: var(--space-3) auto var(--space-1);
   flex-shrink: 0;
 }
-@media (min-width: 480px) { .modal-handle { display: none; } }
+@media (min-width: 480px) {
+  .modal-handle {
+    display: none;
+  }
+}
 
 /* ── Header ──────────────────────────────────────────────────────── */
 .modal-header {
@@ -131,10 +159,18 @@
   cursor: pointer;
   color: var(--color-text-muted);
   flex-shrink: 0;
-  transition: background var(--transition-fast), color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
 }
-.modal-close:hover { background: var(--edu-neutral-100); color: var(--color-text); }
-.modal-close:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.modal-close:hover {
+  background: var(--edu-neutral-100);
+  color: var(--color-text);
+}
+.modal-close:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
 
 /* ── Body ────────────────────────────────────────────────────────── */
 .modal-body {
@@ -148,8 +184,12 @@
 }
 
 /* Scrollbar delgada en el cuerpo del modal */
-.modal-body::-webkit-scrollbar { width: 4px; }
-.modal-body::-webkit-scrollbar-track { background: transparent; }
+.modal-body::-webkit-scrollbar {
+  width: 4px;
+}
+.modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
 .modal-body::-webkit-scrollbar-thumb {
   background: var(--color-border);
   border-radius: var(--radius-full);
@@ -167,9 +207,15 @@
   flex-wrap: wrap;
 }
 
-.modal-footer.modal-footer-start  { justify-content: flex-start; }
-.modal-footer.modal-footer-center { justify-content: center; }
-.modal-footer.modal-footer-spread { justify-content: space-between; }
+.modal-footer.modal-footer-start {
+  justify-content: flex-start;
+}
+.modal-footer.modal-footer-center {
+  justify-content: center;
+}
+.modal-footer.modal-footer-spread {
+  justify-content: space-between;
+}
 
 /* Botones a ancho completo en móvil */
 @media (max-width: 479px) {
@@ -177,7 +223,9 @@
     flex-direction: column-reverse;
     padding: var(--space-4);
   }
-  .modal-footer .btn { width: 100%; }
+  .modal-footer .btn {
+    width: 100%;
+  }
 }
 
 /* ── In-form footer (stays in scroll flow, visually consistent) ── */
@@ -196,5 +244,7 @@
   .modal-form-footer {
     flex-direction: column-reverse;
   }
-  .modal-form-footer .btn { width: 100%; }
+  .modal-form-footer .btn {
+    width: 100%;
+  }
 }

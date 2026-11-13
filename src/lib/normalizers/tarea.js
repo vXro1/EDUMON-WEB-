@@ -1,4 +1,4 @@
-import { assetUrl } from "@/utils/assetUrl";
+import { assetUrl } from '@/utils/assetUrl';
 
 /**
  * Normaliza archivos adjuntos de tareas.
@@ -11,65 +11,34 @@ function normalizeArchivosTarea(archivos) {
   if (!Array.isArray(archivos)) return [];
 
   return archivos.map((archivo, index) => ({
-    _id:
-      archivo._id ||
-      archivo.id ||
-      archivo.publicId ||
-      `file_${index}_${Date.now()}`,
+    _id: archivo._id || archivo.id || archivo.publicId || `file_${index}_${Date.now()}`,
 
-    url: assetUrl(
-      archivo.url ||
-      archivo.secure_url ||
-      ""
-    ),
+    url: assetUrl(archivo.url || archivo.secure_url || ''),
 
-    nombre:
-      archivo.nombre ||
-      archivo.nombreOriginal ||
-      archivo.original_filename ||
-      "Archivo",
+    nombre: archivo.nombre || archivo.nombreOriginal || archivo.original_filename || 'Archivo',
 
-    nombreOriginal:
-      archivo.nombreOriginal ||
-      archivo.nombre ||
-      archivo.original_filename ||
-      "Archivo",
+    nombreOriginal: archivo.nombreOriginal || archivo.nombre || archivo.original_filename || 'Archivo',
 
-    publicId:
-      archivo.publicId ||
-      archivo.public_id ||
-      "",
+    publicId: archivo.publicId || archivo.public_id || '',
 
     // "tipo" es el campo clave para distinguir archivo vs enlace más
     // adelante (TareaDetalle.jsx y TareaForm.jsx filtran por
     // a.tipo === "enlace"). Se preserva tal cual viene del backend.
-    tipo:
-      archivo.tipo ||
-      archivo.tipoArchivo ||
-      archivo.mimetype ||
-      "application/octet-stream",
+    tipo: archivo.tipo || archivo.tipoArchivo || archivo.mimetype || 'application/octet-stream',
 
-    tipoArchivo:
-      archivo.tipoArchivo ||
-      archivo.tipo ||
-      archivo.mimetype ||
-      "application/octet-stream",
+    tipoArchivo: archivo.tipoArchivo || archivo.tipo || archivo.mimetype || 'application/octet-stream',
 
-    tamano:
-      archivo.tamano ||
-      archivo.size ||
-      archivo.bytes ||
-      0,
+    tamano: archivo.tamano || archivo.size || archivo.bytes || 0,
   }));
 }
 
 // El backend almacena "publicada" para tareas activas y nunca actualiza a "vencida"
-const ESTADO_MAP = { publicada: "activa" };
+const ESTADO_MAP = { publicada: 'activa' };
 
 function resolveEstado(estado, fechaEntrega) {
-  const base = ESTADO_MAP[estado] ?? estado ?? "activa";
-  if (base === "activa" && fechaEntrega && new Date(fechaEntrega) < new Date()) {
-    return "vencida";
+  const base = ESTADO_MAP[estado] ?? estado ?? 'activa';
+  if (base === 'activa' && fechaEntrega && new Date(fechaEntrega) < new Date()) {
+    return 'vencida';
   }
   return base;
 }
@@ -80,18 +49,18 @@ function resolveEstado(estado, fechaEntrega) {
  * tarea.moduloId (string sin poblar).
  */
 function normalizeModulo(tarea) {
-  if (tarea.modulo && typeof tarea.modulo === "object") {
+  if (tarea.modulo && typeof tarea.modulo === 'object') {
     return {
       _id: tarea.modulo._id || tarea.modulo.id || null,
-      titulo: tarea.modulo.titulo || "",
-      descripcion: tarea.modulo.descripcion || "",
+      titulo: tarea.modulo.titulo || '',
+      descripcion: tarea.modulo.descripcion || '',
     };
   }
-  if (tarea.moduloId && typeof tarea.moduloId === "object") {
+  if (tarea.moduloId && typeof tarea.moduloId === 'object') {
     return {
       _id: tarea.moduloId._id || tarea.moduloId.id || null,
-      titulo: tarea.moduloId.titulo || "",
-      descripcion: tarea.moduloId.descripcion || "",
+      titulo: tarea.moduloId.titulo || '',
+      descripcion: tarea.moduloId.descripcion || '',
     };
   }
   return null;
@@ -104,15 +73,16 @@ function normalizeModulo(tarea) {
 function normalizeParticipantesSeleccionados(participantes) {
   if (!Array.isArray(participantes)) return [];
 
-  return participantes.map((p) =>
-    p && typeof p === "object"
-      ? {
-          _id: p._id || p.id || null,
-          nombre: p.nombre || "",
-          apellido: p.apellido || "",
-          correo: p.correo || "",
-        }
-      : p // ID crudo (string) cuando el backend no lo pobló
+  return participantes.map(
+    (p) =>
+      p && typeof p === 'object'
+        ? {
+            _id: p._id || p.id || null,
+            nombre: p.nombre || '',
+            apellido: p.apellido || '',
+            correo: p.correo || '',
+          }
+        : p, // ID crudo (string) cuando el backend no lo pobló
   );
 }
 
@@ -123,78 +93,41 @@ function normalizeParticipantesSeleccionados(participantes) {
 export function normalizeTarea(tarea) {
   if (!tarea) return null;
 
-  const id =
-    tarea._id ||
-    tarea.id ||
-    null;
+  const id = tarea._id || tarea.id || null;
 
   // Curso
   const curso =
-    tarea.curso && typeof tarea.curso === "object"
+    tarea.curso && typeof tarea.curso === 'object'
       ? {
-          _id:
-            tarea.curso._id ||
-            tarea.curso.id ||
-            null,
-          nombre:
-            tarea.curso.nombre ||
-            "",
+          _id: tarea.curso._id || tarea.curso.id || null,
+          nombre: tarea.curso.nombre || '',
         }
-      : tarea.cursoId &&
-        typeof tarea.cursoId === "object"
-      ? {
-          _id:
-            tarea.cursoId._id ||
-            tarea.cursoId.id ||
-            null,
-          nombre:
-            tarea.cursoId.nombre ||
-            "",
-        }
-      : null;
+      : tarea.cursoId && typeof tarea.cursoId === 'object'
+        ? {
+            _id: tarea.cursoId._id || tarea.cursoId.id || null,
+            nombre: tarea.cursoId.nombre || '',
+          }
+        : null;
 
   // Docente
   const docente =
-    tarea.docente && typeof tarea.docente === "object"
+    tarea.docente && typeof tarea.docente === 'object'
       ? {
-          _id:
-            tarea.docente._id ||
-            tarea.docente.id ||
-            null,
-          nombre:
-            tarea.docente.nombre ||
-            "",
-          apellido:
-            tarea.docente.apellido ||
-            "",
-          correo:
-            tarea.docente.correo ||
-            "",
-          fotoPerfilUrl:
-            tarea.docente.fotoPerfilUrl ||
-            null,
+          _id: tarea.docente._id || tarea.docente.id || null,
+          nombre: tarea.docente.nombre || '',
+          apellido: tarea.docente.apellido || '',
+          correo: tarea.docente.correo || '',
+          fotoPerfilUrl: tarea.docente.fotoPerfilUrl || null,
         }
-      : tarea.docenteId &&
-        typeof tarea.docenteId === "object"
-      ? {
-          _id:
-            tarea.docenteId._id ||
-            tarea.docenteId.id ||
-            null,
-          nombre:
-            tarea.docenteId.nombre ||
-            "",
-          apellido:
-            tarea.docenteId.apellido ||
-            "",
-          correo:
-            tarea.docenteId.correo ||
-            "",
-          fotoPerfilUrl:
-            tarea.docenteId.fotoPerfilUrl ||
-            null,
-        }
-      : null;
+      : tarea.docenteId && typeof tarea.docenteId === 'object'
+        ? {
+            _id: tarea.docenteId._id || tarea.docenteId.id || null,
+            nombre: tarea.docenteId.nombre || '',
+            apellido: tarea.docenteId.apellido || '',
+            correo: tarea.docenteId.correo || '',
+            fotoPerfilUrl: tarea.docenteId.fotoPerfilUrl || null,
+          }
+        : null;
 
   // Módulo (mismo patrón que curso/docente)
   const modulo = normalizeModulo(tarea);
@@ -205,19 +138,12 @@ export function normalizeTarea(tarea) {
   // componentes que necesitan solo enlaces o solo archivos deben filtrar
   // este mismo array (ver TareaDetalle.jsx / TareaForm.jsx: `.filter(a =>
   // a.tipo === "enlace")` / `.filter(a => a.tipo === "archivo")`).
-  const adjuntos = normalizeArchivosTarea(
-    tarea.adjuntos ||
-      tarea.archivos ||
-      tarea.archivosAdjuntos ||
-      []
-  );
+  const adjuntos = normalizeArchivosTarea(tarea.adjuntos || tarea.archivos || tarea.archivosAdjuntos || []);
 
-  const criterios = typeof tarea.criterios === "string" ? tarea.criterios : "";
+  const criterios = typeof tarea.criterios === 'string' ? tarea.criterios : '';
 
   // Participantes seleccionados
-  const participantesSeleccionados = normalizeParticipantesSeleccionados(
-    tarea.participantesSeleccionados
-  );
+  const participantesSeleccionados = normalizeParticipantesSeleccionados(tarea.participantesSeleccionados);
 
   return {
     // IDs
@@ -225,102 +151,58 @@ export function normalizeTarea(tarea) {
     _id: id,
 
     // Básico
-    titulo:
-      tarea.titulo ||
-      "Sin título",
+    titulo: tarea.titulo || 'Sin título',
 
-    descripcion:
-      tarea.descripcion ||
-      "",
+    descripcion: tarea.descripcion || '',
 
-    instrucciones:
-      tarea.instrucciones ||
-      "",
+    instrucciones: tarea.instrucciones || '',
 
-    estado:
-      resolveEstado(tarea.estado, tarea.fechaEntrega),
+    estado: resolveEstado(tarea.estado, tarea.fechaEntrega),
 
-    prioridad:
-      tarea.prioridad ||
-      "media",
+    prioridad: tarea.prioridad || 'media',
 
-    categoria:
-      tarea.categoria ||
-      null,
+    categoria: tarea.categoria || null,
 
     // Fechas
-    fechaCreacion:
-      tarea.fechaCreacion ||
-      tarea.createdAt ||
-      null,
+    fechaCreacion: tarea.fechaCreacion || tarea.createdAt || null,
 
-    fechaEntrega:
-      tarea.fechaEntrega ||
-      null,
+    fechaEntrega: tarea.fechaEntrega || null,
 
-    fechaPublicacion:
-      tarea.fechaPublicacion ||
-      null,
+    fechaPublicacion: tarea.fechaPublicacion || null,
 
-    createdAt:
-      tarea.createdAt ||
-      null,
+    createdAt: tarea.createdAt || null,
 
-    updatedAt:
-      tarea.updatedAt ||
-      null,
+    updatedAt: tarea.updatedAt || null,
 
     // Relaciones
     curso,
     cursoId:
-      typeof tarea.cursoId === "string"
+      typeof tarea.cursoId === 'string'
         ? tarea.cursoId
-        : tarea.curso?._id ||
-          tarea.curso?.id ||
-          tarea.cursoId?._id ||
-          tarea.cursoId?.id ||
-          null,
+        : tarea.curso?._id || tarea.curso?.id || tarea.cursoId?._id || tarea.cursoId?.id || null,
 
     docente,
     docenteId:
-      typeof tarea.docenteId === "string"
+      typeof tarea.docenteId === 'string'
         ? tarea.docenteId
-        : tarea.docente?._id ||
-          tarea.docente?.id ||
-          tarea.docenteId?._id ||
-          tarea.docenteId?.id ||
-          null,
+        : tarea.docente?._id || tarea.docente?.id || tarea.docenteId?._id || tarea.docenteId?.id || null,
 
     modulo,
     moduloId:
-      typeof tarea.moduloId === "string"
+      typeof tarea.moduloId === 'string'
         ? tarea.moduloId
-        : tarea.modulo?._id ||
-          tarea.modulo?.id ||
-          tarea.moduloId?._id ||
-          tarea.moduloId?.id ||
-          null,
+        : tarea.modulo?._id || tarea.modulo?.id || tarea.moduloId?._id || tarea.moduloId?.id || null,
 
     // Configuración
-    asignacionTipo:
-      tarea.asignacionTipo ||
-      "todos",
+    asignacionTipo: tarea.asignacionTipo || 'todos',
 
-    tipoEntrega:
-      tarea.tipoEntrega ||
-      "archivo",
+    tipoEntrega: tarea.tipoEntrega || 'archivo',
 
-    permiteEntregaTardia:
-      tarea.permiteEntregaTardia ??
-      false,
+    permiteEntregaTardia: tarea.permiteEntregaTardia ?? false,
 
-    visible:
-      tarea.visible ??
-      true,
+    visible: tarea.visible ?? true,
 
-    puntajeMaximo:
-      tarea.puntajeMaximo ??
-      100,
+    puntajeMaximo: tarea.puntajeMaximo ?? 100,
 
     // Contenido
     // Se exponen 3 alias (adjuntos / archivos / archivosAdjuntos) apuntando
@@ -336,26 +218,17 @@ export function normalizeTarea(tarea) {
     participantesSeleccionados,
 
     // Progreso / estadísticas
-    totalEntregas:
-      tarea.totalEntregas ??
-      0,
+    totalEntregas: tarea.totalEntregas ?? 0,
 
-    totalPendientes:
-      tarea.totalPendientes ??
-      0,
+    totalPendientes: tarea.totalPendientes ?? 0,
 
-    totalCalificadas:
-      tarea.totalCalificadas ??
-      0,
+    totalCalificadas: tarea.totalCalificadas ?? 0,
 
     // Etiquetas: Array<String> real en el backend. Nunca se hace
     // JSON.parse/JSON.stringify aquí — si tarea.etiquetas ya es un array,
     // se usa tal cual; si no, se cae a [] en vez de intentar "adivinar"
     // un formato roto (evita propagar corrupción histórica de datos).
-    etiquetas:
-      Array.isArray(tarea.etiquetas)
-        ? tarea.etiquetas
-        : [],
+    etiquetas: Array.isArray(tarea.etiquetas) ? tarea.etiquetas : [],
   };
 }
 
@@ -364,8 +237,5 @@ export function normalizeTarea(tarea) {
  */
 export function normalizeTareas(tareas) {
   if (!Array.isArray(tareas)) return [];
-  return tareas
-    .map(normalizeTarea)
-    .filter(Boolean);
+  return tareas.map(normalizeTarea).filter(Boolean);
 }
-

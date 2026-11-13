@@ -1,34 +1,31 @@
-import { normalizeUser } from "./user";
-import { assetUrl } from "@/utils/assetUrl";
+import { normalizeUser } from './user';
+import { assetUrl } from '@/utils/assetUrl';
 
 // soporta inscripción con usuario anidado, usuario plano ya poblado, o string sin poblar
 function normalizeParticipante(p) {
   if (!p) return null;
 
   // ID crudo, sin poblar
-  if (typeof p === "string") {
-    return { _id: p, usuarioId: p, nombre: "", apellido: "", correo: "", rol: null };
+  if (typeof p === 'string') {
+    return { _id: p, usuarioId: p, nombre: '', apellido: '', correo: '', rol: null };
   }
 
   // Registro de inscripción con usuario anidado
   const usuarioRaw = p.usuario ?? p.usuarioId ?? p;
-  const usuario =
-    usuarioRaw && typeof usuarioRaw === "object"
-      ? normalizeUser(usuarioRaw)
-      : null;
+  const usuario = usuarioRaw && typeof usuarioRaw === 'object' ? normalizeUser(usuarioRaw) : null;
 
   return {
     _id: p._id || p.id || usuario?._id || null,
     usuarioId:
-      typeof p.usuarioId === "string"
+      typeof p.usuarioId === 'string'
         ? p.usuarioId
-        : usuario?._id || (typeof usuarioRaw === "string" ? usuarioRaw : null),
+        : usuario?._id || (typeof usuarioRaw === 'string' ? usuarioRaw : null),
 
     // Datos del usuario aplanados para acceso directo (p.nombre, p.apellido...)
-    nombre: usuario?.nombre || "",
-    apellido: usuario?.apellido || "",
-    correo: usuario?.correo || "",
-    fotoPerfilUrl: assetUrl(usuario?.fotoPerfilUrl || "") || null,
+    nombre: usuario?.nombre || '',
+    apellido: usuario?.apellido || '',
+    correo: usuario?.correo || '',
+    fotoPerfilUrl: assetUrl(usuario?.fotoPerfilUrl || '') || null,
 
     // Objeto completo del usuario, por si se necesita
     usuario,
@@ -44,20 +41,12 @@ export function normalizeCurso(curso) {
   const id = curso._id || curso.id || null;
 
   // Imagen / portada — ruta local relativa del backend → URL absoluta
-  const imgUrl =
-    assetUrl(
-      curso.fotoPortadaUrl ||
-      curso.fotoPortada ||
-      curso.imagen ||
-      curso.image ||
-      ""
-    ) || null;
+  const imgUrl = assetUrl(curso.fotoPortadaUrl || curso.fotoPortada || curso.imagen || curso.image || '') || null;
 
   // Docente
-  const docente =
-    curso.docente
-      ? normalizeUser(curso.docente)
-      : curso.docenteId && typeof curso.docenteId === "object"
+  const docente = curso.docente
+    ? normalizeUser(curso.docente)
+    : curso.docenteId && typeof curso.docenteId === 'object'
       ? normalizeUser(curso.docenteId)
       : null;
 
@@ -67,10 +56,7 @@ export function normalizeCurso(curso) {
     : [];
 
   // Color del curso (hex, ej. #3B82F6) — asignado por el usuario al crear/editar
-  const color =
-    /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(curso.color || "")
-      ? curso.color
-      : null;
+  const color = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/.test(curso.color || '') ? curso.color : null;
 
   return {
     // IDs
@@ -78,10 +64,10 @@ export function normalizeCurso(curso) {
     _id: id,
 
     // Básico
-    nombre: curso.nombre || "Sin nombre",
-    descripcion: curso.descripcion || "",
-    codigo: curso.codigo || "",
-    estado: curso.estado || "activo",
+    nombre: curso.nombre || 'Sin nombre',
+    descripcion: curso.descripcion || '',
+    codigo: curso.codigo || '',
+    estado: curso.estado || 'activo',
 
     // Imagen
     imagen: imgUrl,
@@ -94,19 +80,13 @@ export function normalizeCurso(curso) {
     // Relaciones
     docente,
     docenteId:
-      typeof curso.docenteId === "string"
+      typeof curso.docenteId === 'string'
         ? curso.docenteId
-        : curso.docente?._id ||
-          curso.docente?.id ||
-          curso.docenteId?._id ||
-          curso.docenteId?.id ||
-          null,
+        : curso.docente?._id || curso.docente?.id || curso.docenteId?._id || curso.docenteId?.id || null,
 
     // Participantes
     participantes,
-    totalParticipantes:
-      curso.totalParticipantes ??
-      participantes.length,
+    totalParticipantes: curso.totalParticipantes ?? participantes.length,
 
     // Extras académicos
     categoria: curso.categoria || null,
@@ -121,4 +101,3 @@ export function normalizeCurso(curso) {
     updatedAt: curso.updatedAt || null,
   };
 }
-

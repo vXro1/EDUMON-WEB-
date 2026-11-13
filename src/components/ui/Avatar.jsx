@@ -1,19 +1,19 @@
-import { useState, useEffect } from "react";
-import fallbackImg from "@/assets/icons/edumon-logo.svg";
+import { useState, useEffect } from 'react';
+import fallbackImg from '@/assets/icons/edumon-logo.svg';
 
 const SIZES = {
-  sm: "w-8 h-8 text-xs",
-  md: "w-10 h-10 text-sm",
-  lg: "w-14 h-14 text-base",
+  sm: 'w-8 h-8 text-xs',
+  md: 'w-10 h-10 text-sm',
+  lg: 'w-14 h-14 text-base',
 };
 
 export default function Avatar({
   src,
-  alt = "Usuario",
-  size = "md",
+  alt = 'Usuario',
+  size = 'md',
   initials,
   fallback = fallbackImg,
-  className = "",
+  className = '',
 }) {
   const [imgSrc, setImgSrc] = useState(src || null);
 
@@ -24,20 +24,22 @@ export default function Avatar({
   return (
     <div
       className={[
-        "relative inline-flex items-center justify-center",
-        "rounded-full overflow-hidden shrink-0",
-        "border transition-shadow duration-200",
+        'relative inline-flex items-center justify-center',
+        'rounded-full overflow-hidden shrink-0',
+        'border transition-shadow duration-200',
         SIZES[size] ?? SIZES.md,
         className,
-      ].join(" ")}
+      ].join(' ')}
       style={{
-        background: "var(--color-surface)",
-        borderColor: "var(--color-border)",
-        boxShadow: "var(--shadow-xs)",
+        background: 'var(--color-surface)',
+        borderColor: 'var(--color-border)',
+        boxShadow: 'var(--shadow-xs)',
       }}
     >
       {imgSrc ? (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={imgSrc}
           alt={alt}
           // object-contain, no cover: "cover" recortaría avatares con proporciones distintas
@@ -48,12 +50,14 @@ export default function Avatar({
         <span
           className="font-semibold leading-none select-none"
           aria-label={alt}
-          style={{ color: "var(--color-primary)" }}
+          style={{ color: 'var(--color-primary)' }}
         >
           {initials}
         </span>
       ) : (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={fallback}
           alt={alt}
           className="w-2/3 h-2/3 object-contain opacity-70"

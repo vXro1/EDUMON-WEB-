@@ -1,39 +1,53 @@
-import { describe, it, expect, vi, afterEach, beforeAll } from "vitest";
-import { screen, cleanup } from "@testing-library/react";
-import { renderPagina } from "@/test/renderPagina";
+import { describe, it, expect, vi, afterEach, beforeAll } from 'vitest';
+import { screen, cleanup } from '@testing-library/react';
+import { renderPagina } from '@/test/renderPagina';
 
-vi.mock("@/features/auth/context/AuthContext", () => ({
+vi.mock('@/features/auth/context/AuthContext', () => ({
   useAuthContext: () => ({ user: null, isAuthenticated: false }),
   useUserContext: () => ({ user: null }),
 }));
-vi.mock("@/services/appMovilService", async (orig) => ({
+vi.mock('@/services/appMovilService', async (orig) => ({
   ...(await orig()),
   appMovilGetActual: () => Promise.resolve(null),
 }));
 
 beforeAll(() => {
   // jsdom no implementa matchMedia (lo usa embla-carousel)
-  window.matchMedia ??= () => ({ matches: false, addListener() {}, removeListener() {}, addEventListener() {}, removeEventListener() {} });
+  window.matchMedia ??= () => ({
+    matches: false,
+    addListener() {},
+    removeListener() {},
+    addEventListener() {},
+    removeEventListener() {},
+  });
   // ni IntersectionObserver: este reporta todo como visible al observarlo
   globalThis.IntersectionObserver ??= class {
-    constructor(cb) { this.cb = cb; }
-    observe(el) { this.cb([{ isIntersecting: true, target: el }]); }
+    constructor(cb) {
+      this.cb = cb;
+    }
+    observe(el) {
+      this.cb([{ isIntersecting: true, target: el }]);
+    }
     unobserve() {}
     disconnect() {}
   };
-  globalThis.ResizeObserver ??= class { observe() {} unobserve() {} disconnect() {} };
+  globalThis.ResizeObserver ??= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
 });
 
-const { default: LandingPage } = await import("./LandingPage");
+const { default: LandingPage } = await import('./LandingPage');
 
 afterEach(cleanup);
 
-describe("LandingPage", () => {
-  it("renderiza y carga el carrusel de módulos desde su chunk", async () => {
+describe('LandingPage', () => {
+  it('renderiza y carga el carrusel de módulos desde su chunk', async () => {
     renderPagina(<LandingPage />);
     // al "verse" la sección, CargarAlVer descarga y monta el carrusel
     // chunk diferido: con la suite en paralelo puede tardar más de 1 s
-    expect((await screen.findAllByText("Mi familia y mi identidad", {}, { timeout: 5000 })).length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Familia que dialoga").length).toBeGreaterThan(0);
+    expect((await screen.findAllByText('Mi familia y mi identidad', {}, { timeout: 5000 })).length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Familia que dialoga').length).toBeGreaterThan(0);
   });
 });

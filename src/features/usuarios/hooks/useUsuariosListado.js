@@ -1,8 +1,8 @@
-import { useCallback } from "react";
-import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
-import { queryKeys } from "@/services/queryKeys";
-import { usersGetAll, usersGetDefaultPhotos } from "@/services/usersService";
-import { normalizeUser } from "@/lib/normalizers";
+import { useCallback } from 'react';
+import { useQuery, useQueryClient, keepPreviousData } from '@tanstack/react-query';
+import { queryKeys } from '@/services/queryKeys';
+import { usersGetAll, usersGetDefaultPhotos } from '@/services/usersService';
+import { normalizeUser } from '@/lib/normalizers';
 
 // { users, pagination } de GET /users con los filtros dados
 export function useUsuariosListado(params, opciones = {}) {
@@ -26,17 +26,20 @@ export function useUsuariosListado(params, opciones = {}) {
 // listados de usuarios en caché, sin volver a pedirlos
 export function useMarcarEstadoUsuario() {
   const queryClient = useQueryClient();
-  return useCallback((id, estado) => {
-    queryClient.setQueriesData({ queryKey: [...queryKeys.usuarios.all(), "list"] }, (old) =>
-      old ? { ...old, users: old.users.map((u) => (u._id === id ? { ...u, estado } : u)) } : old
-    );
-  }, [queryClient]);
+  return useCallback(
+    (id, estado) => {
+      queryClient.setQueriesData({ queryKey: [...queryKeys.usuarios.all(), 'list'] }, (old) =>
+        old ? { ...old, users: old.users.map((u) => (u._id === id ? { ...u, estado } : u)) } : old,
+      );
+    },
+    [queryClient],
+  );
 }
 
 // Avatares predeterminados (GET /users/fotos-predeterminadas): estáticos, se
 // piden una vez y se comparten entre el primer inicio de sesión y Mi perfil
 export const fotosPredeterminadasQuery = {
-  queryKey: [...queryKeys.usuarios.all(), "fotos-predeterminadas"],
+  queryKey: [...queryKeys.usuarios.all(), 'fotos-predeterminadas'],
   queryFn: async () => (await usersGetDefaultPhotos()).fotos ?? [],
   staleTime: 60 * 60 * 1000,
 };

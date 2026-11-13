@@ -3,7 +3,7 @@ import { requestInterceptors, responseInterceptors } from './interceptors';
 
 // Solo utilidades base (SIN endpoints aquí)
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? "/api";
+const BASE_URL = import.meta.env.VITE_API_URL ?? '/api';
 
 if (import.meta.env.DEV) {
   // gancho de depuración reservado solo para desarrollo
@@ -30,8 +30,8 @@ async function tryRefreshToken() {
   _refreshPromise = (async () => {
     try {
       const res = await fetch(`${BASE_URL}/auth/refresh`, {
-        method: "POST",
-        credentials: "include",
+        method: 'POST',
+        credentials: 'include',
       });
       return res.ok;
     } catch {
@@ -47,7 +47,7 @@ async function tryRefreshToken() {
 }
 
 const REQUEST_TIMEOUT_MS = 30_000;
-const UPLOAD_TIMEOUT_MS  = 120_000; // acorde al timeout('90s') del backend + margen
+const UPLOAD_TIMEOUT_MS = 120_000; // acorde al timeout('90s') del backend + margen
 
 // combina el signal de dedup de requestQueue con un timeout propio, sin pisar
 // una cancelación real (abortAll/abortKey) -- esa sigue viéndose como antes.
@@ -98,14 +98,14 @@ export const apiFetch = async (endpoint, options = {}) => {
   // timeoutMs: bandera interna para operaciones largas (ej. un aviso a todo el colegio)
   const { silentAuth, timeoutMs, ...restOptions } = options;
 
-  const opts = { method: "GET", ...restOptions };
+  const opts = { method: 'GET', ...restOptions };
   const isFormData = opts.body instanceof FormData;
   opts.headers = {
-    ...(!isFormData && { "Content-Type": "application/json" }),
+    ...(!isFormData && { 'Content-Type': 'application/json' }),
     ...(token && { Authorization: `Bearer ${token}` }),
     ...opts.headers,
   };
-  opts.credentials = "include"; // para que la cookie httpOnly viaje incluso cross-origin en producción
+  opts.credentials = 'include'; // para que la cookie httpOnly viaje incluso cross-origin en producción
 
   const { url: finalUrl, opts: finalOpts } = applyReqInterceptors(url, opts);
   const key = makeKey(finalUrl, finalOpts);
@@ -138,23 +138,25 @@ async function runRequest(endpoint, finalUrl, finalOpts, { silentAuth, timeoutMs
   applyResInterceptors(res);
 
   let data = {};
-  const contentType = res.headers.get("content-type") || "";
-  if (contentType.includes("application/json")) {
-    try { data = await res.json(); } catch {}
+  const contentType = res.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    try {
+      data = await res.json();
+    } catch {}
   }
 
   if (res.status === 401) {
     // credenciales incorrectas — no dispara logout global
-    if (endpoint === "/auth/login") {
-      throw new Error(data.message || "Teléfono o contraseña incorrectos. Verifica tus credenciales.");
+    if (endpoint === '/auth/login') {
+      throw new Error(data.message || 'Teléfono o contraseña incorrectos. Verifica tus credenciales.');
     }
     // chequeo silencioso de sesión (getProfile al arrancar) — 401 esperado
     if (silentAuth) {
-      throw new Error(data.message || "No hay sesión activa.");
+      throw new Error(data.message || 'No hay sesión activa.');
     }
 
     // token expirado: un intento de refresh vía /auth/refresh antes de forzar logout
-    if (!isRetry && endpoint !== "/auth/refresh" && data.code === "TOKEN_EXPIRED") {
+    if (!isRetry && endpoint !== '/auth/refresh' && data.code === 'TOKEN_EXPIRED') {
       const refreshed = await tryRefreshToken();
       if (refreshed) {
         return runRequest(endpoint, finalUrl, finalOpts, { silentAuth, timeoutMs, isRetry: true });
@@ -166,9 +168,11 @@ async function runRequest(endpoint, finalUrl, finalOpts, { silentAuth, timeoutMs
       _handling401 = true;
       try {
         if (_logoutCallback) await _logoutCallback();
-      } finally { _handling401 = false; }
+      } finally {
+        _handling401 = false;
+      }
     }
-    throw new Error(data.message || "Sesión expirada. Por favor inicia sesión de nuevo.");
+    throw new Error(data.message || 'Sesión expirada. Por favor inicia sesión de nuevo.');
   }
 
   if (!res.ok) {
@@ -179,10 +183,10 @@ async function runRequest(endpoint, finalUrl, finalOpts, { silentAuth, timeoutMs
       const details = data.errors
         .map((e) => (e.path ? `${e.path}: ${e.msg}` : e.msg))
         .filter(Boolean)
-        .join(" · ");
+        .join(' · ');
       const error = new Error(details ? `${errorMsg}: ${details}` : errorMsg);
       error.validationErrors = data.errors; // [{ path, msg, ... }]
-      error.errors = data.errors;           // alias esperado por parseValidationErrors.js
+      error.errors = data.errors; // alias esperado por parseValidationErrors.js
       error.data = data;
       throw error;
     }
@@ -200,7 +204,6 @@ async function runRequest(endpoint, finalUrl, finalOpts, { silentAuth, timeoutMs
 
 export const apiFetchFormData = async (endpoint, options = {}) => {
   const opts = { ...options };
-  if (opts.headers && opts.headers["Content-Type"]) delete opts.headers["Content-Type"];
+  if (opts.headers && opts.headers['Content-Type']) delete opts.headers['Content-Type'];
   return apiFetch(endpoint, opts);
 };
-

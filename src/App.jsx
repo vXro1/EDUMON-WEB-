@@ -1,17 +1,17 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import AppRoutes from "./routes/AppRoutes";
-import { AuthProvider } from "./features/auth/context/AuthContext";
-import SessionWarningModal from "./features/auth/components/SessionWarningModal";
-import { SearchProvider } from "./context/SearchContext";
-import { ToastProvider } from "./context/ToastContext";
-import { ConfirmProvider } from "./context/ConfirmContext";
-import { BreadcrumbProvider } from "./context/BreadcrumbContext";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import AppRoutes from './routes/AppRoutes';
+import { AuthProvider } from './features/auth/context/AuthContext';
+import SessionWarningModal from './features/auth/components/SessionWarningModal';
+import { SearchProvider } from './context/SearchContext';
+import { ToastProvider } from './context/ToastContext';
+import { ConfirmProvider } from './context/ConfirmContext';
+import { BreadcrumbProvider } from './context/BreadcrumbContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime:          60_000,
-      retry:              1,
+      staleTime: 60_000,
+      retry: 1,
       refetchOnWindowFocus: false,
     },
   },

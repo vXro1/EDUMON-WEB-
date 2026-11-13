@@ -1,42 +1,37 @@
-import { useState, useCallback, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import CursoContext from "../../context/CursoContext";
-import { ClipboardList, Clock, Eye, Pencil, Lock, Layers } from "lucide-react";
+import { useState, useCallback, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import CursoContext from '../../context/CursoContext';
+import { ClipboardList, Clock, Eye, Pencil, Lock, Layers } from 'lucide-react';
 
-import { tareasGetById, tareasCreate, tareasUpdate, tareasDelete } from "@/features/cursos/services/tareasService";
-import { useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/services/queryKeys";
-import { useTareasListado } from "@/features/cursos/hooks/useListados";
-import { cursosGetAllParticipantes, modulosGetByCurso } from "@/features/cursos/services/cursosService";
+import { tareasGetById, tareasCreate, tareasUpdate, tareasDelete } from '@/features/cursos/services/tareasService';
+import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/services/queryKeys';
+import { useTareasListado } from '@/features/cursos/hooks/useListados';
+import { cursosGetAllParticipantes, modulosGetByCurso } from '@/features/cursos/services/cursosService';
 
-import { AppModal, Button, Toast, IconActionButton, useConfirm } from "@/components";
-import {
-  Sk,
-  EmptyState,
-  SectionHeader,
-} from "../shared/ui";
-import { normalizeTarea } from "@/lib/normalizers/tarea";
-import { sanitizeRichText, isRichTextEmpty } from "@/utils/richText";
-import { humanizeError } from "@/utils/humanizeError";
-import { parseValidationErrors, summarizeValidationErrors } from "@/utils/parseValidationErrors";
+import { AppModal, Button, Toast, IconActionButton, useConfirm } from '@/components';
+import { Sk, EmptyState, SectionHeader } from '../shared/ui';
+import { normalizeTarea } from '@/lib/normalizers/tarea';
+import { sanitizeRichText, isRichTextEmpty } from '@/utils/richText';
+import { humanizeError } from '@/utils/humanizeError';
+import { parseValidationErrors, summarizeValidationErrors } from '@/utils/parseValidationErrors';
 
-import { fmt, fmtHour, esPasada, makeNotify } from "../shared/helpers";
+import { fmt, fmtHour, esPasada, makeNotify } from '../shared/helpers';
 
-import TareaDetalle from "./TareaDetalle";
-import TareaForm from "./TareaForm";
-
+import TareaDetalle from './TareaDetalle';
+import TareaForm from './TareaForm';
 
 const SIN_TAREAS = [];
 
 const emptyForm = () => ({
-  titulo: "",
-  descripcion: "",
-  criterios: "",
+  titulo: '',
+  descripcion: '',
+  criterios: '',
   etiquetas: [],
-  fechaEntrega: "",
-  moduloId: "",
-  asignacionTipo: "todos",
-  tipoEntrega: "archivo",
+  fechaEntrega: '',
+  moduloId: '',
+  asignacionTipo: 'todos',
+  tipoEntrega: 'archivo',
   participantes: [],
   archivosNuevos: [],
   archivosEliminar: [],
@@ -45,7 +40,12 @@ const emptyForm = () => ({
   // no existe "enlacesEliminar" — el backend no soporta borrar un enlace existente
 });
 
-export default function TareasTab({ cursoId: cursoIdProp, canManage: canManageProp, canGrade: canGradeProp, esPadre: esPadreProp }) {
+export default function TareasTab({
+  cursoId: cursoIdProp,
+  canManage: canManageProp,
+  canGrade: canGradeProp,
+  esPadre: esPadreProp,
+}) {
   const confirmar = useConfirm();
   const ctx = useContext(CursoContext);
   const cursoId = ctx?.cursoId ?? cursoIdProp;
@@ -73,16 +73,13 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
   const [modulos, setModulos] = useState([]);
   const [loadingModulos, setLoadingModulos] = useState(false);
 
-  const [toast, setToast] = useState({ msg: "", type: "success" });
+  const [toast, setToast] = useState({ msg: '', type: 'success' });
   const notify = makeNotify(setToast);
 
   // ── CARGAR TAREAS ──────────────────────────────────────────────────
   // tras crear/editar/eliminar: invalida todos los listados de retos en caché
   // (este curso, la página de Retos y los de la familia)
-  const load = useCallback(
-    () => queryClient.invalidateQueries({ queryKey: queryKeys.tareas.all() }),
-    [queryClient]
-  );
+  const load = useCallback(() => queryClient.invalidateQueries({ queryKey: queryKeys.tareas.all() }), [queryClient]);
 
   // ── PARTICIPANTES ──────────────────────────────────────────────────
   const loadParticipantes = useCallback(async () => {
@@ -92,16 +89,16 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
       const lista = res.participantes ?? res.data ?? [];
       setParticipantesCurso(
         lista
-          .map(p => {
+          .map((p) => {
             const u = p.usuario ?? p.usuarioId ?? p;
             return {
-              _id: String(u._id ?? p._id ?? ""),
-              nombre: u.nombre ?? "",
-              apellido: u.apellido ?? "",
-              rol: u.rol ?? p.etiqueta ?? "",
+              _id: String(u._id ?? p._id ?? ''),
+              nombre: u.nombre ?? '',
+              apellido: u.apellido ?? '',
+              rol: u.rol ?? p.etiqueta ?? '',
             };
           })
-          .filter(p => p._id)
+          .filter((p) => p._id),
       );
     } catch {
       setParticipantesCurso([]);
@@ -137,21 +134,20 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
   // reutilizada: primero con el dato de la lista, luego con el fetch fresco
   const buildEditForm = (t) => {
     const selIds = (t.participantesSeleccionados ?? [])
-      .map(p => String(typeof p === "object" ? p?._id ?? "" : p))
+      .map((p) => String(typeof p === 'object' ? (p?._id ?? '') : p))
       .filter(Boolean);
 
-    const enlacesExistentes = (t.adjuntos ?? t.archivosAdjuntos ?? [])
-      .filter(a => a.tipo === "enlace");
+    const enlacesExistentes = (t.adjuntos ?? t.archivosAdjuntos ?? []).filter((a) => a.tipo === 'enlace');
 
     return {
-      titulo: t.titulo ?? "",
-      descripcion: t.descripcion ?? "",
-      criterios: typeof t.criterios === "string" ? t.criterios : "",
+      titulo: t.titulo ?? '',
+      descripcion: t.descripcion ?? '',
+      criterios: typeof t.criterios === 'string' ? t.criterios : '',
       etiquetas: Array.isArray(t.etiquetas) ? t.etiquetas : [],
-      fechaEntrega: t.fechaEntrega ? t.fechaEntrega.substring(0, 16) : "",
-      moduloId: t.moduloId ?? (typeof t.modulo === "object" ? t.modulo?._id ?? "" : t.modulo ?? ""),
-      asignacionTipo: t.asignacionTipo ?? "todos",
-      tipoEntrega: t.tipoEntrega ?? "archivo",
+      fechaEntrega: t.fechaEntrega ? t.fechaEntrega.substring(0, 16) : '',
+      moduloId: t.moduloId ?? (typeof t.modulo === 'object' ? (t.modulo?._id ?? '') : (t.modulo ?? '')),
+      asignacionTipo: t.asignacionTipo ?? 'todos',
+      tipoEntrega: t.tipoEntrega ?? 'archivo',
       participantes: selIds,
       archivosNuevos: [],
       archivosEliminar: [],
@@ -170,7 +166,7 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
 
     // la fila de la lista puede estar desactualizada; se repite el fetch por ID
     const fetchFresh = tareasGetById(t._id ?? t.id)
-      .then(fresh => {
+      .then((fresh) => {
         const normalized = normalizeTarea(fresh);
         setEditTarget(normalized);
         setForm(buildEditForm(normalized));
@@ -211,60 +207,60 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
 
     // mismo mínimo que el validador del backend
     if (!form.titulo.trim()) {
-      nextErrors.titulo = "El título es requerido";
+      nextErrors.titulo = 'El título es requerido';
     } else if (form.titulo.trim().length < 3) {
-      nextErrors.titulo = "El título debe tener al menos 3 caracteres";
+      nextErrors.titulo = 'El título debe tener al menos 3 caracteres';
     }
     if (!form.fechaEntrega) {
-      nextErrors.fechaEntrega = "La fecha de entrega es requerida";
+      nextErrors.fechaEntrega = 'La fecha de entrega es requerida';
     } else if (new Date(form.fechaEntrega) < new Date()) {
-      nextErrors.fechaEntrega = "La fecha de entrega debe ser futura";
+      nextErrors.fechaEntrega = 'La fecha de entrega debe ser futura';
     }
     if (creating && !form.moduloId) {
-      nextErrors.moduloId = "Selecciona un módulo";
+      nextErrors.moduloId = 'Selecciona un módulo';
     }
-    if (form.asignacionTipo === "seleccionados" && form.participantes.length === 0) {
-      nextErrors.participantes = "Selecciona al menos un participante";
+    if (form.asignacionTipo === 'seleccionados' && form.participantes.length === 0) {
+      nextErrors.participantes = 'Selecciona al menos un participante';
     }
 
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
-      notify("Revisa los campos marcados", "error");
+      notify('Revisa los campos marcados', 'error');
       return;
     }
 
     setSaving(true);
     try {
       const fd = new FormData();
-      fd.append("titulo", form.titulo.trim());
-      fd.append("descripcion", sanitizeRichText(form.descripcion));
-      fd.append("criterios", isRichTextEmpty(form.criterios) ? "" : sanitizeRichText(form.criterios));
-      fd.append("cursoId", cursoId);
-      fd.append("asignacionTipo", form.asignacionTipo);
-      fd.append("tipoEntrega", form.tipoEntrega || "archivo");
+      fd.append('titulo', form.titulo.trim());
+      fd.append('descripcion', sanitizeRichText(form.descripcion));
+      fd.append('criterios', isRichTextEmpty(form.criterios) ? '' : sanitizeRichText(form.criterios));
+      fd.append('cursoId', cursoId);
+      fd.append('asignacionTipo', form.asignacionTipo);
+      fd.append('tipoEntrega', form.tipoEntrega || 'archivo');
       // docenteId no se envía — el backend siempre lo fuerza a req.user.userId
 
-      if (form.moduloId) fd.append("moduloId", form.moduloId);
-      if (form.fechaEntrega) fd.append("fechaEntrega", form.fechaEntrega);
+      if (form.moduloId) fd.append('moduloId', form.moduloId);
+      if (form.fechaEntrega) fd.append('fechaEntrega', form.fechaEntrega);
 
       // etiquetas[] / participantesSeleccionados[] — el validator tiene isArray(),
       // los corchetes hacen que Multer arme el array incluso con un solo valor
-      (form.etiquetas ?? []).forEach(tag => fd.append("etiquetas[]", tag));
+      (form.etiquetas ?? []).forEach((tag) => fd.append('etiquetas[]', tag));
 
-      if (form.asignacionTipo === "seleccionados") {
-        form.participantes.forEach(id => fd.append("participantesSeleccionados[]", id));
+      if (form.asignacionTipo === 'seleccionados') {
+        form.participantes.forEach((id) => fd.append('participantesSeleccionados[]', id));
       }
 
-      form.archivosNuevos.forEach(f => fd.append("archivos", f));
+      form.archivosNuevos.forEach((f) => fd.append('archivos', f));
 
       // estos campos no tienen isArray() en el validator, así que JSON.stringify() funciona
       if (editTarget && form.archivosEliminar.length > 0) {
-        fd.append("archivosAEliminar", JSON.stringify(form.archivosEliminar));
+        fd.append('archivosAEliminar', JSON.stringify(form.archivosEliminar));
       }
 
-      const enlacesValidos = form.enlacesNuevos.filter(en => en.url?.trim());
+      const enlacesValidos = form.enlacesNuevos.filter((en) => en.url?.trim());
       if (enlacesValidos.length > 0) {
-        const enlacesKey = editTarget ? "nuevosEnlaces" : "enlaces";
+        const enlacesKey = editTarget ? 'nuevosEnlaces' : 'enlaces';
         fd.append(enlacesKey, JSON.stringify(enlacesValidos));
         // payload confirmado correcto por captura de red; el backend responde 200
         // pero igual deja enlaces vacíos — es un bug de backend, no tocar esto sin evidencia nueva
@@ -272,11 +268,11 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
 
       if (editTarget) {
         await tareasUpdate(editTarget._id, fd);
-        notify("Reto actualizado");
+        notify('Reto actualizado');
         // el backend ignora cambios de "etiquetas" al editar (solo se guardan al crear) — no corregible en frontend
       } else {
         await tareasCreate(fd);
-        notify("Reto creado");
+        notify('Reto creado');
       }
 
       handleClose();
@@ -289,9 +285,9 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
           fieldErrors.participantes = fieldErrors.participantesSeleccionados;
         }
         setErrors(fieldErrors);
-        notify(summarizeValidationErrors(fieldErrors), "error");
+        notify(summarizeValidationErrors(fieldErrors), 'error');
       } else {
-        notify(humanizeError(err, "Error al guardar reto"), "error");
+        notify(humanizeError(err, 'Error al guardar reto'), 'error');
       }
     } finally {
       setSaving(false);
@@ -301,26 +297,22 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
   // tareasDelete no borra el reto, solo lo cierra y limpia sus adjuntos
   const handleDelete = async (id) => {
     const ok = await confirmar({
-      title: "¿Cerrar este reto?",
-      message: "No se podrá reabrir y se eliminarán sus archivos adjuntos.",
-      confirmLabel: "Cerrar reto",
+      title: '¿Cerrar este reto?',
+      message: 'No se podrá reabrir y se eliminarán sus archivos adjuntos.',
+      confirmLabel: 'Cerrar reto',
     });
     if (!ok) return;
     try {
       await tareasDelete(id);
-      notify("Reto cerrado");
+      notify('Reto cerrado');
       load();
     } catch {
-      notify("Error al cerrar el reto", "error");
+      notify('Error al cerrar el reto', 'error');
     }
   };
 
   // ── Título del modal ───────────────────────────────────────────────
-  const modalTitle = creating
-    ? "Nuevo reto"
-    : editTarget
-      ? "Editar reto"
-      : viewTarget?.titulo ?? "Detalle del reto";
+  const modalTitle = creating ? 'Nuevo reto' : editTarget ? 'Editar reto' : (viewTarget?.titulo ?? 'Detalle del reto');
 
   const isForm = editTarget || creating;
 
@@ -328,26 +320,25 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
     <div>
       <Toast {...toast} />
 
-      <SectionHeader
-        title="Retos"
-        action={canManage ? { label: "Nuevo reto", onClick: openCreate } : null}
-      />
+      <SectionHeader title="Retos" action={canManage ? { label: 'Nuevo reto', onClick: openCreate } : null} />
 
       {/* LISTA */}
       {loading ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {[0, 1, 2].map(i => <Sk key={i} h={72} r={12} />)}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {[0, 1, 2].map((i) => (
+            <Sk key={i} h={72} r={12} />
+          ))}
         </div>
       ) : tareas.length === 0 ? (
         <EmptyState
           icon={ClipboardList}
           title="Sin retos"
-          desc={canManage ? "Crea el primer reto del curso." : "No hay retos asignados aún."}
-          action={canManage ? { label: "Crear reto", onClick: openCreate } : null}
+          desc={canManage ? 'Crea el primer reto del curso.' : 'No hay retos asignados aún.'}
+          action={canManage ? { label: 'Crear reto', onClick: openCreate } : null}
         />
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {tareas.map(t => {
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {tareas.map((t) => {
             const vencida = esPasada(t.fechaEntrega ?? t.fechaVencimiento);
             const fecha = t.fechaEntrega ?? t.fechaVencimiento;
             const moduloNombre = t.modulo?.titulo ?? null;
@@ -356,38 +347,62 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
               <div
                 key={t._id}
                 style={{
-                  background: "var(--color-surface)",
+                  background: 'var(--color-surface)',
                   borderRadius: 12,
-                  border: `1px solid ${vencida ? "var(--color-error)" : "var(--color-border)"}`,
-                  padding: "14px 18px",
-                  display: "flex", gap: 14, alignItems: "flex-start",
+                  border: `1px solid ${vencida ? 'var(--color-error)' : 'var(--color-border)'}`,
+                  padding: '14px 18px',
+                  display: 'flex',
+                  gap: 14,
+                  alignItems: 'flex-start',
                 }}
               >
-                <div style={{
-                  width: 36, height: 36, borderRadius: 9,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                  background: vencida ? "var(--color-error-light)" : "rgba(99,102,241,0.1)",
-                  flexShrink: 0,
-                }}>
-                  <ClipboardList style={{ width: 16, height: 16, color: vencida ? "red" : "#6366F1" }} />
+                <div
+                  style={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: 9,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    background: vencida ? 'var(--color-error-light)' : 'rgba(99,102,241,0.1)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <ClipboardList style={{ width: 16, height: 16, color: vencida ? 'red' : '#6366F1' }} />
                 </div>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <p style={{ fontWeight: 700, margin: 0, lineHeight: 1.3 }}>{t.titulo}</p>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 4, flexWrap: "wrap" }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4, flexWrap: 'wrap' }}>
                     {fecha && (
-                      <span style={{ fontSize: 12, color: "var(--color-text-muted)", display: "flex", alignItems: "center", gap: 3 }}>
+                      <span
+                        style={{
+                          fontSize: 12,
+                          color: 'var(--color-text-muted)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 3,
+                        }}
+                      >
                         <Clock style={{ width: 11, height: 11 }} />
                         {fmt(fecha)} {fmtHour(fecha)}
                       </span>
                     )}
                     {moduloNombre && (
-                      <span style={{
-                        fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 999,
-                        background: "var(--color-primary-light)", color: "var(--color-primary)",
-                        display: "inline-flex", alignItems: "center", gap: 4,
-                        boxShadow: "var(--clay-pill)",
-                      }}>
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 600,
+                          padding: '2px 8px',
+                          borderRadius: 999,
+                          background: 'var(--color-primary-light)',
+                          color: 'var(--color-primary)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: 4,
+                          boxShadow: 'var(--clay-pill)',
+                        }}
+                      >
                         <Layers style={{ width: 10, height: 10 }} />
                         {moduloNombre}
                       </span>
@@ -395,12 +410,17 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
                   </div>
                 </div>
 
-                <div style={{ display: "flex", gap: 6, flexShrink: 0, flexWrap: "wrap" }}>
+                <div style={{ display: 'flex', gap: 6, flexShrink: 0, flexWrap: 'wrap' }}>
                   <IconActionButton icon={Eye} color="var(--color-primary)" title="Ver" onClick={() => openDetail(t)} />
                   {canManage && (
                     <>
                       <IconActionButton icon={Pencil} color="#6366F1" title="Editar" onClick={() => openEdit(t)} />
-                      <IconActionButton icon={Lock} color="#64748B" title="Cerrar reto" onClick={() => handleDelete(t._id)} />
+                      <IconActionButton
+                        icon={Lock}
+                        color="#64748B"
+                        title="Cerrar reto"
+                        onClick={() => handleDelete(t._id)}
+                      />
                     </>
                   )}
                 </div>
@@ -411,11 +431,7 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
       )}
 
       {/* MODAL */}
-      <AppModal
-        isOpen={modalOpen}
-        onClose={handleClose}
-        size="md"
-      >
+      <AppModal isOpen={modalOpen} onClose={handleClose} size="md">
         <AppModal.Header title={modalTitle} onClose={handleClose} />
 
         <AppModal.Body>
@@ -456,7 +472,7 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
               Cancelar
             </Button>
             <Button type="submit" form="tarea-form" disabled={saving}>
-              {saving ? "Guardando…" : editTarget ? "Guardar cambios" : "Crear reto"}
+              {saving ? 'Guardando…' : editTarget ? 'Guardar cambios' : 'Crear reto'}
             </Button>
           </AppModal.Footer>
         )}

@@ -1,25 +1,26 @@
-import { useState } from "react";
-import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import { humanizeError } from "../../../utils/humanizeError";
-import { LoginForm } from "@/components";
-import { useToast } from "../../../context/ToastContext";
-import { stashLoginPassword } from "../utils/firstLoginPassword";
-import { usePageMeta } from "@/hooks/usePageMeta";
+import { useState } from 'react';
+import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import { humanizeError } from '../../../utils/humanizeError';
+import { LoginForm } from '@/components';
+import { useToast } from '../../../context/ToastContext';
+import { stashLoginPassword } from '../utils/firstLoginPassword';
+import { usePageMeta } from '@/hooks/usePageMeta';
 
 const ROLE_REDIRECTS = {
-  superadmin: "/admin",
-  administrador: "/admin",
-  docente: "/docente",
-  padre: "/padre",
-  "padre/tutor": "/padre",
+  superadmin: '/admin',
+  administrador: '/admin',
+  docente: '/docente',
+  padre: '/padre',
+  'padre/tutor': '/padre',
 };
 
 export const LoginPage = () => {
   usePageMeta({
-    title: "Iniciar sesión | EDUMON",
-    description: "Ingresa a EDUMON con tu número de teléfono y contraseña para ver tus cursos, retos, calificaciones, foros y calendario.",
-    path: "/login",
+    title: 'Iniciar sesión | EDUMON',
+    description:
+      'Ingresa a EDUMON con tu número de teléfono y contraseña para ver tus cursos, retos, calificaciones, foros y calendario.',
+    path: '/login',
   });
   const { login } = useAuth();
   const { notify } = useToast();
@@ -28,45 +29,38 @@ export const LoginPage = () => {
   const [searchParams] = useSearchParams();
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
-  const sessionExpired = searchParams.get("expired") === "1";
-  const from = location.state?.from?.pathname || "/";
+  const sessionExpired = searchParams.get('expired') === '1';
+  const from = location.state?.from?.pathname || '/';
 
   const handleLogin = async (credentials) => {
     setLoading(true);
-    setError("");
+    setError('');
     try {
       const data = await login(credentials);
       if (data?.primerInicioSesion) {
         stashLoginPassword(credentials.contrasena);
-        navigate("/primer-inicio", { replace: true });
+        navigate('/primer-inicio', { replace: true });
         return;
       }
 
       const rol = data.user?.rol;
-      const nombre = data.user?.nombre ?? "Usuario";
+      const nombre = data.user?.nombre ?? 'Usuario';
       const redirect = ROLE_REDIRECTS[rol] || from;
 
-      notify(`¡Bienvenido, ${nombre}!`, "success");
+      notify(`¡Bienvenido, ${nombre}!`, 'success');
 
       navigate(redirect, {
         replace: true,
         state: { loginSuccess: true, nombre, rol },
       });
     } catch (err) {
-      setError(humanizeError(err, "Credenciales incorrectas. Verifica e intenta de nuevo."));
+      setError(humanizeError(err, 'Credenciales incorrectas. Verifica e intenta de nuevo.'));
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <LoginForm
-      onSubmit={handleLogin}
-      loading={loading}
-      error={error}
-      sessionExpired={sessionExpired}
-    />
-  );
+  return <LoginForm onSubmit={handleLogin} loading={loading} error={error} sessionExpired={sessionExpired} />;
 };

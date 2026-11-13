@@ -1,6 +1,6 @@
 // src/lib/normalizers/user.js
 
-import { assetUrl } from "@/utils/assetUrl";
+import { assetUrl } from '@/utils/assetUrl';
 
 /**
  * Normaliza un usuario individual
@@ -17,13 +17,13 @@ export function normalizeUser(user) {
       _id: null,
 
       // Básico
-      nombre: "Sin nombre",
-      apellido: "",
-      nombreCompleto: "Sin nombre",
+      nombre: 'Sin nombre',
+      apellido: '',
+      nombreCompleto: 'Sin nombre',
 
       // Sistema
-      rol: "desconocido",
-      estado: "activo",
+      rol: 'desconocido',
+      estado: 'activo',
 
       // Perfil
       avatar: null,
@@ -32,16 +32,16 @@ export function normalizeUser(user) {
       fechaNacimiento: null,
 
       // Contacto
-      email: "",
-      correo: "",
-      cedula: "",
-      telefono: "",
-      direccion: "",
-      ciudad: "",
-      pais: "",
+      email: '',
+      correo: '',
+      cedula: '',
+      telefono: '',
+      direccion: '',
+      ciudad: '',
+      pais: '',
 
       // Académico / institucional
-      codigoEstudiante: "",
+      codigoEstudiante: '',
       grado: null,
       curso: null,
 
@@ -69,40 +69,22 @@ export function normalizeUser(user) {
     };
   }
 
-  const id =
-    user._id ||
-    user.id ||
-    null;
+  const id = user._id || user.id || null;
 
   // Correo unificado
-  const emailVal =
-    user.correo ||
-    user.email ||
-    "";
+  const emailVal = user.correo || user.email || '';
 
   // Avatar / foto — el backend guarda rutas locales relativas
   // (/uploads/pub/… o /static/avatares/…); assetUrl las vuelve absolutas
   // contra el origen del API cuando hace falta.
-  const avatarUrl =
-    assetUrl(
-      user.fotoPerfilUrl ||
-      user.avatarUrl ||
-      user.avatar ||
-      user.foto ||
-      ""
-    ) || null;
+  const avatarUrl = assetUrl(user.fotoPerfilUrl || user.avatarUrl || user.avatar || user.foto || '') || null;
 
   // Nombre completo
-  const nombre =
-    user.nombre ||
-    "Sin nombre";
+  const nombre = user.nombre || 'Sin nombre';
 
-  const apellido =
-    user.apellido ||
-    "";
+  const apellido = user.apellido || '';
 
-  const nombreCompleto =
-    `${nombre} ${apellido}`.trim();
+  const nombreCompleto = `${nombre} ${apellido}`.trim();
 
   return {
     // IDs
@@ -115,67 +97,41 @@ export function normalizeUser(user) {
     nombreCompleto,
 
     // Sistema
-    rol:
-      user.rol ||
-      "desconocido",
+    rol: user.rol || 'desconocido',
 
-    estado:
-      user.estado ||
-      "activo",
+    estado: user.estado || 'activo',
 
     // Perfil
     avatar: avatarUrl,
     fotoPerfilUrl: avatarUrl,
 
-    genero:
-      user.genero ||
-      null,
+    genero: user.genero || null,
 
-    fechaNacimiento:
-      user.fechaNacimiento ||
-      null,
+    fechaNacimiento: user.fechaNacimiento || null,
 
     // Contacto
     email: emailVal,
     correo: emailVal,
 
-    cedula:
-      user.cedula ||
-      "",
+    cedula: user.cedula || '',
 
-    telefono:
-      user.telefono ||
-      "",
+    telefono: user.telefono || '',
 
-    direccion:
-      user.direccion ||
-      "",
+    direccion: user.direccion || '',
 
-    ciudad:
-      user.ciudad ||
-      "",
+    ciudad: user.ciudad || '',
 
-    pais:
-      user.pais ||
-      "",
+    pais: user.pais || '',
 
     // Académico / institucional
-    codigoEstudiante:
-      user.codigoEstudiante ||
-      "",
+    codigoEstudiante: user.codigoEstudiante || '',
 
-    grado:
-      user.grado ||
-      null,
+    grado: user.grado || null,
 
-    curso:
-      user.curso ||
-      null,
+    curso: user.curso || null,
 
     // Seguridad / sesión
-    ultimoAcceso:
-      user.ultimoAcceso ||
-      null,
+    ultimoAcceso: user.ultimoAcceso || null,
 
     primerInicioSesion: !!user.primerInicioSesion,
 
@@ -183,41 +139,20 @@ export function normalizeUser(user) {
     perfilActivo: user.perfilActivo ?? user.perfilId ?? null,
 
     // Fechas
-    fechaRegistro:
-      user.fechaRegistro ||
-      user.createdAt ||
-      null,
+    fechaRegistro: user.fechaRegistro || user.createdAt || null,
 
-    createdAt:
-      user.createdAt ||
-      null,
+    createdAt: user.createdAt || null,
 
-    updatedAt:
-      user.updatedAt ||
-      null,
+    updatedAt: user.updatedAt || null,
 
     // Configuración
-    preferencias:
-      typeof user.preferencias === "object" &&
-      user.preferencias !== null
-        ? user.preferencias
-        : {},
+    preferencias: typeof user.preferencias === 'object' && user.preferencias !== null ? user.preferencias : {},
 
     // Relaciones opcionales
-    hijos:
-      Array.isArray(user.hijos)
-        ? user.hijos
-        : [],
+    hijos: Array.isArray(user.hijos) ? user.hijos : [],
 
-    cursos:
-      Array.isArray(user.cursos)
-        ? user.cursos
-        : [],
+    cursos: Array.isArray(user.cursos) ? user.cursos : [],
 
-    permisos:
-      Array.isArray(user.permisos)
-        ? user.permisos
-        : [],
+    permisos: Array.isArray(user.permisos) ? user.permisos : [],
   };
 }
-

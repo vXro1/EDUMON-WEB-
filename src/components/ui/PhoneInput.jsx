@@ -1,8 +1,6 @@
-import { forwardRef, useId } from "react";
-import { AlertCircle, Phone } from "lucide-react";
-import {
-  toLocalPhone, PHONE_PREFIX, PHONE_PLACEHOLDER, PHONE_HINT,
-} from "@/utils/normalizePhone";
+import { forwardRef, useId } from 'react';
+import { AlertCircle, Phone } from 'lucide-react';
+import { toLocalPhone, PHONE_PREFIX, PHONE_PLACEHOLDER, PHONE_HINT } from '@/utils/normalizePhone';
 
 /* ══════════════════════════════════════════════════════════════
    PHONE INPUT — campo de teléfono ÚNICO de toda la app
@@ -24,28 +22,31 @@ import {
    el placeholder ni lo que el usuario escribe, sea cual sea la fuente,
    el ancho de la columna o el navegador.
    ══════════════════════════════════════════════════════════════ */
-export const PhoneInput = forwardRef(function PhoneInput({
-  value = "",
-  onChange,
-  name = "telefono",
-  label = "Teléfono",
-  hint = PHONE_HINT,
-  error,
-  size = "md",
-  placeholder = PHONE_PLACEHOLDER,
-  showIcon = true,
-  required = false,
-  disabled = false,
-  className = "",
-  id,
-  ...rest
-}, ref) {
-  const autoId  = useId();
+export const PhoneInput = forwardRef(function PhoneInput(
+  {
+    value = '',
+    onChange,
+    name = 'telefono',
+    label = 'Teléfono',
+    hint = PHONE_HINT,
+    error,
+    size = 'md',
+    placeholder = PHONE_PLACEHOLDER,
+    showIcon = true,
+    required = false,
+    disabled = false,
+    className = '',
+    id,
+    ...rest
+  },
+  ref,
+) {
+  const autoId = useId();
   const inputId = id ?? autoId;
-  const local   = toLocalPhone(value);
+  const local = toLocalPhone(value);
 
-  const sizeClass  = size === "sm" ? "input-sm" : size === "lg" ? "input-lg" : "";
-  const stateClass = error ? "input-error" : "";
+  const sizeClass = size === 'sm' ? 'input-sm' : size === 'lg' ? 'input-lg' : '';
+  const stateClass = error ? 'input-error' : '';
 
   const handleChange = (e) => {
     const next = toLocalPhone(e.target.value);
@@ -55,15 +56,12 @@ export const PhoneInput = forwardRef(function PhoneInput({
   return (
     <div className="field">
       {label && (
-        <label
-          htmlFor={inputId}
-          className={`field-label${required ? " field-label-required" : ""}`}
-        >
+        <label htmlFor={inputId} className={`field-label${required ? ' field-label-required' : ''}`}>
           {label}
         </label>
       )}
 
-      <div className={["input", sizeClass, stateClass, "phone-field", className].filter(Boolean).join(" ")}>
+      <div className={['input', sizeClass, stateClass, 'phone-field', className].filter(Boolean).join(' ')}>
         {showIcon && (
           <span className="phone-field-icon" aria-hidden="true">
             <Phone size={16} />
@@ -87,9 +85,7 @@ export const PhoneInput = forwardRef(function PhoneInput({
           disabled={disabled}
           required={required}
           aria-invalid={!!error}
-          aria-describedby={
-            error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined
-          }
+          aria-describedby={error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined}
           className="phone-field-input"
           {...rest}
         />
@@ -102,7 +98,9 @@ export const PhoneInput = forwardRef(function PhoneInput({
         </span>
       )}
       {!error && hint && (
-        <span id={`${inputId}-hint`} className="field-hint">{hint}</span>
+        <span id={`${inputId}-hint`} className="field-hint">
+          {hint}
+        </span>
       )}
     </div>
   );

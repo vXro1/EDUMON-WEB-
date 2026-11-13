@@ -1,14 +1,14 @@
 // Usuarios
-export * from "./user";
+export * from './user';
 
 // Cursos
-export * from "./curso";
+export * from './curso';
 
 // Tareas
-export * from "./tarea";
+export * from './tarea';
 
 // Entregas
-export * from "./entrega";
+export * from './entrega';
 
 // Foro
-export * from "./foro";
+export * from './foro';

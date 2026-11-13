@@ -4,17 +4,17 @@
 // panel de formulario (blanco). El corte diagonal entre ambos es el
 // elemento de firma del rediseño — en móvil se desactiva y el panel de
 // marca se aplana a una franja horizontal compacta arriba.
-import { Link } from "react-router-dom";
-import { Home } from "lucide-react";
-import logo from "@/assets/icons/edumon-logo.svg";
-import circulo1 from "@/assets/img/circulos/circulo1.svg";
-import circulo2 from "@/assets/img/circulos/circulo2.svg";
-import circulo3 from "@/assets/img/circulos/circulo3.svg";
+import { Link } from 'react-router-dom';
+import { Home } from 'lucide-react';
+import logo from '@/assets/icons/edumon-logo.svg';
+import circulo1 from '@/assets/img/circulos/circulo1.svg';
+import circulo2 from '@/assets/img/circulos/circulo2.svg';
+import circulo3 from '@/assets/img/circulos/circulo3.svg';
 
 const AUTH_BUBBLES = [
-  { src: circulo1, top: "-10%", left: "-10%", size: 150, opacity: 0.95 },
-  { src: circulo2, bottom: "-12%", right: "-10%", size: 130, opacity: 0.95 },
-  { src: circulo3, top: "62%", left: "9%", size: 26, opacity: 0.95 },
+  { src: circulo1, top: '-10%', left: '-10%', size: 150, opacity: 0.95 },
+  { src: circulo2, bottom: '-12%', right: '-10%', size: 130, opacity: 0.95 },
+  { src: circulo3, top: '62%', left: '9%', size: 26, opacity: 0.95 },
 ];
 
 function AuthBubbles() {
@@ -28,8 +28,13 @@ function AuthBubbles() {
           draggable={false}
           className="auth-bubble"
           style={{
-            top: b.top, left: b.left, right: b.right, bottom: b.bottom,
-            width: b.size, height: b.size, aspectRatio: "1 / 1",
+            top: b.top,
+            left: b.left,
+            right: b.right,
+            bottom: b.bottom,
+            width: b.size,
+            height: b.size,
+            aspectRatio: '1 / 1',
             opacity: b.opacity,
           }}
         />
@@ -43,14 +48,7 @@ function AuthBubbles() {
    Mismo bloque en las 3 pantallas; solo cambia brandTitle / brandTagline.
 ───────────────────────────────────────────── */
 const Star = ({ className, size = 16 }) => (
-  <svg
-    className={className}
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="currentColor"
-    aria-hidden="true"
-  >
+  <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l7.1-1.01z" />
   </svg>
 );
@@ -85,8 +83,13 @@ function AuthBrandPanel({ brandTitle, brandTagline }) {
 ───────────────────────────────────────────── */
 const AuthLayout = ({
   children,
-  brandTitle = <>Bienvenido a <br /><strong>Edumon</strong></>,
-  brandTagline = "Educación conectada, familias unidas.",
+  brandTitle = (
+    <>
+      Bienvenido a <br />
+      <strong>Edumon</strong>
+    </>
+  ),
+  brandTagline = 'Educación conectada, familias unidas.',
 }) => (
   <>
     <style>{AUTH_CSS}</style>
@@ -97,9 +100,7 @@ const AuthLayout = ({
       <div className="auth-stack">
         <div className="auth-card">
           <AuthBrandPanel brandTitle={brandTitle} brandTagline={brandTagline} />
-          <div className="auth-card-body">
-            {children}
-          </div>
+          <div className="auth-card-body">{children}</div>
         </div>
       </div>
     </div>

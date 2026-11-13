@@ -1,5 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { forosGetById, forosGetByCurso, forosCambiarEstado, mensajesForoGetByForo, mensajesForoCreate, mensajesForoToggleLike, mensajesForoDelete, mensajesForoUpdate } from '@/features/foros/services/forosService';
+import {
+  forosGetById,
+  forosGetByCurso,
+  forosCambiarEstado,
+  mensajesForoGetByForo,
+  mensajesForoCreate,
+  mensajesForoToggleLike,
+  mensajesForoDelete,
+  mensajesForoUpdate,
+} from '@/features/foros/services/forosService';
 import { normalizeForo, normalizeMensajes } from '@/lib/normalizers/foro';
 import { queryKeys } from '@/services/queryKeys';
 
@@ -7,12 +16,12 @@ import { queryKeys } from '@/services/queryKeys';
 
 export const useForumDetail = (foroId) =>
   useQuery({
-    queryKey:  queryKeys.foros.detail(foroId),
-    queryFn:   async () => {
+    queryKey: queryKeys.foros.detail(foroId),
+    queryFn: async () => {
       const res = await forosGetById(foroId);
       return normalizeForo(res?.foro ?? res);
     },
-    enabled:   !!foroId,
+    enabled: !!foroId,
     staleTime: 60_000,
   });
 
@@ -21,26 +30,26 @@ export const useForumMessages = (foroId, currentUserId = null) =>
     // currentUserId entra en la queryKey: si cambia de usuario (otra cuenta
     // logeada en la misma sesión de navegador) React Query no debe servir
     // mensajes cacheados con el yaLeDioLike del usuario anterior.
-    queryKey:        [...queryKeys.foros.messages(foroId), currentUserId],
-    queryFn:         async () => {
+    queryKey: [...queryKeys.foros.messages(foroId), currentUserId],
+    queryFn: async () => {
       const res = await mensajesForoGetByForo(foroId);
       const raw = res?.mensajes ?? (Array.isArray(res) ? res : []);
       return normalizeMensajes(raw, currentUserId);
     },
-    enabled:         !!foroId,
-    staleTime:       30_000,
+    enabled: !!foroId,
+    staleTime: 30_000,
     refetchInterval: 60_000,
   });
 
 // Opciones reutilizables (también con useQueries para varios cursos a la vez)
 export const forosPorCursoQuery = (cursoId) => ({
-  queryKey:  queryKeys.foros.byCurso(cursoId),
-  queryFn:   async () => {
+  queryKey: queryKeys.foros.byCurso(cursoId),
+  queryFn: async () => {
     const res = await forosGetByCurso(cursoId);
     const raw = res?.foros ?? (Array.isArray(res) ? res : []);
     return raw.map(normalizeForo).filter(Boolean);
   },
-  enabled:   !!cursoId,
+  enabled: !!cursoId,
   staleTime: 60_000,
 });
 
@@ -52,7 +61,7 @@ export const usePostMessage = (foroId) => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (fd) => mensajesForoCreate(fd),
-    onSuccess:  () => qc.invalidateQueries({ queryKey: queryKeys.foros.messages(foroId) }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.foros.messages(foroId) }),
   });
 };
 
@@ -95,7 +104,7 @@ export const useDeleteMessage = (foroId) => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (msgId) => mensajesForoDelete(msgId),
-    onSuccess:  () => qc.invalidateQueries({ queryKey: queryKeys.foros.messages(foroId) }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.foros.messages(foroId) }),
   });
 };
 
@@ -103,7 +112,7 @@ export const useEditMessage = (foroId) => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ id, contenido }) => mensajesForoUpdate(id, { contenido }),
-    onSuccess:  () => qc.invalidateQueries({ queryKey: queryKeys.foros.messages(foroId) }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: queryKeys.foros.messages(foroId) }),
   });
 };
 
@@ -111,7 +120,7 @@ export const useToggleEstado = (foroId) => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ estado }) => forosCambiarEstado(foroId, { estado }),
-    onSuccess:  () => {
+    onSuccess: () => {
       qc.invalidateQueries({ queryKey: queryKeys.foros.detail(foroId) });
       qc.invalidateQueries({ queryKey: queryKeys.foros.dashboard(foroId) });
     },

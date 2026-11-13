@@ -2,19 +2,19 @@
 // siempre se envía E.164 "+57XXXXXXXXXX". Todo formulario de teléfono usa:
 // onChange -> toLocalPhone, validate -> isValidPhone, submit -> normalizePhone
 
-export const PHONE_PREFIX = "+57";
-export const PHONE_PLACEHOLDER = "3001234567";
-export const PHONE_HINT = "10 dígitos. El +57 se agrega automáticamente.";
-export const PHONE_ERROR = "Ingresa los 10 dígitos del teléfono (ej: 3001234567)";
+export const PHONE_PREFIX = '+57';
+export const PHONE_PLACEHOLDER = '3001234567';
+export const PHONE_HINT = '10 dígitos. El +57 se agrega automáticamente.';
+export const PHONE_ERROR = 'Ingresa los 10 dígitos del teléfono (ej: 3001234567)';
 
 // tolera indicativo, espacios, guiones, paréntesis o 0 inicial en la entrada
 export function toLocalPhone(value) {
-  if (value === null || value === undefined) return "";
+  if (value === null || value === undefined) return '';
 
-  let digits = String(value).replace(/\D/g, "");
+  let digits = String(value).replace(/\D/g, '');
 
-  if (digits.startsWith("57")) digits = digits.slice(2);   // indicativo escrito por el usuario
-  digits = digits.replace(/^0+/, "");                      // 0 inicial redundante
+  if (digits.startsWith('57')) digits = digits.slice(2); // indicativo escrito por el usuario
+  digits = digits.replace(/^0+/, ''); // 0 inicial redundante
 
   return digits.slice(0, 10);
 }
@@ -28,4 +28,3 @@ export function normalizePhone(value) {
 export function isValidPhone(value) {
   return normalizePhone(value) !== null;
 }
-

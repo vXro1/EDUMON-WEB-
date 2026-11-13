@@ -1,8 +1,7 @@
 import { apiFetch, apiFetchFormData } from './core/apiClient';
 import { assetUrl } from '@/utils/assetUrl';
 
-export const usersCreate = (body) =>
-  apiFetch('/users', { method: 'POST', body: JSON.stringify(body) });
+export const usersCreate = (body) => apiFetch('/users', { method: 'POST', body: JSON.stringify(body) });
 
 export const usersGetAll = (params = {}) => {
   const qs = new URLSearchParams(params).toString();
@@ -22,25 +21,19 @@ export const usersUpdateMyPhoto = (formData) =>
 // se devuelven con URL absoluta lista para <img> y para reenviar al guardar.
 export const usersGetDefaultPhotos = async () => {
   const res = await apiFetch('/users/fotos-predeterminadas');
-  const fotos = Array.isArray(res?.fotos)
-    ? res.fotos.map((f) => ({ ...f, url: assetUrl(f.url) }))
-    : res?.fotos;
+  const fotos = Array.isArray(res?.fotos) ? res.fotos.map((f) => ({ ...f, url: assetUrl(f.url) })) : res?.fotos;
   return { ...res, fotos };
 };
 
 export const usersGetById = (id) => apiFetch(`/users/${id}`);
 
-export const usersUpdate = (id, body) =>
-  apiFetch(`/users/${id}`, { method: 'PUT', body: JSON.stringify(body) });
+export const usersUpdate = (id, body) => apiFetch(`/users/${id}`, { method: 'PUT', body: JSON.stringify(body) });
 
 // el administrador cambia ({ contraseña }) o restablece a la cédula ({ restablecer: true })
 // la contraseña de un padre o docente; cierra sus sesiones abiertas
 export const usersCambiarContrasena = (id, body) =>
   apiFetch(`/users/${id}/contrasena`, { method: 'PATCH', body: JSON.stringify(body) });
 
-export const usersReactivate = (id) =>
-  apiFetch(`/users/${id}/reactivar`, { method: 'PATCH' });
+export const usersReactivate = (id) => apiFetch(`/users/${id}/reactivar`, { method: 'PATCH' });
 
-export const usersDelete = (id) =>
-  apiFetch(`/users/${id}`, { method: 'DELETE' });
-
+export const usersDelete = (id) => apiFetch(`/users/${id}`, { method: 'DELETE' });

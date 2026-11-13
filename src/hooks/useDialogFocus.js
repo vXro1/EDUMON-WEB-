@@ -1,23 +1,25 @@
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from 'react';
 
 const FOCUSABLE =
   'button:not([disabled]),[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
 export default function useDialogFocus(panelRef, isOpen, onClose, { initialFocus } = {}) {
   const onCloseRef = useRef(onClose);
-  useLayoutEffect(() => { onCloseRef.current = onClose; });
+  useLayoutEffect(() => {
+    onCloseRef.current = onClose;
+  });
 
   useEffect(() => {
     if (!isOpen) return;
     const previous = document.activeElement;
 
     const onKey = (e) => {
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         e.preventDefault();
         onCloseRef.current?.();
         return;
       }
-      if (e.key !== "Tab" || !panelRef.current) return;
+      if (e.key !== 'Tab' || !panelRef.current) return;
       const items = Array.from(panelRef.current.querySelectorAll(FOCUSABLE));
       if (!items.length) {
         e.preventDefault();
@@ -37,7 +39,7 @@ export default function useDialogFocus(panelRef, isOpen, onClose, { initialFocus
       }
     };
 
-    document.addEventListener("keydown", onKey);
+    document.addEventListener('keydown', onKey);
     const frame = requestAnimationFrame(() => {
       const target =
         (initialFocus && panelRef.current?.querySelector(initialFocus)) ||
@@ -48,8 +50,8 @@ export default function useDialogFocus(panelRef, isOpen, onClose, { initialFocus
 
     return () => {
       cancelAnimationFrame(frame);
-      document.removeEventListener("keydown", onKey);
-      if (previous && typeof previous.focus === "function") previous.focus();
+      document.removeEventListener('keydown', onKey);
+      if (previous && typeof previous.focus === 'function') previous.focus();
     };
   }, [isOpen, panelRef, initialFocus]);
 }

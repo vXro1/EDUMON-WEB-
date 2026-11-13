@@ -1,17 +1,17 @@
-import { createContext, useContext, useState, useCallback, useRef, useMemo } from "react";
+import { createContext, useContext, useState, useCallback, useRef, useMemo } from 'react';
 
 const SearchContext = createContext(null);
 
 const EMPTY_RESULTS = { cursos: [], tareas: [], eventos: [], foros: [], usuarios: [] };
 
 export const SearchProvider = ({ children }) => {
-  const [query,   setQuery]   = useState("");
+  const [query, setQuery] = useState('');
   const [results, setResults] = useState(EMPTY_RESULTS);
-  const [isOpen,  setIsOpen]  = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   // useRef mantiene el mismo Map entre re-renders
-  const handlersRef   = useRef(new Map());
-  const searchTimer   = useRef(null);
+  const handlersRef = useRef(new Map());
+  const searchTimer = useRef(null);
 
   const registerSearchHandler = useCallback((key, handler) => {
     handlersRef.current.set(key, handler);
@@ -28,7 +28,7 @@ export const SearchProvider = ({ children }) => {
 
     for (const [, handler] of handlersRef.current.entries()) {
       const categoryResults = handler(q);
-      if (categoryResults && typeof categoryResults === "object") {
+      if (categoryResults && typeof categoryResults === 'object') {
         Object.assign(newResults, categoryResults);
       }
     }
@@ -36,42 +36,44 @@ export const SearchProvider = ({ children }) => {
     setResults(newResults);
   }, []);
 
-  const handleSearch = useCallback((q) => {
-    setQuery(q);
-    clearTimeout(searchTimer.current);
-    if (q.trim().length === 0) {
-      setResults(EMPTY_RESULTS);
-    } else {
-      searchTimer.current = setTimeout(() => performSearch(q), 200);
-    }
-  }, [performSearch]);
+  const handleSearch = useCallback(
+    (q) => {
+      setQuery(q);
+      clearTimeout(searchTimer.current);
+      if (q.trim().length === 0) {
+        setResults(EMPTY_RESULTS);
+      } else {
+        searchTimer.current = setTimeout(() => performSearch(q), 200);
+      }
+    },
+    [performSearch],
+  );
 
   const clearSearch = useCallback(() => {
     clearTimeout(searchTimer.current);
-    setQuery("");
+    setQuery('');
     setResults(EMPTY_RESULTS);
     setIsOpen(false);
   }, []);
 
-  const value = useMemo(() => ({
-    query,
-    results,
-    isOpen,
-    setIsOpen,
-    handleSearch,
-    clearSearch,
-    registerSearchHandler,
-  }), [query, results, isOpen, handleSearch, clearSearch, registerSearchHandler]);
-
-  return (
-    <SearchContext.Provider value={value}>
-      {children}
-    </SearchContext.Provider>
+  const value = useMemo(
+    () => ({
+      query,
+      results,
+      isOpen,
+      setIsOpen,
+      handleSearch,
+      clearSearch,
+      registerSearchHandler,
+    }),
+    [query, results, isOpen, handleSearch, clearSearch, registerSearchHandler],
   );
+
+  return <SearchContext.Provider value={value}>{children}</SearchContext.Provider>;
 };
 
 export const useSearch = () => {
   const context = useContext(SearchContext);
-  if (!context) throw new Error("useSearch debe estar dentro de SearchProvider");
+  if (!context) throw new Error('useSearch debe estar dentro de SearchProvider');
   return context;
 };

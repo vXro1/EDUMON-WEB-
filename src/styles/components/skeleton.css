@@ -4,8 +4,12 @@
    ════════════════════════════════════════════════════════════════════ */
 
 @keyframes edu-shimmer {
-  0%   { background-position: -400px 0; }
-  100% { background-position:  400px 0; }
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
 }
 
 /* ── Base skeleton ─────────────────────────────────────────────── */
@@ -25,13 +29,32 @@
 }
 
 /* ── Auxiliares de tamaño ──────────────────────────────────────────────── */
-.skeleton-text    { height: 14px; border-radius: var(--radius-xs); }
-.skeleton-text-sm { height: 11px; border-radius: var(--radius-xs); }
-.skeleton-text-lg { height: 20px; border-radius: var(--radius-sm); }
-.skeleton-title   { height: 26px; border-radius: var(--radius-sm); }
-.skeleton-avatar  { border-radius: var(--radius-full); }
-.skeleton-btn     { height: 40px; border-radius: var(--radius-lg); }
-.skeleton-card    { border-radius: var(--radius-xl); }
+.skeleton-text {
+  height: 14px;
+  border-radius: var(--radius-xs);
+}
+.skeleton-text-sm {
+  height: 11px;
+  border-radius: var(--radius-xs);
+}
+.skeleton-text-lg {
+  height: 20px;
+  border-radius: var(--radius-sm);
+}
+.skeleton-title {
+  height: 26px;
+  border-radius: var(--radius-sm);
+}
+.skeleton-avatar {
+  border-radius: var(--radius-full);
+}
+.skeleton-btn {
+  height: 40px;
+  border-radius: var(--radius-lg);
+}
+.skeleton-card {
+  border-radius: var(--radius-xl);
+}
 
 /* ── Stat card skeleton ────────────────────────────────────────── */
 .skeleton-stat {
@@ -53,7 +76,9 @@
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--color-border);
 }
-.skeleton-list-item:last-child { border-bottom: none; }
+.skeleton-list-item:last-child {
+  border-bottom: none;
+}
 
 /* ── Course card skeleton ──────────────────────────────────────── */
 .skeleton-course-card {

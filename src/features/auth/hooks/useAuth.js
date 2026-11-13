@@ -1,4 +1,4 @@
-import { useAuthContext, useUserContext } from "../context/AuthContext";
+import { useAuthContext, useUserContext } from '../context/AuthContext';
 
 // Full auth context — includes token, loading, showWarning (use for auth guards and session modals)
 export const useAuth = () => useAuthContext();

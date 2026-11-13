@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import { Button } from "@/components";
-import logo from "@/assets/icons/edumon-logo.svg";
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { Button } from '@/components';
+import logo from '@/assets/icons/edumon-logo.svg';
 
 function IconChevron({ open }) {
   return (
     <svg
-      className={`w-4 h-4 shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+      className={`w-4 h-4 shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
       viewBox="0 0 20 20"
       fill="none"
       aria-hidden="true"
@@ -17,24 +17,24 @@ function IconChevron({ open }) {
 
 const VARIANTS = {
   primary: {
-    variant: "primary",
+    variant: 'primary',
   },
   secondary: {
-    variant: "secondary",
+    variant: 'secondary',
   },
   ghost: {
-    variant: "ghost",
+    variant: 'ghost',
   },
 };
 
 export default function EdumonDropdown({
-  label = "Opciones",
+  label = 'Opciones',
   options = [],
   onSelect,
   triggerIcon,
   avatarText,
-  variant = "primary",
-  align = "left",
+  variant = 'primary',
+  align = 'left',
   disabled = false,
 }) {
   const [open, setOpen] = useState(false);
@@ -46,16 +46,13 @@ export default function EdumonDropdown({
 
   useEffect(() => {
     const handler = (e) => {
-      if (
-        !menuRef.current?.contains(e.target) &&
-        !triggerRef.current?.contains(e.target)
-      ) {
+      if (!menuRef.current?.contains(e.target) && !triggerRef.current?.contains(e.target)) {
         setOpen(false);
         setActiveIndex(-1);
       }
     };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
   }, []);
 
   useEffect(() => {
@@ -64,48 +61,54 @@ export default function EdumonDropdown({
 
   const enabledOptions = options.filter((o) => !o.disabled);
 
-  const handleTriggerKey = useCallback((e) => {
-    if (disabled) return;
-    if (e.key === "Enter" || e.key === " " || e.key === "ArrowDown") {
-      e.preventDefault();
-      setOpen(true);
-      setActiveIndex(0);
-    }
-    if (e.key === "Escape") {
-      setOpen(false);
-      triggerRef.current?.focus();
-    }
-  }, [disabled]);
-
-  const handleMenuKey = useCallback((e) => {
-    const count = enabledOptions.length;
-    if (e.key === "ArrowDown") {
-      e.preventDefault();
-      setActiveIndex((i) => (i + 1) % count);
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      setActiveIndex((i) => (i - 1 + count) % count);
-    } else if (e.key === "Home") {
-      e.preventDefault();
-      setActiveIndex(0);
-    } else if (e.key === "End") {
-      e.preventDefault();
-      setActiveIndex(count - 1);
-    } else if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      if (activeIndex >= 0) {
-        const opt = enabledOptions[activeIndex];
-        if (opt) {
-          onSelect?.(opt);
-          setOpen(false);
-          triggerRef.current?.focus();
-        }
+  const handleTriggerKey = useCallback(
+    (e) => {
+      if (disabled) return;
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        setOpen(true);
+        setActiveIndex(0);
       }
-    } else if (e.key === "Escape" || e.key === "Tab") {
-      setOpen(false);
-      triggerRef.current?.focus();
-    }
-  }, [activeIndex, enabledOptions, onSelect]);
+      if (e.key === 'Escape') {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    },
+    [disabled],
+  );
+
+  const handleMenuKey = useCallback(
+    (e) => {
+      const count = enabledOptions.length;
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setActiveIndex((i) => (i + 1) % count);
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setActiveIndex((i) => (i - 1 + count) % count);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        setActiveIndex(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        setActiveIndex(count - 1);
+      } else if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (activeIndex >= 0) {
+          const opt = enabledOptions[activeIndex];
+          if (opt) {
+            onSelect?.(opt);
+            setOpen(false);
+            triggerRef.current?.focus();
+          }
+        }
+      } else if (e.key === 'Escape' || e.key === 'Tab') {
+        setOpen(false);
+        triggerRef.current?.focus();
+      }
+    },
+    [activeIndex, enabledOptions, onSelect],
+  );
 
   useEffect(() => {
     if (!open || activeIndex < 0) return;
@@ -117,7 +120,6 @@ export default function EdumonDropdown({
 
   return (
     <div className="relative inline-block">
-
       {/* TRIGGER */}
       <Button
         ref={triggerRef}
@@ -132,11 +134,7 @@ export default function EdumonDropdown({
         onKeyDown={handleTriggerKey}
         className="flex items-center gap-2"
       >
-        {avatarText && (
-          <span className="flex items-center justify-center">
-            {avatarText}
-          </span>
-        )}
+        {avatarText && <span className="flex items-center justify-center">{avatarText}</span>}
 
         {triggerIcon && !avatarText && triggerIcon}
 
@@ -153,7 +151,7 @@ export default function EdumonDropdown({
           role="menu"
           aria-labelledby={`${menuId}-trigger`}
           onKeyDown={handleMenuKey}
-          className={`absolute mt-2 min-w-[200px] z-50 ${align === "right" ? "right-0" : "left-0"}`}
+          className={`absolute mt-2 min-w-[200px] z-50 ${align === 'right' ? 'right-0' : 'left-0'}`}
         >
           {/* HEADER */}
           <div className="flex items-center gap-2 mb-1">
@@ -169,7 +167,7 @@ export default function EdumonDropdown({
               key={opt.id}
               role="menuitem"
               size="sm"
-              variant={opt.danger ? "danger" : "ghost"}
+              variant={opt.danger ? 'danger' : 'ghost'}
               disabled={opt.disabled}
               onClick={() => {
                 if (!opt.disabled) {

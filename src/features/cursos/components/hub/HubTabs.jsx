@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 export default function HubTabs({ tabs, activeTab, onTabChange }) {
   const navRef = useRef(null);
@@ -26,21 +26,21 @@ export default function HubTabs({ tabs, activeTab, onTabChange }) {
   }, [measure, tabs.length]);
 
   useEffect(() => {
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
   }, [measure]);
 
   return (
     <nav
       ref={navRef}
       style={{
-        position: "relative",
-        display: "flex",
-        justifyContent: "center",
+        position: 'relative',
+        display: 'flex',
+        justifyContent: 'center',
         gap: 4,
-        borderBottom: "2px solid var(--color-border)",
+        borderBottom: '2px solid var(--color-border)',
         marginBottom: 24,
-        overflowX: "auto",
+        overflowX: 'auto',
       }}
     >
       {tabs.map((tab) => {
@@ -48,22 +48,24 @@ export default function HubTabs({ tabs, activeTab, onTabChange }) {
         return (
           <button
             key={tab.key}
-            ref={(el) => { btnRefs.current[tab.key] = el; }}
+            ref={(el) => {
+              btnRefs.current[tab.key] = el;
+            }}
             onClick={() => onTabChange(tab.key)}
             className="hub-tab-btn"
             style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: "10px 16px",
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '10px 16px',
               fontSize: 13.5,
               fontWeight: active ? 700 : 500,
-              color: active ? "var(--color-primary)" : "var(--color-text-muted)",
+              color: active ? 'var(--color-primary)' : 'var(--color-text-muted)',
               marginBottom: -2,
-              whiteSpace: "nowrap",
-              transition: "color 200ms ease, transform 150ms ease",
-              display: "flex",
-              alignItems: "center",
+              whiteSpace: 'nowrap',
+              transition: 'color 200ms ease, transform 150ms ease',
+              display: 'flex',
+              alignItems: 'center',
               gap: 6,
               borderRadius: 8,
             }}
@@ -80,18 +82,18 @@ export default function HubTabs({ tabs, activeTab, onTabChange }) {
         aria-hidden="true"
         className="hub-tab-indicator"
         style={{
-          position: "absolute",
+          position: 'absolute',
           bottom: -2,
           left: 0,
           height: 3,
           borderRadius: 3,
-          background: "var(--color-primary)",
+          background: 'var(--color-primary)',
           transform: `translateX(${indicator.left}px)`,
           width: indicator.width,
           opacity: indicator.ready ? 1 : 0,
           transition: animate
-            ? "transform 280ms cubic-bezier(0.22,1,0.36,1), width 280ms cubic-bezier(0.22,1,0.36,1), opacity 150ms ease"
-            : "none",
+            ? 'transform 280ms cubic-bezier(0.22,1,0.36,1), width 280ms cubic-bezier(0.22,1,0.36,1), opacity 150ms ease'
+            : 'none',
         }}
       />
 

@@ -1,25 +1,43 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from 'react';
 import {
-  Plus, Search, Building2, Edit2, X, Loader2,
-  Phone, Mail, MapPin, Hash, User, RefreshCw,
-  Eye, ExternalLink, Globe, Calendar, Shield,
-  Trash2, AlertCircle,
-} from "lucide-react";
-import { institucionesCreate, institucionesUpdate, institucionesDelete } from "@/services/institucionesService";
-import { useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/services/queryKeys";
-import { useInstituciones } from "@/features/instituciones/hooks/useInstituciones";
-import { usersGetById } from "@/services/usersService";
-import { Modal, Toast, Button } from "@/components";
-import { Input, PhoneInput } from "@/components";
-import { IconBtn } from "@/features/cursos/components/shared/ui";
-import { normalizeUser } from "@/lib/normalizers";
-import { humanizeError } from "@/utils/humanizeError";
-import { normalizePhone, isValidPhone, PHONE_ERROR } from "@/utils/normalizePhone";
+  Plus,
+  Search,
+  Building2,
+  Edit2,
+  X,
+  Loader2,
+  Phone,
+  Mail,
+  MapPin,
+  Hash,
+  User,
+  RefreshCw,
+  Eye,
+  ExternalLink,
+  Globe,
+  Calendar,
+  Shield,
+  Trash2,
+  AlertCircle,
+} from 'lucide-react';
+import { institucionesCreate, institucionesUpdate, institucionesDelete } from '@/services/institucionesService';
+import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/services/queryKeys';
+import { useInstituciones } from '@/features/instituciones/hooks/useInstituciones';
+import { usersGetById } from '@/services/usersService';
+import { Modal, Toast, Button } from '@/components';
+import { Input, PhoneInput } from '@/components';
+import { IconBtn } from '@/features/cursos/components/shared/ui';
+import { normalizeUser } from '@/lib/normalizers';
+import { humanizeError } from '@/utils/humanizeError';
+import { normalizePhone, isValidPhone, PHONE_ERROR } from '@/utils/normalizePhone';
 import {
-  contrasenaInicial, TEXTO_CONTRASENA_INICIAL,
-  isValidCedula, CEDULA_ERROR, toCedula,
-} from "@/utils/credenciales";
+  contrasenaInicial,
+  TEXTO_CONTRASENA_INICIAL,
+  isValidCedula,
+  CEDULA_ERROR,
+  toCedula,
+} from '@/utils/credenciales';
 
 // ── Fila esqueleto ────────────────────────────────────────────
 const SIN_INSTITUCIONES = [];
@@ -28,8 +46,11 @@ function SkRow() {
   return (
     <tr>
       {[200, 110, 150, 120, 90].map((w, i) => (
-        <td key={i} style={{ padding: "14px 16px" }}>
-          <div className="animate-pulse" style={{ height: 14, width: w, borderRadius: 6, background: "var(--color-border)" }} />
+        <td key={i} style={{ padding: '14px 16px' }}>
+          <div
+            className="animate-pulse"
+            style={{ height: 14, width: w, borderRadius: 6, background: 'var(--color-border)' }}
+          />
         </td>
       ))}
     </tr>
@@ -41,10 +62,10 @@ function Empty({ search, onClear }) {
   return (
     <tr>
       <td colSpan={5}>
-        <div style={{ padding: "56px 24px", textAlign: "center" }}>
-          <Building2 style={{ width: 36, height: 36, color: "var(--color-text-muted)", margin: "0 auto 12px" }} />
-          <p style={{ fontSize: 15, fontWeight: 600, color: "var(--color-text-muted)" }}>
-            {search ? "Sin resultados" : "Aún no hay instituciones"}
+        <div style={{ padding: '56px 24px', textAlign: 'center' }}>
+          <Building2 style={{ width: 36, height: 36, color: 'var(--color-text-muted)', margin: '0 auto 12px' }} />
+          <p style={{ fontSize: 15, fontWeight: 600, color: 'var(--color-text-muted)' }}>
+            {search ? 'Sin resultados' : 'Aún no hay instituciones'}
           </p>
           {search && (
             <Button variant="ghost" size="sm" onClick={onClear} style={{ marginTop: 8 }}>
@@ -61,77 +82,174 @@ function Empty({ search, onClear }) {
 function InfoRow({ icon: Icon, label, value, isLink = false }) {
   if (!value) return null;
   return (
-    <div style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "8px 0", borderBottom: "1px solid var(--color-border)" }}>
-      <div style={{ width: 28, height: 28, borderRadius: 7, background: "rgba(12,106,196,0.08)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginTop: 1 }}>
-        <Icon style={{ width: 13, height: 13, color: "var(--color-primary)" }} />
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 10,
+        padding: '8px 0',
+        borderBottom: '1px solid var(--color-border)',
+      }}
+    >
+      <div
+        style={{
+          width: 28,
+          height: 28,
+          borderRadius: 7,
+          background: 'rgba(12,106,196,0.08)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+          marginTop: 1,
+        }}
+      >
+        <Icon style={{ width: 13, height: 13, color: 'var(--color-primary)' }} />
       </div>
       <div style={{ flex: 1 }}>
-        <p style={{ fontSize: 11, fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 2px" }}>{label}</p>
+        <p
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            color: 'var(--color-text-muted)',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            margin: '0 0 2px',
+          }}
+        >
+          {label}
+        </p>
         {isLink ? (
-          <a href={value} target="_blank" rel="noopener noreferrer" style={{ fontSize: 13.5, color: "var(--color-primary)", wordBreak: "break-word", display: "flex", alignItems: "center", gap: 4 }}>
+          <a
+            href={value}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontSize: 13.5,
+              color: 'var(--color-primary)',
+              wordBreak: 'break-word',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+            }}
+          >
             {value} <ExternalLink style={{ width: 11, height: 11 }} />
           </a>
         ) : (
-          <p style={{ fontSize: 13.5, color: "var(--color-text)", margin: 0, wordBreak: "break-word" }}>{value}</p>
+          <p style={{ fontSize: 13.5, color: 'var(--color-text)', margin: 0, wordBreak: 'break-word' }}>{value}</p>
         )}
       </div>
     </div>
   );
 }
 
-function SectionLabel({ icon: Icon, label, color = "var(--color-primary)" }) {
+function SectionLabel({ icon: Icon, label, color = 'var(--color-primary)' }) {
   return (
-    <p style={{ fontSize: 11.5, fontWeight: 700, color, textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8, marginTop: 4, display: "flex", alignItems: "center", gap: 6 }}>
+    <p
+      style={{
+        fontSize: 11.5,
+        fontWeight: 700,
+        color,
+        textTransform: 'uppercase',
+        letterSpacing: '0.06em',
+        marginBottom: 8,
+        marginTop: 4,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 6,
+      }}
+    >
       <Icon style={{ width: 13, height: 13 }} /> {label}
     </p>
   );
 }
 
 function AdminAvatar({ admin }) {
-  const name = [admin?.nombre, admin?.apellido].filter(Boolean).join(" ") || "Admin";
-  const initials = name.split(" ").map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+  const name = [admin?.nombre, admin?.apellido].filter(Boolean).join(' ') || 'Admin';
+  const initials = name
+    .split(' ')
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
   if (admin?.fotoPerfilUrl) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginBottom: 16 }}>
-        <img loading="lazy" decoding="async" src={admin.fotoPerfilUrl} alt={name}
-          style={{ width: 60, height: 60, borderRadius: "50%", objectFit: "cover", border: "2px solid var(--color-border)" }}
-          onError={(e) => { e.currentTarget.style.display = "none"; }} />
-        <p style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text)", margin: 0 }}>{name}</p>
-        <a href={admin.fotoPerfilUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, color: "var(--color-primary)", display: "flex", alignItems: "center", gap: 4 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+        <img
+          loading="lazy"
+          decoding="async"
+          src={admin.fotoPerfilUrl}
+          alt={name}
+          style={{
+            width: 60,
+            height: 60,
+            borderRadius: '50%',
+            objectFit: 'cover',
+            border: '2px solid var(--color-border)',
+          }}
+          onError={(e) => {
+            e.currentTarget.style.display = 'none';
+          }}
+        />
+        <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text)', margin: 0 }}>{name}</p>
+        <a
+          href={admin.fotoPerfilUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ fontSize: 12, color: 'var(--color-primary)', display: 'flex', alignItems: 'center', gap: 4 }}
+        >
           Ver foto completa <ExternalLink style={{ width: 11, height: 11 }} />
         </a>
       </div>
     );
   }
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginBottom: 16 }}>
-      <div style={{ width: 60, height: 60, borderRadius: "50%", background: "linear-gradient(135deg,var(--color-primary),#1E3A5F)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ fontSize: 20, fontWeight: 800, color: "white" }}>{initials}</span>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+      <div
+        style={{
+          width: 60,
+          height: 60,
+          borderRadius: '50%',
+          background: 'linear-gradient(135deg,var(--color-primary),#1E3A5F)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <span style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>{initials}</span>
       </div>
-      <p style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text)", margin: 0 }}>{name}</p>
+      <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--color-text)', margin: 0 }}>{name}</p>
     </div>
   );
 }
 
 function fmtDate(str) {
-  if (!str) return "—";
-  return new Date(str).toLocaleDateString("es-CO", { year: "numeric", month: "long", day: "numeric" });
+  if (!str) return '—';
+  return new Date(str).toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
 const INIT_FORM = {
-  nombre: "", nit: "", direccion: "", telefono: "", correo: "",
-  adminNombre: "", adminApellido: "", adminCedula: "", adminCorreo: "", adminTelefono: "",
+  nombre: '',
+  nit: '',
+  direccion: '',
+  telefono: '',
+  correo: '',
+  adminNombre: '',
+  adminApellido: '',
+  adminCedula: '',
+  adminCorreo: '',
+  adminTelefono: '',
 };
-const INIT_EDIT = { nombre: "", direccion: "", telefono: "", correo: "" };
+const INIT_EDIT = { nombre: '', direccion: '', telefono: '', correo: '' };
 
 // ─────────────────────────────────────────────────────────────
 export default function InstitucionesPage() {
-  const [search, setSearch] = useState("");
-  const [toast, setToast] = useState({ msg: "", type: "success" });
+  const [search, setSearch] = useState('');
+  const [toast, setToast] = useState({ msg: '', type: 'success' });
   const [showCreate, setShowCreate] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
   const [deleteTarget, setDeleteTarget] = useState(null);
-  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
   const [detailInst, setDetailInst] = useState(null);
   const [detailAdmin, setDetailAdmin] = useState(null);
   const [loadingAdmin, setLoadingAdmin] = useState(false);
@@ -139,9 +257,9 @@ export default function InstitucionesPage() {
   const [form, setForm] = useState(INIT_FORM);
   const [editForm, setEditForm] = useState(INIT_EDIT);
 
-  const notify = (msg, type = "success") => {
+  const notify = (msg, type = 'success') => {
     setToast({ msg, type });
-    setTimeout(() => setToast({ msg: "", type: "success" }), 3500);
+    setTimeout(() => setToast({ msg: '', type: 'success' }), 3500);
   };
 
   const queryClient = useQueryClient();
@@ -149,13 +267,13 @@ export default function InstitucionesPage() {
   const instituciones = institucionesData ?? SIN_INSTITUCIONES;
 
   useEffect(() => {
-    if (institucionesError) notify("Error al cargar instituciones", "error");
+    if (institucionesError) notify('Error al cargar instituciones', 'error');
   }, [institucionesError]);
 
   // tras crear/editar/eliminar
   const load = useCallback(
     () => queryClient.invalidateQueries({ queryKey: queryKeys.instituciones.all() }),
-    [queryClient]
+    [queryClient],
   );
 
   const filtered = instituciones.filter((inst) => {
@@ -175,14 +293,20 @@ export default function InstitucionesPage() {
     if (inst.adminId) {
       setLoadingAdmin(true);
       try {
-        const res = await usersGetById(typeof inst.adminId === "object" ? inst.adminId?._id : inst.adminId);
+        const res = await usersGetById(typeof inst.adminId === 'object' ? inst.adminId?._id : inst.adminId);
         setDetailAdmin(normalizeUser(res.user ?? res));
-      } catch { /* opcional */ }
-      finally { setLoadingAdmin(false); }
+      } catch {
+        /* opcional */
+      } finally {
+        setLoadingAdmin(false);
+      }
     }
   };
 
-  const closeDetail = () => { setDetailInst(null); setDetailAdmin(null); };
+  const closeDetail = () => {
+    setDetailInst(null);
+    setDetailAdmin(null);
+  };
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -193,22 +317,33 @@ export default function InstitucionesPage() {
     const adminCedula = form.adminCedula.trim();
 
     if (!nombre || !nit) {
-      notify("Nombre y NIT son obligatorios", "error");
+      notify('Nombre y NIT son obligatorios', 'error');
       return;
     }
     // el teléfono del admin es su usuario para iniciar sesión (login es por
     // teléfono, no hay login por correo) -- sin él, la cuenta queda creada
     // pero nadie puede entrar nunca; por eso es obligatorio, no opcional.
-    if (!form.adminNombre.trim() || !form.adminApellido.trim() || !adminCedula || !adminCorreo || !form.adminTelefono.trim()) {
-      notify("Completa los datos del administrador (nombre, apellido, cédula, correo y teléfono)", "error");
+    if (
+      !form.adminNombre.trim() ||
+      !form.adminApellido.trim() ||
+      !adminCedula ||
+      !adminCorreo ||
+      !form.adminTelefono.trim()
+    ) {
+      notify('Completa los datos del administrador (nombre, apellido, cédula, correo y teléfono)', 'error');
       return;
     }
-    if (!isValidCedula(adminCedula)) { notify(CEDULA_ERROR, "error"); return; }
+    if (!isValidCedula(adminCedula)) {
+      notify(CEDULA_ERROR, 'error');
+      return;
+    }
     if (form.telefono && !isValidPhone(form.telefono)) {
-      notify(`Teléfono de la institución: ${PHONE_ERROR}`, "error"); return;
+      notify(`Teléfono de la institución: ${PHONE_ERROR}`, 'error');
+      return;
     }
     if (!isValidPhone(form.adminTelefono)) {
-      notify(`Teléfono del administrador: ${PHONE_ERROR}`, "error"); return;
+      notify(`Teléfono del administrador: ${PHONE_ERROR}`, 'error');
+      return;
     }
 
     setSaving(true);
@@ -221,8 +356,8 @@ export default function InstitucionesPage() {
         nit,
         adminCedula,
         adminCorreo,
-        telefono: normalizePhone(form.telefono) ?? "",
-        adminTelefono: normalizePhone(form.adminTelefono) ?? "",
+        telefono: normalizePhone(form.telefono) ?? '',
+        adminTelefono: normalizePhone(form.adminTelefono) ?? '',
       });
       notify(`Institución creada. Contraseña inicial del admin: ${contrasenaInicial(adminCedula)}`);
       setShowCreate(false);
@@ -230,8 +365,8 @@ export default function InstitucionesPage() {
       load();
     } catch (err) {
       // Loguea el detalle real que devuelve el backend para depurar en consola
-      console.error("[crearInstitucion] respuesta backend:", err?.response?.data);
-      notify(humanizeError(err, "Error al crear institución"), "error");
+      console.error('[crearInstitucion] respuesta backend:', err?.response?.data);
+      notify(humanizeError(err, 'Error al crear institución'), 'error');
     } finally {
       setSaving(false);
     }
@@ -240,31 +375,39 @@ export default function InstitucionesPage() {
   const openEdit = (inst) => {
     setEditTarget(inst);
     setEditForm({
-      nombre: inst.nombre ?? "", direccion: inst.direccion ?? "",
-      telefono: inst.telefono ?? "", correo: inst.correo ?? "",
+      nombre: inst.nombre ?? '',
+      direccion: inst.direccion ?? '',
+      telefono: inst.telefono ?? '',
+      correo: inst.correo ?? '',
     });
   };
 
   const handleEdit = async (e) => {
     e.preventDefault();
     if (!editTarget) return;
-    if (editForm.telefono && !isValidPhone(editForm.telefono)) { notify(PHONE_ERROR, "error"); return; }
+    if (editForm.telefono && !isValidPhone(editForm.telefono)) {
+      notify(PHONE_ERROR, 'error');
+      return;
+    }
     setSaving(true);
     try {
       await institucionesUpdate(editTarget._id, {
         ...editForm,
-        telefono: normalizePhone(editForm.telefono) ?? "",
+        telefono: normalizePhone(editForm.telefono) ?? '',
       });
-      notify("Institución actualizada");
+      notify('Institución actualizada');
       setEditTarget(null);
       load();
-    } catch (err) { notify(humanizeError(err, "Error al actualizar institución"), "error"); }
-    finally { setSaving(false); }
+    } catch (err) {
+      notify(humanizeError(err, 'Error al actualizar institución'), 'error');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const openDelete = (inst) => {
     setDeleteTarget(inst);
-    setDeleteConfirmText("");
+    setDeleteConfirmText('');
   };
 
   const handleDelete = async () => {
@@ -272,43 +415,71 @@ export default function InstitucionesPage() {
     setSaving(true);
     try {
       await institucionesDelete(deleteTarget._id);
-      notify("Institución eliminada: sus datos se conservaron, pero ya nadie de ahí puede usar la aplicación");
+      notify('Institución eliminada: sus datos se conservaron, pero ya nadie de ahí puede usar la aplicación');
       setDeleteTarget(null);
       load();
-    } catch (err) { notify(humanizeError(err, "Error al eliminar institución"), "error"); }
-    finally { setSaving(false); }
+    } catch (err) {
+      notify(humanizeError(err, 'Error al eliminar institución'), 'error');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const f = (key) => (e) => setForm((p) => ({ ...p, [key]: e.target.value }));
   const ef = (key) => (e) => setEditForm((p) => ({ ...p, [key]: e.target.value }));
 
-  const adminData = detailAdmin ||
-    (detailInst?.adminId && typeof detailInst.adminId === "object" ? normalizeUser(detailInst.adminId) : null);
+  const adminData =
+    detailAdmin ||
+    (detailInst?.adminId && typeof detailInst.adminId === 'object' ? normalizeUser(detailInst.adminId) : null);
 
   return (
-    <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+    <div style={{ maxWidth: 1200, margin: '0 auto' }}>
       <Toast msg={toast.msg} type={toast.type} />
 
       {/* Encabezado de página */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'space-between',
+          marginBottom: 24,
+          flexWrap: 'wrap',
+          gap: 12,
+        }}
+      >
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4 }}>
-            <div style={{ width: 36, height: 36, borderRadius: 10, background: "rgba(12,106,196,0.10)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <Building2 style={{ width: 18, height: 18, color: "var(--color-primary)" }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
+            <div
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 10,
+                background: 'rgba(12,106,196,0.10)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Building2 style={{ width: 18, height: 18, color: 'var(--color-primary)' }} />
             </div>
-            <h1 style={{ fontSize: 20, fontWeight: 800, color: "var(--color-text)", margin: 0 }}>Instituciones</h1>
+            <h1 style={{ fontSize: 20, fontWeight: 800, color: 'var(--color-text)', margin: 0 }}>Instituciones</h1>
           </div>
-          <p style={{ fontSize: 13, color: "var(--color-text-muted)", margin: 0 }}>
+          <p style={{ fontSize: 13, color: 'var(--color-text-muted)', margin: 0 }}>
             Gestión global de instituciones educativas · {instituciones.length} registradas
           </p>
         </div>
 
         {/* Botones de cabecera */}
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <IconBtn color="var(--color-text-muted)" title="Actualizar" onClick={load}>
             <RefreshCw style={{ width: 15, height: 15 }} />
           </IconBtn>
-          <Button onClick={() => { setForm(INIT_FORM); setShowCreate(true); }}>
+          <Button
+            onClick={() => {
+              setForm(INIT_FORM);
+              setShowCreate(true);
+            }}
+          >
             <Plus style={{ width: 16, height: 16 }} /> Nueva institución
           </Button>
         </div>
@@ -322,22 +493,44 @@ export default function InstitucionesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           leftIcon={<Search size={16} />}
-          rightIcon={search ? (
-            <IconBtn color="var(--color-text-muted)" onClick={() => setSearch("")} style={{ padding: 0 }}>
-              <X style={{ width: 15, height: 15 }} />
-            </IconBtn>
-          ) : undefined}
+          rightIcon={
+            search ? (
+              <IconBtn color="var(--color-text-muted)" onClick={() => setSearch('')} style={{ padding: 0 }}>
+                <X style={{ width: 15, height: 15 }} />
+              </IconBtn>
+            ) : undefined
+          }
         />
       </div>
 
       {/* Tabla */}
-      <div style={{ background: "var(--color-surface)", borderRadius: 16, border: "1px solid var(--color-border)", boxShadow: "var(--clay-card)", overflow: "hidden" }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+      <div
+        style={{
+          background: 'var(--color-surface)',
+          borderRadius: 16,
+          border: '1px solid var(--color-border)',
+          boxShadow: 'var(--clay-card)',
+          overflow: 'hidden',
+        }}
+      >
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
-              <tr style={{ borderBottom: "2px solid var(--color-border)" }}>
-                {["Institución", "NIT / Código", "Contacto", "Dirección", "Acciones"].map((h) => (
-                  <th key={h} style={{ padding: "13px 16px", textAlign: "left", fontSize: 11, fontWeight: 700, color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", whiteSpace: "nowrap" }}>
+              <tr style={{ borderBottom: '2px solid var(--color-border)' }}>
+                {['Institución', 'NIT / Código', 'Contacto', 'Dirección', 'Acciones'].map((h) => (
+                  <th
+                    key={h}
+                    style={{
+                      padding: '13px 16px',
+                      textAlign: 'left',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: 'var(--color-text-muted)',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.06em',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
                     {h}
                   </th>
                 ))}
@@ -347,7 +540,7 @@ export default function InstitucionesPage() {
               {loading ? (
                 [0, 1, 2, 3, 4].map((i) => <SkRow key={i} />)
               ) : filtered.length === 0 ? (
-                <Empty search={search} onClear={() => setSearch("")} />
+                <Empty search={search} onClear={() => setSearch('')} />
               ) : (
                 filtered.map((inst) => (
                   <InstitRow key={inst._id} inst={inst} onView={openDetail} onEdit={openEdit} onDelete={openDelete} />
@@ -357,8 +550,16 @@ export default function InstitucionesPage() {
           </table>
         </div>
         {!loading && filtered.length > 0 && (
-          <div style={{ padding: "12px 16px", borderTop: "1px solid var(--color-border)", display: "flex", alignItems: "center", justifyContent: "flex-end" }}>
-            <span style={{ fontSize: 12.5, color: "var(--color-text-muted)" }}>
+          <div
+            style={{
+              padding: '12px 16px',
+              borderTop: '1px solid var(--color-border)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+            }}
+          >
+            <span style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>
               {filtered.length} de {instituciones.length} instituciones
             </span>
           </div>
@@ -366,12 +567,27 @@ export default function InstitucionesPage() {
       </div>
 
       {/* MODAL DE DETALLE */}
-      <Modal isOpen={Boolean(detailInst)} onClose={closeDetail} title={detailInst?.nombre ?? "Detalle de institución"} size="md">
+      <Modal
+        isOpen={Boolean(detailInst)}
+        onClose={closeDetail}
+        title={detailInst?.nombre ?? 'Detalle de institución'}
+        size="md"
+      >
         {detailInst && (
           <div>
-            <div style={{ display: "flex", justifyContent: "center", marginBottom: 20 }}>
-              <div style={{ width: 64, height: 64, borderRadius: 16, background: "rgba(12,106,196,0.10)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Building2 style={{ width: 28, height: 28, color: "var(--color-primary)" }} />
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+              <div
+                style={{
+                  width: 64,
+                  height: 64,
+                  borderRadius: 16,
+                  background: 'rgba(12,106,196,0.10)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
+                <Building2 style={{ width: 28, height: 28, color: 'var(--color-primary)' }} />
               </div>
             </div>
             <SectionLabel icon={Building2} label="Datos de la institución" />
@@ -386,30 +602,61 @@ export default function InstitucionesPage() {
                 <InfoRow icon={Calendar} label="Fecha de registro" value={fmtDate(detailInst.createdAt)} />
               )}
             </div>
-            <div style={{ paddingTop: 16, borderTop: "1px solid var(--color-border)" }}>
+            <div style={{ paddingTop: 16, borderTop: '1px solid var(--color-border)' }}>
               <SectionLabel icon={Shield} label="Administrador" color="var(--edu-green-600)" />
               {loadingAdmin ? (
-                <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 0", color: "var(--color-text-muted)", fontSize: 13 }}>
-                  <Loader2 style={{ width: 15, height: 15, animation: "edu-spin 0.6s linear infinite" }} />
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8,
+                    padding: '12px 0',
+                    color: 'var(--color-text-muted)',
+                    fontSize: 13,
+                  }}
+                >
+                  <Loader2 style={{ width: 15, height: 15, animation: 'edu-spin 0.6s linear infinite' }} />
                   Cargando info del administrador...
                 </div>
               ) : adminData ? (
                 <div>
                   <AdminAvatar admin={adminData} />
-                  <InfoRow icon={User} label="Nombre completo" value={[adminData.nombre, adminData.apellido].filter(Boolean).join(" ")} />
+                  <InfoRow
+                    icon={User}
+                    label="Nombre completo"
+                    value={[adminData.nombre, adminData.apellido].filter(Boolean).join(' ')}
+                  />
                   <InfoRow icon={Hash} label="Cédula" value={adminData.cedula} />
                   <InfoRow icon={Mail} label="Correo" value={adminData.correo} />
                   <InfoRow icon={Phone} label="Teléfono" value={adminData.telefono} />
                 </div>
               ) : (
-                <p style={{ fontSize: 13, color: "var(--color-text-muted)", padding: "8px 0" }}>Sin información del administrador</p>
+                <p style={{ fontSize: 13, color: 'var(--color-text-muted)', padding: '8px 0' }}>
+                  Sin información del administrador
+                </p>
               )}
             </div>
 
             {/* Acciones del modal detail */}
-            <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 20, paddingTop: 16, borderTop: "1px solid var(--color-border)" }}>
-              <Button variant="ghost" onClick={closeDetail}>Cerrar</Button>
-              <Button onClick={() => { closeDetail(); openEdit(detailInst); }}>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: 10,
+                marginTop: 20,
+                paddingTop: 16,
+                borderTop: '1px solid var(--color-border)',
+              }}
+            >
+              <Button variant="ghost" onClick={closeDetail}>
+                Cerrar
+              </Button>
+              <Button
+                onClick={() => {
+                  closeDetail();
+                  openEdit(detailInst);
+                }}
+              >
                 <Edit2 style={{ width: 14, height: 14 }} /> Editar institución
               </Button>
             </div>
@@ -418,57 +665,53 @@ export default function InstitucionesPage() {
       </Modal>
 
       {/* MODAL DE CREACIÓN */}
-      <Modal isOpen={showCreate} onClose={() => setShowCreate(false)} title="Nueva institución" description="Complete todos los campos requeridos." size="lg">
+      <Modal
+        isOpen={showCreate}
+        onClose={() => setShowCreate(false)}
+        title="Nueva institución"
+        description="Complete todos los campos requeridos."
+        size="lg"
+      >
         <form onSubmit={handleCreate}>
           <div style={{ marginBottom: 16 }}>
             <SectionLabel icon={Building2} label="Datos de la institución" />
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <Input
                 label="Nombre"
                 placeholder="Institución Educativa..."
                 value={form.nombre}
-                onChange={f("nombre")}
+                onChange={f('nombre')}
                 required
               />
-              <Input
-                label="NIT"
-                placeholder="900.000.000-0"
-                value={form.nit}
-                onChange={f("nit")}
-                required
-              />
+              <Input label="NIT" placeholder="900.000.000-0" value={form.nit} onChange={f('nit')} required />
               <Input
                 label="Dirección"
                 placeholder="Calle 123 #45-67"
                 value={form.direccion}
-                onChange={f("direccion")}
+                onChange={f('direccion')}
                 leftIcon={<MapPin size={16} />}
               />
-              <PhoneInput
-                label="Teléfono"
-                value={form.telefono}
-                onChange={f("telefono")}
-              />
-              <div style={{ gridColumn: "1 / -1" }}>
+              <PhoneInput label="Teléfono" value={form.telefono} onChange={f('telefono')} />
+              <div style={{ gridColumn: '1 / -1' }}>
                 <Input
                   label="Correo institucional"
                   type="email"
                   placeholder="contacto@institucion.edu.co"
                   value={form.correo}
-                  onChange={f("correo")}
+                  onChange={f('correo')}
                   leftIcon={<Mail size={16} />}
                 />
               </div>
             </div>
           </div>
-          <div style={{ paddingTop: 16, borderTop: "1px solid var(--color-border)" }}>
+          <div style={{ paddingTop: 16, borderTop: '1px solid var(--color-border)' }}>
             <SectionLabel icon={User} label="Administrador inicial" color="var(--edu-green-600)" />
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <Input
                 label="Nombre"
                 placeholder="Juan"
                 value={form.adminNombre}
-                onChange={f("adminNombre")}
+                onChange={f('adminNombre')}
                 leftIcon={<User size={16} />}
                 required
               />
@@ -476,7 +719,7 @@ export default function InstitucionesPage() {
                 label="Apellido"
                 placeholder="Pérez"
                 value={form.adminApellido}
-                onChange={f("adminApellido")}
+                onChange={f('adminApellido')}
                 leftIcon={<User size={16} />}
                 required
               />
@@ -489,116 +732,159 @@ export default function InstitucionesPage() {
                 leftIcon={<Hash size={16} />}
                 required
               />
-              <PhoneInput
-                label="Teléfono *"
-                value={form.adminTelefono}
-                onChange={f("adminTelefono")}
-                required
-              />
-              <div style={{ gridColumn: "1 / -1" }}>
+              <PhoneInput label="Teléfono *" value={form.adminTelefono} onChange={f('adminTelefono')} required />
+              <div style={{ gridColumn: '1 / -1' }}>
                 <Input
                   label="Correo del admin"
                   type="email"
                   placeholder="admin@institucion.edu.co"
                   value={form.adminCorreo}
-                  onChange={f("adminCorreo")}
+                  onChange={f('adminCorreo')}
                   leftIcon={<Mail size={16} />}
                   required
                 />
               </div>
             </div>
-            <p style={{ fontSize: 12, color: "var(--color-text-muted)", marginTop: 10, display: "flex", alignItems: "center", gap: 5 }}>
+            <p
+              style={{
+                fontSize: 12,
+                color: 'var(--color-text-muted)',
+                marginTop: 10,
+                display: 'flex',
+                alignItems: 'center',
+                gap: 5,
+              }}
+            >
               <Hash style={{ width: 11, height: 11 }} />
               {TEXTO_CONTRASENA_INICIAL}
             </p>
           </div>
 
           {/* Acciones del modal create */}
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 20 }}>
-            <Button variant="ghost" type="button" onClick={() => setShowCreate(false)}>Cancelar</Button>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
+            <Button variant="ghost" type="button" onClick={() => setShowCreate(false)}>
+              Cancelar
+            </Button>
             <Button type="submit" disabled={saving}>
-              {saving && <Loader2 style={{ width: 15, height: 15, animation: "edu-spin 0.6s linear infinite" }} />}
-              {saving ? "Creando..." : "Crear institución"}
+              {saving && <Loader2 style={{ width: 15, height: 15, animation: 'edu-spin 0.6s linear infinite' }} />}
+              {saving ? 'Creando...' : 'Crear institución'}
             </Button>
           </div>
         </form>
       </Modal>
 
       {/* MODAL DE EDICIÓN */}
-      <Modal isOpen={Boolean(editTarget)} onClose={() => setEditTarget(null)} title={`Editar: ${editTarget?.nombre ?? ""}`} size="md">
+      <Modal
+        isOpen={Boolean(editTarget)}
+        onClose={() => setEditTarget(null)}
+        title={`Editar: ${editTarget?.nombre ?? ''}`}
+        size="md"
+      >
         <form onSubmit={handleEdit}>
-          <div style={{ display: "grid", gap: 12 }}>
+          <div style={{ display: 'grid', gap: 12 }}>
             <Input
               label="Nombre"
               placeholder="Nombre de la institución"
               value={editForm.nombre}
-              onChange={ef("nombre")}
+              onChange={ef('nombre')}
               required
             />
             <Input
               label="Dirección"
               placeholder="Dirección"
               value={editForm.direccion}
-              onChange={ef("direccion")}
+              onChange={ef('direccion')}
               leftIcon={<MapPin size={16} />}
             />
-            <PhoneInput
-              label="Teléfono"
-              value={editForm.telefono}
-              onChange={ef("telefono")}
-            />
+            <PhoneInput label="Teléfono" value={editForm.telefono} onChange={ef('telefono')} />
             <Input
               label="Correo"
               type="email"
               placeholder="Correo"
               value={editForm.correo}
-              onChange={ef("correo")}
+              onChange={ef('correo')}
               leftIcon={<Mail size={16} />}
             />
           </div>
 
           {/* Acciones del modal edit */}
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 20 }}>
-            <Button variant="ghost" type="button" onClick={() => setEditTarget(null)}>Cancelar</Button>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
+            <Button variant="ghost" type="button" onClick={() => setEditTarget(null)}>
+              Cancelar
+            </Button>
             <Button type="submit" disabled={saving}>
-              {saving && <Loader2 style={{ width: 15, height: 15, animation: "edu-spin 0.6s linear infinite" }} />}
-              {saving ? "Guardando..." : "Guardar cambios"}
+              {saving && <Loader2 style={{ width: 15, height: 15, animation: 'edu-spin 0.6s linear infinite' }} />}
+              {saving ? 'Guardando...' : 'Guardar cambios'}
             </Button>
           </div>
         </form>
       </Modal>
 
       {/* ══ DELETE CONFIRM ══ */}
-      <Modal isOpen={Boolean(deleteTarget)} onClose={() => setDeleteTarget(null)} title="Eliminar institución" size="sm">
-        <div style={{ display: "flex", alignItems: "flex-start", gap: 10, marginBottom: 16, padding: "12px 14px", borderRadius: 10, background: "rgba(220,38,38,0.06)", border: "1px solid rgba(220,38,38,0.2)" }}>
-          <AlertCircle style={{ width: 18, height: 18, color: "var(--color-error-hover)", flexShrink: 0, marginTop: 1 }} />
-          <p style={{ fontSize: 13, color: "var(--color-text)", margin: 0 }}>
-            Esto <strong>no borra</strong> ningún dato, pero deja inutilizable la institución <strong>{deleteTarget?.nombre}</strong>: nadie podrá iniciar sesión (sus docentes, administradores y los padres sin hijos en otra institución quedan suspendidos) y sus cursos quedan archivados. Se puede revertir después activando la institución y reactivando a cada usuario.
+      <Modal
+        isOpen={Boolean(deleteTarget)}
+        onClose={() => setDeleteTarget(null)}
+        title="Eliminar institución"
+        size="sm"
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: 10,
+            marginBottom: 16,
+            padding: '12px 14px',
+            borderRadius: 10,
+            background: 'rgba(220,38,38,0.06)',
+            border: '1px solid rgba(220,38,38,0.2)',
+          }}
+        >
+          <AlertCircle
+            style={{ width: 18, height: 18, color: 'var(--color-error-hover)', flexShrink: 0, marginTop: 1 }}
+          />
+          <p style={{ fontSize: 13, color: 'var(--color-text)', margin: 0 }}>
+            Esto <strong>no borra</strong> ningún dato, pero deja inutilizable la institución{' '}
+            <strong>{deleteTarget?.nombre}</strong>: nadie podrá iniciar sesión (sus docentes, administradores y los
+            padres sin hijos en otra institución quedan suspendidos) y sus cursos quedan archivados. Se puede revertir
+            después activando la institución y reactivando a cada usuario.
           </p>
         </div>
-        <label style={{ fontSize: 12.5, color: "var(--color-text-muted)", display: "block", marginBottom: 6 }}>
-          Para confirmar, escribe el nombre exacto: <strong style={{ color: "var(--color-text)" }}>{deleteTarget?.nombre}</strong>
+        <label style={{ fontSize: 12.5, color: 'var(--color-text-muted)', display: 'block', marginBottom: 6 }}>
+          Para confirmar, escribe el nombre exacto:{' '}
+          <strong style={{ color: 'var(--color-text)' }}>{deleteTarget?.nombre}</strong>
         </label>
         <Input
           value={deleteConfirmText}
           onChange={(e) => setDeleteConfirmText(e.target.value)}
           placeholder="Nombre de la institución"
         />
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 20 }}>
-          <Button variant="ghost" type="button" onClick={() => setDeleteTarget(null)}>Cancelar</Button>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
+          <Button variant="ghost" type="button" onClick={() => setDeleteTarget(null)}>
+            Cancelar
+          </Button>
           <button
             onClick={handleDelete}
-            disabled={saving || deleteConfirmText.trim() !== (deleteTarget?.nombre ?? "").trim()}
+            disabled={saving || deleteConfirmText.trim() !== (deleteTarget?.nombre ?? '').trim()}
             style={{
-              padding: "9px 20px", borderRadius: 10, border: "none",
-              background: (saving || deleteConfirmText.trim() !== (deleteTarget?.nombre ?? "").trim()) ? "#fca5a5" : "var(--color-error-hover)",
-              color: "white", fontSize: 13.5, fontWeight: 700,
-              cursor: (saving || deleteConfirmText.trim() !== (deleteTarget?.nombre ?? "").trim()) ? "not-allowed" : "pointer",
-              display: "flex", alignItems: "center", gap: 8,
+              padding: '9px 20px',
+              borderRadius: 10,
+              border: 'none',
+              background:
+                saving || deleteConfirmText.trim() !== (deleteTarget?.nombre ?? '').trim()
+                  ? '#fca5a5'
+                  : 'var(--color-error-hover)',
+              color: 'white',
+              fontSize: 13.5,
+              fontWeight: 700,
+              cursor:
+                saving || deleteConfirmText.trim() !== (deleteTarget?.nombre ?? '').trim() ? 'not-allowed' : 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
             }}
           >
-            {saving && <Loader2 style={{ width: 14, height: 14, animation: "edu-spin 0.6s linear infinite" }} />}
-            {saving ? "Eliminando..." : "Eliminar institución"}
+            {saving && <Loader2 style={{ width: 14, height: 14, animation: 'edu-spin 0.6s linear infinite' }} />}
+            {saving ? 'Eliminando...' : 'Eliminar institución'}
           </button>
         </div>
       </Modal>
@@ -609,48 +895,84 @@ export default function InstitucionesPage() {
 // ── Fila de tabla ─────────────────────────────────────────────
 function InstitRow({ inst, onView, onEdit, onDelete }) {
   return (
-    <tr style={{ borderBottom: "1px solid var(--color-border)", transition: "background 150ms" }}
-      onMouseEnter={(e) => { e.currentTarget.style.background = "var(--color-bg)"; }}
-      onMouseLeave={(e) => { e.currentTarget.style.background = "var(--color-surface)"; }}
+    <tr
+      style={{ borderBottom: '1px solid var(--color-border)', transition: 'background 150ms' }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'var(--color-bg)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'var(--color-surface)';
+      }}
     >
-      <td style={{ padding: "13px 16px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 34, height: 34, borderRadius: 9, flexShrink: 0, background: "rgba(12,106,196,0.10)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Building2 style={{ width: 16, height: 16, color: "var(--color-primary)" }} />
+      <td style={{ padding: '13px 16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div
+            style={{
+              width: 34,
+              height: 34,
+              borderRadius: 9,
+              flexShrink: 0,
+              background: 'rgba(12,106,196,0.10)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Building2 style={{ width: 16, height: 16, color: 'var(--color-primary)' }} />
           </div>
           <div>
-            <p style={{ fontSize: 13.5, fontWeight: 700, color: "var(--color-text)", margin: 0 }}>{inst.nombre}</p>
-            {inst.codigo && <p style={{ fontSize: 11.5, color: "var(--color-text-muted)", margin: 0 }}>Código: {inst.codigo}</p>}
+            <p style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--color-text)', margin: 0 }}>{inst.nombre}</p>
+            {inst.codigo && (
+              <p style={{ fontSize: 11.5, color: 'var(--color-text-muted)', margin: 0 }}>Código: {inst.codigo}</p>
+            )}
           </div>
         </div>
       </td>
-      <td style={{ padding: "13px 16px" }}>
-        <p style={{ fontSize: 13, color: "var(--color-text-secondary)", margin: 0 }}>{inst.nit ?? "—"}</p>
-        {inst.codigo && <p style={{ fontSize: 11.5, color: "var(--color-text-muted)", margin: 0 }}>{inst.codigo}</p>}
+      <td style={{ padding: '13px 16px' }}>
+        <p style={{ fontSize: 13, color: 'var(--color-text-secondary)', margin: 0 }}>{inst.nit ?? '—'}</p>
+        {inst.codigo && <p style={{ fontSize: 11.5, color: 'var(--color-text-muted)', margin: 0 }}>{inst.codigo}</p>}
       </td>
-      <td style={{ padding: "13px 16px" }}>
+      <td style={{ padding: '13px 16px' }}>
         {inst.correo && (
-          <p style={{ fontSize: 12.5, color: "var(--color-text-secondary)", margin: 0, display: "flex", alignItems: "center", gap: 4 }}>
+          <p
+            style={{
+              fontSize: 12.5,
+              color: 'var(--color-text-secondary)',
+              margin: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+            }}
+          >
             <Mail style={{ width: 11, height: 11, flexShrink: 0 }} /> {inst.correo}
           </p>
         )}
         {inst.telefono && (
-          <p style={{ fontSize: 12.5, color: "var(--color-text-muted)", margin: 0, display: "flex", alignItems: "center", gap: 4 }}>
+          <p
+            style={{
+              fontSize: 12.5,
+              color: 'var(--color-text-muted)',
+              margin: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 4,
+            }}
+          >
             <Phone style={{ width: 11, height: 11, flexShrink: 0 }} /> {inst.telefono}
           </p>
         )}
-        {!inst.correo && !inst.telefono && <span style={{ fontSize: 13, color: "var(--color-text-muted)" }}>—</span>}
+        {!inst.correo && !inst.telefono && <span style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>—</span>}
       </td>
-      <td style={{ padding: "13px 16px", fontSize: 13, color: "var(--color-text-secondary)", maxWidth: 180 }}>
-        <span style={{ display: "block", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-          {inst.direccion || <span style={{ color: "var(--color-text-muted)" }}>—</span>}
+      <td style={{ padding: '13px 16px', fontSize: 13, color: 'var(--color-text-secondary)', maxWidth: 180 }}>
+        <span style={{ display: 'block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          {inst.direccion || <span style={{ color: 'var(--color-text-muted)' }}>—</span>}
         </span>
-        {inst.ciudad && <span style={{ fontSize: 11.5, color: "var(--color-text-muted)" }}>{inst.ciudad}</span>}
+        {inst.ciudad && <span style={{ fontSize: 11.5, color: 'var(--color-text-muted)' }}>{inst.ciudad}</span>}
       </td>
 
       {/* Acciones de fila */}
-      <td style={{ padding: "13px 16px" }}>
-        <div style={{ display: "flex", gap: 6 }}>
+      <td style={{ padding: '13px 16px' }}>
+        <div style={{ display: 'flex', gap: 6 }}>
           <Button variant="outline" size="sm" onClick={() => onView(inst)} title="Ver detalle">
             <Eye style={{ width: 13, height: 13 }} /> Ver
           </Button>
@@ -658,8 +980,11 @@ function InstitRow({ inst, onView, onEdit, onDelete }) {
             <Edit2 style={{ width: 13, height: 13 }} /> Editar
           </Button>
           <Button
-            variant="outline" size="sm" onClick={() => onDelete(inst)} title="Eliminar"
-            style={{ color: "var(--color-error-hover)", borderColor: "rgba(220,38,38,0.3)" }}
+            variant="outline"
+            size="sm"
+            onClick={() => onDelete(inst)}
+            title="Eliminar"
+            style={{ color: 'var(--color-error-hover)', borderColor: 'rgba(220,38,38,0.3)' }}
           >
             <Trash2 style={{ width: 13, height: 13 }} />
           </Button>

@@ -1,7 +1,6 @@
 import { apiFetch, apiFetchFormData } from '@/services/core/apiClient';
 
-export const entregasCreate = (formData) =>
-  apiFetchFormData('/entregas', { method: 'POST', body: formData });
+export const entregasCreate = (formData) => apiFetchFormData('/entregas', { method: 'POST', body: formData });
 
 export const entregasGetAll = (params = {}) => {
   const qs = new URLSearchParams(params).toString();
@@ -13,14 +12,11 @@ export const entregasGetByTarea = (tareaId, params = {}) => {
   return apiFetch(`/entregas/tarea/${tareaId}${qs ? `?${qs}` : ''}`);
 };
 
-export const entregasGetMineByTarea = (tareaId) =>
-  apiFetch(`/entregas/mis-entregas/${tareaId}`);
+export const entregasGetMineByTarea = (tareaId) => apiFetch(`/entregas/mis-entregas/${tareaId}`);
 
-export const entregasUpdate = (id, formData) =>
-  apiFetchFormData(`/entregas/${id}`, { method: 'PUT', body: formData });
+export const entregasUpdate = (id, formData) => apiFetchFormData(`/entregas/${id}`, { method: 'PUT', body: formData });
 
-export const entregasEnviar = (id) =>
-  apiFetch(`/entregas/${id}/enviar`, { method: 'PATCH' });
+export const entregasEnviar = (id) => apiFetch(`/entregas/${id}/enviar`, { method: 'PATCH' });
 
 export const entregasCalificar = (id, body) =>
   apiFetch(`/entregas/${id}/calificar`, { method: 'PATCH', body: JSON.stringify(body) });

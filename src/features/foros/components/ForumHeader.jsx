@@ -10,9 +10,9 @@ const ForumHeader = ({
   foro,
   cursoNombre,
   cursoId: _cursoId,
-  loading        = false,
+  loading = false,
   onBack,
-  canManage      = false,
+  canManage = false,
   onToggleEstado,
   togglingEstado = false,
   sidebarOpen,
@@ -24,13 +24,35 @@ const ForumHeader = ({
     return (
       <div className="fm-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: 'var(--color-surface-2)',
-            animation: 'fm-pulse 1.4s ease-in-out infinite', flexShrink: 0 }} />
+          <div
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 12,
+              background: 'var(--color-surface-2)',
+              animation: 'fm-pulse 1.4s ease-in-out infinite',
+              flexShrink: 0,
+            }}
+          />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 7, flex: 1 }}>
-            <div style={{ width: 200, height: 16, borderRadius: 4, background: 'var(--color-surface-2)',
-              animation: 'fm-pulse 1.4s ease-in-out infinite' }} />
-            <div style={{ width: 120, height: 12, borderRadius: 4, background: 'var(--color-surface-2)',
-              animation: 'fm-pulse 1.4s ease-in-out infinite' }} />
+            <div
+              style={{
+                width: 200,
+                height: 16,
+                borderRadius: 4,
+                background: 'var(--color-surface-2)',
+                animation: 'fm-pulse 1.4s ease-in-out infinite',
+              }}
+            />
+            <div
+              style={{
+                width: 120,
+                height: 12,
+                borderRadius: 4,
+                background: 'var(--color-surface-2)',
+                animation: 'fm-pulse 1.4s ease-in-out infinite',
+              }}
+            />
           </div>
         </div>
       </div>
@@ -70,7 +92,7 @@ const ForumHeaderContent = ({
   onToggleActivity,
 }) => {
   const [descExpanded, setDescExpanded] = useState(false);
-  const descPlain  = stripHtml(foro?.descripcion);
+  const descPlain = stripHtml(foro?.descripcion);
   const isLongDesc = descPlain.length > DESC_COLLAPSE_THRESHOLD;
 
   return (
@@ -87,9 +109,7 @@ const ForumHeaderContent = ({
           </div>
 
           <div style={{ flex: 1, minWidth: 0 }}>
-            {cursoNombre && (
-              <p className="fm-eyebrow">{cursoNombre} · Foros</p>
-            )}
+            {cursoNombre && <p className="fm-eyebrow">{cursoNombre} · Foros</p>}
             <div style={{ display: 'flex', alignItems: 'center', gap: 9, flexWrap: 'wrap' }}>
               <h1 className="fm-title">{foro?.titulo ?? 'Foro'}</h1>
               <span className="fm-status" data-closed={isClosed || undefined}>
@@ -102,7 +122,7 @@ const ForumHeaderContent = ({
                   <div className="fm-desc" dangerouslySetInnerHTML={{ __html: sanitizeRichText(foro.descripcion) }} />
                 </div>
                 {isLongDesc && (
-                  <button type="button" className="fm-desc-toggle" onClick={() => setDescExpanded(v => !v)}>
+                  <button type="button" className="fm-desc-toggle" onClick={() => setDescExpanded((v) => !v)}>
                     {descExpanded ? 'Ver menos' : 'Ver descripción completa'}
                     {descExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
                   </button>
@@ -122,23 +142,38 @@ const ForumHeaderContent = ({
             en vez de comprimirse hasta ser irreconocibles. */}
         <div className="fm-header-actions">
           {canManage && (
-            <button type="button" onClick={onToggleEstado} disabled={togglingEstado}
-              className="fm-action" data-variant={isClosed ? 'open' : 'close'}>
+            <button
+              type="button"
+              onClick={onToggleEstado}
+              disabled={togglingEstado}
+              className="fm-action"
+              data-variant={isClosed ? 'open' : 'close'}
+            >
               {isClosed ? <Unlock size={14} /> : <Lock size={14} />}
               {isClosed ? 'Abrir foro' : 'Cerrar foro'}
             </button>
           )}
 
-          <button type="button" onClick={onToggleActivity} className="fm-action" data-active={activityOpen || undefined}
+          <button
+            type="button"
+            onClick={onToggleActivity}
+            className="fm-action"
+            data-active={activityOpen || undefined}
             aria-pressed={!!activityOpen}
-            title={activityOpen ? 'Ocultar estadísticas' : 'Mostrar estadísticas de este foro'}>
+            title={activityOpen ? 'Ocultar estadísticas' : 'Mostrar estadísticas de este foro'}
+          >
             <PanelRight size={15} />
             <span className="fm-action-label">Estadísticas</span>
           </button>
 
-          <button type="button" onClick={onToggleSidebar} className="fm-action" data-active={sidebarOpen || undefined}
+          <button
+            type="button"
+            onClick={onToggleSidebar}
+            className="fm-action"
+            data-active={sidebarOpen || undefined}
             aria-pressed={!!sidebarOpen}
-            title={sidebarOpen ? 'Ocultar lista de foros' : 'Ver otros foros del curso'}>
+            title={sidebarOpen ? 'Ocultar lista de foros' : 'Ver otros foros del curso'}
+          >
             <PanelLeft size={15} />
             <span className="fm-action-label">Otros foros</span>
           </button>

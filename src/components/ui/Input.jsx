@@ -1,5 +1,5 @@
-import { useState, useId, forwardRef } from "react";
-import { AlertCircle, Eye, EyeOff, CheckCircle } from "lucide-react";
+import { useState, useId, forwardRef } from 'react';
+import { AlertCircle, Eye, EyeOff, CheckCircle } from 'lucide-react';
 
 /* ══════════════════════════════════════════════════════════════
    INPUT
@@ -12,53 +12,47 @@ import { AlertCircle, Eye, EyeOff, CheckCircle } from "lucide-react";
    en vez de padding-left calculado a mano (esa versión anterior hacía que
    el prefijo y el placeholder terminaran pegados o superpuestos).
    ══════════════════════════════════════════════════════════════ */
-export const Input = forwardRef(function Input({
-  label,
-  hint,
-  error,
-  success,
-  successMsg,
-  size       = "md",
-  leftIcon,
-  rightIcon,
-  type       = "text",
-  required   = false,
-  disabled   = false,
-  className  = "",
-  id,
-  ...rest
-}, ref) {
-  const autoId   = useId();
-  const inputId  = id ?? autoId;
+export const Input = forwardRef(function Input(
+  {
+    label,
+    hint,
+    error,
+    success,
+    successMsg,
+    size = 'md',
+    leftIcon,
+    rightIcon,
+    type = 'text',
+    required = false,
+    disabled = false,
+    className = '',
+    id,
+    ...rest
+  },
+  ref,
+) {
+  const autoId = useId();
+  const inputId = id ?? autoId;
   const [showPwd, setShowPwd] = useState(false);
 
-  const isPassword     = type === "password";
-  const resolvedType   = isPassword ? (showPwd ? "text" : "password") : type;
-  const sizeClass      = size === "sm" ? "input-sm" : size === "lg" ? "input-lg" : "";
-  const isSuccess      = !!(success || successMsg);
-  const stateClass     = error     ? "input-error"
-                       : isSuccess ? "input-success"
-                       : "";
-  const iconLeftClass  = leftIcon                  ? "input-icon-left"  : "";
-  const iconRightClass = (rightIcon || isPassword) ? "input-icon-right" : "";
+  const isPassword = type === 'password';
+  const resolvedType = isPassword ? (showPwd ? 'text' : 'password') : type;
+  const sizeClass = size === 'sm' ? 'input-sm' : size === 'lg' ? 'input-lg' : '';
+  const isSuccess = !!(success || successMsg);
+  const stateClass = error ? 'input-error' : isSuccess ? 'input-success' : '';
+  const iconLeftClass = leftIcon ? 'input-icon-left' : '';
+  const iconRightClass = rightIcon || isPassword ? 'input-icon-right' : '';
 
   return (
     <div className="field">
       {label && (
-        <label
-          htmlFor={inputId}
-          className={`field-label${required ? " field-label-required" : ""}`}
-        >
+        <label htmlFor={inputId} className={`field-label${required ? ' field-label-required' : ''}`}>
           {label}
         </label>
       )}
 
       <div className="input-wrapper">
-        {leftIcon && (
-          <span className="input-adornment input-adornment-left">
-            {leftIcon}
-          </span>
-        )}
+        {leftIcon && <span className="input-adornment input-adornment-left">{leftIcon}</span>}
 
         <input
           ref={ref}
@@ -68,18 +62,11 @@ export const Input = forwardRef(function Input({
           required={required}
           aria-invalid={!!error}
           aria-describedby={
-            error      ? `${inputId}-error`   :
-            successMsg ? `${inputId}-success` :
-            hint       ? `${inputId}-hint`    : undefined
+            error ? `${inputId}-error` : successMsg ? `${inputId}-success` : hint ? `${inputId}-hint` : undefined
           }
-          className={[
-            "input",
-            sizeClass,
-            stateClass,
-            iconLeftClass,
-            iconRightClass,
-            className,
-          ].filter(Boolean).join(" ")}
+          className={['input', sizeClass, stateClass, iconLeftClass, iconRightClass, className]
+            .filter(Boolean)
+            .join(' ')}
           {...rest}
         />
 
@@ -88,16 +75,14 @@ export const Input = forwardRef(function Input({
             <button
               type="button"
               className="input-adornment-btn"
-              onClick={() => setShowPwd(v => !v)}
-              aria-label={showPwd ? "Ocultar contraseña" : "Mostrar contraseña"}
+              onClick={() => setShowPwd((v) => !v)}
+              aria-label={showPwd ? 'Ocultar contraseña' : 'Mostrar contraseña'}
             >
               {showPwd ? <EyeOff size={17} /> : <Eye size={17} />}
             </button>
           </span>
         ) : rightIcon ? (
-          <span className="input-adornment input-adornment-right">
-            {rightIcon}
-          </span>
+          <span className="input-adornment input-adornment-right">{rightIcon}</span>
         ) : null}
       </div>
 
@@ -119,7 +104,9 @@ export const Input = forwardRef(function Input({
 
       {/* Texto de ayuda */}
       {!error && !successMsg && hint && (
-        <span id={`${inputId}-hint`} className="field-hint">{hint}</span>
+        <span id={`${inputId}-hint`} className="field-hint">
+          {hint}
+        </span>
       )}
     </div>
   );
@@ -128,29 +115,19 @@ export const Input = forwardRef(function Input({
 /* ══════════════════════════════════════════════════════════════
    ÁREA DE TEXTO
    ══════════════════════════════════════════════════════════════ */
-export const Textarea = forwardRef(function Textarea({
-  label,
-  hint,
-  error,
-  size      = "md",
-  required  = false,
-  disabled  = false,
-  className = "",
-  id,
-  ...rest
-}, ref) {
-  const autoId     = useId();
+export const Textarea = forwardRef(function Textarea(
+  { label, hint, error, size = 'md', required = false, disabled = false, className = '', id, ...rest },
+  ref,
+) {
+  const autoId = useId();
   const textareaId = id ?? autoId;
-  const sizeClass  = size === "sm" ? "textarea-sm" : size === "lg" ? "textarea-lg" : "";
-  const stateClass = error ? "input-error" : "";
+  const sizeClass = size === 'sm' ? 'textarea-sm' : size === 'lg' ? 'textarea-lg' : '';
+  const stateClass = error ? 'input-error' : '';
 
   return (
     <div className="field">
       {label && (
-        <label
-          htmlFor={textareaId}
-          className={`field-label${required ? " field-label-required" : ""}`}
-        >
+        <label htmlFor={textareaId} className={`field-label${required ? ' field-label-required' : ''}`}>
           {label}
         </label>
       )}
@@ -162,7 +139,7 @@ export const Textarea = forwardRef(function Textarea({
         required={required}
         aria-invalid={!!error}
         aria-describedby={error ? `${textareaId}-error` : hint ? `${textareaId}-hint` : undefined}
-        className={["textarea", sizeClass, stateClass, className].filter(Boolean).join(" ")}
+        className={['textarea', sizeClass, stateClass, className].filter(Boolean).join(' ')}
         {...rest}
       />
 
@@ -173,7 +150,9 @@ export const Textarea = forwardRef(function Textarea({
         </span>
       )}
       {!error && hint && (
-        <span id={`${textareaId}-hint`} className="field-hint">{hint}</span>
+        <span id={`${textareaId}-hint`} className="field-hint">
+          {hint}
+        </span>
       )}
     </div>
   );
@@ -182,30 +161,19 @@ export const Textarea = forwardRef(function Textarea({
 /* ══════════════════════════════════════════════════════════════
    SELECTOR
    ══════════════════════════════════════════════════════════════ */
-export const Select = forwardRef(function Select({
-  label,
-  hint,
-  error,
-  size      = "md",
-  required  = false,
-  disabled  = false,
-  className = "",
-  children,
-  id,
-  ...rest
-}, ref) {
-  const autoId    = useId();
-  const selectId  = id ?? autoId;
-  const sizeClass = size === "sm" ? "select-sm" : size === "lg" ? "select-lg" : "";
-  const stateClass = error ? "input-error" : "";
+export const Select = forwardRef(function Select(
+  { label, hint, error, size = 'md', required = false, disabled = false, className = '', children, id, ...rest },
+  ref,
+) {
+  const autoId = useId();
+  const selectId = id ?? autoId;
+  const sizeClass = size === 'sm' ? 'select-sm' : size === 'lg' ? 'select-lg' : '';
+  const stateClass = error ? 'input-error' : '';
 
   return (
     <div className="field">
       {label && (
-        <label
-          htmlFor={selectId}
-          className={`field-label${required ? " field-label-required" : ""}`}
-        >
+        <label htmlFor={selectId} className={`field-label${required ? ' field-label-required' : ''}`}>
           {label}
         </label>
       )}
@@ -217,7 +185,7 @@ export const Select = forwardRef(function Select({
         required={required}
         aria-invalid={!!error}
         aria-describedby={error ? `${selectId}-error` : hint ? `${selectId}-hint` : undefined}
-        className={["select", sizeClass, stateClass, className].filter(Boolean).join(" ")}
+        className={['select', sizeClass, stateClass, className].filter(Boolean).join(' ')}
         {...rest}
       >
         {children}
@@ -230,7 +198,9 @@ export const Select = forwardRef(function Select({
         </span>
       )}
       {!error && hint && (
-        <span id={`${selectId}-hint`} className="field-hint">{hint}</span>
+        <span id={`${selectId}-hint`} className="field-hint">
+          {hint}
+        </span>
       )}
     </div>
   );
@@ -239,26 +209,13 @@ export const Select = forwardRef(function Select({
 /* ══════════════════════════════════════════════════════════════
    INTERRUPTOR
    ══════════════════════════════════════════════════════════════ */
-export const Toggle = forwardRef(function Toggle({
-  label,
-  disabled  = false,
-  className = "",
-  id,
-  ...rest
-}, ref) {
-  const autoId   = useId();
+export const Toggle = forwardRef(function Toggle({ label, disabled = false, className = '', id, ...rest }, ref) {
+  const autoId = useId();
   const toggleId = id ?? autoId;
 
   return (
     <label className={`toggle ${className}`} htmlFor={toggleId}>
-      <input
-        ref={ref}
-        id={toggleId}
-        type="checkbox"
-        className="toggle-input"
-        disabled={disabled}
-        {...rest}
-      />
+      <input ref={ref} id={toggleId} type="checkbox" className="toggle-input" disabled={disabled} {...rest} />
       <span className="toggle-track" aria-hidden="true" />
       {label && <span className="toggle-label-text">{label}</span>}
     </label>
@@ -268,23 +225,14 @@ export const Toggle = forwardRef(function Toggle({
 /* ══════════════════════════════════════════════════════════════
    CASILLA DE VERIFICACIÓN
    ══════════════════════════════════════════════════════════════ */
-export const Checkbox = forwardRef(function Checkbox({
-  label,
-  disabled  = false,
-  className = "",
-  size      = "md",
-  ...rest
-}, ref) {
-  const sizeClass = size === "sm" ? " check-sm" : "";
+export const Checkbox = forwardRef(function Checkbox(
+  { label, disabled = false, className = '', size = 'md', ...rest },
+  ref,
+) {
+  const sizeClass = size === 'sm' ? ' check-sm' : '';
   return (
     <label className={`check-label ${className}`}>
-      <input
-        ref={ref}
-        type="checkbox"
-        className={`check-input${sizeClass}`}
-        disabled={disabled}
-        {...rest}
-      />
+      <input ref={ref} type="checkbox" className={`check-input${sizeClass}`} disabled={disabled} {...rest} />
       {label && <span>{label}</span>}
     </label>
   );

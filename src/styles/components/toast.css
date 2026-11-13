@@ -4,19 +4,41 @@
 
 /* ── Keyframes ────────────────────────────────────────────────────────── */
 @keyframes edu-toast-enter {
-  0%   { opacity: 0; transform: translateX(calc(100% + var(--space-6))); }
-  60%  { transform: translateX(-6px); }
-  100% { opacity: 1; transform: translateX(0); }
+  0% {
+    opacity: 0;
+    transform: translateX(calc(100% + var(--space-6)));
+  }
+  60% {
+    transform: translateX(-6px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes edu-toast-exit {
-  0%   { opacity: 1; transform: translateX(0); max-height: 120px; margin-bottom: var(--space-3); }
-  100% { opacity: 0; transform: translateX(calc(100% + var(--space-6))); max-height: 0; margin-bottom: 0; }
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+    max-height: 120px;
+    margin-bottom: var(--space-3);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(calc(100% + var(--space-6)));
+    max-height: 0;
+    margin-bottom: 0;
+  }
 }
 
 @keyframes edu-toast-progress {
-  from { transform: scaleX(1); }
-  to   { transform: scaleX(0); }
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
 }
 
 /* ── Viewport (contenedor fijo) ───────────────────────────────────────── */
@@ -115,7 +137,7 @@
   margin-top: 0.125rem;
   transition:
     background var(--transition-fast),
-    color      var(--transition-fast);
+    color var(--transition-fast);
 }
 .toast-close:hover {
   background: var(--color-surface-3);
@@ -127,40 +149,60 @@
   border-color: var(--color-success-light);
   border-left: 4px solid var(--color-success);
 }
-.toast-success .toast-icon { background: var(--color-success-light); color: var(--color-success-hover); }
-.toast-success::after      { background: var(--color-success-light); }
+.toast-success .toast-icon {
+  background: var(--color-success-light);
+  color: var(--color-success-hover);
+}
+.toast-success::after {
+  background: var(--color-success-light);
+}
 
 .toast-error {
   border-color: var(--color-error-light);
   border-left: 4px solid var(--color-error);
 }
-.toast-error .toast-icon { background: var(--color-error-light); color: var(--color-error-hover); }
-.toast-error::after      { background: var(--color-error-light); }
+.toast-error .toast-icon {
+  background: var(--color-error-light);
+  color: var(--color-error-hover);
+}
+.toast-error::after {
+  background: var(--color-error-light);
+}
 
 .toast-warning {
   border-color: var(--color-warning-light);
   border-left: 4px solid var(--color-warning);
 }
-.toast-warning .toast-icon { background: var(--color-warning-light); color: var(--color-warning-hover); }
-.toast-warning::after      { background: var(--color-warning-light); }
+.toast-warning .toast-icon {
+  background: var(--color-warning-light);
+  color: var(--color-warning-hover);
+}
+.toast-warning::after {
+  background: var(--color-warning-light);
+}
 
 .toast-info {
   border-color: var(--color-accent-light);
   border-left: 4px solid var(--color-accent);
 }
-.toast-info .toast-icon { background: var(--color-accent-light); color: var(--color-accent-hover); }
-.toast-info::after      { background: var(--color-accent-light); }
+.toast-info .toast-icon {
+  background: var(--color-accent-light);
+  color: var(--color-accent-hover);
+}
+.toast-info::after {
+  background: var(--color-accent-light);
+}
 
 /* ── Salida (agregar vía JS) ────────────────────────────────────────────────── */
 .toast-exiting {
-  animation: edu-toast-exit 0.30s ease forwards;
+  animation: edu-toast-exit 0.3s ease forwards;
   pointer-events: none;
 }
 
 /* ── Progreso de cierre automático (establecer --toast-duration en el elemento) ──────── */
 .toast-has-progress::after {
   background: currentColor;
-  opacity: 0.20;
+  opacity: 0.2;
   transform-origin: left;
   animation: edu-toast-progress var(--toast-duration, 5s) linear forwards;
 }

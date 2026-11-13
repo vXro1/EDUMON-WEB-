@@ -5,7 +5,6 @@
    área táctil global.
    ────────────────────────────────────────────────────────────────────── */
 
-
 /* ── Base ───────────────────────────────────────────────────────────── */
 
 .btn {
@@ -54,7 +53,6 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-
 /* ── Contenido del botón ──────────────────────────────────────────────
    .btn-text envuelve TODO lo que el botón recibe como children (ver
    Button.jsx). En la mayoría de usos reales del proyecto eso es un ícono
@@ -93,21 +91,17 @@
   background: rgba(255, 255, 255, 0.09);
 }
 
-
 /* ── Focus ─────────────────────────────────────────────────────────── */
 
 .btn:focus-visible {
   outline: none;
-  box-shadow:
-    var(--clay-btn),
-    var(--shadow-focus);
+  box-shadow: var(--clay-btn), var(--shadow-focus);
 }
-
 
 /* ── Disabled ─────────────────────────────────────────────────────── */
 
 .btn:disabled,
-.btn[aria-disabled="true"] {
+.btn[aria-disabled='true'] {
   opacity: 0.45;
   cursor: not-allowed;
   pointer-events: none;
@@ -115,7 +109,6 @@
   box-shadow: none !important;
   transform: none !important;
 }
-
 
 /* ── Tamaño XS ────────────────────────────────────────────────────── */
 
@@ -132,7 +125,6 @@
   gap: var(--space-1);
 }
 
-
 /* ── Tamaño SM ────────────────────────────────────────────────────── */
 
 .btn-sm {
@@ -145,7 +137,6 @@
 
   border-radius: var(--radius-md);
 }
-
 
 /* ── Tamaño LG ────────────────────────────────────────────────────── */
 
@@ -161,7 +152,6 @@
 
   letter-spacing: var(--tracking-wide);
 }
-
 
 /* ── Tamaño XL ────────────────────────────────────────────────────── */
 
@@ -179,13 +169,11 @@
   letter-spacing: var(--tracking-wide);
 }
 
-
 /* ── Full width ───────────────────────────────────────────────────── */
 
 .btn-full {
   width: 100%;
 }
-
 
 /* ══════════════════════════════════════════════════════════════════════
    PRIMARIO
@@ -204,9 +192,7 @@
 
   transform: translateY(-2px);
 
-  box-shadow:
-    var(--clay-shadow-md),
-    var(--shadow-primary);
+  box-shadow: var(--clay-shadow-md), var(--shadow-primary);
 }
 
 .btn-primary:not(:disabled):active {
@@ -219,19 +205,12 @@
   box-shadow: var(--clay-shadow-sm);
 }
 
-
 /* ══════════════════════════════════════════════════════════════════════
    GRADIENTE
    ══════════════════════════════════════════════════════════════════ */
 
 .btn-gradient {
-  background:
-    linear-gradient(
-      135deg,
-      var(--edu-yellow-400) 0%,
-      var(--edu-yellow-500) 55%,
-      var(--edu-yellow-600) 100%
-    );
+  background: linear-gradient(135deg, var(--edu-yellow-400) 0%, var(--edu-yellow-500) 55%, var(--edu-yellow-600) 100%);
 
   color: var(--edu-dark);
   border-color: transparent;
@@ -240,9 +219,7 @@
 .btn-gradient:not(:disabled):hover {
   transform: translateY(-2px);
 
-  box-shadow:
-    var(--clay-shadow-md),
-    var(--shadow-warning);
+  box-shadow: var(--clay-shadow-md), var(--shadow-warning);
 
   filter: brightness(1.06);
 }
@@ -251,7 +228,6 @@
   transform: translateY(0) scale(0.98);
   box-shadow: var(--clay-shadow-sm);
 }
-
 
 /* ══════════════════════════════════════════════════════════════════════
    SECUNDARIO — ROSA
@@ -270,9 +246,7 @@
 
   transform: translateY(-2px);
 
-  box-shadow:
-    var(--clay-shadow-md),
-    var(--shadow-secondary);
+  box-shadow: var(--clay-shadow-md), var(--shadow-secondary);
 }
 
 .btn-secondary:not(:disabled):active {
@@ -284,7 +258,6 @@
 
   box-shadow: var(--clay-shadow-sm);
 }
-
 
 /* ══════════════════════════════════════════════════════════════════════
    FANTASMA
@@ -308,7 +281,6 @@
   transform: scale(0.98);
 }
 
-
 /* ══════════════════════════════════════════════════════════════════════
    FANTASMA — PELIGRO
    ══════════════════════════════════════════════════════════════════ */
@@ -330,7 +302,6 @@
   transform: scale(0.98);
 }
 
-
 /* ══════════════════════════════════════════════════════════════════════
    FANTASMA — PRIMARIO
    ══════════════════════════════════════════════════════════════════ */
@@ -351,7 +322,6 @@
   background: var(--edu-yellow-100);
   transform: scale(0.98);
 }
-
 
 /* ══════════════════════════════════════════════════════════════════════
    SUAVE
@@ -377,7 +347,6 @@
   transform: scale(0.98);
 }
 
-
 /* ══════════════════════════════════════════════════════════════════════
    ÉXITO
    ══════════════════════════════════════════════════════════════════ */
@@ -394,9 +363,7 @@
 
   transform: translateY(-2px);
 
-  box-shadow:
-    var(--clay-shadow-md),
-    var(--shadow-success);
+  box-shadow: var(--clay-shadow-md), var(--shadow-success);
 }
 
 .btn-success:not(:disabled):active {
@@ -408,11 +375,8 @@
 }
 
 .btn-success:focus-visible {
-  box-shadow:
-    var(--clay-btn),
-    var(--shadow-focus-success);
+  box-shadow: var(--clay-btn), var(--shadow-focus-success);
 }
-
 
 /* ══════════════════════════════════════════════════════════════════════
    ADVERTENCIA
@@ -430,9 +394,7 @@
 
   transform: translateY(-2px);
 
-  box-shadow:
-    var(--clay-shadow-md),
-    var(--shadow-warning);
+  box-shadow: var(--clay-shadow-md), var(--shadow-warning);
 }
 
 .btn-warning:not(:disabled):active {
@@ -440,7 +402,6 @@
 
   box-shadow: var(--clay-shadow-sm);
 }
-
 
 /* ══════════════════════════════════════════════════════════════════════
    PELIGRO
@@ -453,14 +414,12 @@
 }
 
 .btn-danger:not(:disabled):hover {
-  background: #F87171;
-  border-color: #F87171;
+  background: #f87171;
+  border-color: #f87171;
 
   transform: translateY(-2px);
 
-  box-shadow:
-    var(--clay-shadow-md),
-    var(--shadow-danger);
+  box-shadow: var(--clay-shadow-md), var(--shadow-danger);
 }
 
 .btn-danger:not(:disabled):active {
@@ -470,11 +429,8 @@
 }
 
 .btn-danger:focus-visible {
-  box-shadow:
-    var(--clay-btn),
-    var(--shadow-focus-error);
+  box-shadow: var(--clay-btn), var(--shadow-focus-error);
 }
-
 
 /* ══════════════════════════════════════════════════════════════════════
    ACENTO — CIAN
@@ -492,9 +448,7 @@
 
   transform: translateY(-2px);
 
-  box-shadow:
-    var(--clay-shadow-md),
-    var(--shadow-accent);
+  box-shadow: var(--clay-shadow-md), var(--shadow-accent);
 }
 
 .btn-accent:not(:disabled):active {
@@ -502,7 +456,6 @@
 
   box-shadow: var(--clay-shadow-sm);
 }
-
 
 /* ══════════════════════════════════════════════════════════════════════
    CONTORNO NEUTRO
@@ -533,7 +486,6 @@
 
   box-shadow: var(--clay-shadow-sm);
 }
-
 
 /* ══════════════════════════════════════════════════════════════════════
    ENLACE
@@ -577,7 +529,6 @@
 .btn-link:not(:disabled):active {
   transform: none;
 }
-
 
 /* ══════════════════════════════════════════════════════════════════════
    ACCESIBILIDAD — REDUCCIÓN DE MOVIMIENTO
