@@ -1,15 +1,15 @@
-import { defineConfig, loadEnv } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
 // Destino del proxy de desarrollo (/api, /uploads, /static, /socket.io).
 // Por defecto el backend local; nunca producción, para no escribir datos reales
 // desde el entorno de desarrollo. Se configura en .env.local (ver .env.example).
-const PROXY_POR_DEFECTO = 'http://localhost:4000'
+const PROXY_POR_DEFECTO = 'http://localhost:4000';
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
-  const proxyTarget = env.VITE_API_PROXY_TARGET || PROXY_POR_DEFECTO
+  const env = loadEnv(mode, process.cwd(), '');
+  const proxyTarget = env.VITE_API_PROXY_TARGET || PROXY_POR_DEFECTO;
 
   return {
     plugins: [react()],
@@ -60,9 +60,9 @@ export default defineConfig(({ mode }) => {
             if (/node_modules[\/](react|react-dom|react-router|react-router-dom|scheduler)[\/]/.test(id)) {
               return 'vendor.react';
             }
-          }
-        }
-      }
-    }
-  }
-})
+          },
+        },
+      },
+    },
+  };
+});

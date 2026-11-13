@@ -1,48 +1,47 @@
-import { memo, useMemo } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LogOut, PanelLeftClose, PanelLeftOpen } from "lucide-react";
-import { UserAvatar } from "@/components";
-import { ICONS, NAV_GROUPS, ROLE_LABELS } from "@/config/navigation/navGroups";
-import logoSvg from "@/assets/icons/edumon-logo.svg";
+import { memo, useMemo } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import { UserAvatar } from '@/components';
+import { ICONS, NAV_GROUPS, ROLE_LABELS } from '@/config/navigation/navGroups';
+import logoSvg from '@/assets/icons/edumon-logo.svg';
 
 const NavItem = memo(function NavItem({ item, onClose }) {
   const { pathname } = useLocation();
   const Icon = ICONS[item.icon] ?? ICONS.home;
-  const isActive = item.exact
-    ? pathname === item.path
-    : pathname.startsWith(item.path);
+  const isActive = item.exact ? pathname === item.path : pathname.startsWith(item.path);
 
   return (
     <Link
       to={item.path}
       onClick={onClose}
       aria-label={item.label}
-      aria-current={isActive ? "page" : undefined}
+      aria-current={isActive ? 'page' : undefined}
       data-tooltip={item.label}
-      className={`sidebar-item${isActive ? " active" : ""}`}
+      className={`sidebar-item${isActive ? ' active' : ''}`}
     >
-      <span className="ico" aria-hidden="true"><Icon size={17} /></span>
+      <span className="ico" aria-hidden="true">
+        <Icon size={17} />
+      </span>
       <span className="lbl">{item.label}</span>
     </Link>
   );
 });
 
 export const Sidebar = memo(function Sidebar({ user, logout, collapsed, onToggleCollapse, drawerOpen, onCloseDrawer }) {
-  const navigate  = useNavigate();
-  const groups    = useMemo(() => NAV_GROUPS[user?.rol] ?? [], [user?.rol]);
-  const roleLabel = useMemo(() => ROLE_LABELS[user?.rol] ?? user?.rol ?? "Usuario", [user?.rol]);
+  const navigate = useNavigate();
+  const groups = useMemo(() => NAV_GROUPS[user?.rol] ?? [], [user?.rol]);
+  const roleLabel = useMemo(() => ROLE_LABELS[user?.rol] ?? user?.rol ?? 'Usuario', [user?.rol]);
 
   return (
-    <aside className={`sidebar${drawerOpen ? " drawer-open" : ""}`}>
-
+    <aside className={`sidebar${drawerOpen ? ' drawer-open' : ''}`}>
       <div className="sidebar-brand">
         <img src={logoSvg} alt="Edumon" className="sidebar-logo" />
         <button
           id="sidebar-collapse-btn"
           className="sidebar-collapse-btn"
           onClick={onToggleCollapse}
-          title={collapsed ? "Expandir menu" : "Contraer menu"}
-          aria-label={collapsed ? "Expandir menu" : "Contraer menu"}
+          title={collapsed ? 'Expandir menu' : 'Contraer menu'}
+          aria-label={collapsed ? 'Expandir menu' : 'Contraer menu'}
         >
           {collapsed ? <PanelLeftOpen size={14} /> : <PanelLeftClose size={14} />}
         </button>
@@ -61,25 +60,25 @@ export const Sidebar = memo(function Sidebar({ user, logout, collapsed, onToggle
 
       <button
         className="sidebar-card"
-        onClick={() => { navigate("/perfil"); onCloseDrawer(); }}
+        onClick={() => {
+          navigate('/perfil');
+          onCloseDrawer();
+        }}
         title="Ver mi perfil"
       >
         <UserAvatar user={user} size={32} />
         <div className="who">
-          <p className="name">{user?.nombre ?? "Usuario"}</p>
+          <p className="name">{user?.nombre ?? 'Usuario'}</p>
           <p className="role">{roleLabel}</p>
         </div>
       </button>
 
-      <button
-        className="sidebar-item sidebar-item--danger"
-        onClick={logout}
-        title="Cerrar sesion"
-      >
-        <span className="ico"><LogOut size={17} /></span>
+      <button className="sidebar-item sidebar-item--danger" onClick={logout} title="Cerrar sesion">
+        <span className="ico">
+          <LogOut size={17} />
+        </span>
         <span className="lbl">Cerrar sesion</span>
       </button>
-
     </aside>
   );
 });

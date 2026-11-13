@@ -1,99 +1,102 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from 'react';
 
-import {
-  Plus,
-  RefreshCw,
-  Loader2,
-  Clock,
-  MapPin,
-  Trash2,
-  Edit2,
-  X,
-  Image,
-  Paperclip,
-} from "lucide-react";
+import { Plus, RefreshCw, Loader2, Clock, MapPin, Trash2, Edit2, X, Image, Paperclip } from 'lucide-react';
 
-import { cursosGetVisibles } from "@/features/cursos/services/cursosService";
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { eventosGetAll, eventosCreate, eventosUpdate, eventosDelete } from "@/features/eventos/services/eventosService";
+import { cursosGetVisibles } from '@/features/cursos/services/cursosService';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { eventosGetAll, eventosCreate, eventosUpdate, eventosDelete } from '@/features/eventos/services/eventosService';
 
-import { Modal, Toast, Button, Input, Textarea, Select } from "@/components";
-import { IconBtn } from "@/features/cursos/components/shared/ui";
+import { Modal, Toast, Button, Input, Textarea, Select } from '@/components';
+import { IconBtn } from '@/features/cursos/components/shared/ui';
 
-import { normalizeCurso }from "@/lib/normalizers";
-import { humanizeError } from "@/utils/humanizeError";
-import { parseValidationErrors, summarizeValidationErrors } from "@/utils/parseValidationErrors";
+import { normalizeCurso } from '@/lib/normalizers';
+import { humanizeError } from '@/utils/humanizeError';
+import { parseValidationErrors, summarizeValidationErrors } from '@/utils/parseValidationErrors';
 
 const CATEGORIA_CFG = {
-  tarea:          { color: "#6366F1", bg: "rgba(99,102,241,0.10)",  label: "Reto" },
-  escuela_padres: { color: "#D97706", bg: "rgba(217,119,6,0.10)",   label: "Escuela de padres" },
-  institucional:  { color: "var(--color-primary)", bg: "rgba(12,106,196,0.10)",  label: "Institucional" },
-  reunion:        { color: "var(--color-primary)", bg: "rgba(12,106,196,0.10)",  label: "Reunión" },
-  actividad:      { color: "var(--edu-green-600)", bg: "rgba(22,163,74,0.10)",   label: "Actividad" },
-  otro:           { color: "#64748B", bg: "rgba(100,116,139,0.10)", label: "Otro" },
+  tarea: { color: '#6366F1', bg: 'rgba(99,102,241,0.10)', label: 'Reto' },
+  escuela_padres: { color: '#D97706', bg: 'rgba(217,119,6,0.10)', label: 'Escuela de padres' },
+  institucional: { color: 'var(--color-primary)', bg: 'rgba(12,106,196,0.10)', label: 'Institucional' },
+  reunion: { color: 'var(--color-primary)', bg: 'rgba(12,106,196,0.10)', label: 'Reunión' },
+  actividad: { color: 'var(--edu-green-600)', bg: 'rgba(22,163,74,0.10)', label: 'Actividad' },
+  otro: { color: '#64748B', bg: 'rgba(100,116,139,0.10)', label: 'Otro' },
 };
 
 // único enum que el backend acepta para "categoria"
-const CATEGORIA_FORM_OPTIONS = ["escuela_padres", "tarea", "institucional"];
+const CATEGORIA_FORM_OPTIONS = ['escuela_padres', 'tarea', 'institucional'];
 
-function catCfg(cat) { return CATEGORIA_CFG[cat] ?? CATEGORIA_CFG.otro; }
-
-function toLocalInput(iso) {
-  if (!iso) return "";
-  try { return new Date(iso).toISOString().slice(0, 16); } catch { return ""; }
+function catCfg(cat) {
+  return CATEGORIA_CFG[cat] ?? CATEGORIA_CFG.otro;
 }
 
-function Sk({ h = 14, w = "100%", r = 6 }) {
-  return <div className="animate-pulse" style={{ height: h, width: w, borderRadius: r, background: "var(--color-border)" }} />;
+function toLocalInput(iso) {
+  if (!iso) return '';
+  try {
+    return new Date(iso).toISOString().slice(0, 16);
+  } catch {
+    return '';
+  }
+}
+
+function Sk({ h = 14, w = '100%', r = 6 }) {
+  return (
+    <div
+      className="animate-pulse"
+      style={{ height: h, width: w, borderRadius: r, background: 'var(--color-border)' }}
+    />
+  );
 }
 
 /* ── Texto de error inline debajo de cada campo ────────────────────── */
 function FieldError({ message }) {
   if (!message) return null;
   return (
-    <p style={{ margin: "4px 0 0", fontSize: 12, color: "var(--color-error-hover)", fontWeight: 600 }}>
-      {message}
-    </p>
+    <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--color-error-hover)', fontWeight: 600 }}>{message}</p>
   );
 }
 
 const INIT_FORM = {
-  titulo: "", descripcion: "", fechaInicio: "", fechaFin: "",
-  hora: "", ubicacion: "", categoria: "institucional",
+  titulo: '',
+  descripcion: '',
+  fechaInicio: '',
+  fechaFin: '',
+  hora: '',
+  ubicacion: '',
+  categoria: 'institucional',
 };
 
 export default function EventosPage() {
   const { user } = useAuth();
-  const [eventos,   setEventos]   = useState([]);
-  const [cursos,    setCursos]    = useState([]);
-  const [loading,   setLoading]   = useState(true);
-  const [toast,     setToast]     = useState({ msg: "", type: "success" });
+  const [eventos, setEventos] = useState([]);
+  const [cursos, setCursos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState({ msg: '', type: 'success' });
 
-  const [showForm,       setShowForm]       = useState(false);
-  const [editTarget,     setEditTarget]     = useState(null);
-  const [form,           setForm]           = useState(INIT_FORM);
-  const [cursosIds,      setCursosIds]      = useState([]);
-  const [imagenPortada,  setImagenPortada]  = useState(null);
-  const [adjunto,        setAdjunto]        = useState(null);
-  const [saving,         setSaving]         = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [editTarget, setEditTarget] = useState(null);
+  const [form, setForm] = useState(INIT_FORM);
+  const [cursosIds, setCursosIds] = useState([]);
+  const [imagenPortada, setImagenPortada] = useState(null);
+  const [adjunto, setAdjunto] = useState(null);
+  const [saving, setSaving] = useState(false);
   // Errores específicos por campo, ej: { fechaInicio: "La fecha de inicio debe ser futura" }
-  const [errors,         setErrors]         = useState({});
+  const [errors, setErrors] = useState({});
   const portadaRef = useRef(null);
   const adjuntoRef = useRef(null);
 
-  const [showDelete,  setShowDelete]  = useState(false);
-  const [deletingId,  setDeletingId]  = useState(null);
-  const [deleting,    setDeleting]    = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
-  const notify = (msg, type = "success") => {
+  const notify = (msg, type = 'success') => {
     setToast({ msg, type });
-    setTimeout(() => setToast({ msg: "", type: "success" }), 3500);
+    setTimeout(() => setToast({ msg: '', type: 'success' }), 3500);
   };
 
   useEffect(() => {
     if (!user) return;
     cursosGetVisibles(user.rol, { limit: 50 })
-      .then(d => setCursos((d.cursos ?? []).map(normalizeCurso)))
+      .then((d) => setCursos((d.cursos ?? []).map(normalizeCurso)))
       .catch(() => {});
   }, [user]);
 
@@ -103,19 +106,21 @@ export default function EventosPage() {
       const data = await eventosGetAll();
       setEventos(data.eventos ?? data.items ?? []);
     } catch {
-      notify("Error al cargar eventos", "error");
+      notify('Error al cargar eventos', 'error');
     } finally {
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   // Limpia el error de un campo apenas el usuario empieza a corregirlo,
   // así el mensaje no queda pegado tras el primer intento fallido.
   const clearError = (key) => {
     if (errors[key]) {
-      setErrors(prev => {
+      setErrors((prev) => {
         const next = { ...prev };
         delete next[key];
         return next;
@@ -125,7 +130,7 @@ export default function EventosPage() {
 
   const updateForm = (key, value) => {
     clearError(key);
-    setForm(f => ({ ...f, [key]: value }));
+    setForm((f) => ({ ...f, [key]: value }));
   };
 
   const openCreate = () => {
@@ -141,15 +146,15 @@ export default function EventosPage() {
   const openEdit = (ev) => {
     setEditTarget(ev);
     setForm({
-      titulo:      ev.titulo      ?? "",
-      descripcion: ev.descripcion ?? "",
+      titulo: ev.titulo ?? '',
+      descripcion: ev.descripcion ?? '',
       fechaInicio: toLocalInput(ev.fechaInicio),
-      fechaFin:    toLocalInput(ev.fechaFin),
-      hora:        ev.hora        ?? "",
-      ubicacion:   ev.ubicacion   ?? "",
-      categoria:   CATEGORIA_FORM_OPTIONS.includes(ev.categoria) ? ev.categoria : "institucional",
+      fechaFin: toLocalInput(ev.fechaFin),
+      hora: ev.hora ?? '',
+      ubicacion: ev.ubicacion ?? '',
+      categoria: CATEGORIA_FORM_OPTIONS.includes(ev.categoria) ? ev.categoria : 'institucional',
     });
-    const ids = (ev.cursosIds ?? ev.cursos ?? []).map(c => c._id ?? c);
+    const ids = (ev.cursosIds ?? ev.cursos ?? []).map((c) => c._id ?? c);
     setCursosIds(ids);
     setImagenPortada(null);
     setAdjunto(null);
@@ -158,15 +163,13 @@ export default function EventosPage() {
   };
 
   const toggleCurso = (id) => {
-    setCursosIds(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-    );
+    setCursosIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   };
 
   const handleSave = async (e) => {
     e.preventDefault();
     if (cursosIds.length === 0) {
-      setErrors({ cursosIds: "Selecciona al menos un curso" });
+      setErrors({ cursosIds: 'Selecciona al menos un curso' });
       return;
     }
     // Al editar solo se envía lo que cambió: el PUT corre los validadores del
@@ -176,23 +179,23 @@ export default function EventosPage() {
     let enviarCursos = true;
     if (editTarget) {
       const original = {
-        titulo:      editTarget.titulo      ?? "",
-        descripcion: editTarget.descripcion ?? "",
+        titulo: editTarget.titulo ?? '',
+        descripcion: editTarget.descripcion ?? '',
         fechaInicio: toLocalInput(editTarget.fechaInicio),
-        fechaFin:    toLocalInput(editTarget.fechaFin),
-        hora:        editTarget.hora        ?? "",
-        ubicacion:   editTarget.ubicacion   ?? "",
-        categoria:   CATEGORIA_FORM_OPTIONS.includes(editTarget.categoria) ? editTarget.categoria : "institucional",
+        fechaFin: toLocalInput(editTarget.fechaFin),
+        hora: editTarget.hora ?? '',
+        ubicacion: editTarget.ubicacion ?? '',
+        categoria: CATEGORIA_FORM_OPTIONS.includes(editTarget.categoria) ? editTarget.categoria : 'institucional',
       };
       campos = Object.fromEntries(Object.entries(form).filter(([k, v]) => v !== original[k]));
       // el validador compara fechaFin con la fechaInicio del body: van juntas
-      if ("fechaInicio" in campos || "fechaFin" in campos) {
+      if ('fechaInicio' in campos || 'fechaFin' in campos) {
         campos.fechaInicio = form.fechaInicio;
         campos.fechaFin = form.fechaFin;
       }
-      const cursosOriginales = (editTarget.cursosIds ?? editTarget.cursos ?? []).map(c => c._id ?? c);
-      enviarCursos = cursosOriginales.length !== cursosIds.length
-        || cursosIds.some(id => !cursosOriginales.includes(id));
+      const cursosOriginales = (editTarget.cursosIds ?? editTarget.cursos ?? []).map((c) => c._id ?? c);
+      enviarCursos =
+        cursosOriginales.length !== cursosIds.length || cursosIds.some((id) => !cursosOriginales.includes(id));
       if (Object.keys(campos).length === 0 && !enviarCursos && !imagenPortada && !adjunto) {
         setShowForm(false);
         return;
@@ -202,24 +205,26 @@ export default function EventosPage() {
     setErrors({});
     try {
       const fd = new FormData();
-      Object.entries(campos).forEach(([k, v]) => { if (v) fd.append(k, v); });
-      if (enviarCursos) cursosIds.forEach(id => fd.append("cursosIds[]", id));
-      if (imagenPortada) fd.append("imagenPortada", imagenPortada);
-      if (adjunto)       fd.append("adjunto", adjunto);
+      Object.entries(campos).forEach(([k, v]) => {
+        if (v) fd.append(k, v);
+      });
+      if (enviarCursos) cursosIds.forEach((id) => fd.append('cursosIds[]', id));
+      if (imagenPortada) fd.append('imagenPortada', imagenPortada);
+      if (adjunto) fd.append('adjunto', adjunto);
 
       if (editTarget) await eventosUpdate(editTarget._id, fd);
-      else            await eventosCreate(fd);
+      else await eventosCreate(fd);
 
-      notify(editTarget ? "Evento actualizado" : "Evento creado");
+      notify(editTarget ? 'Evento actualizado' : 'Evento creado');
       setShowForm(false);
       load();
     } catch (err) {
       const fieldErrors = parseValidationErrors(err);
       if (fieldErrors) {
         setErrors(fieldErrors);
-        notify(summarizeValidationErrors(fieldErrors), "error");
+        notify(summarizeValidationErrors(fieldErrors), 'error');
       } else {
-        notify(humanizeError(err, "Error al guardar evento"), "error");
+        notify(humanizeError(err, 'Error al guardar evento'), 'error');
       }
     } finally {
       setSaving(false);
@@ -230,27 +235,27 @@ export default function EventosPage() {
     setDeleting(true);
     try {
       await eventosDelete(deletingId);
-      notify("Evento eliminado");
+      notify('Evento eliminado');
       setShowDelete(false);
       load();
     } catch {
-      notify("Error al eliminar", "error");
+      notify('Error al eliminar', 'error');
     } finally {
       setDeleting(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto' }}>
       <Toast msg={toast.msg} type={toast.type} />
 
       {/* HEADER */}
-      <div style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 12, marginBottom: 24 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 20, fontWeight: 800 }}>Eventos</h1>
         </div>
 
-        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
           <IconBtn color="var(--color-text-muted)" onClick={load}>
             <RefreshCw />
           </IconBtn>
@@ -265,79 +270,143 @@ export default function EventosPage() {
       {loading ? (
         <Sk h={80} />
       ) : eventos.length === 0 ? (
-        <div style={{
-          background: "var(--color-surface)", borderRadius: 14,
-          border: "1px solid var(--color-border)", padding: "48px 24px",
-          textAlign: "center", color: "var(--color-text-muted)", fontSize: 14,
-        }}>
+        <div
+          style={{
+            background: 'var(--color-surface)',
+            borderRadius: 14,
+            border: '1px solid var(--color-border)',
+            padding: '48px 24px',
+            textAlign: 'center',
+            color: 'var(--color-text-muted)',
+            fontSize: 14,
+          }}
+        >
           No hay eventos. Crea uno con el botón de arriba.
         </div>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {eventos.map(ev => {
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {eventos.map((ev) => {
             const cfg = catCfg(ev.categoria);
             const portadaUrl = ev.imagenPortada?.url ?? null;
             const adjuntoUrl = ev.adjuntos?.url ?? null;
-            const adjuntoNombre = ev.adjuntos?.nombre ?? "Adjunto";
+            const adjuntoNombre = ev.adjuntos?.nombre ?? 'Adjunto';
             return (
-              <div key={ev._id} style={{
-                background: "var(--color-surface)", borderRadius: 14,
-                border: "1px solid var(--color-border)", overflow: "hidden",
-                boxShadow: "var(--clay-card)",
-                display: "flex",
-              }}>
+              <div
+                key={ev._id}
+                style={{
+                  background: 'var(--color-surface)',
+                  borderRadius: 14,
+                  border: '1px solid var(--color-border)',
+                  overflow: 'hidden',
+                  boxShadow: 'var(--clay-card)',
+                  display: 'flex',
+                }}
+              >
                 {portadaUrl && (
-                  <img loading="lazy" decoding="async"
-                    src={portadaUrl} alt={ev.titulo}
-                    style={{ width: 90, objectFit: "cover", flexShrink: 0 }}
+                  <img
+                    loading="lazy"
+                    decoding="async"
+                    src={portadaUrl}
+                    alt={ev.titulo}
+                    style={{ width: 90, objectFit: 'cover', flexShrink: 0 }}
                   />
                 )}
-                <div style={{ flex: 1, padding: "14px 16px", minWidth: 0 }}>
-                  <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                    <span style={{
-                      display: "inline-block", fontSize: 11, fontWeight: 600, padding: "2px 8px",
-                      borderRadius: 999, background: cfg.bg, color: cfg.color, flexShrink: 0,
-                      boxShadow: "var(--clay-pill)",
-                    }}>
+                <div style={{ flex: 1, padding: '14px 16px', minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        fontSize: 11,
+                        fontWeight: 600,
+                        padding: '2px 8px',
+                        borderRadius: 999,
+                        background: cfg.bg,
+                        color: cfg.color,
+                        flexShrink: 0,
+                        boxShadow: 'var(--clay-pill)',
+                      }}
+                    >
                       {cfg.label}
                     </span>
-                    <strong style={{ fontSize: 14, color: "var(--color-text)", lineHeight: 1.3 }}>
-                      {ev.titulo}
-                    </strong>
+                    <strong style={{ fontSize: 14, color: 'var(--color-text)', lineHeight: 1.3 }}>{ev.titulo}</strong>
                   </div>
                   {ev.descripcion && (
-                    <p style={{ fontSize: 12.5, color: "var(--color-text-muted)", margin: "6px 0 0",
-                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                    <p
+                      style={{
+                        fontSize: 12.5,
+                        color: 'var(--color-text-muted)',
+                        margin: '6px 0 0',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
                       {ev.descripcion}
                     </p>
                   )}
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 8, flexWrap: "wrap" }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8, flexWrap: 'wrap' }}>
                     {ev.fechaInicio && (
-                      <span style={{ fontSize: 11.5, color: "var(--color-text-muted)", display: "flex", alignItems: "center", gap: 4 }}>
+                      <span
+                        style={{
+                          fontSize: 11.5,
+                          color: 'var(--color-text-muted)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
+                      >
                         <Clock size={11} />
-                        {new Date(ev.fechaInicio).toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" })}
+                        {new Date(ev.fechaInicio).toLocaleDateString('es-CO', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}
                       </span>
                     )}
                     {ev.ubicacion && (
-                      <span style={{ fontSize: 11.5, color: "var(--color-text-muted)", display: "flex", alignItems: "center", gap: 4 }}>
+                      <span
+                        style={{
+                          fontSize: 11.5,
+                          color: 'var(--color-text-muted)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4,
+                        }}
+                      >
                         <MapPin size={11} /> {ev.ubicacion}
                       </span>
                     )}
                     {adjuntoUrl && (
                       <a
-                        href={adjuntoUrl} target="_blank" rel="noreferrer"
-                        style={{ fontSize: 11.5, color: "var(--color-primary)", display: "flex", alignItems: "center", gap: 4, textDecoration: "none" }}
+                        href={adjuntoUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          fontSize: 11.5,
+                          color: 'var(--color-primary)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 4,
+                          textDecoration: 'none',
+                        }}
                       >
                         <Paperclip size={11} /> {adjuntoNombre}
                       </a>
                     )}
                   </div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "0 14px", flexShrink: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0 14px', flexShrink: 0 }}>
                   <Button variant="outline" size="sm" onClick={() => openEdit(ev)}>
                     <Edit2 size={14} /> Editar
                   </Button>
-                  <IconBtn label="Eliminar" color="var(--color-error-hover)" onClick={() => { setDeletingId(ev._id); setShowDelete(true); }}>
+                  <IconBtn
+                    label="Eliminar"
+                    color="var(--color-error-hover)"
+                    onClick={() => {
+                      setDeletingId(ev._id);
+                      setShowDelete(true);
+                    }}
+                  >
                     <Trash2 size={14} />
                   </IconBtn>
                 </div>
@@ -349,14 +418,13 @@ export default function EventosPage() {
 
       {/* FORM MODAL */}
       <Modal isOpen={showForm} onClose={() => setShowForm(false)} title="Evento">
-        <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-
+        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
             <Input
               label="Título *"
               name="titulo"
               value={form.titulo}
-              onChange={(e) => updateForm("titulo", e.target.value)}
+              onChange={(e) => updateForm('titulo', e.target.value)}
               placeholder="Nombre del evento"
               required
             />
@@ -368,7 +436,7 @@ export default function EventosPage() {
               label="Descripción *"
               name="descripcion"
               value={form.descripcion}
-              onChange={(e) => updateForm("descripcion", e.target.value)}
+              onChange={(e) => updateForm('descripcion', e.target.value)}
               placeholder="Descripción del evento (mínimo 10 caracteres)"
               rows={3}
             />
@@ -381,7 +449,7 @@ export default function EventosPage() {
               name="fechaInicio"
               type="datetime-local"
               value={form.fechaInicio}
-              onChange={(e) => updateForm("fechaInicio", e.target.value)}
+              onChange={(e) => updateForm('fechaInicio', e.target.value)}
             />
             <FieldError message={errors.fechaInicio} />
           </div>
@@ -392,7 +460,7 @@ export default function EventosPage() {
               name="fechaFin"
               type="datetime-local"
               value={form.fechaFin}
-              onChange={(e) => updateForm("fechaFin", e.target.value)}
+              onChange={(e) => updateForm('fechaFin', e.target.value)}
             />
             <FieldError message={errors.fechaFin} />
           </div>
@@ -403,7 +471,7 @@ export default function EventosPage() {
               name="hora"
               type="time"
               value={form.hora}
-              onChange={(e) => updateForm("hora", e.target.value)}
+              onChange={(e) => updateForm('hora', e.target.value)}
             />
             <FieldError message={errors.hora} />
           </div>
@@ -413,7 +481,7 @@ export default function EventosPage() {
               label="Ubicación *"
               name="ubicacion"
               value={form.ubicacion}
-              onChange={(e) => updateForm("ubicacion", e.target.value)}
+              onChange={(e) => updateForm('ubicacion', e.target.value)}
               placeholder="Aula, sala, enlace…"
               leftIcon={<MapPin size={16} />}
             />
@@ -425,11 +493,13 @@ export default function EventosPage() {
               label="Categoría *"
               name="categoria"
               value={form.categoria}
-              onChange={(e) => updateForm("categoria", e.target.value)}
+              onChange={(e) => updateForm('categoria', e.target.value)}
               required
             >
               {CATEGORIA_FORM_OPTIONS.map((key) => (
-                <option key={key} value={key}>{CATEGORIA_CFG[key].label}</option>
+                <option key={key} value={key}>
+                  {CATEGORIA_CFG[key].label}
+                </option>
               ))}
             </Select>
             <FieldError message={errors.categoria} />
@@ -437,29 +507,48 @@ export default function EventosPage() {
 
           {/* el backend exige cursosIds como array en cada creación/edición */}
           <div>
-            <p style={{ fontSize: 11.5, fontWeight: 700, color: "var(--color-text-muted)",
-              textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6, margin: "0 0 6px" }}>
+            <p
+              style={{
+                fontSize: 11.5,
+                fontWeight: 700,
+                color: 'var(--color-text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: 6,
+                margin: '0 0 6px',
+              }}
+            >
               Cursos asociados *
             </p>
             {cursos.length === 0 ? (
-              <p style={{ fontSize: 12.5, color: "var(--color-text-muted)" }}>
+              <p style={{ fontSize: 12.5, color: 'var(--color-text-muted)' }}>
                 No tienes cursos disponibles para asociar.
               </p>
             ) : (
-              <div style={{
-                display: "flex", flexDirection: "column", gap: 6,
-                maxHeight: 160, overflowY: "auto",
-                border: "1px solid var(--color-border)", borderRadius: 8, padding: 8,
-              }}>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 6,
+                  maxHeight: 160,
+                  overflowY: 'auto',
+                  border: '1px solid var(--color-border)',
+                  borderRadius: 8,
+                  padding: 8,
+                }}
+              >
                 {cursos.map((c) => (
                   <label
                     key={c._id}
-                    style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, cursor: "pointer" }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, cursor: 'pointer' }}
                   >
                     <input
                       type="checkbox"
                       checked={cursosIds.includes(c._id)}
-                      onChange={() => { clearError("cursosIds"); toggleCurso(c._id); }}
+                      onChange={() => {
+                        clearError('cursosIds');
+                        toggleCurso(c._id);
+                      }}
                     />
                     {c.nombre}
                   </label>
@@ -471,30 +560,52 @@ export default function EventosPage() {
 
           {/* Imagen de portada */}
           <div>
-            <p style={{ fontSize: 11.5, fontWeight: 700, color: "var(--color-text-muted)",
-              textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 6, margin: "0 0 6px" }}>
+            <p
+              style={{
+                fontSize: 11.5,
+                fontWeight: 700,
+                color: 'var(--color-text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                marginBottom: 6,
+                margin: '0 0 6px',
+              }}
+            >
               Imagen de portada
             </p>
             <input
-              ref={portadaRef} type="file" accept="image/jpeg,image/png,image/jpg,image/webp,image/gif"
-              style={{ display: "none" }}
-              onChange={e => setImagenPortada(e.target.files[0] ?? null)}
+              ref={portadaRef}
+              type="file"
+              accept="image/jpeg,image/png,image/jpg,image/webp,image/gif"
+              style={{ display: 'none' }}
+              onChange={(e) => setImagenPortada(e.target.files[0] ?? null)}
             />
             <button
-              type="button" onClick={() => portadaRef.current?.click()}
+              type="button"
+              onClick={() => portadaRef.current?.click()}
               style={{
-                display: "flex", alignItems: "center", gap: 7,
-                background: "none", border: "1.5px dashed var(--color-border)",
-                borderRadius: 8, padding: "8px 14px", cursor: "pointer",
-                fontSize: 12.5, color: "var(--color-text-muted)", width: "100%",
+                display: 'flex',
+                alignItems: 'center',
+                gap: 7,
+                background: 'none',
+                border: '1.5px dashed var(--color-border)',
+                borderRadius: 8,
+                padding: '8px 14px',
+                cursor: 'pointer',
+                fontSize: 12.5,
+                color: 'var(--color-text-muted)',
+                width: '100%',
               }}
             >
               <Image size={14} />
-              {imagenPortada ? imagenPortada.name : "Seleccionar imagen de portada (opcional)"}
+              {imagenPortada ? imagenPortada.name : 'Seleccionar imagen de portada (opcional)'}
               {imagenPortada && (
                 <span
-                  onClick={e => { e.stopPropagation(); setImagenPortada(null); }}
-                  style={{ marginLeft: "auto", cursor: "pointer", color: "var(--color-error-hover)" }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setImagenPortada(null);
+                  }}
+                  style={{ marginLeft: 'auto', cursor: 'pointer', color: 'var(--color-error-hover)' }}
                 >
                   <X size={13} />
                 </span>
@@ -504,31 +615,51 @@ export default function EventosPage() {
 
           {/* Adjunto */}
           <div>
-            <p style={{ fontSize: 11.5, fontWeight: 700, color: "var(--color-text-muted)",
-              textTransform: "uppercase", letterSpacing: "0.05em", margin: "0 0 6px" }}>
+            <p
+              style={{
+                fontSize: 11.5,
+                fontWeight: 700,
+                color: 'var(--color-text-muted)',
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                margin: '0 0 6px',
+              }}
+            >
               Archivo adjunto
             </p>
             <input
-              ref={adjuntoRef} type="file"
+              ref={adjuntoRef}
+              type="file"
               accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              style={{ display: "none" }}
-              onChange={e => setAdjunto(e.target.files[0] ?? null)}
+              style={{ display: 'none' }}
+              onChange={(e) => setAdjunto(e.target.files[0] ?? null)}
             />
             <button
-              type="button" onClick={() => adjuntoRef.current?.click()}
+              type="button"
+              onClick={() => adjuntoRef.current?.click()}
               style={{
-                display: "flex", alignItems: "center", gap: 7,
-                background: "none", border: "1.5px dashed var(--color-border)",
-                borderRadius: 8, padding: "8px 14px", cursor: "pointer",
-                fontSize: 12.5, color: "var(--color-text-muted)", width: "100%",
+                display: 'flex',
+                alignItems: 'center',
+                gap: 7,
+                background: 'none',
+                border: '1.5px dashed var(--color-border)',
+                borderRadius: 8,
+                padding: '8px 14px',
+                cursor: 'pointer',
+                fontSize: 12.5,
+                color: 'var(--color-text-muted)',
+                width: '100%',
               }}
             >
               <Paperclip size={14} />
-              {adjunto ? adjunto.name : "Adjuntar archivo (imagen, PDF, Word — opcional)"}
+              {adjunto ? adjunto.name : 'Adjuntar archivo (imagen, PDF, Word — opcional)'}
               {adjunto && (
                 <span
-                  onClick={e => { e.stopPropagation(); setAdjunto(null); }}
-                  style={{ marginLeft: "auto", cursor: "pointer", color: "var(--color-error-hover)" }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setAdjunto(null);
+                  }}
+                  style={{ marginLeft: 'auto', cursor: 'pointer', color: 'var(--color-error-hover)' }}
                 >
                   <X size={13} />
                 </span>
@@ -536,8 +667,15 @@ export default function EventosPage() {
             </button>
           </div>
 
-          <div style={{ display: "flex", justifyContent: "flex-end", gap: 10,
-            paddingTop: 10, borderTop: "1px solid var(--color-border)" }}>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              gap: 10,
+              paddingTop: 10,
+              borderTop: '1px solid var(--color-border)',
+            }}
+          >
             <Button variant="ghost" type="button" onClick={() => setShowForm(false)}>
               Cancelar
             </Button>
@@ -546,7 +684,6 @@ export default function EventosPage() {
               Guardar
             </Button>
           </div>
-
         </form>
       </Modal>
 

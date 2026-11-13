@@ -14,43 +14,56 @@ const ForumSidebar = ({
   const navigate = useNavigate();
 
   return (
-    <aside style={{
-      background: 'var(--color-surface)',
-      padding:    '16px 0',
-      minHeight:  '100%',
-      boxSizing:  'border-box',
-    }}>
+    <aside
+      style={{
+        background: 'var(--color-surface)',
+        padding: '16px 0',
+        minHeight: '100%',
+        boxSizing: 'border-box',
+      }}
+    >
       {/* Encabezado */}
-      <div style={{
-        display:        'flex',
-        alignItems:     'center',
-        justifyContent: 'space-between',
-        padding:        '0 14px 12px',
-        borderBottom:   '1px solid var(--color-border)',
-        marginBottom:   8,
-      }}>
-        <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.08em',
-          textTransform: 'uppercase', color: 'var(--color-text-muted)' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 14px 12px',
+          borderBottom: '1px solid var(--color-border)',
+          marginBottom: 8,
+        }}
+      >
+        <span
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: '0.08em',
+            textTransform: 'uppercase',
+            color: 'var(--color-text-muted)',
+          }}
+        >
           Foros del curso
         </span>
         {canCreate && (
-          <button type="button" onClick={onCreateClick}
+          <button
+            type="button"
+            onClick={onCreateClick}
             style={{
-              background:   'rgba(12,106,196,0.10)',
-              border:       'none',
+              background: 'rgba(12,106,196,0.10)',
+              border: 'none',
               borderRadius: 7,
-              padding:      '5px 10px',
-              cursor:       'pointer',
-              color:        'var(--color-primary)',
-              display:      'flex',
-              alignItems:   'center',
-              gap:          5,
-              fontSize:     12,
-              fontWeight:   700,
-              transition:   'background 0.15s',
+              padding: '5px 10px',
+              cursor: 'pointer',
+              color: 'var(--color-primary)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 5,
+              fontSize: 12,
+              fontWeight: 700,
+              transition: 'background 0.15s',
             }}
-            onMouseEnter={e => e.currentTarget.style.background = 'rgba(12,106,196,0.18)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'rgba(12,106,196,0.10)'}
+            onMouseEnter={(e) => (e.currentTarget.style.background = 'rgba(12,106,196,0.18)')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'rgba(12,106,196,0.10)')}
           >
             <Plus size={14} /> Nuevo foro
           </button>
@@ -60,60 +73,83 @@ const ForumSidebar = ({
       {/* Lista de foros */}
       {loading ? (
         <div style={{ padding: '0 10px', display: 'flex', flexDirection: 'column', gap: 6 }}>
-          {[1, 2, 3].map(i => (
-            <div key={i} style={{
-              height: 52, borderRadius: 8,
-              background: 'var(--color-surface-2)',
-              animation: 'fm-pulse 1.4s ease-in-out infinite',
-            }} />
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              style={{
+                height: 52,
+                borderRadius: 8,
+                background: 'var(--color-surface-2)',
+                animation: 'fm-pulse 1.4s ease-in-out infinite',
+              }}
+            />
           ))}
         </div>
       ) : forums.length === 0 ? (
-        <p style={{ textAlign: 'center', fontSize: 12.5, color: 'var(--color-text-muted)',
-          padding: '24px 14px', lineHeight: 1.5 }}>
+        <p
+          style={{
+            textAlign: 'center',
+            fontSize: 12.5,
+            color: 'var(--color-text-muted)',
+            padding: '24px 14px',
+            lineHeight: 1.5,
+          }}
+        >
           No hay foros en este curso.
         </p>
       ) : (
         <nav style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: '0 8px' }}>
-          {forums.map(f => {
-            const isActive  = f._id === currentId;
-            const isClosed  = f.estado === 'cerrado' || f.cerrado;
-            const Icon      = isClosed ? Lock : MessageSquare;
-            const iconColor = isActive ? 'var(--color-primary)' : isClosed
-              ? 'var(--color-text-muted)' : 'var(--color-text-muted)';
+          {forums.map((f) => {
+            const isActive = f._id === currentId;
+            const isClosed = f.estado === 'cerrado' || f.cerrado;
+            const Icon = isClosed ? Lock : MessageSquare;
+            const iconColor = isActive
+              ? 'var(--color-primary)'
+              : isClosed
+                ? 'var(--color-text-muted)'
+                : 'var(--color-text-muted)';
 
             return (
               <button
                 key={f._id}
                 type="button"
-                onClick={() => { navigate(`/curso/${cursoId}/foro/${f._id}`); onClose?.(); }}
-                style={{
-                  width:          '100%',
-                  display:        'flex',
-                  alignItems:     'flex-start',
-                  gap:            10,
-                  padding:        '9px 10px',
-                  borderRadius:   8,
-                  border:         'none',
-                  cursor:         'pointer',
-                  textAlign:      'left',
-                  background:     isActive ? 'rgba(12,106,196,0.08)' : 'transparent',
-                  transition:     'background 0.15s',
+                onClick={() => {
+                  navigate(`/curso/${cursoId}/foro/${f._id}`);
+                  onClose?.();
                 }}
-                onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'var(--color-surface-2)'; }}
-                onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
+                style={{
+                  width: '100%',
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 10,
+                  padding: '9px 10px',
+                  borderRadius: 8,
+                  border: 'none',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  background: isActive ? 'rgba(12,106,196,0.08)' : 'transparent',
+                  transition: 'background 0.15s',
+                }}
+                onMouseEnter={(e) => {
+                  if (!isActive) e.currentTarget.style.background = 'var(--color-surface-2)';
+                }}
+                onMouseLeave={(e) => {
+                  if (!isActive) e.currentTarget.style.background = 'transparent';
+                }}
               >
                 <Icon size={14} style={{ flexShrink: 0, marginTop: 2, color: iconColor }} />
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{
-                    margin:        0,
-                    fontSize:      13,
-                    fontWeight:    isActive ? 700 : 500,
-                    color:         isActive ? 'var(--color-primary)' : 'var(--color-text)',
-                    overflow:      'hidden',
-                    textOverflow:  'ellipsis',
-                    whiteSpace:    'nowrap',
-                  }}>
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: 13,
+                      fontWeight: isActive ? 700 : 500,
+                      color: isActive ? 'var(--color-primary)' : 'var(--color-text)',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
                     {f.titulo}
                   </p>
                   <p style={{ margin: '2px 0 0', fontSize: 11, color: 'var(--color-text-muted)' }}>

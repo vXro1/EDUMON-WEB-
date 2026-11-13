@@ -1,7 +1,6 @@
 import { apiFetch, apiFetchFormData } from './core/apiClient';
 
-export const institucionesCreate = (body) =>
-  apiFetch('/instituciones', { method: 'POST', body: JSON.stringify(body) });
+export const institucionesCreate = (body) => apiFetch('/instituciones', { method: 'POST', body: JSON.stringify(body) });
 
 export const institucionesGetAll = () => apiFetch('/instituciones');
 
@@ -11,8 +10,7 @@ export const institucionesUpdate = (id, body) =>
 // irreversible: borra la institución y todo lo que depende de ella (cursos,
 // tareas, entregas, eventos, foros, docentes/admins y los padres que se
 // queden sin ningún otro curso)
-export const institucionesDelete = (id) =>
-  apiFetch(`/instituciones/${id}`, { method: 'DELETE' });
+export const institucionesDelete = (id) => apiFetch(`/instituciones/${id}`, { method: 'DELETE' });
 
 export const institucionesGetMine = () => apiFetch('/instituciones/mi-institucion');
 

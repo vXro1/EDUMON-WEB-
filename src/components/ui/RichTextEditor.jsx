@@ -1,14 +1,14 @@
-import { useEffect, useId, useRef } from "react";
-import { Bold, Italic, Underline, List, ListOrdered, Minus } from "lucide-react";
-import { isRichTextEmpty } from "@/utils/richText";
+import { useEffect, useId, useRef } from 'react';
+import { Bold, Italic, Underline, List, ListOrdered, Minus } from 'lucide-react';
+import { isRichTextEmpty } from '@/utils/richText';
 
 const TOOLBAR_BTNS = [
-  { cmd: "bold", icon: Bold, label: "Negrita" },
-  { cmd: "italic", icon: Italic, label: "Cursiva" },
-  { cmd: "underline", icon: Underline, label: "Subrayado" },
-  { cmd: "insertUnorderedList", icon: List, label: "Lista con viñetas" },
-  { cmd: "insertOrderedList", icon: ListOrdered, label: "Lista numerada" },
-  { cmd: "insertHorizontalRule", icon: Minus, label: "Separador" },
+  { cmd: 'bold', icon: Bold, label: 'Negrita' },
+  { cmd: 'italic', icon: Italic, label: 'Cursiva' },
+  { cmd: 'underline', icon: Underline, label: 'Subrayado' },
+  { cmd: 'insertUnorderedList', icon: List, label: 'Lista con viñetas' },
+  { cmd: 'insertOrderedList', icon: ListOrdered, label: 'Lista numerada' },
+  { cmd: 'insertHorizontalRule', icon: Minus, label: 'Separador' },
 ];
 
 /* ══════════════════════════════════════════════════════════════
@@ -25,9 +25,9 @@ const TOOLBAR_BTNS = [
    posición del cursor apenas el usuario tecleara.
    ══════════════════════════════════════════════════════════════ */
 export default function RichTextEditor({
-  value = "",
+  value = '',
   onChange,
-  placeholder = "Escribe aquí…",
+  placeholder = 'Escribe aquí…',
   label,
   hint,
   error,
@@ -43,19 +43,23 @@ export default function RichTextEditor({
   const empty = isRichTextEmpty(value);
 
   useEffect(() => {
-    try { document.execCommand("defaultParagraphSeparator", false, "p"); } catch { /* no-op */ }
+    try {
+      document.execCommand('defaultParagraphSeparator', false, 'p');
+    } catch {
+      /* no-op */
+    }
   }, []);
 
   useEffect(() => {
-    if (ref.current && ref.current.innerHTML !== (value || "")) {
-      ref.current.innerHTML = value || "";
+    if (ref.current && ref.current.innerHTML !== (value || '')) {
+      ref.current.innerHTML = value || '';
     }
   }, [value]);
 
   const exec = (cmd) => {
     ref.current?.focus();
     document.execCommand(cmd, false, null);
-    onChange?.(ref.current?.innerHTML ?? "");
+    onChange?.(ref.current?.innerHTML ?? '');
   };
 
   return (
@@ -66,7 +70,7 @@ export default function RichTextEditor({
         </label>
       )}
 
-      <div className={`rte${error ? " rte-error" : ""}${compact ? " rte-compact" : ""}`}>
+      <div className={`rte${error ? ' rte-error' : ''}${compact ? ' rte-compact' : ''}`}>
         <div className="rte-toolbar" role="toolbar" aria-label="Formato de texto">
           {TOOLBAR_BTNS.map((b) => (
             <button
@@ -95,7 +99,7 @@ export default function RichTextEditor({
             aria-multiline="true"
             aria-invalid={!!error}
             style={{ minHeight, maxHeight }}
-            onInput={() => onChange?.(ref.current?.innerHTML ?? "")}
+            onInput={() => onChange?.(ref.current?.innerHTML ?? '')}
             onKeyDown={onKeyDown}
           />
         </div>

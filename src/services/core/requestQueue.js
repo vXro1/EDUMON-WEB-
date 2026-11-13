@@ -32,7 +32,11 @@ export function queueRequest(key, startFn) {
 
 export function abortAll() {
   for (const { controller } of inflight.values()) {
-    try { controller.abort(); } catch { /* ignorar */ }
+    try {
+      controller.abort();
+    } catch {
+      /* ignorar */
+    }
   }
   inflight.clear();
 }
@@ -40,7 +44,9 @@ export function abortAll() {
 export function abortKey(key) {
   const entry = inflight.get(key);
   if (entry) {
-    try { entry.controller.abort(); } catch {}
+    try {
+      entry.controller.abort();
+    } catch {}
     inflight.delete(key);
   }
 }

@@ -1,28 +1,19 @@
-import { memo, useMemo, useState } from "react";
-import useUserStore from "@/store/useUserStore";
+import { memo, useMemo, useState } from 'react';
+import useUserStore from '@/store/useUserStore';
 
 // solo se usa dentro del dashboard, así que puede asumir el azul de marca directamente
-const PALETTE = [
-  "#0C6AC4",
-  "#F23D7F",
-  "#05C7F2",
-  "#41D958",
-  "#FCBD00",
-  "#46A8EA",
-  "#F45194",
-  "#25CEF5",
-];
+const PALETTE = ['#0C6AC4', '#F23D7F', '#05C7F2', '#41D958', '#FCBD00', '#46A8EA', '#F45194', '#25CEF5'];
 
 const ROLE_BORDER = {
-  docente:       "var(--color-primary)",
-  estudiante:    "#41D958",
-  familia:       "#FCBD00",
-  padre:         "#FCBD00",
-  admin:         "#F23D7F",
-  administrador: "#F23D7F",
+  docente: 'var(--color-primary)',
+  estudiante: '#41D958',
+  familia: '#FCBD00',
+  padre: '#FCBD00',
+  admin: '#F23D7F',
+  administrador: '#F23D7F',
 };
 
-function hash(str = "") {
+function hash(str = '') {
   let h = 0;
   for (let i = 0; i < str.length; i++) {
     h = (h << 5) - h + str.charCodeAt(i);
@@ -32,7 +23,7 @@ function hash(str = "") {
 }
 
 function pickColor(user) {
-  const key = `${user?.nombre ?? ""}${user?.apellido ?? ""}`;
+  const key = `${user?.nombre ?? ''}${user?.apellido ?? ''}`;
   return PALETTE[hash(key) % PALETTE.length];
 }
 
@@ -45,13 +36,13 @@ function luminance(hex) {
 }
 
 function textColorFor(hex) {
-  return 1.05 / (luminance(hex) + 0.05) >= 4.5 ? "#FFFFFF" : "#0D0D0D";
+  return 1.05 / (luminance(hex) + 0.05) >= 4.5 ? '#FFFFFF' : '#0D0D0D';
 }
 
 function initials(user) {
-  const n = user?.nombre?.[0] || "";
-  const a = user?.apellido?.[0] || "";
-  return (n + a).toUpperCase() || "?";
+  const n = user?.nombre?.[0] || '';
+  const a = user?.apellido?.[0] || '';
+  return (n + a).toUpperCase() || '?';
 }
 
 // Wrapped in React.memo to prevent re-renders in large lists.
@@ -69,81 +60,84 @@ const UserAvatar = memo(function UserAvatar({
   const [error, setError] = useState(false);
 
   // Read from global store only when showStatus is requested
-  const storeOnline = useUserStore((s) =>
-    showStatus && user?._id ? s.onlineUsers[user._id] : undefined
-  );
+  const storeOnline = useUserStore((s) => (showStatus && user?._id ? s.onlineUsers[user._id] : undefined));
 
   const hasPhoto = !!user?.fotoPerfilUrl && !error;
   const bg = useMemo(() => pickColor(user), [user]);
   const fg = useMemo(() => textColorFor(bg), [bg]);
   const text = useMemo(() => initials(user), [user]);
 
-  const tooltip =
-    title?.trim() ||
-    `${user?.nombre ?? ""} ${user?.apellido ?? ""}`.trim() ||
-    "Usuario";
+  const tooltip = title?.trim() || `${user?.nombre ?? ''} ${user?.apellido ?? ''}`.trim() || 'Usuario';
 
-  const borderColor = ROLE_BORDER[user?.rol] || "transparent";
+  const borderColor = ROLE_BORDER[user?.rol] || 'transparent';
 
   // Explicit prop takes precedence; otherwise fall back to store value
-  const resolvedStatus = status ?? (storeOnline ? "online" : "offline");
+  const resolvedStatus = status ?? (storeOnline ? 'online' : 'offline');
 
   return (
     <div
       title={tooltip}
-      role={onClick ? "button" : undefined}
+      role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
       onClick={onClick}
-      onKeyDown={onClick ? (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick(e); } } : undefined}
+      onKeyDown={
+        onClick
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onClick(e);
+              }
+            }
+          : undefined
+      }
       style={{
         width: size,
         height: size,
-        borderRadius: "50%",
-        position: "relative",
+        borderRadius: '50%',
+        position: 'relative',
         flexShrink: 0,
-        overflow: "hidden",
-        background: hasPhoto ? "#e5e7eb" : bg,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        overflow: 'hidden',
+        background: hasPhoto ? '#e5e7eb' : bg,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         /* box-shadow en lugar de border: no afecta el box-model ni genera overflow */
-        boxShadow: borderColor !== "transparent"
-          ? `0 0 0 2px ${borderColor}, 0 0 0 3.5px rgba(255,255,255,0.85)`
-          : undefined,
-        transition: "transform 0.15s ease",
-        cursor: onClick ? "pointer" : "default",
+        boxShadow:
+          borderColor !== 'transparent' ? `0 0 0 2px ${borderColor}, 0 0 0 3.5px rgba(255,255,255,0.85)` : undefined,
+        transition: 'transform 0.15s ease',
+        cursor: onClick ? 'pointer' : 'default',
         ...style,
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
-      onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+      onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
+      onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
     >
       {hasPhoto ? (
-        <img loading="lazy" decoding="async"
+        <img
+          loading="lazy"
+          decoding="async"
           src={user.fotoPerfilUrl}
           alt={tooltip}
           width={size}
           height={size}
           onError={() => setError(true)}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
         />
       ) : (
-        <span style={{ fontWeight: 700, color: fg, fontSize: size * 0.35 }}>
-          {text}
-        </span>
+        <span style={{ fontWeight: 700, color: fg, fontSize: size * 0.35 }}>{text}</span>
       )}
 
       {/* ONLINE STATUS dot */}
       {showStatus && (
         <span
           style={{
-            position: "absolute",
+            position: 'absolute',
             bottom: 2,
             right: 2,
             width: size * 0.28,
             height: size * 0.28,
-            borderRadius: "50%",
-            background: resolvedStatus === "online" ? "#22c55e" : "#9ca3af",
-            border: "2px solid white",
+            borderRadius: '50%',
+            background: resolvedStatus === 'online' ? '#22c55e' : '#9ca3af',
+            border: '2px solid white',
           }}
         />
       )}

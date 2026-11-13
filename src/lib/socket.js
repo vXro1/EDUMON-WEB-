@@ -1,6 +1,6 @@
 // io() sin url conecta contra window.location.origin; nginx reenvía
 // /socket.io/ al backend. Auth va por cookie httpOnly (withCredentials).
-import { io } from "socket.io-client";
+import { io } from 'socket.io-client';
 
 let socket = null;
 

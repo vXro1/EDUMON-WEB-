@@ -1,62 +1,80 @@
 // calendario general para docente y administrador
-import { useState, useCallback } from "react";
-import { useQueries, useQueryClient } from "@tanstack/react-query";
-import { CalendarDays } from "lucide-react";
-import { useCursosListado } from "@/features/cursos/hooks/useListados";
-import { queryKeys } from "@/services/queryKeys";
-import { normalizeRole, ROLES } from "@/security/roleMatrix";
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { calendarioGetByCurso } from "@/features/calendario/services/calendarioService";
-import { eventosDelete, eventosCreateSimple, eventosUpdateSimple } from "@/features/eventos/services/eventosService";
-import { usePermission, PERMISSIONS } from "@/hooks/usePermission";
-import { cuerpoEvento, cambiosEvento, validarEvento, formDesdeEvento } from "@/features/eventos/utils/eventoForm";
-import CalendarWidget from "@/components/ui/CalendarWidget";
-import { Modal, Button } from "@/components";
+import { useState, useCallback } from 'react';
+import { useQueries, useQueryClient } from '@tanstack/react-query';
+import { CalendarDays } from 'lucide-react';
+import { useCursosListado } from '@/features/cursos/hooks/useListados';
+import { queryKeys } from '@/services/queryKeys';
+import { normalizeRole, ROLES } from '@/security/roleMatrix';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { calendarioGetByCurso } from '@/features/calendario/services/calendarioService';
+import { eventosDelete, eventosCreateSimple, eventosUpdateSimple } from '@/features/eventos/services/eventosService';
+import { usePermission, PERMISSIONS } from '@/hooks/usePermission';
+import { cuerpoEvento, cambiosEvento, validarEvento, formDesdeEvento } from '@/features/eventos/utils/eventoForm';
+import CalendarWidget from '@/components/ui/CalendarWidget';
+import { Modal, Button } from '@/components';
 
 const SIN_DATOS = [];
 
 const CATEGORIAS = [
-  { value: "escuela_padres", label: "Escuela de padres" },
-  { value: "tarea",          label: "Reto"              },
-  { value: "institucional",  label: "Institucional"     },
+  { value: 'escuela_padres', label: 'Escuela de padres' },
+  { value: 'tarea', label: 'Reto' },
+  { value: 'institucional', label: 'Institucional' },
 ];
 
 const EMPTY_FORM = {
-  titulo: "", descripcion: "", fechaInicio: "", fechaFin: "",
-  hora: "", ubicacion: "", categoria: "institucional",
+  titulo: '',
+  descripcion: '',
+  fechaInicio: '',
+  fechaFin: '',
+  hora: '',
+  ubicacion: '',
+  categoria: 'institucional',
 };
 
 const inp = {
-  width: "100%", padding: "9px 12px", fontSize: 13.5,
-  border: "1.5px solid var(--color-border)", borderRadius: 10,
-  background: "var(--color-bg)", color: "var(--color-text)",
-  boxSizing: "border-box",
+  width: '100%',
+  padding: '9px 12px',
+  fontSize: 13.5,
+  border: '1.5px solid var(--color-border)',
+  borderRadius: 10,
+  background: 'var(--color-bg)',
+  color: 'var(--color-text)',
+  boxSizing: 'border-box',
 };
 const lbl = {
-  fontSize: 12, fontWeight: 700, color: "var(--color-text-muted)",
-  marginBottom: 5, display: "block",
+  fontSize: 12,
+  fontWeight: 700,
+  color: 'var(--color-text-muted)',
+  marginBottom: 5,
+  display: 'block',
 };
 
 // ─── Modal crear evento (requiere seleccionar curso) ─────────────────────
 function CreateEventoModal({ cursos, onClose, onSaved }) {
-  const [form,    setForm]    = useState(EMPTY_FORM);
-  const [cursoId, setCursoId] = useState(cursos.length === 1 ? cursos[0]._id : "");
-  const [saving,  setSaving]  = useState(false);
-  const [error,   setError]   = useState("");
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [cursoId, setCursoId] = useState(cursos.length === 1 ? cursos[0]._id : '');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
 
-  const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
+  const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
 
   const handleSave = async () => {
-    if (!cursoId) { setError("Debes seleccionar un curso."); return; }
+    if (!cursoId) {
+      setError('Debes seleccionar un curso.');
+      return;
+    }
     const invalido = validarEvento(form);
-    if (invalido) { setError(invalido); return; }
+    if (invalido) {
+      setError(invalido);
+      return;
+    }
     setSaving(true);
-    setError("");
+    setError('');
     try {
       await eventosCreateSimple({ ...cuerpoEvento(form), cursosIds: [cursoId] });
       onSaved();
     } catch (err) {
-      setError(err.message || "No se pudo crear el evento.");
+      setError(err.message || 'No se pudo crear el evento.');
     } finally {
       setSaving(false);
     }
@@ -64,66 +82,109 @@ function CreateEventoModal({ cursos, onClose, onSaved }) {
 
   return (
     <Modal isOpen onClose={onClose} size="md" title="Nuevo evento" description="Crea un evento para un curso">
-      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         {error && (
-          <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 10, padding: "10px 14px", fontSize: 13, color: "var(--color-error-hover)" }}>
+          <div
+            style={{
+              background: 'rgba(239,68,68,0.08)',
+              border: '1px solid rgba(239,68,68,0.3)',
+              borderRadius: 10,
+              padding: '10px 14px',
+              fontSize: 13,
+              color: 'var(--color-error-hover)',
+            }}
+          >
             {error}
           </div>
         )}
 
         <div>
           <label style={lbl}>Curso *</label>
-          <select style={inp} value={cursoId} onChange={e => setCursoId(e.target.value)}>
+          <select style={inp} value={cursoId} onChange={(e) => setCursoId(e.target.value)}>
             <option value="">— Selecciona un curso —</option>
-            {cursos.map(c => (
-              <option key={c._id} value={c._id}>{c.nombre ?? c.name ?? c._id}</option>
+            {cursos.map((c) => (
+              <option key={c._id} value={c._id}>
+                {c.nombre ?? c.name ?? c._id}
+              </option>
             ))}
           </select>
         </div>
 
         <div>
           <label style={lbl}>Título *</label>
-          <input style={inp} value={form.titulo} onChange={e => set("titulo", e.target.value)} placeholder="Nombre del evento" />
+          <input
+            style={inp}
+            value={form.titulo}
+            onChange={(e) => set('titulo', e.target.value)}
+            placeholder="Nombre del evento"
+          />
         </div>
 
         <div>
           <label style={lbl}>Descripción *</label>
-          <textarea style={{ ...inp, resize: "vertical", minHeight: 72 }} value={form.descripcion} onChange={e => set("descripcion", e.target.value)} placeholder="Mínimo 10 caracteres" />
+          <textarea
+            style={{ ...inp, resize: 'vertical', minHeight: 72 }}
+            value={form.descripcion}
+            onChange={(e) => set('descripcion', e.target.value)}
+            placeholder="Mínimo 10 caracteres"
+          />
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
             <label style={lbl}>Fecha inicio *</label>
-            <input style={inp} type="date" value={form.fechaInicio} onChange={e => set("fechaInicio", e.target.value)} />
+            <input
+              style={inp}
+              type="date"
+              value={form.fechaInicio}
+              onChange={(e) => set('fechaInicio', e.target.value)}
+            />
           </div>
           <div>
             <label style={lbl}>Fecha fin</label>
-            <input style={inp} type="date" value={form.fechaFin} min={form.fechaInicio} onChange={e => set("fechaFin", e.target.value)} />
+            <input
+              style={inp}
+              type="date"
+              value={form.fechaFin}
+              min={form.fechaInicio}
+              onChange={(e) => set('fechaFin', e.target.value)}
+            />
           </div>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
             <label style={lbl}>Hora *</label>
-            <input style={inp} type="time" value={form.hora} onChange={e => set("hora", e.target.value)} />
+            <input style={inp} type="time" value={form.hora} onChange={(e) => set('hora', e.target.value)} />
           </div>
           <div>
             <label style={lbl}>Categoría</label>
-            <select style={inp} value={form.categoria} onChange={e => set("categoria", e.target.value)}>
-              {CATEGORIAS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+            <select style={inp} value={form.categoria} onChange={(e) => set('categoria', e.target.value)}>
+              {CATEGORIAS.map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
+                </option>
+              ))}
             </select>
           </div>
         </div>
 
         <div>
           <label style={lbl}>Ubicación *</label>
-          <input style={inp} value={form.ubicacion} onChange={e => set("ubicacion", e.target.value)} placeholder="Salón, virtual, etc." />
+          <input
+            style={inp}
+            value={form.ubicacion}
+            onChange={(e) => set('ubicacion', e.target.value)}
+            placeholder="Salón, virtual, etc."
+          />
         </div>
 
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
-          <Button variant="ghost" size="sm" onClick={onClose}>Cancelar</Button>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 4 }}>
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            Cancelar
+          </Button>
           <Button size="sm" onClick={handleSave} disabled={saving}>
-            {saving ? "Creando…" : "Crear evento"}
+            {saving ? 'Creando…' : 'Crear evento'}
           </Button>
         </div>
       </div>
@@ -134,24 +195,30 @@ function CreateEventoModal({ cursos, onClose, onSaved }) {
 // ─── Modal editar evento (el evento ya tiene cursoId) ────────────────────
 function EditEventoModal({ evento, onClose, onSaved }) {
   const [original] = useState(() => formDesdeEvento(evento));
-  const [form,   setForm]   = useState(original);
+  const [form, setForm] = useState(original);
   const [saving, setSaving] = useState(false);
-  const [error,  setError]  = useState("");
+  const [error, setError] = useState('');
 
-  const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
+  const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
 
   const handleSave = async () => {
     const body = cambiosEvento(original, form);
-    if (Object.keys(body).length === 0) { onClose(); return; }
+    if (Object.keys(body).length === 0) {
+      onClose();
+      return;
+    }
     const invalido = validarEvento(form, Object.keys(body));
-    if (invalido) { setError(invalido); return; }
+    if (invalido) {
+      setError(invalido);
+      return;
+    }
     setSaving(true);
-    setError("");
+    setError('');
     try {
       await eventosUpdateSimple(evento._id ?? evento.id, body);
       onSaved();
     } catch (err) {
-      setError(err.message || "No se pudo guardar el evento.");
+      setError(err.message || 'No se pudo guardar el evento.');
     } finally {
       setSaving(false);
     }
@@ -159,50 +226,85 @@ function EditEventoModal({ evento, onClose, onSaved }) {
 
   return (
     <Modal isOpen onClose={onClose} size="md" title="Editar evento" description="Modifica los datos del evento">
-      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         {error && (
-          <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: 10, padding: "10px 14px", fontSize: 13, color: "var(--color-error-hover)" }}>
+          <div
+            style={{
+              background: 'rgba(239,68,68,0.08)',
+              border: '1px solid rgba(239,68,68,0.3)',
+              borderRadius: 10,
+              padding: '10px 14px',
+              fontSize: 13,
+              color: 'var(--color-error-hover)',
+            }}
+          >
             {error}
           </div>
         )}
         <div>
           <label style={lbl}>Título *</label>
-          <input style={inp} value={form.titulo} onChange={e => set("titulo", e.target.value)} />
+          <input style={inp} value={form.titulo} onChange={(e) => set('titulo', e.target.value)} />
         </div>
         <div>
           <label style={lbl}>Descripción *</label>
-          <textarea style={{ ...inp, resize: "vertical", minHeight: 72 }} value={form.descripcion} onChange={e => set("descripcion", e.target.value)} />
+          <textarea
+            style={{ ...inp, resize: 'vertical', minHeight: 72 }}
+            value={form.descripcion}
+            onChange={(e) => set('descripcion', e.target.value)}
+          />
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
             <label style={lbl}>Fecha inicio *</label>
-            <input style={inp} type="date" value={form.fechaInicio} onChange={e => set("fechaInicio", e.target.value)} />
+            <input
+              style={inp}
+              type="date"
+              value={form.fechaInicio}
+              onChange={(e) => set('fechaInicio', e.target.value)}
+            />
           </div>
           <div>
             <label style={lbl}>Fecha fin</label>
-            <input style={inp} type="date" value={form.fechaFin} min={form.fechaInicio} onChange={e => set("fechaFin", e.target.value)} />
+            <input
+              style={inp}
+              type="date"
+              value={form.fechaFin}
+              min={form.fechaInicio}
+              onChange={(e) => set('fechaFin', e.target.value)}
+            />
           </div>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
             <label style={lbl}>Hora *</label>
-            <input style={inp} type="time" value={form.hora} onChange={e => set("hora", e.target.value)} />
+            <input style={inp} type="time" value={form.hora} onChange={(e) => set('hora', e.target.value)} />
           </div>
           <div>
             <label style={lbl}>Categoría</label>
-            <select style={inp} value={form.categoria} onChange={e => set("categoria", e.target.value)}>
-              {CATEGORIAS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+            <select style={inp} value={form.categoria} onChange={(e) => set('categoria', e.target.value)}>
+              {CATEGORIAS.map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
+                </option>
+              ))}
             </select>
           </div>
         </div>
         <div>
           <label style={lbl}>Ubicación *</label>
-          <input style={inp} value={form.ubicacion} onChange={e => set("ubicacion", e.target.value)} placeholder="Salón, virtual, etc." />
+          <input
+            style={inp}
+            value={form.ubicacion}
+            onChange={(e) => set('ubicacion', e.target.value)}
+            placeholder="Salón, virtual, etc."
+          />
         </div>
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
-          <Button variant="ghost" size="sm" onClick={onClose}>Cancelar</Button>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 4 }}>
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            Cancelar
+          </Button>
           <Button size="sm" onClick={handleSave} disabled={saving}>
-            {saving ? "Guardando…" : "Guardar cambios"}
+            {saving ? 'Guardando…' : 'Guardar cambios'}
           </Button>
         </div>
       </div>
@@ -218,43 +320,47 @@ export default function CalendarioPage() {
   const { user } = useAuth();
 
   const [createOpen, setCreateOpen] = useState(false);
-  const [editEvt,    setEditEvt]    = useState(null);
+  const [editEvt, setEditEvt] = useState(null);
   const queryClient = useQueryClient();
 
   // Cursos visibles (admin: todos; resto: los suyos) y, en paralelo, el
   // calendario de cada uno, en caché por curso (queryKeys.calendario.byCurso)
   const cursosQuery = useCursosListado({
-    alcance: normalizeRole(user?.rol) === ROLES.ADMIN ? "todos" : "mios",
+    alcance: normalizeRole(user?.rol) === ROLES.ADMIN ? 'todos' : 'mios',
     params: { limit: 50 },
     enabled: Boolean(user),
   });
   const cursos = cursosQuery.data?.cursos ?? SIN_DATOS;
   // une los calendarios de todos los cursos; un curso cuyo calendario falle
   // se ignora, como antes
-  const combinar = useCallback((resultados) => {
-    let totalTareas = 0, totalEventos = 0, tareasVencidas = 0, eventosProximos = 0;
-    const allItems = [];
-    resultados.forEach((q, i) => {
-      const res = q.data;
-      if (!res) return;
-      (res.items ?? []).forEach((item) =>
-        allItems.push({ ...item, cursoNombre: cursos[i]?.nombre ?? "Sin nombre" })
-      );
-      const st = res.estadisticas;
-      if (st) {
-        totalTareas     += st.totalTareas     ?? 0;
-        totalEventos    += st.totalEventos    ?? 0;
-        tareasVencidas  += st.tareasVencidas  ?? 0;
-        eventosProximos += st.eventosProximos ?? 0;
-      }
-    });
-    allItems.sort((x, y) => new Date(x.fecha) - new Date(y.fecha));
-    return {
-      items: allItems,
-      stats: { totalTareas, totalEventos, tareasVencidas, eventosProximos },
-      cargando: resultados.some((q) => q.isLoading),
-    };
-  }, [cursos]);
+  const combinar = useCallback(
+    (resultados) => {
+      let totalTareas = 0,
+        totalEventos = 0,
+        tareasVencidas = 0,
+        eventosProximos = 0;
+      const allItems = [];
+      resultados.forEach((q, i) => {
+        const res = q.data;
+        if (!res) return;
+        (res.items ?? []).forEach((item) => allItems.push({ ...item, cursoNombre: cursos[i]?.nombre ?? 'Sin nombre' }));
+        const st = res.estadisticas;
+        if (st) {
+          totalTareas += st.totalTareas ?? 0;
+          totalEventos += st.totalEventos ?? 0;
+          tareasVencidas += st.tareasVencidas ?? 0;
+          eventosProximos += st.eventosProximos ?? 0;
+        }
+      });
+      allItems.sort((x, y) => new Date(x.fecha) - new Date(y.fecha));
+      return {
+        items: allItems,
+        stats: { totalTareas, totalEventos, tareasVencidas, eventosProximos },
+        cargando: resultados.some((q) => q.isLoading),
+      };
+    },
+    [cursos],
+  );
 
   const { items, stats, cargando } = useQueries({
     queries: cursos.map((c) => ({
@@ -280,29 +386,42 @@ export default function CalendarioPage() {
   };
 
   return (
-    <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+    <div style={{ maxWidth: 1100, margin: '0 auto' }}>
       {/* Encabezado */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
-        <div style={{
-          width: 42, height: 42, borderRadius: 12,
-          background: "rgba(12,106,196,0.1)",
-          display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
-        }}>
-          <CalendarDays size={20} style={{ color: "var(--color-primary)" }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+        <div
+          style={{
+            width: 42,
+            height: 42,
+            borderRadius: 12,
+            background: 'rgba(12,106,196,0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexShrink: 0,
+          }}
+        >
+          <CalendarDays size={20} style={{ color: 'var(--color-primary)' }} />
         </div>
         <div>
-          <h1 style={{ margin: 0, fontSize: "1.2rem", fontWeight: 800, color: "var(--color-text)" }}>
-            Calendario
-          </h1>
-          <p style={{ margin: 0, fontSize: "0.8rem", color: "var(--color-text-muted)" }}>
+          <h1 style={{ margin: 0, fontSize: '1.2rem', fontWeight: 800, color: 'var(--color-text)' }}>Calendario</h1>
+          <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
             Retos y eventos de todos tus cursos
           </p>
         </div>
       </div>
 
       {error ? (
-        <div style={{ textAlign: "center", padding: "48px 24px", background: "var(--color-surface)", borderRadius: 16, border: "1px solid var(--color-border)" }}>
-          <p style={{ fontSize: 14, color: "var(--color-text-muted)", marginBottom: 16 }}>
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '48px 24px',
+            background: 'var(--color-surface)',
+            borderRadius: 16,
+            border: '1px solid var(--color-border)',
+          }}
+        >
+          <p style={{ fontSize: 14, color: 'var(--color-text-muted)', marginBottom: 16 }}>
             No se pudo cargar el calendario.
           </p>
           <Button onClick={load}>Reintentar</Button>
@@ -325,7 +444,10 @@ export default function CalendarioPage() {
         <CreateEventoModal
           cursos={cursos}
           onClose={() => setCreateOpen(false)}
-          onSaved={() => { setCreateOpen(false); load(); }}
+          onSaved={() => {
+            setCreateOpen(false);
+            load();
+          }}
         />
       )}
 
@@ -333,7 +455,10 @@ export default function CalendarioPage() {
         <EditEventoModal
           evento={editEvt}
           onClose={() => setEditEvt(null)}
-          onSaved={() => { setEditEvt(null); load(); }}
+          onSaved={() => {
+            setEditEvt(null);
+            load();
+          }}
         />
       )}
     </div>

@@ -9,17 +9,13 @@ export const notificacionesGetAll = (params = {}) => {
   return apiFetch(`/notificaciones${qs ? `?${qs}` : ''}`);
 };
 
-export const notificacionesGetConteoNoLeidas = () =>
-  apiFetch('/notificaciones/conteo-no-leidas');
+export const notificacionesGetConteoNoLeidas = () => apiFetch('/notificaciones/conteo-no-leidas');
 
-export const notificacionesMarcarLeida = (id) =>
-  apiFetch(`/notificaciones/${id}/leer`, { method: 'PATCH' });
+export const notificacionesMarcarLeida = (id) => apiFetch(`/notificaciones/${id}/leer`, { method: 'PATCH' });
 
-export const notificacionesMarcarTodasLeidas = () =>
-  apiFetch('/notificaciones/leer-todas', { method: 'PATCH' });
+export const notificacionesMarcarTodasLeidas = () => apiFetch('/notificaciones/leer-todas', { method: 'PATCH' });
 
-export const notificacionesDelete = (id) =>
-  apiFetch(`/notificaciones/${id}`, { method: 'DELETE' });
+export const notificacionesDelete = (id) => apiFetch(`/notificaciones/${id}`, { method: 'DELETE' });
 
 export const notificacionesLimpiarAntiguas = (params = {}) => {
   const qs = new URLSearchParams(params).toString();

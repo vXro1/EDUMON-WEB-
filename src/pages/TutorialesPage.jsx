@@ -1,24 +1,24 @@
-import { useEffect, useState } from "react";
-import { usePageMeta } from "@/hooks/usePageMeta";
-import { Link, useLocation } from "react-router-dom";
-import edumonLogo from "@/assets/icons/edumon-logo-letras.svg";
-import edumonLetras from "@/assets/img/edumon-letras.webp";
-import mascota from "@/assets/img/edumon-mascota.svg";
-import mascotasEquipo from "@/assets/img/edumon-mascotas-jugando.webp";
-import avatarVerde from "@/assets/img/avatars/avatar5.svg";
-import avatarProfe from "@/assets/img/avatars/avatar3.svg";
-import circulo1 from "@/assets/img/circulos/circulo1.svg";
-import circulo2 from "@/assets/img/circulos/circulo2.svg";
-import circulo4 from "@/assets/img/circulos/circulo4.svg";
-import circulo5 from "@/assets/img/circulos/circulo5.svg";
-import circulo6 from "@/assets/img/circulos/circulo6.svg";
-import circulo7 from "@/assets/img/circulos/circulo7.svg";
-import circulo9 from "@/assets/img/circulos/circulo9.svg";
-import circulo11 from "@/assets/img/circulos/circulo11.svg";
-import { TUTORIALES } from "./tutoriales.data";
+import { useEffect, useState } from 'react';
+import { usePageMeta } from '@/hooks/usePageMeta';
+import { Link, useLocation } from 'react-router-dom';
+import edumonLogo from '@/assets/icons/edumon-logo-letras.svg';
+import edumonLetras from '@/assets/img/edumon-letras.webp';
+import mascota from '@/assets/img/edumon-mascota.svg';
+import mascotasEquipo from '@/assets/img/edumon-mascotas-jugando.webp';
+import avatarVerde from '@/assets/img/avatars/avatar5.svg';
+import avatarProfe from '@/assets/img/avatars/avatar3.svg';
+import circulo1 from '@/assets/img/circulos/circulo1.svg';
+import circulo2 from '@/assets/img/circulos/circulo2.svg';
+import circulo4 from '@/assets/img/circulos/circulo4.svg';
+import circulo5 from '@/assets/img/circulos/circulo5.svg';
+import circulo6 from '@/assets/img/circulos/circulo6.svg';
+import circulo7 from '@/assets/img/circulos/circulo7.svg';
+import circulo9 from '@/assets/img/circulos/circulo9.svg';
+import circulo11 from '@/assets/img/circulos/circulo11.svg';
+import { TUTORIALES } from './tutoriales.data';
 
-import "./LandingPage.css";
-import "./TutorialesPage.css";
+import './LandingPage.css';
+import './TutorialesPage.css';
 
 const IconPlay = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -27,16 +27,34 @@ const IconPlay = ({ size = 16 }) => (
 );
 
 const IconArrowLeft = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true"
-    stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <line x1="19" y1="12" x2="5" y2="12" />
     <polyline points="12 19 5 12 12 5" />
   </svg>
 );
 
 const IconExternal = ({ size = 14 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true"
-    stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
     <polyline points="15 3 21 3 21 9" />
     <line x1="10" y1="14" x2="21" y2="3" />
@@ -44,8 +62,18 @@ const IconExternal = ({ size = 14 }) => (
 );
 
 const IconSparkles = ({ size = 14, className }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" className={className}
-    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+    className={className}
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M12 3l1.88 5.76L20 10l-5.76 1.88L12 18l-1.88-5.76L4 10l5.76-1.88z" />
     <path d="M5 3v4M3 5h4M19 17v4M17 19h4" />
   </svg>
@@ -65,8 +93,17 @@ const IconYouTube = ({ size = 18 }) => (
 );
 
 const IconDownload = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true"
-    stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden="true"
+    stroke="currentColor"
+    strokeWidth="2.2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
     <polyline points="7 10 12 15 17 10" />
     <line x1="12" y1="15" x2="12" y2="3" />
@@ -74,30 +111,30 @@ const IconDownload = ({ size = 18 }) => (
 );
 
 const BURBUJAS = [
-  { src: circulo1, cls: "b1" },
-  { src: circulo5, cls: "b2" },
-  { src: circulo9, cls: "b4" },
-  { src: circulo11, cls: "b6" },
+  { src: circulo1, cls: 'b1' },
+  { src: circulo5, cls: 'b2' },
+  { src: circulo9, cls: 'b4' },
+  { src: circulo11, cls: 'b6' },
 ];
 
 const BURBUJAS_CTA = [
-  { src: circulo2, cls: "c1" },
-  { src: circulo4, cls: "c2" },
-  { src: circulo6, cls: "c3" },
-  { src: circulo7, cls: "c4" },
-  { src: circulo9, cls: "c5" },
+  { src: circulo2, cls: 'c1' },
+  { src: circulo4, cls: 'c2' },
+  { src: circulo6, cls: 'c3' },
+  { src: circulo7, cls: 'c4' },
+  { src: circulo9, cls: 'c5' },
 ];
 
-const CANAL_YOUTUBE = "https://www.youtube.com/@EDUMONEduca";
+const CANAL_YOUTUBE = 'https://www.youtube.com/@EDUMONEduca';
 
 const ACCESOS = [
-  { id: "padres", label: "Soy padre de familia", avatar: avatarVerde, tono: "green" },
-  { id: "docentes", label: "Soy docente", avatar: avatarProfe, tono: "cyan" },
+  { id: 'padres', label: 'Soy padre de familia', avatar: avatarVerde, tono: 'green' },
+  { id: 'docentes', label: 'Soy docente', avatar: avatarProfe, tono: 'cyan' },
 ];
 
 function VideoPlayer({ t, playing, onPlay }) {
   if (playing) {
-    const origin = typeof window !== "undefined" ? window.location.origin : "";
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
     return (
       <div className="tuto-video">
         <iframe
@@ -119,7 +156,14 @@ function VideoPlayer({ t, playing, onPlay }) {
       onClick={onPlay}
       aria-label={`Video en YouTube: reproducir ${t.titulo}`}
     >
-      <img className="tuto-video__thumb" src={t.banner} alt={`Miniatura del video de EDUMON: ${t.titulo}`} width={960} height={540} loading="lazy" />
+      <img
+        className="tuto-video__thumb"
+        src={t.banner}
+        alt={`Miniatura del video de EDUMON: ${t.titulo}`}
+        width={960}
+        height={540}
+        loading="lazy"
+      />
       <span className="tuto-video__yt" aria-hidden="true">
         <IconYouTube size={18} /> Video en YouTube
       </span>
@@ -135,7 +179,15 @@ function TutorialCard({ t }) {
 
   return (
     <article className={`tuto-card tuto-card--${t.tono}`} id={t.id}>
-      <img loading="lazy" decoding="async" className="tuto-card__peek" src={t.mascota} alt={`Mascota de EDUMON del tutorial ${t.titulo}`} aria-hidden="true" draggable={false} />
+      <img
+        loading="lazy"
+        decoding="async"
+        className="tuto-card__peek"
+        src={t.mascota}
+        alt={`Mascota de EDUMON del tutorial ${t.titulo}`}
+        aria-hidden="true"
+        draggable={false}
+      />
 
       <div className="tuto-card__media">
         <VideoPlayer t={t} playing={playing} onPlay={() => setPlaying(true)} />
@@ -145,7 +197,9 @@ function TutorialCard({ t }) {
         <div className="tuto-card__meta">
           <span className="tuto-card__num">{t.numero}</span>
           {t.publico.map((p) => (
-            <span className="tuto-chip" key={p}>{p}</span>
+            <span className="tuto-chip" key={p}>
+              {p}
+            </span>
           ))}
         </div>
 
@@ -185,20 +239,21 @@ export default function TutorialesPage() {
   const { hash } = useLocation();
 
   usePageMeta({
-    title: "Tutoriales de EDUMON | Aprende a usar la plataforma",
-    description: "Videos tutoriales de EDUMON para docentes y padres de familia: aprende a usar la app móvil y la plataforma web paso a paso.",
-    path: "/tutoriales",
+    title: 'Tutoriales de EDUMON | Aprende a usar la plataforma',
+    description:
+      'Videos tutoriales de EDUMON para docentes y padres de familia: aprende a usar la app móvil y la plataforma web paso a paso.',
+    path: '/tutoriales',
   });
 
   useEffect(() => {
     const target = hash && document.getElementById(hash.slice(1));
-    if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     else window.scrollTo(0, 0);
   }, [hash]);
 
   const irA = (e, id) => {
     e.preventDefault();
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
@@ -228,15 +283,22 @@ export default function TutorialesPage() {
             <div className="tuto-hero__content">
               <h1 className="tuto-hero__title">
                 <span className="tuto-hero__line">Aprende a usar</span>
-                <img src={edumonLetras} alt="EDUMON" className="tuto-hero__letras" width={900} height={354} fetchPriority="high" />
+                <img
+                  src={edumonLetras}
+                  alt="EDUMON"
+                  className="tuto-hero__letras"
+                  width={900}
+                  height={354}
+                  fetchPriority="high"
+                />
                 <span className="tuto-hero__line">
                   <span className="tuto-mark">paso a paso</span>
                 </span>
               </h1>
 
               <p className="tuto-hero__text">
-                Videos cortos y sencillos para que padres de familia y docentes
-                instalen la app móvil y le saquen el máximo provecho desde el primer día.
+                Videos cortos y sencillos para que padres de familia y docentes instalen la app móvil y le saquen el
+                máximo provecho desde el primer día.
               </p>
 
               <div className="tuto-hero__accesos">
@@ -247,18 +309,19 @@ export default function TutorialesPage() {
                     onClick={(e) => irA(e, a.id)}
                     className={`tuto-acceso tuto-acceso--${a.tono}`}
                   >
-                    <img loading="lazy" decoding="async" src={a.avatar} alt={`Mascota de EDUMON para ${a.label}`} aria-hidden="true" />
+                    <img
+                      loading="lazy"
+                      decoding="async"
+                      src={a.avatar}
+                      alt={`Mascota de EDUMON para ${a.label}`}
+                      aria-hidden="true"
+                    />
                     {a.label}
                   </a>
                 ))}
               </div>
 
-              <a
-                className="tuto-hero__canal"
-                href={CANAL_YOUTUBE}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <a className="tuto-hero__canal" href={CANAL_YOUTUBE} target="_blank" rel="noopener noreferrer">
                 Todos los videos están en nuestro canal de YouTube <strong>@EDUMONEduca</strong>
                 <IconExternal size={12} />
               </a>
@@ -269,10 +332,17 @@ export default function TutorialesPage() {
               <IconStar size={22} className="tuto-spark tuto-spark--1" />
               <IconSparkles size={26} className="tuto-spark tuto-spark--2" />
               <div className="tuto-hero__bubble-talk">¡Dale play y aprende conmigo!</div>
-              <img loading="lazy" decoding="async" src={mascota} alt="Mascota de EDUMON" className="tuto-hero__mascota" width={660} height={626} />
+              <img
+                loading="lazy"
+                decoding="async"
+                src={mascota}
+                alt="Mascota de EDUMON"
+                className="tuto-hero__mascota"
+                width={660}
+                height={626}
+              />
             </div>
           </div>
-
         </section>
 
         <section className="tuto-list" aria-label="Lista de tutoriales">
@@ -285,20 +355,32 @@ export default function TutorialesPage() {
           <div className="tuto-cta__card">
             <div className="tuto-cta__bubbles" aria-hidden="true">
               {BURBUJAS_CTA.map((b) => (
-                <img loading="lazy" decoding="async" key={b.cls} src={b.src} alt="" className={`tuto-cta__bubble tuto-cta__bubble--${b.cls}`} />
+                <img
+                  loading="lazy"
+                  decoding="async"
+                  key={b.cls}
+                  src={b.src}
+                  alt=""
+                  className={`tuto-cta__bubble tuto-cta__bubble--${b.cls}`}
+                />
               ))}
             </div>
             <div className="tuto-cta__content">
               <h2 className="tuto-cta__title">¿Aún no tienes la app?</h2>
-              <p className="tuto-cta__text">
-                Descárgala gratis para Android y únete a la familia Edumon.
-              </p>
+              <p className="tuto-cta__text">Descárgala gratis para Android y únete a la familia Edumon.</p>
               <Link to="/#app" className="tuto-cta__btn">
                 <IconDownload size={18} />
                 Ir a descargar
               </Link>
             </div>
-            <img src={mascotasEquipo} alt="Las mascotas de EDUMON" className="tuto-cta__crew" width={640} height={427} loading="lazy" />
+            <img
+              src={mascotasEquipo}
+              alt="Las mascotas de EDUMON"
+              className="tuto-cta__crew"
+              width={640}
+              height={427}
+              loading="lazy"
+            />
           </div>
         </section>
       </main>

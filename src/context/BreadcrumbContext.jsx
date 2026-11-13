@@ -1,4 +1,4 @@
-import { createContext, useState } from "react";
+import { createContext, useState } from 'react';
 const BreadcrumbCtx = createContext(null);
 
 export function BreadcrumbProvider({ children }) {
@@ -11,10 +11,5 @@ export function BreadcrumbProvider({ children }) {
     });
   };
 
-  return (
-    <BreadcrumbCtx.Provider value={{ titles, setTitle }}>
-      {children}
-    </BreadcrumbCtx.Provider>
-  );
+  return <BreadcrumbCtx.Provider value={{ titles, setTitle }}>{children}</BreadcrumbCtx.Provider>;
 }
-

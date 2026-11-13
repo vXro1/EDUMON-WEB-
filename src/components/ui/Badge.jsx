@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { X } from 'lucide-react';
 
 /* ─────────────────────────────────────────────────────────────────────────
    Badges — Soft UI:
@@ -54,23 +54,23 @@ const CSS = `
 
 /* ── PALETA — todo referencia tokens semánticos, nada hardcodeado ──────── */
 const PALETTE = {
-  success: { bg: "var(--color-success-light)", text: "var(--edu-green-700)",      ring: "var(--color-success)" },
-  error:   { bg: "var(--color-error-light)",   text: "var(--color-error-hover)",  ring: "var(--color-error)" },
-  warning: { bg: "var(--color-warning-light)", text: "var(--edu-yellow-700)",     ring: "var(--color-warning)" },
-  info:    { bg: "var(--color-info-light)",    text: "var(--edu-cyan-700)",       ring: "var(--color-info)" },
-  purple:  { bg: "var(--color-primary-light)", text: "var(--color-primary-hover)",ring: "var(--color-primary)" },
-  neutral: { bg: "var(--color-surface-3)",     text: "var(--color-text-muted)",   ring: "var(--color-border-strong)" },
-  dark:    { bg: "var(--edu-neutral-800)",     text: "#fff",                      ring: "var(--edu-neutral-900)" },
+  success: { bg: 'var(--color-success-light)', text: 'var(--edu-green-700)', ring: 'var(--color-success)' },
+  error: { bg: 'var(--color-error-light)', text: 'var(--color-error-hover)', ring: 'var(--color-error)' },
+  warning: { bg: 'var(--color-warning-light)', text: 'var(--edu-yellow-700)', ring: 'var(--color-warning)' },
+  info: { bg: 'var(--color-info-light)', text: 'var(--edu-cyan-700)', ring: 'var(--color-info)' },
+  purple: { bg: 'var(--color-primary-light)', text: 'var(--color-primary-hover)', ring: 'var(--color-primary)' },
+  neutral: { bg: 'var(--color-surface-3)', text: 'var(--color-text-muted)', ring: 'var(--color-border-strong)' },
+  dark: { bg: 'var(--edu-neutral-800)', text: '#fff', ring: 'var(--edu-neutral-900)' },
 };
 
 /* ── TAMAÑOS ────────────────────────────────────────────────────────────── */
-const SIZE_CLASS = { sm: "ui-badge-sm", md: "ui-badge-md", lg: "ui-badge-lg" };
+const SIZE_CLASS = { sm: 'ui-badge-sm', md: 'ui-badge-md', lg: 'ui-badge-lg' };
 
 /* ── CSS ya inyectado? ──────────────────────────────────────────────────── */
 let injected = false;
 function injectOnce() {
   if (injected) return;
-  const el = document.createElement("style");
+  const el = document.createElement('style');
   el.textContent = CSS;
   document.head.appendChild(el);
   injected = true;
@@ -89,16 +89,16 @@ function injectOnce() {
      className  : string
 ════════════════════════════════════════════════════════════════════════ */
 export default function Badge({
-  variant     = "info",
-  size        = "md",
-  dot         = false,
-  pulse       = false,
+  variant = 'info',
+  size = 'md',
+  dot = false,
+  pulse = false,
   interactive = false,
-  icon        = null,
-  onClose     = null,
+  icon = null,
+  onClose = null,
   children,
-  className   = "",
-  style       = {},
+  className = '',
+  style = {},
 }) {
   injectOnce();
 
@@ -107,27 +107,24 @@ export default function Badge({
 
   return (
     <span
-      role={interactive ? "button" : undefined}
+      role={interactive ? 'button' : undefined}
       tabIndex={interactive ? 0 : undefined}
-      className={[
-        "ui-badge",
-        sizeClass,
-        interactive ? "ui-badge-interactive" : "",
-        className,
-      ].filter(Boolean).join(" ")}
+      className={['ui-badge', sizeClass, interactive ? 'ui-badge-interactive' : '', className]
+        .filter(Boolean)
+        .join(' ')}
       style={{
         background: p.bg,
-        color:      p.text,
-        border:     `1px solid color-mix(in srgb, ${p.ring} 22%, transparent)`,
-        boxShadow:  "var(--clay-pill)",
+        color: p.text,
+        border: `1px solid color-mix(in srgb, ${p.ring} 22%, transparent)`,
+        boxShadow: 'var(--clay-pill)',
         ...style,
       }}
     >
-      {icon && <span style={{ display: "flex", alignItems: "center" }}>{icon}</span>}
+      {icon && <span style={{ display: 'flex', alignItems: 'center' }}>{icon}</span>}
 
       {(dot || pulse) && (
         <span
-          className={["ui-dot", pulse ? "ui-dot-pulse" : ""].filter(Boolean).join(" ")}
+          className={['ui-dot', pulse ? 'ui-dot-pulse' : ''].filter(Boolean).join(' ')}
           style={{ background: p.ring }}
           aria-hidden="true"
         />
@@ -137,21 +134,24 @@ export default function Badge({
 
       {onClose && (
         <button
-          onClick={(e) => { e.stopPropagation(); onClose(); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
           aria-label="Eliminar"
           style={{
-            background:   "color-mix(in srgb, currentColor 15%, transparent)",
-            border:       "none",
-            borderRadius: "50%",
-            width:        "14px",
-            height:       "14px",
-            display:      "flex",
-            alignItems:   "center",
-            justifyContent: "center",
-            cursor:       "pointer",
-            padding:      0,
-            color:        p.text,
-            flexShrink:   0,
+            background: 'color-mix(in srgb, currentColor 15%, transparent)',
+            border: 'none',
+            borderRadius: '50%',
+            width: '14px',
+            height: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            padding: 0,
+            color: p.text,
+            flexShrink: 0,
           }}
         >
           <X size={9} strokeWidth={3} />
@@ -160,4 +160,3 @@ export default function Badge({
     </span>
   );
 }
-

@@ -1,18 +1,22 @@
 // src/features/cursos/components/hub/HubHeader.jsx
-import { Users, Archive } from "lucide-react";
-import { Sk } from "../shared/ui";
+import { Users, Archive } from 'lucide-react';
+import { Sk } from '../shared/ui';
 // Mismo fallback que ya usan CursoCard.jsx/CursosPage.jsx/FamiliaCursosPage.jsx
 // para "curso sin portada" — antes esta cabecera usaba un degradado de color
 // liso en su lugar, así que un curso sin foto propia se veía distinto aquí
 // que en el resto de la app, y el color sólido tapaba por completo cualquier
 // imagen (de ahí "ese color no me deja ver la imagen").
-import letrasImg from "@/assets/img/edumon-letras-sm.webp";
+import letrasImg from '@/assets/img/edumon-letras-sm.webp';
 
-const FALLBACK_COLOR = "#0C6AC4";
+const FALLBACK_COLOR = '#0C6AC4';
 
 function shade(hex, amount) {
-  let h = hex.replace("#", "");
-  if (h.length === 3) h = h.split("").map(ch => ch + ch).join("");
+  let h = hex.replace('#', '');
+  if (h.length === 3)
+    h = h
+      .split('')
+      .map((ch) => ch + ch)
+      .join('');
   if (!/^[0-9A-Fa-f]{6}$/.test(h)) return hex;
   const r = Math.round(parseInt(h.slice(0, 2), 16) * (1 - amount));
   const g = Math.round(parseInt(h.slice(2, 4), 16) * (1 - amount));
@@ -21,8 +25,12 @@ function shade(hex, amount) {
 }
 
 function tint(hex, amount) {
-  let h = hex.replace("#", "");
-  if (h.length === 3) h = h.split("").map(ch => ch + ch).join("");
+  let h = hex.replace('#', '');
+  if (h.length === 3)
+    h = h
+      .split('')
+      .map((ch) => ch + ch)
+      .join('');
   if (!/^[0-9A-Fa-f]{6}$/.test(h)) return hex;
   const r = Math.round(parseInt(h.slice(0, 2), 16) + (255 - parseInt(h.slice(0, 2), 16)) * amount);
   const g = Math.round(parseInt(h.slice(2, 4), 16) + (255 - parseInt(h.slice(2, 4), 16)) * amount);
@@ -41,23 +49,22 @@ export default function HubHeader({ curso, loading, esPadre = false, esEstudiant
 
   if (!curso) {
     return (
-      <div style={{ padding: "24px", textAlign: "center", color: "var(--color-text-muted)", marginBottom: 20 }}>
+      <div style={{ padding: '24px', textAlign: 'center', color: 'var(--color-text-muted)', marginBottom: 20 }}>
         Curso no encontrado
       </div>
     );
   }
 
-  const roleLabel = esPadre ? "Seguimiento" : esEstudiante ? "Mi curso" : "Curso";
+  const roleLabel = esPadre ? 'Seguimiento' : esEstudiante ? 'Mi curso' : 'Curso';
 
-  const color     = curso.color || FALLBACK_COLOR;
+  const color = curso.color || FALLBACK_COLOR;
   const colorDark = shade(color, 0.45);
-  const cover     = curso.fotoPortada || "";
+  const cover = curso.fotoPortada || '';
 
   return (
     <>
       <style>{HUBHEADER_CSS}</style>
-      <div className="hhead-wrap" style={{ "--hhead-color": color, "--hhead-color-dark": colorDark }}>
-
+      <div className="hhead-wrap" style={{ '--hhead-color': color, '--hhead-color-dark': colorDark }}>
         <div className="hhead-cover">
           {cover ? (
             <img
@@ -65,7 +72,10 @@ export default function HubHeader({ curso, loading, esPadre = false, esEstudiant
               alt=""
               loading="lazy"
               className="hhead-cover-img"
-              onError={e => { e.target.onerror = null; e.target.style.display = "none"; }}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.style.display = 'none';
+              }}
             />
           ) : (
             <div
@@ -88,14 +98,14 @@ export default function HubHeader({ curso, loading, esPadre = false, esEstudiant
             {curso.docente && (
               <div className="hhead-docente">
                 <span className="hhead-docente-dot" />
-                <span className="hhead-docente-name">{curso.docente.nombre} {curso.docente.apellido}</span>
+                <span className="hhead-docente-name">
+                  {curso.docente.nombre} {curso.docente.apellido}
+                </span>
                 <span className="hhead-docente-role">Docente</span>
               </div>
             )}
 
-            {curso.descripcion && (
-              <p className="hhead-desc">{curso.descripcion}</p>
-            )}
+            {curso.descripcion && <p className="hhead-desc">{curso.descripcion}</p>}
           </div>
 
           <div className="hhead-info-stats">
@@ -103,10 +113,10 @@ export default function HubHeader({ curso, loading, esPadre = false, esEstudiant
               <Users style={{ width: 13, height: 13 }} />
               {curso.participantes?.length ?? curso.totalParticipantes ?? 0} participantes
             </span>
-            {curso.estado && curso.estado !== "activo" && (
+            {curso.estado && curso.estado !== 'activo' && (
               <span className="hhead-pill hhead-pill--warn">
                 <Archive style={{ width: 13, height: 13 }} />
-                {curso.estado === "archivado" ? "Archivado" : curso.estado}
+                {curso.estado === 'archivado' ? 'Archivado' : curso.estado}
               </span>
             )}
           </div>

@@ -1,77 +1,94 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
-import { screen, cleanup, render } from "@testing-library/react";
-import { MemoryRouter } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { renderPagina } from "@/test/renderPagina";
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { screen, cleanup, render } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderPagina } from '@/test/renderPagina';
 
-const usuario = { _id: "p1", rol: "padre", nombre: "Marta" };
-vi.mock("@/features/auth/context/AuthContext", () => ({
+const usuario = { _id: 'p1', rol: 'padre', nombre: 'Marta' };
+vi.mock('@/features/auth/context/AuthContext', () => ({
   useAuthContext: () => ({ user: usuario, isAuthenticated: true }),
   useUserContext: () => ({ user: usuario }),
 }));
 
 const tareasGetAll = vi.fn();
 const forosGetByCurso = vi.fn();
-vi.mock("@/features/foros/services/forosService", async (orig) => ({
+vi.mock('@/features/foros/services/forosService', async (orig) => ({
   ...(await orig()),
   forosGetByCurso: (...a) => forosGetByCurso(...a),
 }));
 const cursosGetMine = vi.fn();
-vi.mock("@/features/cursos/services/tareasService", async (orig) => ({
+vi.mock('@/features/cursos/services/tareasService', async (orig) => ({
   ...(await orig()),
   tareasGetAll: (...a) => tareasGetAll(...a),
 }));
-vi.mock("@/features/cursos/services/cursosService", async (orig) => ({
+vi.mock('@/features/cursos/services/cursosService', async (orig) => ({
   ...(await orig()),
   cursosGetMine: (...a) => cursosGetMine(...a),
 }));
 
-const { default: FamiliaTareasPage } = await import("./FamiliaTareasPage");
-const { default: FamiliaEntregasPage } = await import("./FamiliaEntregasPage");
-const { default: FamiliaCursosPage } = await import("./FamiliaCursosPage");
-const { default: FamiliaForosPage } = await import("./FamiliaForosPage");
+const { default: FamiliaTareasPage } = await import('./FamiliaTareasPage');
+const { default: FamiliaEntregasPage } = await import('./FamiliaEntregasPage');
+const { default: FamiliaCursosPage } = await import('./FamiliaCursosPage');
+const { default: FamiliaForosPage } = await import('./FamiliaForosPage');
 
 const futura = new Date(Date.now() + 7 * 864e5).toISOString();
 
-afterEach(() => { cleanup(); vi.clearAllMocks(); });
+afterEach(() => {
+  cleanup();
+  vi.clearAllMocks();
+});
 
-describe("listados de la familia", () => {
-  it("Tareas y Entregas comparten la misma petición en caché", async () => {
+describe('listados de la familia', () => {
+  it('Tareas y Entregas comparten la misma petición en caché', async () => {
     tareasGetAll.mockResolvedValue({
-      tareas: [{ _id: "t1", titulo: "Leer un cuento", estado: "publicada", fechaEntrega: futura, cursoId: { _id: "c1", nombre: "Lectura" } }],
+      tareas: [
+        {
+          _id: 't1',
+          titulo: 'Leer un cuento',
+          estado: 'publicada',
+          fechaEntrega: futura,
+          cursoId: { _id: 'c1', nombre: 'Lectura' },
+        },
+      ],
     });
     const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false, staleTime: 60_000 } } });
     const envolver = (ui) => (
-      <QueryClientProvider client={queryClient}><MemoryRouter>{ui}</MemoryRouter></QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>{ui}</MemoryRouter>
+      </QueryClientProvider>
     );
 
     const { unmount } = render(envolver(<FamiliaTareasPage />));
-    expect(await screen.findByText("Leer un cuento")).toBeTruthy();
+    expect(await screen.findByText('Leer un cuento')).toBeTruthy();
     unmount();
 
     render(envolver(<FamiliaEntregasPage />));
-    expect(await screen.findByText("Leer un cuento")).toBeTruthy();
+    expect(await screen.findByText('Leer un cuento')).toBeTruthy();
     expect(tareasGetAll).toHaveBeenCalledTimes(1);
   });
 
-  it("Cursos lista los cursos del padre", async () => {
-    cursosGetMine.mockResolvedValue({ cursos: [{ _id: "c1", nombre: "Lectura", descripcion: "Curso de lectura" }] });
+  it('Cursos lista los cursos del padre', async () => {
+    cursosGetMine.mockResolvedValue({ cursos: [{ _id: 'c1', nombre: 'Lectura', descripcion: 'Curso de lectura' }] });
     renderPagina(<FamiliaCursosPage />);
-    expect(await screen.findByText("Lectura")).toBeTruthy();
+    expect(await screen.findByText('Lectura')).toBeTruthy();
     expect(cursosGetMine).toHaveBeenCalledWith({ limit: 50 });
   });
 
-  it("Foros pide los foros de cada curso en paralelo y los agrupa", async () => {
-    cursosGetMine.mockResolvedValue({ cursos: [
-      { _id: "c1", nombre: "Lectura", descripcion: "Curso de lectura" },
-      { _id: "c2", nombre: "Ciencias", descripcion: "Curso de ciencias" },
-    ] });
-    forosGetByCurso.mockImplementation((id) => Promise.resolve({
-      foros: [{ _id: `f-${id}`, titulo: id === "c1" ? "Libros favoritos" : "Experimentos en casa", cursoId: id }],
-    }));
+  it('Foros pide los foros de cada curso en paralelo y los agrupa', async () => {
+    cursosGetMine.mockResolvedValue({
+      cursos: [
+        { _id: 'c1', nombre: 'Lectura', descripcion: 'Curso de lectura' },
+        { _id: 'c2', nombre: 'Ciencias', descripcion: 'Curso de ciencias' },
+      ],
+    });
+    forosGetByCurso.mockImplementation((id) =>
+      Promise.resolve({
+        foros: [{ _id: `f-${id}`, titulo: id === 'c1' ? 'Libros favoritos' : 'Experimentos en casa', cursoId: id }],
+      }),
+    );
     renderPagina(<FamiliaForosPage />);
-    expect(await screen.findByText("Libros favoritos")).toBeTruthy();
-    expect(await screen.findByText("Experimentos en casa")).toBeTruthy();
+    expect(await screen.findByText('Libros favoritos')).toBeTruthy();
+    expect(await screen.findByText('Experimentos en casa')).toBeTruthy();
     expect(forosGetByCurso).toHaveBeenCalledTimes(2);
   });
 });

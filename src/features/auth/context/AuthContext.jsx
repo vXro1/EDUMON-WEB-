@@ -1,28 +1,21 @@
-import React, {
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { authService } from "../../../services/authService";
-import { registerLogoutCallback } from "../../../services/core/apiClient";
-import { sessionManager } from "../../../services/core/sessionManager";
-import { connectSocket, disconnectSocket } from "@/lib/socket";
-import { normalizeUser } from "@/lib/normalizers";
+import { authService } from '../../../services/authService';
+import { registerLogoutCallback } from '../../../services/core/apiClient';
+import { sessionManager } from '../../../services/core/sessionManager';
+import { connectSocket, disconnectSocket } from '@/lib/socket';
+import { normalizeUser } from '@/lib/normalizers';
 
 const UserContext = createContext(null);
 export const AuthContext = createContext(null);
 
-const PUBLIC_MARKETING_PATHS = ["/", "/tutoriales", "/demo"];
+const PUBLIC_MARKETING_PATHS = ['/', '/tutoriales', '/demo'];
 
 const isMarketingPath = () =>
-  typeof window !== "undefined" && PUBLIC_MARKETING_PATHS.includes(window.location.pathname);
+  typeof window !== 'undefined' && PUBLIC_MARKETING_PATHS.includes(window.location.pathname);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser]       = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(() => !isMarketingPath());
   const [sessionChecked, setSessionChecked] = useState(false);
   const sessionCheckRef = useRef(null);
@@ -33,25 +26,33 @@ export const AuthProvider = ({ children }) => {
   const isAuthenticated = !!user;
 
   const clearAll = useCallback(() => {
-    try { authService.clearAllCache?.(); } catch {}
-    try { sessionStorage.clear(); } catch {}
+    try {
+      authService.clearAllCache?.();
+    } catch {}
+    try {
+      sessionStorage.clear();
+    } catch {}
   }, []);
 
-  const logout = useCallback(async (reason) => {
-    sessionManager.stop();
-    setShowWarning(false);
+  const logout = useCallback(
+    async (reason) => {
+      sessionManager.stop();
+      setShowWarning(false);
 
-    try { await authService.logout(); } catch {}
+      try {
+        await authService.logout();
+      } catch {}
 
-    clearAll();
-    setUser(null);
+      clearAll();
+      setUser(null);
 
-    const url = reason === 'expired'    ? '/login?expired=1'
-              : reason === 'inactivity' ? '/login?inactivity=1'
-              : '/login';
+      const url =
+        reason === 'expired' ? '/login?expired=1' : reason === 'inactivity' ? '/login?inactivity=1' : '/login';
 
-    window.location.replace(url);
-  }, [clearAll]);
+      window.location.replace(url);
+    },
+    [clearAll],
+  );
 
   // logout global por 401 real; el chequeo silencioso al arrancar no pasa por aquí
   useEffect(() => {
@@ -66,7 +67,7 @@ export const AuthProvider = ({ children }) => {
 
   // padres y docentes no se desconectan por inactividad (su sesión dura un año y se
   // renueva sola en el backend); administradores sí, porque manejan datos de todos
-  const sinCierrePorInactividad = ["padre", "padre/tutor", "docente"].includes(user?.rol);
+  const sinCierrePorInactividad = ['padre', 'padre/tutor', 'docente'].includes(user?.rol);
 
   useEffect(() => {
     if (!isAuthenticated || sinCierrePorInactividad) {
@@ -77,8 +78,8 @@ export const AuthProvider = ({ children }) => {
 
     sessionManager.start({
       onWarning: () => setShowWarning(true),
-      onResume:  () => setShowWarning(false),
-      onExpire:  () => logout('inactivity'),
+      onResume: () => setShowWarning(false),
+      onExpire: () => logout('inactivity'),
     });
 
     return () => sessionManager.stop();
@@ -132,7 +133,7 @@ export const AuthProvider = ({ children }) => {
 
   const updateUser = useCallback((partialUser) => {
     if (!partialUser) return;
-    setUser(prev => {
+    setUser((prev) => {
       const merged = prev ? { ...prev, ...partialUser } : partialUser;
       return normalizeUser(merged);
     });
@@ -157,31 +158,29 @@ export const AuthProvider = ({ children }) => {
 
   const userValue = useMemo(
     () => ({ user, isAuthenticated, login, logout, updateUser, switchProfile }),
-    [user, isAuthenticated, login, logout, updateUser, switchProfile]
+    [user, isAuthenticated, login, logout, updateUser, switchProfile],
   );
 
   const fullValue = useMemo(
     () => ({ ...userValue, loading, sessionChecked, ensureSession, showWarning, stayLoggedIn }),
-    [userValue, loading, sessionChecked, ensureSession, showWarning, stayLoggedIn]
+    [userValue, loading, sessionChecked, ensureSession, showWarning, stayLoggedIn],
   );
 
   return (
     <UserContext.Provider value={userValue}>
-      <AuthContext.Provider value={fullValue}>
-        {children}
-      </AuthContext.Provider>
+      <AuthContext.Provider value={fullValue}>{children}</AuthContext.Provider>
     </UserContext.Provider>
   );
 };
 
 export const useAuthContext = () => {
   const ctx = React.useContext(AuthContext);
-  if (!ctx) throw new Error("useAuthContext debe usarse dentro de <AuthProvider>");
+  if (!ctx) throw new Error('useAuthContext debe usarse dentro de <AuthProvider>');
   return ctx;
 };
 
 export const useUserContext = () => {
   const ctx = React.useContext(UserContext);
-  if (!ctx) throw new Error("useUserContext debe usarse dentro de <AuthProvider>");
+  if (!ctx) throw new Error('useUserContext debe usarse dentro de <AuthProvider>');
   return ctx;
 };

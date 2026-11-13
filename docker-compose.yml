@@ -6,11 +6,11 @@
 services:
   backend:
     build:
-      context: "../Backend"
+      context: '../Backend'
     container_name: edumon-backend
     init: true
     env_file:
-      - "../Backend/.env"
+      - '../Backend/.env'
     environment:
       UPLOAD_DIR: /data/uploads
     volumes:
@@ -18,7 +18,7 @@ services:
     networks:
       - edumon-net
     ports:
-      - "4000:4000"   # publicado solo para poder pegarle directo al probar
+      - '4000:4000' # publicado solo para poder pegarle directo al probar
     restart: unless-stopped
 
   frontend:
@@ -40,7 +40,7 @@ services:
     networks:
       - edumon-net
     ports:
-      - "8080:8080"
+      - '8080:8080'
     restart: unless-stopped
 
 networks:

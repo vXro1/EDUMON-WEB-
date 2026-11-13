@@ -30,7 +30,7 @@ body {
   margin: 0;
   min-height: 100dvh;
   font-family: var(--font-sans);
-  background-color: var(--color-bg-muted, #FAFAFA);
+  background-color: var(--color-bg-muted, #fafafa);
   color: var(--color-text);
   line-height: var(--leading-normal);
   -webkit-font-smoothing: antialiased;
@@ -50,7 +50,12 @@ body {
 }
 
 /* ── Encabezados ─────────────────────────────────────────────── */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
@@ -69,23 +74,27 @@ canvas {
 
 /* ── Interactivos ────────────────────────────────────────────── */
 button,
-[role="button"] {
+[role='button'] {
   cursor: pointer;
 }
 
 /* Tamaño mínimo de objetivo táctil (WCAG 2.5.8) */
 button,
 a,
-input[type="checkbox"],
-input[type="radio"],
-input[type="range"],
+input[type='checkbox'],
+input[type='radio'],
+input[type='range'],
 select {
   min-height: 22px;
 }
 
 /* Excepciones: los botones inline pequeños aún necesitan la sobreescritura de min-height */
-.btn-xs { min-height: 30px; }
-.btn-sm { min-height: 36px; }
+.btn-xs {
+  min-height: 30px;
+}
+.btn-sm {
+  min-height: 36px;
+}
 
 a {
   color: inherit;
@@ -106,7 +115,8 @@ select {
 }
 
 /* ── Listas ──────────────────────────────────────────────────── */
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
@@ -121,8 +131,13 @@ table {
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;
 }
-*::-webkit-scrollbar { width: 5px; height: 5px; }
-*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
 *::-webkit-scrollbar-thumb {
   background: var(--color-border);
   border-radius: var(--radius-full);
@@ -137,7 +152,7 @@ table {
     font-family: var(--font-sans);
   }
   body {
-    background-color: var(--color-bg-muted, #FAFAFA);
+    background-color: var(--color-bg-muted, #fafafa);
     color: var(--color-text);
     font-family: var(--font-sans);
   }

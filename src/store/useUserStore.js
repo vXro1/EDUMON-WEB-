@@ -1,7 +1,7 @@
 // caché global de usuarios, búsqueda O(1) por ID. persist sobrevive recargas;
 // onlineUsers no se persiste (estado efímero)
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 const useUserStore = create(
   persist(
@@ -43,10 +43,10 @@ const useUserStore = create(
       },
     }),
     {
-      name: "edumon-user-cache",
+      name: 'edumon-user-cache',
       partialize: (state) => ({ users: state.users }),
-    }
-  )
+    },
+  ),
 );
 
 export default useUserStore;

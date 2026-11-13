@@ -1,6 +1,6 @@
 // src/lib/normalizers/entrega.js
 
-import { assetUrl } from "@/utils/assetUrl";
+import { assetUrl } from '@/utils/assetUrl';
 
 /**
  * Normaliza archivos adjuntos
@@ -9,47 +9,23 @@ function normalizeArchivos(archivos) {
   if (!Array.isArray(archivos)) return [];
 
   return archivos.map((archivo, index) => ({
-    _id:
-      archivo._id ||
-      archivo.id ||
-      archivo.publicId ||
-      `file_${index}_${Date.now()}`,
+    _id: archivo._id || archivo.id || archivo.publicId || `file_${index}_${Date.now()}`,
 
     // El backend guarda ahora rutas locales relativas (/uploads/priv/…);
     // assetUrl les antepone el origen del API cuando corre en otro dominio.
-    url: assetUrl(archivo.url || archivo.secure_url || ""),
+    url: assetUrl(archivo.url || archivo.secure_url || ''),
 
-    nombre:
-      archivo.nombre ||
-      archivo.nombreOriginal ||
-      archivo.original_filename ||
-      "Archivo",
+    nombre: archivo.nombre || archivo.nombreOriginal || archivo.original_filename || 'Archivo',
 
-    nombreOriginal:
-      archivo.nombreOriginal ||
-      archivo.nombre ||
-      archivo.original_filename ||
-      "Archivo",
+    nombreOriginal: archivo.nombreOriginal || archivo.nombre || archivo.original_filename || 'Archivo',
 
-    publicId: archivo.publicId || archivo.public_id || "",
+    publicId: archivo.publicId || archivo.public_id || '',
 
-    tipo:
-      archivo.tipo ||
-      archivo.tipoArchivo ||
-      archivo.mimetype ||
-      "application/octet-stream",
+    tipo: archivo.tipo || archivo.tipoArchivo || archivo.mimetype || 'application/octet-stream',
 
-    tipoArchivo:
-      archivo.tipoArchivo ||
-      archivo.tipo ||
-      archivo.mimetype ||
-      "application/octet-stream",
+    tipoArchivo: archivo.tipoArchivo || archivo.tipo || archivo.mimetype || 'application/octet-stream',
 
-    tamano:
-      archivo.tamano ||
-      archivo.size ||
-      archivo.bytes ||
-      0,
+    tamano: archivo.tamano || archivo.size || archivo.bytes || 0,
   }));
 }
 
@@ -65,97 +41,79 @@ export function normalizeEntrega(data) {
     _id: data._id || data.id || null,
     id: data._id || data.id || null,
 
-    tareaId:
-      typeof data.tareaId === "object"
-        ? data.tareaId._id || data.tareaId.id
-        : data.tareaId || null,
+    tareaId: typeof data.tareaId === 'object' ? data.tareaId._id || data.tareaId.id : data.tareaId || null,
 
-    padreId:
-      typeof data.padreId === "object"
-        ? data.padreId._id || data.padreId.id
-        : data.padreId || null,
+    padreId: typeof data.padreId === 'object' ? data.padreId._id || data.padreId.id : data.padreId || null,
 
     // Padre
     padre:
-      data.padre && typeof data.padre === "object"
+      data.padre && typeof data.padre === 'object'
         ? {
             _id: data.padre._id || data.padre.id || null,
-            nombre: data.padre.nombre || "Padre",
-            apellido: data.padre.apellido || "",
-            correo: data.padre.correo || "",
-            telefono: data.padre.telefono || "",
-            rol: data.padre.rol || "padre",
-            fotoPerfilUrl: assetUrl(data.padre.fotoPerfilUrl || ""),
+            nombre: data.padre.nombre || 'Padre',
+            apellido: data.padre.apellido || '',
+            correo: data.padre.correo || '',
+            telefono: data.padre.telefono || '',
+            rol: data.padre.rol || 'padre',
+            fotoPerfilUrl: assetUrl(data.padre.fotoPerfilUrl || ''),
           }
-        : data.padreId && typeof data.padreId === "object"
-        ? {
-            _id: data.padreId._id || data.padreId.id || null,
-            nombre: data.padreId.nombre || "Padre",
-            apellido: data.padreId.apellido || "",
-            correo: data.padreId.correo || "",
-            telefono: data.padreId.telefono || "",
-            rol: data.padreId.rol || "padre",
-            fotoPerfilUrl: assetUrl(data.padreId.fotoPerfilUrl || ""),
-          }
-        : null,
+        : data.padreId && typeof data.padreId === 'object'
+          ? {
+              _id: data.padreId._id || data.padreId.id || null,
+              nombre: data.padreId.nombre || 'Padre',
+              apellido: data.padreId.apellido || '',
+              correo: data.padreId.correo || '',
+              telefono: data.padreId.telefono || '',
+              rol: data.padreId.rol || 'padre',
+              fotoPerfilUrl: assetUrl(data.padreId.fotoPerfilUrl || ''),
+            }
+          : null,
 
     tarea:
-      data.tarea && typeof data.tarea === "object"
+      data.tarea && typeof data.tarea === 'object'
         ? {
             _id: data.tarea._id || data.tarea.id || null,
-            titulo: data.tarea.titulo || "Reto",
-            descripcion: data.tarea.descripcion || "",
+            titulo: data.tarea.titulo || 'Reto',
+            descripcion: data.tarea.descripcion || '',
             fechaEntrega: data.tarea.fechaEntrega || null,
-            criterios: typeof data.tarea.criterios === "string" ? data.tarea.criterios : "",
+            criterios: typeof data.tarea.criterios === 'string' ? data.tarea.criterios : '',
           }
-        : data.tareaId && typeof data.tareaId === "object"
-        ? {
-            _id: data.tareaId._id || data.tareaId.id || null,
-            titulo: data.tareaId.titulo || "Reto",
-            descripcion: data.tareaId.descripcion || "",
-            fechaEntrega: data.tareaId.fechaEntrega || null,
-            criterios: typeof data.tareaId.criterios === "string" ? data.tareaId.criterios : "",
-          }
-        : null,
+        : data.tareaId && typeof data.tareaId === 'object'
+          ? {
+              _id: data.tareaId._id || data.tareaId.id || null,
+              titulo: data.tareaId.titulo || 'Reto',
+              descripcion: data.tareaId.descripcion || '',
+              fechaEntrega: data.tareaId.fechaEntrega || null,
+              criterios: typeof data.tareaId.criterios === 'string' ? data.tareaId.criterios : '',
+            }
+          : null,
 
     // Respuesta
-    textoRespuesta: data.textoRespuesta || "",
-    comentario: data.comentario || "",
+    textoRespuesta: data.textoRespuesta || '',
+    comentario: data.comentario || '',
 
     // Estado
-    estado: data.estado || "borrador",
+    estado: data.estado || 'borrador',
 
     // Archivos
-    archivos: normalizeArchivos(
-      data.archivos ||
-        data.archivosAdjuntos ||
-        []
-    ),
+    archivos: normalizeArchivos(data.archivos || data.archivosAdjuntos || []),
 
-    archivosAdjuntos: normalizeArchivos(
-      data.archivosAdjuntos ||
-        data.archivos ||
-        []
-    ),
+    archivosAdjuntos: normalizeArchivos(data.archivosAdjuntos || data.archivos || []),
 
     // Enlaces (Drive, YouTube, etc.) adjuntados por el acudiente junto con
     // los archivos — ver sanitizarEnlaces() en entregaController.js.
     enlaces: Array.isArray(data.enlaces)
       ? data.enlaces
-          .filter((e) => e && typeof e.url === "string")
+          .filter((e) => e && typeof e.url === 'string')
           .map((e) => ({
             url: e.url,
-            titulo: e.titulo || "",
-            descripcion: e.descripcion || "",
+            titulo: e.titulo || '',
+            descripcion: e.descripcion || '',
           }))
       : [],
 
     // Fechas
-    fechaEnvio:
-      data.fechaEnvio ||
-      data.fechaEntrega ||
-      data.createdAt ||
-      null,
+    fechaEnvio: data.fechaEnvio || data.fechaEntrega || data.createdAt || null,
 
     createdAt: data.createdAt || null,
     updatedAt: data.updatedAt || null,
@@ -167,54 +125,31 @@ export function normalizeEntrega(data) {
     // valoración — ocultaba la nota tanto al padre (FamiliaEntregasPage)
     // como al docente (EntregasPage).
     calificacion:
-      data.calificacion &&
-      data.calificacion.valoracion !== undefined &&
-      data.calificacion.valoracion !== null
+      data.calificacion && data.calificacion.valoracion !== undefined && data.calificacion.valoracion !== null
         ? {
             valoracion: data.calificacion.valoracion ?? null,
-            comentario: data.calificacion.comentario || "",
-            fechaCalificacion:
-              data.calificacion.fechaCalificacion || null,
+            comentario: data.calificacion.comentario || '',
+            fechaCalificacion: data.calificacion.fechaCalificacion || null,
 
             // "docente" viene de un cache de enriquecimiento manual (ver
             // normalizeAndEnrichEntrega); "docenteId" es como el backend lo
             // manda de verdad cuando popula calificacion.docenteId.
             docente:
-              data.calificacion.docente &&
-              typeof data.calificacion.docente === "object"
+              data.calificacion.docente && typeof data.calificacion.docente === 'object'
                 ? {
-                    _id:
-                      data.calificacion.docente._id ||
-                      data.calificacion.docente.id ||
-                      null,
-                    nombre:
-                      data.calificacion.docente.nombre ||
-                      "Docente",
-                    apellido:
-                      data.calificacion.docente.apellido ||
-                      "",
-                    correo:
-                      data.calificacion.docente.correo ||
-                      "",
+                    _id: data.calificacion.docente._id || data.calificacion.docente.id || null,
+                    nombre: data.calificacion.docente.nombre || 'Docente',
+                    apellido: data.calificacion.docente.apellido || '',
+                    correo: data.calificacion.docente.correo || '',
                   }
-                : data.calificacion.docenteId &&
-                  typeof data.calificacion.docenteId === "object"
-                ? {
-                    _id:
-                      data.calificacion.docenteId._id ||
-                      data.calificacion.docenteId.id ||
-                      null,
-                    nombre:
-                      data.calificacion.docenteId.nombre ||
-                      "Docente",
-                    apellido:
-                      data.calificacion.docenteId.apellido ||
-                      "",
-                    correo:
-                      data.calificacion.docenteId.correo ||
-                      "",
-                  }
-                : null,
+                : data.calificacion.docenteId && typeof data.calificacion.docenteId === 'object'
+                  ? {
+                      _id: data.calificacion.docenteId._id || data.calificacion.docenteId.id || null,
+                      nombre: data.calificacion.docenteId.nombre || 'Docente',
+                      apellido: data.calificacion.docenteId.apellido || '',
+                      correo: data.calificacion.docenteId.correo || '',
+                    }
+                  : null,
           }
         : null,
   };
@@ -227,4 +162,3 @@ export function normalizeEntregas(entregas) {
   if (!Array.isArray(entregas)) return [];
   return entregas.map(normalizeEntrega).filter(Boolean);
 }
-

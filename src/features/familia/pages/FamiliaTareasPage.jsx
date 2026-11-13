@@ -1,29 +1,31 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  ClipboardList, Search, ChevronRight, AlertCircle,
-  Clock, BookOpen, CheckCircle2, XCircle,
-} from "lucide-react";
-import { useTareasListado } from "@/features/cursos/hooks/useListados";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ClipboardList, Search, ChevronRight, AlertCircle, Clock, BookOpen, CheckCircle2, XCircle } from 'lucide-react';
+import { useTareasListado } from '@/features/cursos/hooks/useListados';
 
-import { Button, Input , Badge } from "@/components";
-import { IconBtn } from "@/features/cursos/components/shared/ui";
+import { Button, Input, Badge } from '@/components';
+import { IconBtn } from '@/features/cursos/components/shared/ui';
 
 const SIN_DATOS = [];
 
 // normalizeTarea() produce "activa" / "cerrada" / "vencida", nunca "abierta"
 const ESTADO_META = {
-  activa:  { label: "Abierta", variant: "success"  },
-  cerrada: { label: "Cerrada", variant: "neutral"  },
-  vencida: { label: "Vencida", variant: "error"    },
+  activa: { label: 'Abierta', variant: 'success' },
+  cerrada: { label: 'Cerrada', variant: 'neutral' },
+  vencida: { label: 'Vencida', variant: 'error' },
 };
 
-function Sk({ h = 14, w = "100%", r = 6 }) {
-  return <div className="animate-pulse" style={{ height: h, width: w, borderRadius: r, background: "var(--color-border)" }} />;
+function Sk({ h = 14, w = '100%', r = 6 }) {
+  return (
+    <div
+      className="animate-pulse"
+      style={{ height: h, width: w, borderRadius: r, background: 'var(--color-border)' }}
+    />
+  );
 }
 
 function EstadoBadge({ estado }) {
-  const m = ESTADO_META[estado] ?? { label: estado, variant: "neutral" };
+  const m = ESTADO_META[estado] ?? { label: estado, variant: 'neutral' };
   return (
     <Badge variant={m.variant} size="sm" dot>
       {m.label}
@@ -32,9 +34,9 @@ function EstadoBadge({ estado }) {
 }
 
 function formatFecha(fechaStr) {
-  if (!fechaStr) return "Sin fecha";
+  if (!fechaStr) return 'Sin fecha';
   const d = new Date(fechaStr);
-  return d.toLocaleDateString("es-CO", { day: "numeric", month: "short", year: "numeric" });
+  return d.toLocaleDateString('es-CO', { day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 function isVencida(fechaStr) {
@@ -43,57 +45,78 @@ function isVencida(fechaStr) {
 }
 
 function TareaRow({ tarea, onClick }) {
-  const estado = tarea.estado ?? "activa";
-  const iconBg = estado === "activa" ? "rgba(12,106,196,0.10)"
-    : estado === "vencida" ? "rgba(220,38,38,0.10)"
-    : "rgba(107,114,128,0.10)";
-  const iconColor = estado === "activa" ? "var(--color-primary)"
-    : estado === "vencida" ? "var(--color-error-hover)"
-    : "#6B7280";
-  const Icon = estado === "activa" ? ClipboardList
-    : estado === "vencida" ? XCircle
-    : CheckCircle2;
+  const estado = tarea.estado ?? 'activa';
+  const iconBg =
+    estado === 'activa'
+      ? 'rgba(12,106,196,0.10)'
+      : estado === 'vencida'
+        ? 'rgba(220,38,38,0.10)'
+        : 'rgba(107,114,128,0.10)';
+  const iconColor =
+    estado === 'activa' ? 'var(--color-primary)' : estado === 'vencida' ? 'var(--color-error-hover)' : '#6B7280';
+  const Icon = estado === 'activa' ? ClipboardList : estado === 'vencida' ? XCircle : CheckCircle2;
 
   return (
     <div
       onClick={onClick}
       style={{
-        display: "flex", alignItems: "center", gap: 14,
-        padding: "14px 18px", borderBottom: "1px solid var(--color-border)",
-        cursor: "pointer", transition: "background 150ms",
+        display: 'flex',
+        alignItems: 'center',
+        gap: 14,
+        padding: '14px 18px',
+        borderBottom: '1px solid var(--color-border)',
+        cursor: 'pointer',
+        transition: 'background 150ms',
       }}
     >
       {/* Ícono */}
-      <div style={{
-        width: 38, height: 38, borderRadius: 10, flexShrink: 0,
-        background: iconBg,
-        display: "flex", alignItems: "center", justifyContent: "center",
-      }}>
+      <div
+        style={{
+          width: 38,
+          height: 38,
+          borderRadius: 10,
+          flexShrink: 0,
+          background: iconBg,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         <Icon style={{ width: 16, height: 16, color: iconColor }} />
       </div>
 
       {/* Información */}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <p style={{
-          fontSize: 14, fontWeight: 600, margin: 0,
-          whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
-        }}>
+        <p
+          style={{
+            fontSize: 14,
+            fontWeight: 600,
+            margin: 0,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
           {tarea.titulo}
         </p>
 
-        <div style={{ display: "flex", gap: 10, marginTop: 4, flexWrap: "wrap" }}>
+        <div style={{ display: 'flex', gap: 10, marginTop: 4, flexWrap: 'wrap' }}>
           {tarea.curso && (
-            <span style={{ display: "flex", gap: 4, fontSize: 12 }}>
+            <span style={{ display: 'flex', gap: 4, fontSize: 12 }}>
               <BookOpen style={{ width: 11, height: 11 }} />
               {tarea.curso.nombre}
             </span>
           )}
 
           {tarea.fechaEntrega && (
-            <span style={{
-              display: "flex", gap: 4, fontSize: 12,
-              color: isVencida(tarea.fechaEntrega) ? "var(--color-error-hover)" : "var(--color-text-muted)",
-            }}>
+            <span
+              style={{
+                display: 'flex',
+                gap: 4,
+                fontSize: 12,
+                color: isVencida(tarea.fechaEntrega) ? 'var(--color-error-hover)' : 'var(--color-text-muted)',
+              }}
+            >
               <Clock style={{ width: 11, height: 11 }} />
               {formatFecha(tarea.fechaEntrega)}
             </span>
@@ -102,7 +125,7 @@ function TareaRow({ tarea, onClick }) {
       </div>
 
       {/* Badge + acción */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <EstadoBadge estado={estado} />
 
         <IconBtn label="Ver" color="var(--color-text-muted)" onClick={onClick}>
@@ -117,15 +140,14 @@ function TareaRow({ tarea, onClick }) {
 export default function FamiliaTareasPage() {
   const navigate = useNavigate();
 
-  const { data: tareasData, isLoading: loading, isError: apiError, refetch } =
-    useTareasListado({ limit: 100 });
+  const { data: tareasData, isLoading: loading, isError: apiError, refetch } = useTareasListado({ limit: 100 });
   const tareas = tareasData ?? SIN_DATOS;
-  const [search,       setSearch]       = useState("");
-  const [filtroEstado, setFiltroEstado] = useState("todos");
+  const [search, setSearch] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('todos');
 
   const load = () => refetch();
 
-  const filtered = tareas.filter(t => {
+  const filtered = tareas.filter((t) => {
     const matchSearch =
       !search ||
       t.titulo?.toLowerCase().includes(search.toLowerCase()) ||
@@ -133,27 +155,34 @@ export default function FamiliaTareasPage() {
 
     // "Cerradas" agrupa cerrada + vencida — para un padre ambas significan lo mismo
     const matchEstado =
-      filtroEstado === "todos" ? true :
-      filtroEstado === "cerrada" ? (t.estado === "cerrada" || t.estado === "vencida") :
-      t.estado === filtroEstado;
+      filtroEstado === 'todos'
+        ? true
+        : filtroEstado === 'cerrada'
+          ? t.estado === 'cerrada' || t.estado === 'vencida'
+          : t.estado === filtroEstado;
 
     return matchSearch && matchEstado;
   });
 
-  const abiertas = tareas.filter(t => t.estado === "activa").length;
-  const cerradas = tareas.filter(t => t.estado !== "activa").length;
+  const abiertas = tareas.filter((t) => t.estado === 'activa').length;
+  const cerradas = tareas.filter((t) => t.estado !== 'activa').length;
 
   return (
-    <div style={{ maxWidth: 900, margin: "0 auto" }}>
-
+    <div style={{ maxWidth: 900, margin: '0 auto' }}>
       {/* Encabezado */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
-        <div style={{
-          width: 40, height: 40, borderRadius: 11,
-          background: "rgba(99,102,241,0.10)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
-          <ClipboardList style={{ width: 18, height: 18, color: "#6366F1" }} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 24 }}>
+        <div
+          style={{
+            width: 40,
+            height: 40,
+            borderRadius: 11,
+            background: 'rgba(99,102,241,0.10)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <ClipboardList style={{ width: 18, height: 18, color: '#6366F1' }} />
         </div>
 
         <div>
@@ -164,11 +193,11 @@ export default function FamiliaTareasPage() {
         </div>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 18 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 18 }}>
         <Input
           name="search"
           value={search}
-          onChange={e => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar reto…"
           leftIcon={<Search size={14} />}
         />
@@ -177,12 +206,16 @@ export default function FamiliaTareasPage() {
           role="tablist"
           aria-label="Filtrar retos por estado"
           style={{
-            display: "inline-flex", gap: 4, padding: 4, width: "fit-content",
-            background: "var(--color-surface-2)", border: "1px solid var(--color-border)",
+            display: 'inline-flex',
+            gap: 4,
+            padding: 4,
+            width: 'fit-content',
+            background: 'var(--color-surface-2)',
+            border: '1px solid var(--color-border)',
             borderRadius: 12,
           }}
         >
-          {["todos", "activa", "cerrada"].map(e => {
+          {['todos', 'activa', 'cerrada'].map((e) => {
             const active = filtroEstado === e;
             return (
               <button
@@ -192,21 +225,25 @@ export default function FamiliaTareasPage() {
                 aria-selected={active}
                 onClick={() => setFiltroEstado(e)}
                 style={{
-                  padding: "7px 16px",
+                  padding: '7px 16px',
                   borderRadius: 9,
                   fontWeight: 700,
                   fontSize: 13,
-                  border: "none",
-                  cursor: "pointer",
-                  background: active ? "var(--color-primary)" : "transparent",
-                  color: active ? "white" : "var(--color-text-muted)",
-                  boxShadow: active ? "var(--clay-shadow-sm)" : "none",
-                  transition: "background 150ms, color 150ms",
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: active ? 'var(--color-primary)' : 'transparent',
+                  color: active ? 'white' : 'var(--color-text-muted)',
+                  boxShadow: active ? 'var(--clay-shadow-sm)' : 'none',
+                  transition: 'background 150ms, color 150ms',
                 }}
-                onMouseEnter={e2 => { if (!active) e2.currentTarget.style.color = "var(--color-text)"; }}
-                onMouseLeave={e2 => { if (!active) e2.currentTarget.style.color = "var(--color-text-muted)"; }}
+                onMouseEnter={(e2) => {
+                  if (!active) e2.currentTarget.style.color = 'var(--color-text)';
+                }}
+                onMouseLeave={(e2) => {
+                  if (!active) e2.currentTarget.style.color = 'var(--color-text-muted)';
+                }}
               >
-                {e === "todos" ? "Todas" : e === "activa" ? "Abiertas" : "Cerradas"}
+                {e === 'todos' ? 'Todas' : e === 'activa' ? 'Abiertas' : 'Cerradas'}
               </button>
             );
           })}
@@ -215,7 +252,7 @@ export default function FamiliaTareasPage() {
 
       {/* Error de carga */}
       {apiError && (
-        <div style={{ padding: 40, textAlign: "center" }}>
+        <div style={{ padding: 40, textAlign: 'center' }}>
           <AlertCircle />
           <Button variant="primary" onClick={load}>
             Reintentar
@@ -225,29 +262,27 @@ export default function FamiliaTareasPage() {
 
       {/* Lista */}
       {!apiError && (
-        <div style={{
-          background: "var(--color-surface)",
-          borderRadius: 16,
-          border: "1px solid var(--color-border)",
-        }}>
+        <div
+          style={{
+            background: 'var(--color-surface)',
+            borderRadius: 16,
+            border: '1px solid var(--color-border)',
+          }}
+        >
           {loading ? (
-            [0,1,2,3].map(i => (
+            [0, 1, 2, 3].map((i) => (
               <div key={i} style={{ padding: 14 }}>
                 <Sk h={14} w="60%" />
               </div>
             ))
           ) : filtered.length === 0 ? (
-            <div style={{ padding: 60, textAlign: "center" }}>
+            <div style={{ padding: 60, textAlign: 'center' }}>
               <AlertCircle />
               <p>No hay retos</p>
             </div>
           ) : (
-            filtered.map(t => (
-              <TareaRow
-                key={t._id}
-                tarea={t}
-                onClick={() => navigate(`/familia/entregas/${t._id}`)}
-              />
+            filtered.map((t) => (
+              <TareaRow key={t._id} tarea={t} onClick={() => navigate(`/familia/entregas/${t._id}`)} />
             ))
           )}
         </div>

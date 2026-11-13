@@ -6,16 +6,16 @@ import { forosGetById } from '@/features/foros/services/forosService';
 import { normalizeForo } from '@/lib/normalizers/foro';
 
 const ForoRedirect = () => {
-  const { id }   = useParams();
+  const { id } = useParams();
   const navigate = useNavigate();
-  const [error,  setError] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (!id) return;
     let mounted = true;
 
     forosGetById(id)
-      .then(res => {
+      .then((res) => {
         if (!mounted) return;
         const foro = normalizeForo(res?.foro ?? res);
         if (foro?.cursoId) {
@@ -24,9 +24,13 @@ const ForoRedirect = () => {
           setError(true);
         }
       })
-      .catch(() => { if (mounted) setError(true); });
+      .catch(() => {
+        if (mounted) setError(true);
+      });
 
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [id, navigate]);
 
   if (error) {
@@ -40,13 +44,28 @@ const ForoRedirect = () => {
   }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
-      minHeight: 200, gap: 10, color: 'var(--color-text-muted)', fontSize: 14 }}>
-      <span style={{
-        width: 18, height: 18, border: '2.5px solid var(--color-border)',
-        borderTopColor: 'var(--color-primary)', borderRadius: '50%',
-        animation: 'auth-spin 0.7s linear infinite', display: 'inline-block',
-      }} />
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: 200,
+        gap: 10,
+        color: 'var(--color-text-muted)',
+        fontSize: 14,
+      }}
+    >
+      <span
+        style={{
+          width: 18,
+          height: 18,
+          border: '2.5px solid var(--color-border)',
+          borderTopColor: 'var(--color-primary)',
+          borderRadius: '50%',
+          animation: 'auth-spin 0.7s linear infinite',
+          display: 'inline-block',
+        }}
+      />
       Redirigiendo al foro…
     </div>
   );

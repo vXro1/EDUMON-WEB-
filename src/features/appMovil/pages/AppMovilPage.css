@@ -10,13 +10,13 @@
    coherente con el resto del sitio (landing, login) en vez de un
    recuadro genérico con borde gris. */
 .appmovil-hero-card::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   height: 4px;
-  background: var(--gradient-cool, linear-gradient(135deg, #0A5AA8, #25CEF5));
+  background: var(--gradient-cool, linear-gradient(135deg, #0a5aa8, #25cef5));
 }
 
 /* Cabecera del historial con tinte de marca en vez de blanco plano */
@@ -115,7 +115,7 @@
     letter-spacing: 0.05em;
     text-align: left;
   }
-  .appmovil-table td[data-label="Acciones"] > div {
+  .appmovil-table td[data-label='Acciones'] > div {
     flex-wrap: wrap;
     justify-content: flex-end;
   }

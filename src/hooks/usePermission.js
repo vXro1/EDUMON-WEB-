@@ -1,6 +1,6 @@
-import { useUser } from "@/features/auth/hooks/useAuth";
-import { tienePermiso } from "@/security/roleMatrix";
-export { PERMISSIONS } from "@/security/permissions";
+import { useUser } from '@/features/auth/hooks/useAuth';
+import { tienePermiso } from '@/security/roleMatrix';
+export { PERMISSIONS } from '@/security/permissions';
 
 /**
  * Returns true if the current user has the given permission.
@@ -8,6 +8,5 @@ export { PERMISSIONS } from "@/security/permissions";
  */
 export function usePermission(permission) {
   const { user } = useUser();
-  return tienePermiso(user?.rol ?? user?.role ?? "", permission);
+  return tienePermiso(user?.rol ?? user?.role ?? '', permission);
 }
-

@@ -1,32 +1,35 @@
-import { useState, useCallback } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "@/services/queryKeys";
-import { calendarioGetByCurso } from "@/features/calendario/services/calendarioService";
-import { eventosDelete, eventosCreateSimple, eventosUpdateSimple } from "@/features/eventos/services/eventosService";
-import CalendarWidget from "@/components/ui/CalendarWidget";
-import { AppModal, Button, Input, Textarea, Select } from "@/components";
-import { parseValidationErrors, summarizeValidationErrors } from "@/utils/parseValidationErrors";
-import { cuerpoEvento, cambiosEvento, validarEvento, formDesdeEvento } from "@/features/eventos/utils/eventoForm";
+import { useState, useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/services/queryKeys';
+import { calendarioGetByCurso } from '@/features/calendario/services/calendarioService';
+import { eventosDelete, eventosCreateSimple, eventosUpdateSimple } from '@/features/eventos/services/eventosService';
+import CalendarWidget from '@/components/ui/CalendarWidget';
+import { AppModal, Button, Input, Textarea, Select } from '@/components';
+import { parseValidationErrors, summarizeValidationErrors } from '@/utils/parseValidationErrors';
+import { cuerpoEvento, cambiosEvento, validarEvento, formDesdeEvento } from '@/features/eventos/utils/eventoForm';
 
 const CATEGORIAS = [
-  { value: "escuela_padres", label: "Escuela de padres" },
-  { value: "tarea",          label: "Reto"              },
-  { value: "institucional",  label: "Institucional"     },
+  { value: 'escuela_padres', label: 'Escuela de padres' },
+  { value: 'tarea', label: 'Reto' },
+  { value: 'institucional', label: 'Institucional' },
 ];
 const SIN_ITEMS = [];
 
 const EMPTY_FORM = {
-  titulo: "", descripcion: "", fechaInicio: "", fechaFin: "",
-  hora: "", ubicacion: "", categoria: "institucional",
+  titulo: '',
+  descripcion: '',
+  fechaInicio: '',
+  fechaFin: '',
+  hora: '',
+  ubicacion: '',
+  categoria: 'institucional',
 };
 
 /* ── Texto de error inline debajo de cada campo ────────────────────── */
 function FieldError({ message }) {
   if (!message) return null;
   return (
-    <p style={{ margin: "4px 0 0", fontSize: 12, color: "var(--color-error-hover)", fontWeight: 600 }}>
-      {message}
-    </p>
+    <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--color-error-hover)', fontWeight: 600 }}>{message}</p>
   );
 }
 
@@ -34,17 +37,17 @@ function FieldError({ message }) {
 function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
   const isEdit = !!evento;
   const [original] = useState(() => (isEdit ? formDesdeEvento(evento) : EMPTY_FORM));
-  const [form,   setForm]   = useState(original);
+  const [form, setForm] = useState(original);
   const [saving, setSaving] = useState(false);
-  const [error,  setError]  = useState("");
+  const [error, setError] = useState('');
   // Errores específicos por campo, ej: { fechaInicio: "La fecha de inicio debe ser futura" }
   const [fieldErrors, setFieldErrors] = useState({});
 
   const set = (k, v) => {
-    setForm(p => ({ ...p, [k]: v }));
+    setForm((p) => ({ ...p, [k]: v }));
     // Limpiar el error de ese campo apenas el usuario empieza a corregirlo
     if (fieldErrors[k]) {
-      setFieldErrors(prev => {
+      setFieldErrors((prev) => {
         const next = { ...prev };
         delete next[k];
         return next;
@@ -55,14 +58,19 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
   const handleSave = async () => {
     // editar: solo lo que cambió; crear: todo
     const body = isEdit ? cambiosEvento(original, form) : { ...cuerpoEvento(form), cursosIds: [cursoId] };
-    if (isEdit && Object.keys(body).length === 0) { onClose(); return; }
+    if (isEdit && Object.keys(body).length === 0) {
+      onClose();
+      return;
+    }
     const invalido = validarEvento(form, isEdit ? Object.keys(body) : null);
-    if (invalido) { setError(invalido); return; }
+    if (invalido) {
+      setError(invalido);
+      return;
+    }
     setSaving(true);
-    setError("");
+    setError('');
     setFieldErrors({});
     try {
-
       if (isEdit) {
         await eventosUpdateSimple(evento._id ?? evento.id, body);
       } else {
@@ -75,7 +83,7 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
         setFieldErrors(parsed);
         setError(summarizeValidationErrors(parsed));
       } else {
-        setError(err.message || "No se pudo guardar el evento.");
+        setError(err.message || 'No se pudo guardar el evento.');
       }
     } finally {
       setSaving(false);
@@ -85,19 +93,23 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
   return (
     <AppModal isOpen onClose={onClose} size="md">
       <AppModal.Header
-        title={isEdit ? "Editar evento" : "Nuevo evento"}
-        description={isEdit ? "Modifica los datos del evento" : "Crea un evento para este curso"}
+        title={isEdit ? 'Editar evento' : 'Nuevo evento'}
+        description={isEdit ? 'Modifica los datos del evento' : 'Crea un evento para este curso'}
         onClose={onClose}
       />
       <AppModal.Body>
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {error && (
-            <div style={{
-              background: "rgba(239,68,68,0.08)",
-              border: "1px solid rgba(239,68,68,0.3)",
-              borderRadius: 10, padding: "10px 14px",
-              fontSize: 13, color: "var(--color-error-hover)",
-            }}>
+            <div
+              style={{
+                background: 'rgba(239,68,68,0.08)',
+                border: '1px solid rgba(239,68,68,0.3)',
+                borderRadius: 10,
+                padding: '10px 14px',
+                fontSize: 13,
+                color: 'var(--color-error-hover)',
+              }}
+            >
               {error}
             </div>
           )}
@@ -106,7 +118,7 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
             <Input
               label="Título *"
               value={form.titulo}
-              onChange={e => set("titulo", e.target.value)}
+              onChange={(e) => set('titulo', e.target.value)}
               placeholder="Nombre del evento"
             />
             <FieldError message={fieldErrors.titulo} />
@@ -116,20 +128,20 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
             <Textarea
               label="Descripción *"
               value={form.descripcion}
-              onChange={e => set("descripcion", e.target.value)}
+              onChange={(e) => set('descripcion', e.target.value)}
               placeholder="Descripción del evento (mínimo 10 caracteres)"
               rows={3}
             />
             <FieldError message={fieldErrors.descripcion} />
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <div>
               <Input
                 label="Fecha inicio *"
                 type="date"
                 value={form.fechaInicio}
-                onChange={e => set("fechaInicio", e.target.value)}
+                onChange={(e) => set('fechaInicio', e.target.value)}
               />
               <FieldError message={fieldErrors.fechaInicio} />
             </div>
@@ -139,29 +151,24 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
                 type="date"
                 value={form.fechaFin}
                 min={form.fechaInicio}
-                onChange={e => set("fechaFin", e.target.value)}
+                onChange={(e) => set('fechaFin', e.target.value)}
               />
               <FieldError message={fieldErrors.fechaFin} />
             </div>
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
             <div>
-              <Input
-                label="Hora *"
-                type="time"
-                value={form.hora}
-                onChange={e => set("hora", e.target.value)}
-              />
+              <Input label="Hora *" type="time" value={form.hora} onChange={(e) => set('hora', e.target.value)} />
               <FieldError message={fieldErrors.hora} />
             </div>
             <div>
-              <Select
-                label="Categoría *"
-                value={form.categoria}
-                onChange={e => set("categoria", e.target.value)}
-              >
-                {CATEGORIAS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+              <Select label="Categoría *" value={form.categoria} onChange={(e) => set('categoria', e.target.value)}>
+                {CATEGORIAS.map((c) => (
+                  <option key={c.value} value={c.value}>
+                    {c.label}
+                  </option>
+                ))}
               </Select>
               <FieldError message={fieldErrors.categoria} />
             </div>
@@ -171,7 +178,7 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
             <Input
               label="Ubicación *"
               value={form.ubicacion}
-              onChange={e => set("ubicacion", e.target.value)}
+              onChange={(e) => set('ubicacion', e.target.value)}
               placeholder="Salón, virtual, etc."
             />
             <FieldError message={fieldErrors.ubicacion} />
@@ -179,9 +186,11 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
         </div>
       </AppModal.Body>
       <AppModal.Footer>
-        <Button variant="ghost" size="sm" onClick={onClose}>Cancelar</Button>
+        <Button variant="ghost" size="sm" onClick={onClose}>
+          Cancelar
+        </Button>
         <Button size="sm" onClick={handleSave} disabled={saving}>
-          {saving ? "Guardando…" : isEdit ? "Guardar cambios" : "Crear evento"}
+          {saving ? 'Guardando…' : isEdit ? 'Guardar cambios' : 'Crear evento'}
         </Button>
       </AppModal.Footer>
     </AppModal>
@@ -202,9 +211,7 @@ export default function CalendarioTab({ cursoId, canManage }) {
     enabled: Boolean(cursoId),
     staleTime: 30_000,
   });
-  const items = (data?.items ?? SIN_ITEMS).slice().sort(
-    (a, b) => new Date(a.fecha) - new Date(b.fecha)
-  );
+  const items = (data?.items ?? SIN_ITEMS).slice().sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
   const stats = data?.estadisticas ?? null;
 
   // tras crear/editar/eliminar: refresca este curso, el calendario general y eventos
@@ -226,7 +233,7 @@ export default function CalendarioTab({ cursoId, canManage }) {
         stats={stats}
         canManage={canManage}
         onRefresh={load}
-        onCreateEvent={() => setFormEvt("new")}
+        onCreateEvent={() => setFormEvt('new')}
         onEditEvent={(item) => setFormEvt(item)}
         onDeleteEvent={handleDelete}
         title="Calendario del curso"
@@ -235,9 +242,12 @@ export default function CalendarioTab({ cursoId, canManage }) {
       {formEvt && (
         <EventoFormModal
           cursoId={cursoId}
-          evento={formEvt === "new" ? null : formEvt}
+          evento={formEvt === 'new' ? null : formEvt}
           onClose={() => setFormEvt(null)}
-          onSaved={() => { setFormEvt(null); load(); }}
+          onSaved={() => {
+            setFormEvt(null);
+            load();
+          }}
         />
       )}
     </>

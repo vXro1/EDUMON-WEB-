@@ -1,42 +1,41 @@
-import { PERMISSIONS } from "./permissions.js";
+import { PERMISSIONS } from './permissions.js';
 
 // ─── Constantes de rol ────────────────────────────────────────────────────────
 // no existe rol "estudiante" — los perfiles familiares usan rol 'padre', solo varía esTitular
 export const ROLES = {
-  ADMIN:      "administrador",
-  DOCENTE:    "docente",
-  PADRE:      "padre",
-  SUPERADMIN: "superadmin",
+  ADMIN: 'administrador',
+  DOCENTE: 'docente',
+  PADRE: 'padre',
+  SUPERADMIN: 'superadmin',
 };
 
 // ─── Matriz de permisos ───────────────────────────────────────────────────────
 const ALL = Object.values(PERMISSIONS);
 
 const rolePermissions = {
-
   [ROLES.SUPERADMIN]: ALL,
 
   // el aislamiento real de admin es por institucionId, no por tipo de acción.
   // Puede crear y editar retos, módulos, foros y eventos de los cursos de su colegio
   // (panel del colegio, para cubrir emergencias); los retos quedan a nombre de la
   // docente del curso. Solo los perfiles familiares siguen siendo de cada familia.
- [ROLES.ADMIN]: ALL.filter(
+  [ROLES.ADMIN]: ALL.filter(
     (p) =>
       ![
         PERMISSIONS.MANAGE_FAMILY_PROFILES, // no puede crear/editar perfiles familiares
-      ].includes(p)
+      ].includes(p),
   ),
 
   [ROLES.DOCENTE]: [
     PERMISSIONS.VIEW_COURSES,
-    PERMISSIONS.CREATE_COURSES,         
-    PERMISSIONS.GRADE_TASKS,             // legado — mantenido por compatibilidad
+    PERMISSIONS.CREATE_COURSES,
+    PERMISSIONS.GRADE_TASKS, // legado — mantenido por compatibilidad
 
-    PERMISSIONS.VIEW_COURSE_PARTICIPANTS,     // confirmado: getParticipantesCurso
-    PERMISSIONS.MANAGE_COURSE_PARTICIPANTS,   // confirmado: agregarParticipante/removerParticipante
+    PERMISSIONS.VIEW_COURSE_PARTICIPANTS, // confirmado: getParticipantesCurso
+    PERMISSIONS.MANAGE_COURSE_PARTICIPANTS, // confirmado: agregarParticipante/removerParticipante
 
     PERMISSIONS.VIEW_MODULES,
-    PERMISSIONS.MANAGE_MODULES,          // confirmado: verificarPermisoModulo → usuarioPerteneceACurso
+    PERMISSIONS.MANAGE_MODULES, // confirmado: verificarPermisoModulo → usuarioPerteneceACurso
 
     PERMISSIONS.VIEW_TASKS,
     PERMISSIONS.MANAGE_TASKS,
@@ -44,23 +43,23 @@ const rolePermissions = {
     PERMISSIONS.VIEW_ENTREGAS,
     PERMISSIONS.GRADE_ENTREGAS,
 
-    PERMISSIONS.VIEW_FOROS,              // confirmado: obtenerForosPorCurso
-    PERMISSIONS.CREATE_FORO,             // confirmado: crearForo (ownership check)
-    PERMISSIONS.MANAGE_FORO,             // confirmado: actualizarForo/eliminarForo/cambiarEstadoForo
+    PERMISSIONS.VIEW_FOROS, // confirmado: obtenerForosPorCurso
+    PERMISSIONS.CREATE_FORO, // confirmado: crearForo (ownership check)
+    PERMISSIONS.MANAGE_FORO, // confirmado: actualizarForo/eliminarForo/cambiarEstadoForo
     PERMISSIONS.POST_MENSAJE_FORO,
     PERMISSIONS.REPLY_MENSAJE_FORO,
 
-    PERMISSIONS.VIEW_EVENTS,             // confirmado: getEventos filtra por docenteId
-    PERMISSIONS.CREATE_EVENTS,           // confirmado: createEvento restringe a cursos propios
+    PERMISSIONS.VIEW_EVENTS, // confirmado: getEventos filtra por docenteId
+    PERMISSIONS.CREATE_EVENTS, // confirmado: createEvento restringe a cursos propios
 
     PERMISSIONS.VIEW_NOTIFICATIONS,
   ],
 
   // sin VIEW_COURSE_PARTICIPANTS — ningún controlador expone esa vista a padre
   [ROLES.PADRE]: [
-    PERMISSIONS.VIEW_COURSES,            // confirmado: getMisCursos, obtenerCalendarioUsuario
+    PERMISSIONS.VIEW_COURSES, // confirmado: getMisCursos, obtenerCalendarioUsuario
 
-    PERMISSIONS.VIEW_MODULES,            // confirmado: usuarioPerteneceACurso incluye padre participante
+    PERMISSIONS.VIEW_MODULES, // confirmado: usuarioPerteneceACurso incluye padre participante
     PERMISSIONS.VIEW_TASKS,
 
     PERMISSIONS.VIEW_ENTREGAS,
@@ -73,10 +72,10 @@ const rolePermissions = {
     // al responder, padre solo puede hacerlo a mensajes de docente/administrador
     PERMISSIONS.REPLY_MENSAJE_FORO,
 
-    PERMISSIONS.VIEW_EVENTS,             // confirmado: getEventos filtra por cursos del padre
+    PERMISSIONS.VIEW_EVENTS, // confirmado: getEventos filtra por cursos del padre
 
     PERMISSIONS.VIEW_NOTIFICATIONS,
-    PERMISSIONS.MANAGE_FAMILY_PROFILES,  // confirmado: perfilFamiliarController — CRUD sobre titularId
+    PERMISSIONS.MANAGE_FAMILY_PROFILES, // confirmado: perfilFamiliarController — CRUD sobre titularId
   ],
 };
 
@@ -85,10 +84,10 @@ export function normalizeRole(role) {
   if (!role) return null;
   const r = String(role).toLowerCase().trim();
 
-  if (r === "superadmin" || r.includes("superadmin")) return ROLES.SUPERADMIN;
-  if (r.includes("admin"))                             return ROLES.ADMIN;
-  if (r.includes("docente"))                           return ROLES.DOCENTE;
-  if (r.includes("padre") || r.includes("tutor"))      return ROLES.PADRE;
+  if (r === 'superadmin' || r.includes('superadmin')) return ROLES.SUPERADMIN;
+  if (r.includes('admin')) return ROLES.ADMIN;
+  if (r.includes('docente')) return ROLES.DOCENTE;
+  if (r.includes('padre') || r.includes('tutor')) return ROLES.PADRE;
 
   return r;
 }

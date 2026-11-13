@@ -1,16 +1,14 @@
-
-const RAW_BASE = import.meta.env.VITE_API_URL ?? "/api";
+const RAW_BASE = import.meta.env.VITE_API_URL ?? '/api';
 
 // Origen del backend derivado de VITE_API_URL. Si es relativo ("/api"), el
 // backend comparte origen con el front y las rutas /uploads ya resuelven solas.
-let API_ORIGIN = "";
+let API_ORIGIN = '';
 try {
-  const origin =
-    typeof window !== "undefined" ? window.location.origin : "http://localhost";
+  const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost';
   const parsed = new URL(RAW_BASE, origin).origin;
-  API_ORIGIN = parsed === origin ? "" : parsed;
+  API_ORIGIN = parsed === origin ? '' : parsed;
 } catch {
-  API_ORIGIN = "";
+  API_ORIGIN = '';
 }
 
 /**
@@ -25,12 +23,12 @@ try {
  * @returns {string}
  */
 export function assetUrl(path) {
-  if (!path || typeof path !== "string") return "";
+  if (!path || typeof path !== 'string') return '';
   const trimmed = path.trim();
-  if (!trimmed) return "";
+  if (!trimmed) return '';
   if (/^(https?:|data:|blob:)/i.test(trimmed)) return trimmed;
   if (!API_ORIGIN) return trimmed; // mismo origen: sirve tal cual
-  return `${API_ORIGIN}${trimmed.startsWith("/") ? "" : "/"}${trimmed}`;
+  return `${API_ORIGIN}${trimmed.startsWith('/') ? '' : '/'}${trimmed}`;
 }
 
 export default assetUrl;

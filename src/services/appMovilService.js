@@ -18,9 +18,7 @@ import { apiFetch, apiFetchFormData } from './core/apiClient';
 import { assetUrl } from '@/utils/assetUrl';
 
 const normalizeApk = (apk) =>
-  apk
-    ? { ...apk, url: assetUrl(apk.url), urlDescarga: assetUrl(apk.urlDescarga || apk.url) }
-    : apk;
+  apk ? { ...apk, url: assetUrl(apk.url), urlDescarga: assetUrl(apk.urlDescarga || apk.url) } : apk;
 
 // ── Público (consumido por la landing, sin sesión) ──────────────
 // GET /apk/actual → 200 { apk } | 404 si no hay ninguna versión activa.
@@ -60,5 +58,4 @@ export const appMovilActivar = (id) => appMovilUpdate(id, { activa: true });
 
 // DELETE /apk/:id → { message } — si era la activa, el backend promueve la
 // más reciente que quede.
-export const appMovilEliminar = (id) =>
-  apiFetch(`/apk/${id}`, { method: 'DELETE' });
+export const appMovilEliminar = (id) => apiFetch(`/apk/${id}`, { method: 'DELETE' });

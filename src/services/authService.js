@@ -27,14 +27,16 @@ export const authService = {
   logout: async () => {
     try {
       await apiFetch('/auth/logout', { method: 'POST' });
-    } catch {}
-    finally {
+    } catch {
+    } finally {
       authService.clearAllCache();
     }
   },
 
   clearAllCache: () => {
-    try { sessionStorage.clear(); } catch {}
+    try {
+      sessionStorage.clear();
+    } catch {}
   },
 
   forgotPassword: async (body) => apiFetch('/auth/forgot-password', { method: 'POST', body: JSON.stringify(body) }),
