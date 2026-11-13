@@ -42,6 +42,12 @@ export const queryKeys = {
     detail:  (id)       => ["eventos", id],
   },
 
+  // ─── Calendario ───────────────────────────────────────────────────────────
+  calendario: {
+    all:     ()         => ["calendario"],
+    byCurso: (cursoId)  => ["calendario", "curso", cursoId],
+  },
+
   // ─── Usuarios ─────────────────────────────────────────────────────────────
   usuarios: {
     all:    ()   => ["usuarios"],

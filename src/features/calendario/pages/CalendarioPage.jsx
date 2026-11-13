@@ -1,7 +1,10 @@
 // calendario general para docente y administrador
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { useQueries, useQueryClient } from "@tanstack/react-query";
 import { CalendarDays } from "lucide-react";
-import { cursosGetVisibles } from "@/features/cursos/services/cursosService";
+import { useCursosListado } from "@/features/cursos/hooks/useListados";
+import { queryKeys } from "@/services/queryKeys";
+import { normalizeRole, ROLES } from "@/security/roleMatrix";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { calendarioGetByCurso } from "@/features/calendario/services/calendarioService";
 import { eventosDelete, eventosCreateSimple, eventosUpdateSimple } from "@/features/eventos/services/eventosService";
@@ -9,6 +12,8 @@ import { usePermission, PERMISSIONS } from "@/hooks/usePermission";
 import { cuerpoEvento, cambiosEvento, validarEvento, formDesdeEvento } from "@/features/eventos/utils/eventoForm";
 import CalendarWidget from "@/components/ui/CalendarWidget";
 import { Modal, Button } from "@/components";
+
+const SIN_DATOS = [];
 
 const CATEGORIAS = [
   { value: "escuela_padres", label: "Escuela de padres" },
@@ -212,56 +217,62 @@ export default function CalendarioPage() {
   const canManage = usePermission(PERMISSIONS.CREATE_EVENTS);
   const { user } = useAuth();
 
-  const [cursos,     setCursos]     = useState([]);
-  const [items,      setItems]      = useState([]);
-  const [stats,      setStats]      = useState(null);
-  const [loading,    setLoading]    = useState(true);
-  const [error,      setError]      = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [editEvt,    setEditEvt]    = useState(null);
+  const queryClient = useQueryClient();
 
-  const load = useCallback(async () => {
-    if (!user) return;
-    setLoading(true);
-    setError(false);
-    try {
-      const cursosRes  = await cursosGetVisibles(user.rol, { limit: 50 });
-      const cursosList = cursosRes?.cursos ?? [];
-      setCursos(cursosList);
-
-      let totalTareas = 0, totalEventos = 0, tareasVencidas = 0, eventosProximos = 0;
-      const allItems  = [];
-
-      await Promise.all(
-        cursosList.map(async (c) => {
-          try {
-            const res     = await calendarioGetByCurso(c._id);
-            const entries = res?.items ?? [];
-            entries.forEach(item =>
-              allItems.push({ ...item, cursoNombre: c.nombre ?? "Sin nombre" })
-            );
-            const st = res?.estadisticas;
-            if (st) {
-              totalTareas     += st.totalTareas     ?? 0;
-              totalEventos    += st.totalEventos    ?? 0;
-              tareasVencidas  += st.tareasVencidas  ?? 0;
-              eventosProximos += st.eventosProximos ?? 0;
-            }
-          } catch { /* ignorar errores de cursos individuales */ }
-        })
+  // Cursos visibles (admin: todos; resto: los suyos) y, en paralelo, el
+  // calendario de cada uno, en caché por curso (queryKeys.calendario.byCurso)
+  const cursosQuery = useCursosListado({
+    alcance: normalizeRole(user?.rol) === ROLES.ADMIN ? "todos" : "mios",
+    params: { limit: 50 },
+    enabled: Boolean(user),
+  });
+  const cursos = cursosQuery.data?.cursos ?? SIN_DATOS;
+  // une los calendarios de todos los cursos; un curso cuyo calendario falle
+  // se ignora, como antes
+  const combinar = useCallback((resultados) => {
+    let totalTareas = 0, totalEventos = 0, tareasVencidas = 0, eventosProximos = 0;
+    const allItems = [];
+    resultados.forEach((q, i) => {
+      const res = q.data;
+      if (!res) return;
+      (res.items ?? []).forEach((item) =>
+        allItems.push({ ...item, cursoNombre: cursos[i]?.nombre ?? "Sin nombre" })
       );
+      const st = res.estadisticas;
+      if (st) {
+        totalTareas     += st.totalTareas     ?? 0;
+        totalEventos    += st.totalEventos    ?? 0;
+        tareasVencidas  += st.tareasVencidas  ?? 0;
+        eventosProximos += st.eventosProximos ?? 0;
+      }
+    });
+    allItems.sort((x, y) => new Date(x.fecha) - new Date(y.fecha));
+    return {
+      items: allItems,
+      stats: { totalTareas, totalEventos, tareasVencidas, eventosProximos },
+      cargando: resultados.some((q) => q.isLoading),
+    };
+  }, [cursos]);
 
-      allItems.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
-      setItems(allItems);
-      setStats({ totalTareas, totalEventos, tareasVencidas, eventosProximos });
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
+  const { items, stats, cargando } = useQueries({
+    queries: cursos.map((c) => ({
+      queryKey: queryKeys.calendario.byCurso(c._id),
+      queryFn: () => calendarioGetByCurso(c._id),
+      staleTime: 30_000,
+    })),
+    combine: combinar,
+  });
 
-  useEffect(() => { load(); }, [load]);
+  const loading = cursosQuery.isLoading || cargando;
+  const error = cursosQuery.isError;
+
+  // tras crear/editar/eliminar un evento
+  const load = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: queryKeys.calendario.all() });
+    queryClient.invalidateQueries({ queryKey: queryKeys.eventos.all() });
+  }, [queryClient]);
 
   const handleDelete = async (id) => {
     await eventosDelete(id);

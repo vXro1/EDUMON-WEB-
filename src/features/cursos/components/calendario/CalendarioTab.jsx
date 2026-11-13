@@ -1,4 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/services/queryKeys";
 import { calendarioGetByCurso } from "@/features/calendario/services/calendarioService";
 import { eventosDelete, eventosCreateSimple, eventosUpdateSimple } from "@/features/eventos/services/eventosService";
 import CalendarWidget from "@/components/ui/CalendarWidget";
@@ -11,6 +13,8 @@ const CATEGORIAS = [
   { value: "tarea",          label: "Reto"              },
   { value: "institucional",  label: "Institucional"     },
 ];
+const SIN_ITEMS = [];
+
 const EMPTY_FORM = {
   titulo: "", descripcion: "", fechaInicio: "", fechaFin: "",
   hora: "", ubicacion: "", categoria: "institucional",
@@ -188,28 +192,26 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
 // CalendarioTab — gestiona fetch + CRUD; delega visual a CalendarWidget
 // ══════════════════════════════════════════════════════════════════════════
 export default function CalendarioTab({ cursoId, canManage }) {
-  const [items,   setItems]   = useState([]);
-  const [stats,   setStats]   = useState(null);
-  const [loading, setLoading] = useState(true);
   const [formEvt, setFormEvt] = useState(null); // null | "new" | elemento
+  const queryClient = useQueryClient();
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await calendarioGetByCurso(cursoId);
-      const sorted = (res.items ?? []).sort(
-        (a, b) => new Date(a.fecha) - new Date(b.fecha)
-      );
-      setItems(sorted);
-      setStats(res.estadisticas ?? null);
-    } catch {
-      setItems([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [cursoId]);
+  // misma clave que el calendario general: comparten caché
+  const { data, isLoading: loading } = useQuery({
+    queryKey: queryKeys.calendario.byCurso(cursoId),
+    queryFn: () => calendarioGetByCurso(cursoId),
+    enabled: Boolean(cursoId),
+    staleTime: 30_000,
+  });
+  const items = (data?.items ?? SIN_ITEMS).slice().sort(
+    (a, b) => new Date(a.fecha) - new Date(b.fecha)
+  );
+  const stats = data?.estadisticas ?? null;
 
-  useEffect(() => { load(); }, [load]);
+  // tras crear/editar/eliminar: refresca este curso, el calendario general y eventos
+  const load = useCallback(() => {
+    queryClient.invalidateQueries({ queryKey: queryKeys.calendario.all() });
+    queryClient.invalidateQueries({ queryKey: queryKeys.eventos.all() });
+  }, [queryClient]);
 
   const handleDelete = async (id) => {
     await eventosDelete(id);
