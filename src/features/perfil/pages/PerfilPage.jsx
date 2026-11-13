@@ -109,7 +109,7 @@ function HijosSection({ perfiles, loading }) {
           background: "var(--color-bg)", borderRadius: 12, border: "1px solid var(--color-border)",
         }}>
           {p.avatarUrl ? (
-            <img src={p.avatarUrl} alt={p.nombre} style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "contain", padding: "8%", flexShrink: 0 }} />
+            <img loading="lazy" decoding="async" src={p.avatarUrl} alt={p.nombre} style={{ width: 40, height: 40, borderRadius: "50%", objectFit: "contain", padding: "8%", flexShrink: 0 }} />
           ) : (
             <div style={{ width: 40, height: 40, borderRadius: "50%", background: "rgba(22,163,74,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <GraduationCap size={18} color="var(--edu-green-600)" />
@@ -720,7 +720,7 @@ export default function PerfilPage() {
                     onMouseEnter={e => !uploadingPhoto && (e.currentTarget.style.transform = "scale(1.08)")}
                     onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
                   >
-                    <img
+                    <img loading="lazy" decoding="async"
                       src={foto.url}
                       alt={foto.nombre ?? `Avatar ${i + 1}`}
                       style={{ width: "100%", height: "100%", objectFit: "contain", padding: "10%", display: "block" }}

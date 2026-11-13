@@ -39,7 +39,7 @@ function AvatarPicker({ value, onChange }) {
           display: "flex", alignItems: "center", justifyContent: "center",
         }}>
           {value
-            ? <img src={value} alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ? <img loading="lazy" decoding="async" src={value} alt="Avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
             : <UserCircle size={28} color="var(--color-text-muted)" />
           }
         </div>
@@ -86,7 +86,7 @@ function AvatarPicker({ value, onChange }) {
                 onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.1)")}
                 onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
               >
-                <img src={src} alt={`Avatar ${i + 1}`} style={{ width: "100%", aspectRatio: "1", borderRadius: "50%", objectFit: "cover", display: "block" }} />
+                <img loading="lazy" decoding="async" src={src} alt={`Avatar ${i + 1}`} style={{ width: "100%", aspectRatio: "1", borderRadius: "50%", objectFit: "cover", display: "block" }} />
               </button>
             );
           })}
@@ -137,7 +137,7 @@ function ProfileCard({ perfil, isTitular, isSelected, onSelect, onEdit, onDelete
       {/* Avatar */}
       <div style={{ width: 72, height: 72, borderRadius: "50%", overflow: "hidden", flexShrink: 0 }}>
         {perfil.avatarUrl ? (
-          <img src={perfil.avatarUrl} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <img loading="lazy" decoding="async" src={perfil.avatarUrl} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         ) : (
           <div style={{
             width: "100%", height: "100%",

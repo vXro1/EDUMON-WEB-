@@ -665,7 +665,7 @@ export default function CursosPage() {
               background: "var(--color-bg)", border: "1px solid var(--color-border)",
               borderLeft: `4px solid ${editForm.color || "var(--color-primary)"}`,
             }}>
-              <img
+              <img loading="lazy" decoding="async"
                 src={selected.fotoPortada || getCursoAvatar(selected)} alt={selected.nombre}
                 onError={e => { e.target.onerror = null; e.target.src = getCursoAvatar(selected); }}
                 style={{ width: 40, height: 40, borderRadius: 8, objectFit: "cover", flexShrink: 0 }}

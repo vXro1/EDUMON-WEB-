@@ -175,7 +175,7 @@ function PreviewModal({ item, onClose }) {
         <div style={{ flex: 1, overflow: "auto", background: "var(--color-bg-secondary, #f3f4f6)" }}>
           {item.isImage ? (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh", padding: 20 }}>
-              <img
+              <img loading="lazy" decoding="async"
                 src={item.url}
                 alt={item.name}
                 style={{
@@ -239,7 +239,7 @@ function FileCard({ name, sizeLabel, isImage, imageUrl, href, marked = false, on
         background: isImage ? "var(--color-bg)" : badge.bg,
       }}>
         {isImage ? (
-          <img src={imageUrl} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          <img loading="lazy" decoding="async" src={imageUrl} alt={name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
         ) : (
           <span style={{ fontSize: 15, fontWeight: 800, color: badge.fg, letterSpacing: 0.3 }}>
             {badge.label}

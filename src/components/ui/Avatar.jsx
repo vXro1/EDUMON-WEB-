@@ -37,7 +37,7 @@ export default function Avatar({
       }}
     >
       {imgSrc ? (
-        <img
+        <img loading="lazy" decoding="async"
           src={imgSrc}
           alt={alt}
           // object-contain, no cover: "cover" recortaría avatares con proporciones distintas
@@ -53,7 +53,7 @@ export default function Avatar({
           {initials}
         </span>
       ) : (
-        <img
+        <img loading="lazy" decoding="async"
           src={fallback}
           alt={alt}
           className="w-2/3 h-2/3 object-contain opacity-70"

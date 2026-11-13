@@ -135,7 +135,7 @@ function TutorialCard({ t }) {
 
   return (
     <article className={`tuto-card tuto-card--${t.tono}`} id={t.id}>
-      <img className="tuto-card__peek" src={t.mascota} alt={`Mascota de EDUMON del tutorial ${t.titulo}`} aria-hidden="true" draggable={false} />
+      <img loading="lazy" decoding="async" className="tuto-card__peek" src={t.mascota} alt={`Mascota de EDUMON del tutorial ${t.titulo}`} aria-hidden="true" draggable={false} />
 
       <div className="tuto-card__media">
         <VideoPlayer t={t} playing={playing} onPlay={() => setPlaying(true)} />
@@ -247,7 +247,7 @@ export default function TutorialesPage() {
                     onClick={(e) => irA(e, a.id)}
                     className={`tuto-acceso tuto-acceso--${a.tono}`}
                   >
-                    <img src={a.avatar} alt={`Mascota de EDUMON para ${a.label}`} aria-hidden="true" />
+                    <img loading="lazy" decoding="async" src={a.avatar} alt={`Mascota de EDUMON para ${a.label}`} aria-hidden="true" />
                     {a.label}
                   </a>
                 ))}
@@ -269,7 +269,7 @@ export default function TutorialesPage() {
               <IconStar size={22} className="tuto-spark tuto-spark--1" />
               <IconSparkles size={26} className="tuto-spark tuto-spark--2" />
               <div className="tuto-hero__bubble-talk">¡Dale play y aprende conmigo!</div>
-              <img src={mascota} alt="Mascota de EDUMON" className="tuto-hero__mascota" width={660} height={626} />
+              <img loading="lazy" decoding="async" src={mascota} alt="Mascota de EDUMON" className="tuto-hero__mascota" width={660} height={626} />
             </div>
           </div>
 
@@ -285,7 +285,7 @@ export default function TutorialesPage() {
           <div className="tuto-cta__card">
             <div className="tuto-cta__bubbles" aria-hidden="true">
               {BURBUJAS_CTA.map((b) => (
-                <img key={b.cls} src={b.src} alt="" className={`tuto-cta__bubble tuto-cta__bubble--${b.cls}`} />
+                <img loading="lazy" decoding="async" key={b.cls} src={b.src} alt="" className={`tuto-cta__bubble tuto-cta__bubble--${b.cls}`} />
               ))}
             </div>
             <div className="tuto-cta__content">

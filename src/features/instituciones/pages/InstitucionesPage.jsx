@@ -88,7 +88,7 @@ function AdminAvatar({ admin }) {
   if (admin?.fotoPerfilUrl) {
     return (
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginBottom: 16 }}>
-        <img src={admin.fotoPerfilUrl} alt={name}
+        <img loading="lazy" decoding="async" src={admin.fotoPerfilUrl} alt={name}
           style={{ width: 60, height: 60, borderRadius: "50%", objectFit: "cover", border: "2px solid var(--color-border)" }}
           onError={(e) => { e.currentTarget.style.display = "none"; }} />
         <p style={{ fontSize: 14, fontWeight: 700, color: "var(--color-text)", margin: 0 }}>{name}</p>
