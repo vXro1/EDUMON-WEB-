@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { fotosPredeterminadasQuery } from "@/features/usuarios/hooks/useUsuariosListado";
 import { queryKeys } from "@/services/queryKeys";
 import { useUser } from "@/features/auth/hooks/useAuth";
 
@@ -9,7 +10,7 @@ import {
   BookOpen, GraduationCap, Key, Info, Clock, Hash, Check,
 } from "lucide-react";
 
-import { usersGetMyProfile, usersUpdateMyPhoto, usersGetDefaultPhotos, usersUpdateMyProfile } from "@/services/usersService";
+import { usersGetMyProfile, usersUpdateMyPhoto, usersUpdateMyProfile } from "@/services/usersService";
 import { cursosGetAll, cursosGetMine } from "@/features/cursos/services/cursosService";
 import { perfilesGetAll } from "@/features/familia/services/perfilesService";
 import { authChangePassword } from "@/services/authService";
@@ -252,6 +253,7 @@ export default function PerfilPage() {
   // El rol se conoce por la sesión: cursos y perfiles familiares se piden en
   // paralelo con el perfil, no después de él y uno tras otro como antes
   const { user: sesion } = useUser();
+  const queryClient = useQueryClient();
   const rol = profile?.rol ?? sesion?.rol;
   const esPadre = rol === "padre" || rol === "familia" || rol === "padre/tutor";
   const esDocente = rol === "docente";
@@ -365,8 +367,8 @@ export default function PerfilPage() {
     setPendingAvatar(null);
     setLoadingPhotos(true);
     try {
-      const data = await usersGetDefaultPhotos();
-      setDefaultPhotos(data.fotos ?? []);
+      // misma caché que el primer inicio de sesión: abrir el modal otra vez no repite la petición
+      setDefaultPhotos(await queryClient.fetchQuery(fotosPredeterminadasQuery));
     } catch (err) {
       setAvatarError(humanizeError(err, "No se pudieron cargar los avatares"));
     } finally {
