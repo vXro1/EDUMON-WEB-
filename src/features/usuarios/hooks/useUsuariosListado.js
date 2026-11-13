@@ -1,4 +1,5 @@
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useCallback } from "react";
+import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { queryKeys } from "@/services/queryKeys";
 import { usersGetAll } from "@/services/usersService";
 import { normalizeUser } from "@/lib/normalizers";
@@ -19,4 +20,15 @@ export function useUsuariosListado(params, opciones = {}) {
     staleTime: 30_000,
     ...opciones,
   });
+}
+
+// Refleja al instante un cambio de estado (suspender/activar) en todos los
+// listados de usuarios en caché, sin volver a pedirlos
+export function useMarcarEstadoUsuario() {
+  const queryClient = useQueryClient();
+  return useCallback((id, estado) => {
+    queryClient.setQueriesData({ queryKey: [...queryKeys.usuarios.all(), "list"] }, (old) =>
+      old ? { ...old, users: old.users.map((u) => (u._id === id ? { ...u, estado } : u)) } : old
+    );
+  }, [queryClient]);
 }

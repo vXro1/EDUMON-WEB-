@@ -5,7 +5,11 @@ import {
   User, Hash, Mail, Filter, Eye, Edit2, UserX, UserCheck, Phone, Calendar, Clock,
 } from "lucide-react";
 
-import { usersGetAll, usersGetById, usersUpdate, usersDelete, usersReactivate } from "@/services/usersService";
+import { usersGetById, usersUpdate, usersDelete, usersReactivate } from "@/services/usersService";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/services/queryKeys";
+import { useUsuariosListado, useMarcarEstadoUsuario } from "@/features/usuarios/hooks/useUsuariosListado";
+import { usePaginaPorFiltros } from "@/hooks/usePaginaPorFiltros";
 import { institucionesCreateDocente, institucionesCreateDocentesCsv } from "@/services/institucionesService";
 import { Modal, UserAvatar, Toast, Button, Badge, Input, PhoneInput } from "@/components";
 import { Sk, EmptyState } from "@/features/cursos/components/shared/ui";
@@ -158,6 +162,7 @@ function CsvFormatoTable() {
 /* ── Constantes ─────────────────────────────────────────────────────── */
 const INIT = { nombre: "", apellido: "", cedula: "", telefono: "", correo: "" };
 const LIMIT = 15;
+const SIN_DOCENTES = [];
 
 /* ══════════════════════════════════════════════════════════════════════
    PÁGINA
@@ -165,13 +170,9 @@ const LIMIT = 15;
 export default function DocentesPage() {
   const setUsers = useUserStore(s => s.setUsers);
 
-  const [docentes,   setDocentes]   = useState([]);
-  const [loading,    setLoading]    = useState(true);
   const [search,     setSearch]     = useState("");
   const [debSearch,  setDebSearch]  = useState("");
   const [estadoFilter, setEstadoFilter] = useState("");
-  const [page,       setPage]       = useState(1);
-  const [total,      setTotal]      = useState(0);
   const [toast,    setToast]    = useState({ msg: "", type: "success" });
   const [saving,   setSaving]   = useState(false);
 
@@ -204,29 +205,33 @@ export default function DocentesPage() {
     return () => clearTimeout(t);
   }, [search]);
 
-  useEffect(() => { setPage(1); }, [debSearch, estadoFilter]);
+  // la página vuelve a 1 al buscar o filtrar, sin una petición intermedia
+  const [page, setPage] = usePaginaPorFiltros(`${debSearch}|${estadoFilter}`);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      // al buscar, traer todos los docentes para que el filtro cliente sea completo
-      const params = debSearch
-        ? { rol: "docente", page: 1, limit: 1000 }
-        : { rol: "docente", page, limit: LIMIT };
-      if (estadoFilter) params.estado = estadoFilter;
-      const res = await usersGetAll(params);
-      const normalized = (res.users ?? []).map(normalizeUser);
-      setDocentes(normalized);
-      setTotal(res.pagination?.totalUsers ?? normalized.length);
-      setUsers(normalized);
-    } catch {
-      notify("Error al cargar docentes", "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [page, debSearch, estadoFilter, setUsers]);
+  // al buscar, traer todos los docentes para que el filtro cliente sea completo
+  const listParams = debSearch
+    ? { rol: "docente", page: 1, limit: 1000 }
+    : { rol: "docente", page, limit: LIMIT };
+  if (estadoFilter) listParams.estado = estadoFilter;
+  const { data: docentesData, isLoading: loading, isError: docentesError } = useUsuariosListado(listParams);
+  const docentes = docentesData?.users ?? SIN_DOCENTES;
+  const total = docentesData?.pagination?.totalUsers ?? docentes.length;
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    if (docentesData) setUsers(docentesData.users);
+  }, [docentesData, setUsers]);
+
+  useEffect(() => {
+    if (docentesError) notify("Error al cargar docentes", "error");
+  }, [docentesError]);
+
+  const queryClient = useQueryClient();
+  const marcarEstado = useMarcarEstadoUsuario();
+  // tras crear/editar/importar: vuelve a pedir los listados de usuarios
+  const load = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: queryKeys.usuarios.all() }),
+    [queryClient]
+  );
 
   /* ── Filtro ── */
   const filtered = docentes.filter(d => {
@@ -384,7 +389,7 @@ export default function DocentesPage() {
     setSaving(true);
     try {
       await usersDelete(delTarget._id);
-      setDocentes(prev => prev.map(d => d._id === delTarget._id ? { ...d, estado: "suspendido" } : d));
+      marcarEstado(delTarget._id, "suspendido");
       notify("Docente suspendido");
       setDelTarget(null);
     } catch (err) {
@@ -401,7 +406,7 @@ export default function DocentesPage() {
     try {
       // el backend rechaza "estado" en PUT /users/:id; reactivar tiene su propia ruta
       await usersReactivate(activTarget._id);
-      setDocentes(prev => prev.map(d => d._id === activTarget._id ? { ...d, estado: "activo" } : d));
+      marcarEstado(activTarget._id, "activo");
       notify("Docente activado");
       setActivTarget(null);
     } catch (err) {
