@@ -1,18 +1,20 @@
 // directorio de foros por curso — al hacer clic navega a la vista canónica
 // del foro (ForumPage, /curso/:cursoId/foro/:foroId) en vez de reimplementarla
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQueries } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
   MessageSquare, Search, ChevronRight, AlertCircle,
   Lock, BookOpen, Users,
 } from "lucide-react";
 
-import { cursosGetMine } from "@/features/cursos/services/cursosService";
-import { forosGetByCurso } from "@/features/foros/services/forosService";
-import { normalizeCurso, normalizeForos } from "@/lib/normalizers";
+import { useCursosListado } from "@/features/cursos/hooks/useListados";
+import { forosPorCursoQuery } from "@/features/foros/hooks/useForumData";
 
 import { Badge } from "@/components";
 import { Sk, EmptyState } from "@/features/cursos/components/shared/ui";
+
+const SIN_DATOS = [];
 
 function formatFecha(fechaStr) {
   if (!fechaStr) return null;
@@ -113,38 +115,23 @@ function CursoForosGroup({ curso, foros, onOpenForo }) {
 export default function FamiliaForosPage() {
   const navigate = useNavigate();
 
-  const [grupos,  setGrupos]  = useState([]); // [{ curso, foros }]
-  const [loading, setLoading] = useState(true);
-  const [apiError, setApiError] = useState(false);
   const [search,  setSearch]  = useState("");
 
-  const load = async () => {
-    setLoading(true);
-    setApiError(false);
-    try {
-      const res = await cursosGetMine({ limit: 50 });
-      const cursos = (res?.cursos ?? []).map(normalizeCurso);
+  // Cursos del padre (misma caché que "Mis cursos") y, en paralelo, los foros
+  // de cada curso; cada lista queda en caché por curso (queryKeys.foros.byCurso)
+  const cursosQuery = useCursosListado({ alcance: "mios", params: { limit: 50 } });
+  const cursos = cursosQuery.data?.cursos ?? SIN_DATOS;
+  const forosQueries = useQueries({ queries: cursos.map((c) => forosPorCursoQuery(c._id)) });
 
-      const conForos = await Promise.all(
-        cursos.map(async (curso) => {
-          try {
-            const fr = await forosGetByCurso(curso._id);
-            return { curso, foros: normalizeForos(fr?.foros ?? fr) };
-          } catch {
-            return { curso, foros: [] };
-          }
-        })
-      );
+  // un curso cuyos foros fallen se muestra sin foros, como antes
+  const grupos = cursos.map((curso, i) => ({ curso, foros: forosQueries[i]?.data ?? SIN_DATOS }));
+  const loading = cursosQuery.isLoading || forosQueries.some((q) => q.isLoading);
+  const apiError = cursosQuery.isError;
 
-      setGrupos(conForos);
-    } catch {
-      setApiError(true);
-    } finally {
-      setLoading(false);
-    }
+  const load = () => {
+    cursosQuery.refetch();
+    forosQueries.forEach((q) => q.refetch());
   };
-
-  useEffect(() => { load(); }, []);
 
   const openForo = (foro, curso) => {
     navigate(`/curso/${curso._id}/foro/${foro._id}`, { state: { cursoNombre: curso.nombre } });
