@@ -1,9 +1,12 @@
-import { useState, useEffect, useCallback, useContext } from "react";
+import { useState, useCallback, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import CursoContext from "../../context/CursoContext";
 import { ClipboardList, Clock, Eye, Pencil, Lock, Layers } from "lucide-react";
 
-import { tareasGetAll, tareasGetById, tareasCreate, tareasUpdate, tareasDelete } from "@/features/cursos/services/tareasService";
+import { tareasGetById, tareasCreate, tareasUpdate, tareasDelete } from "@/features/cursos/services/tareasService";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/services/queryKeys";
+import { useTareasListado } from "@/features/cursos/hooks/useListados";
 import { cursosGetAllParticipantes, modulosGetByCurso } from "@/features/cursos/services/cursosService";
 
 import { AppModal, Button, Toast, IconActionButton, useConfirm } from "@/components";
@@ -22,6 +25,8 @@ import { fmt, fmtHour, esPasada, makeNotify } from "../shared/helpers";
 import TareaDetalle from "./TareaDetalle";
 import TareaForm from "./TareaForm";
 
+
+const SIN_TAREAS = [];
 
 const emptyForm = () => ({
   titulo: "",
@@ -49,8 +54,9 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
   const esPadre = esPadreProp ?? false;
   const navigate = useNavigate();
 
-  const [tareas, setTareas] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
+  const { data: tareasData, isLoading: loading } = useTareasListado({ cursoId }, { enabled: Boolean(cursoId) });
+  const tareas = tareasData ?? SIN_TAREAS;
 
   const [modalOpen, setModalOpen] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -71,19 +77,12 @@ export default function TareasTab({ cursoId: cursoIdProp, canManage: canManagePr
   const notify = makeNotify(setToast);
 
   // ── CARGAR TAREAS ──────────────────────────────────────────────────
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await tareasGetAll({ cursoId });
-      setTareas((res.tareas ?? res.data ?? []).map(normalizeTarea));
-    } catch {
-      setTareas([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [cursoId]);
-
-  useEffect(() => { load(); }, [load]);
+  // tras crear/editar/eliminar: invalida todos los listados de retos en caché
+  // (este curso, la página de Retos y los de la familia)
+  const load = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: queryKeys.tareas.all() }),
+    [queryClient]
+  );
 
   // ── PARTICIPANTES ──────────────────────────────────────────────────
   const loadParticipantes = useCallback(async () => {
