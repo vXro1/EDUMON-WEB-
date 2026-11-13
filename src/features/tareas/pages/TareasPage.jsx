@@ -462,7 +462,9 @@ export default function TareasPage() {
       fd.append("fechaEntrega",   editForm.fechaEntrega);
       fd.append("asignacionTipo", editForm.asignacionTipo);
       fd.append("tipoEntrega",    editForm.tipoEntrega || "archivo");
-      fd.append("estado",         editForm.estado || "activa");
+      // normalizeTarea traduce "publicada" → "activa"/"vencida"; el backend solo
+      // acepta "publicada" | "cerrada" y respondía 400 a cualquier reto abierto
+      fd.append("estado",         editForm.estado === "cerrada" ? "cerrada" : "publicada");
 
       // mismo caso que en handleCreate: participantesSeleccionados[], no JSON.stringify
       if (editForm.asignacionTipo === "seleccionados") {
