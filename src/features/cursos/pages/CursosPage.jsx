@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { queryKeys } from "@/services/queryKeys";
 
 import {
   Layers, Plus, Search, Edit2, Archive, Users,
@@ -41,6 +43,7 @@ import { humanizeError }                 from "@/utils/humanizeError";
 import { normalizeRole, ROLES }          from "@/security/roleMatrix";
 
 const LIMIT = 12;
+const SIN_CURSOS = [];
 
 const ESTADO_META = {
   activo:    { label: "Activo",    color: "var(--edu-green-600)", bg: "rgba(22,163,74,0.1)"  },
@@ -190,10 +193,7 @@ export default function CursosPage() {
   const isDocente = rol === ROLES.DOCENTE;
 
   /* ── State ─────────────────────────────────────────────────── */
-  const [cursos,    setCursos]    = useState([]);
-  const [loading,   setLoading]   = useState(true);
   const [page,      setPage]      = useState(1);
-  const [total,     setTotal]     = useState(0);
   const [search,    setSearch]    = useState("");
   const [debSearch, setDebSearch] = useState("");
   const [toast,     setToast]     = useState({ msg: "", type: "success" });
@@ -244,48 +244,40 @@ export default function CursosPage() {
   // Reiniciar a página 1 cuando se limpia la búsqueda para que la paginación normal reinicie correctamente
   useEffect(() => { if (!debSearch) setPage(1); }, [debSearch]);
 
-  /* ── Carga de cursos con enriquecimiento de docente ─────────── */
-  const load = useCallback(async () => {
-    if (!user) return;
-    setLoading(true);
-    try {
-      // Al buscar, traer todos los elementos para que el filtro del lado cliente sea completo
-      const params = debSearch ? { page: 1, limit: 1000 } : { page, limit: LIMIT };
-      const res = isDocente
-        ? await cursosGetMine(params)
-        : await cursosGetAll(params);
-
+  /* ── Carga de cursos ───────────────────────────────────────── */
+  // Los listados ya traen el docente poblado; antes se pedía GET /cursos/:id
+  // por cada curso sin docente (hasta 1000 peticiones al buscar) y esa
+  // respuesta tampoco lo traía.
+  const queryClient = useQueryClient();
+  // Al buscar, traer todos los elementos para que el filtro del lado cliente sea completo
+  const listParams = debSearch ? { page: 1, limit: 1000 } : { page, limit: LIMIT };
+  const {
+    data: cursosData,
+    isLoading: loading,
+    isError: cursosError,
+  } = useQuery({
+    queryKey: queryKeys.cursos.list({ alcance: isDocente ? "mios" : "todos", ...listParams }),
+    queryFn: async () => {
+      const res = isDocente ? await cursosGetMine(listParams) : await cursosGetAll(listParams);
       const raw = (res.cursos ?? res.data ?? []).map(normalizeCurso);
+      return { cursos: raw, total: res.pagination?.total ?? raw.length };
+    },
+    enabled: Boolean(user),
+    placeholderData: keepPreviousData,
+    staleTime: 30_000,
+  });
+  const cursos = cursosData?.cursos ?? SIN_CURSOS;
+  const total = cursosData?.total ?? 0;
 
-      // Si el docente viene sin nombre (solo ID o ausente), enriquecer con cursosGetById
-      const enriched = await Promise.all(
-        raw.map(async (c) => {
-          const needsEnrich =
-            !c.docente ||
-            typeof c.docente === "string" ||
-            !c.docente?.nombre;
-          if (needsEnrich) {
-            try {
-              const full = await cursosGetById(c._id);
-              return normalizeCurso(full.curso ?? full);
-            } catch {
-              return c;
-            }
-          }
-          return c;
-        })
-      );
+  useEffect(() => {
+    if (cursosError) notify("Error al cargar cursos", "error");
+  }, [cursosError]);
 
-      setCursos(enriched);
-      setTotal(res.pagination?.total ?? raw.length);
-    } catch {
-      notify("Error al cargar cursos", "error");
-    } finally {
-      setLoading(false);
-    }
-  }, [page, debSearch, isDocente, user]);
-
-  useEffect(() => { load(); }, [load]);
+  // tras crear/editar/eliminar: refresca listados y detalle del curso en caché
+  const load = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: queryKeys.cursos.all() }),
+    [queryClient]
+  );
 
   /* ── Búsqueda global ───────────────────────────────────────── */
   useEffect(() => {
