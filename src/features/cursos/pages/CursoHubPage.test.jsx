@@ -40,7 +40,8 @@ describe("CursoHubPage", () => {
         </ConfirmProvider>
       </QueryClientProvider>
     );
-    expect(await screen.findByText("Cuento en familia")).toBeTruthy();
+    // la pestaña es un chunk diferido: con la suite en paralelo puede tardar más de 1 s
+    expect(await screen.findByText("Cuento en familia", {}, { timeout: 5000 })).toBeTruthy();
     expect(tareasGetAll).toHaveBeenCalledWith({ cursoId: "c1" });
   });
 });
