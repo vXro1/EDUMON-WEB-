@@ -1,14 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   ClipboardList, Search, ChevronRight, AlertCircle,
   Clock, BookOpen, CheckCircle2, XCircle,
 } from "lucide-react";
-import { tareasGetAll } from "@/features/cursos/services/tareasService";
-import { normalizeTarea } from "@/lib/normalizers";
+import { useTareasListado } from "@/features/cursos/hooks/useListados";
 
 import { Button, Input , Badge } from "@/components";
 import { IconBtn } from "@/features/cursos/components/shared/ui";
+
+const SIN_DATOS = [];
 
 // normalizeTarea() produce "activa" / "cerrada" / "vencida", nunca "abierta"
 const ESTADO_META = {
@@ -116,26 +117,13 @@ function TareaRow({ tarea, onClick }) {
 export default function FamiliaTareasPage() {
   const navigate = useNavigate();
 
-  const [tareas,       setTareas]       = useState([]);
-  const [loading,      setLoading]      = useState(true);
-  const [apiError,     setApiError]     = useState(false);
+  const { data: tareasData, isLoading: loading, isError: apiError, refetch } =
+    useTareasListado({ limit: 100 });
+  const tareas = tareasData ?? SIN_DATOS;
   const [search,       setSearch]       = useState("");
   const [filtroEstado, setFiltroEstado] = useState("todos");
 
-  const load = async () => {
-    setLoading(true);
-    setApiError(false);
-    try {
-      const res = await tareasGetAll({ limit: 100 });
-      setTareas((res?.tareas ?? res?.data ?? []).map(normalizeTarea));
-    } catch {
-      setApiError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { load(); }, []);
+  const load = () => refetch();
 
   const filtered = tareas.filter(t => {
     const matchSearch =

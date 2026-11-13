@@ -1,10 +1,11 @@
 // índice de "Mis entregas" — cada fila es un link; el formulario de envío
 // vive en su propia URL (FamiliaEntregaDetallePage), no en un acordeón
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileText, AlertCircle, Clock, BookOpen, ChevronRight } from "lucide-react";
-import { tareasGetAll } from "@/features/cursos/services/tareasService";
-import { normalizeTarea } from "@/lib/normalizers";
+import { useTareasListado } from "@/features/cursos/hooks/useListados";
+
+const SIN_DATOS = [];
 
 function Sk({ h = 14, w = "100%", r = 6 }) {
   return <div className="animate-pulse" style={{ height: h, width: w, borderRadius: r, background: "var(--color-border)" }} />;
@@ -74,25 +75,12 @@ function TareaCard({ tarea }) {
 
 // ════════════════════════════════════════════════════════════
 export default function FamiliaEntregasPage() {
-  const [tareas,   setTareas]   = useState([]);
-  const [loading,  setLoading]  = useState(true);
-  const [apiError, setApiError] = useState(false);
+  const { data: tareasData, isLoading: loading, isError: apiError, refetch } =
+    useTareasListado({ limit: 100 });
+  const tareas = tareasData ?? SIN_DATOS;
   const [search,   setSearch]   = useState("");
 
-  const loadTareas = async () => {
-    setLoading(true);
-    setApiError(false);
-    try {
-      const res = await tareasGetAll({ limit: 100 });
-      setTareas((res?.tareas ?? res?.data ?? []).map(normalizeTarea));
-    } catch {
-      setApiError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { loadTareas(); }, []);
+  const loadTareas = () => refetch();
 
   const filtered = search
     ? tareas.filter(t =>

@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BookOpen, Search, AlertCircle } from "lucide-react";
 
-import { cursosGetMine } from "@/features/cursos/services/cursosService";
-import { normalizeCurso } from "@/lib/normalizers";
+import { useCursosListado } from "@/features/cursos/hooks/useListados";
 import CursoCard from "@/features/cursos/components/CursoCard";
 import { Button } from "@/components";
+
+const SIN_DATOS = [];
 
 function Sk({ h = 14, w = "100%", r = 6 }) {
   return (
@@ -36,25 +37,12 @@ function SkCard() {
 export default function FamiliaCursosPage() {
   const navigate = useNavigate();
 
-  const [cursos, setCursos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [apiError, setApiError] = useState(false);
+  const { data, isLoading: loading, isError: apiError, refetch } =
+    useCursosListado({ alcance: "mios", params: { limit: 50 } });
+  const cursos = data?.cursos ?? SIN_DATOS;
   const [search, setSearch] = useState("");
 
-  const load = async () => {
-    setLoading(true);
-    setApiError(false);
-    try {
-      const res = await cursosGetMine({ limit: 50 });
-      setCursos((res?.cursos ?? []).map(normalizeCurso));
-    } catch {
-      setApiError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => { load(); }, []);
+  const load = () => refetch();
 
   const filtered = search
     ? cursos.filter(
