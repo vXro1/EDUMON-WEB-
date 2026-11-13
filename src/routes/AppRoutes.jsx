@@ -98,14 +98,14 @@ export default function AppRoutes() {
 
             {/* Administración */}
             <Route path="/instituciones" element={<ProtectedRoute allowedRoles={["superadmin"]}><InstitucionesPage /></ProtectedRoute>} />
-            <Route path="/institucion"   element={<ProtectedRoute allowedRoles={["administrador","superadmin"]}><MiInstitucionPage /></ProtectedRoute>} />
+            <Route path="/institucion"   element={<ProtectedRoute allowedRoles={["administrador"]}><MiInstitucionPage /></ProtectedRoute>} />
             <Route path="/usuarios"      element={<ProtectedRoute allowedRoles={["administrador","superadmin"]}><UsuariosPage /></ProtectedRoute>} />
             <Route path="/colegio"       element={<ProtectedRoute allowedRoles={["administrador","superadmin"]}><PanelColegioPage /></ProtectedRoute>} />
             <Route path="/docentes"      element={<ProtectedRoute allowedRoles={["administrador","superadmin"]}><DocentesPage /></ProtectedRoute>} />
             <Route path="/app-movil"     element={<ProtectedRoute allowedRoles={["superadmin"]}><AppMovilPage /></ProtectedRoute>} />
 
             {/* Cursos */}
-            <Route path="/cursos" element={<ProtectedRoute allowedRoles={["administrador","superadmin","docente"]}><CursosPage /></ProtectedRoute>} />
+            <Route path="/cursos" element={<ProtectedRoute allowedRoles={["administrador","docente"]}><CursosPage /></ProtectedRoute>} />
             <Route path="/cursos/:id" element={<ProtectedRoute allowedRoles={ALL_ROLES}><CursoHubPage /></ProtectedRoute>} />
 
             {/* Foros — la URL canónica vive dentro del contexto del curso */}
@@ -118,7 +118,7 @@ export default function AppRoutes() {
 
             {/* Tareas */}
             <Route path="/tareas"              element={<ProtectedRoute allowedRoles={["docente"]}><TareasPage /></ProtectedRoute>} />
-            <Route path="/tareas/:id/entregas" element={<ProtectedRoute allowedRoles={["docente","administrador","superadmin"]}><EntregasPage /></ProtectedRoute>} />
+            <Route path="/tareas/:id/entregas" element={<ProtectedRoute allowedRoles={["docente","administrador"]}><EntregasPage /></ProtectedRoute>} />
 
             {/* Eventos */}
             <Route path="/eventos" element={<ProtectedRoute allowedRoles={["docente","administrador","superadmin"]}><EventosPage /></ProtectedRoute>} />
@@ -139,7 +139,7 @@ export default function AppRoutes() {
             {/* Universal */}
             <Route path="/perfil"         element={<ProtectedRoute><PerfilPage /></ProtectedRoute>} />
             <Route path="/notificaciones" element={<ProtectedRoute><NotificacionesPage /></ProtectedRoute>} />
-            <Route path="/buzon"          element={<ProtectedRoute allowedRoles={["administrador","superadmin"]}><BuzonPage /></ProtectedRoute>} />
+            <Route path="/buzon"          element={<ProtectedRoute allowedRoles={["superadmin"]}><BuzonPage /></ProtectedRoute>} />
             <Route path="/sesiones"       element={<ProtectedRoute><SesionesPage /></ProtectedRoute>} />
 
           </Route>
