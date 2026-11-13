@@ -6,6 +6,7 @@ import { useAuth } from "@/features/auth/hooks/useAuth";
 import { calendarioGetByCurso } from "@/features/calendario/services/calendarioService";
 import { eventosDelete, eventosCreateSimple, eventosUpdateSimple } from "@/features/eventos/services/eventosService";
 import { usePermission, PERMISSIONS } from "@/hooks/usePermission";
+import { cuerpoEvento, cambiosEvento, validarEvento, formDesdeEvento } from "@/features/eventos/utils/eventoForm";
 import CalendarWidget from "@/components/ui/CalendarWidget";
 import { Modal, Button } from "@/components";
 
@@ -42,22 +43,12 @@ function CreateEventoModal({ cursos, onClose, onSaved }) {
 
   const handleSave = async () => {
     if (!cursoId) { setError("Debes seleccionar un curso."); return; }
-    if (!form.titulo.trim() || !form.fechaInicio) {
-      setError("El título y la fecha de inicio son requeridos."); return;
-    }
+    const invalido = validarEvento(form);
+    if (invalido) { setError(invalido); return; }
     setSaving(true);
     setError("");
     try {
-      await eventosCreateSimple({
-        titulo:      form.titulo.trim(),
-        descripcion: form.descripcion.trim(),
-        fechaInicio: form.fechaInicio,
-        fechaFin:    form.fechaFin || form.fechaInicio,
-        hora:        form.hora,
-        ubicacion:   form.ubicacion.trim(),
-        categoria:   form.categoria,
-        cursosIds:   [cursoId],
-      });
+      await eventosCreateSimple({ ...cuerpoEvento(form), cursosIds: [cursoId] });
       onSaved();
     } catch (err) {
       setError(err.message || "No se pudo crear el evento.");
@@ -91,8 +82,8 @@ function CreateEventoModal({ cursos, onClose, onSaved }) {
         </div>
 
         <div>
-          <label style={lbl}>Descripción</label>
-          <textarea style={{ ...inp, resize: "vertical", minHeight: 72 }} value={form.descripcion} onChange={e => set("descripcion", e.target.value)} placeholder="Descripción opcional" />
+          <label style={lbl}>Descripción *</label>
+          <textarea style={{ ...inp, resize: "vertical", minHeight: 72 }} value={form.descripcion} onChange={e => set("descripcion", e.target.value)} placeholder="Mínimo 10 caracteres" />
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -108,7 +99,7 @@ function CreateEventoModal({ cursos, onClose, onSaved }) {
 
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           <div>
-            <label style={lbl}>Hora</label>
+            <label style={lbl}>Hora *</label>
             <input style={inp} type="time" value={form.hora} onChange={e => set("hora", e.target.value)} />
           </div>
           <div>
@@ -120,7 +111,7 @@ function CreateEventoModal({ cursos, onClose, onSaved }) {
         </div>
 
         <div>
-          <label style={lbl}>Ubicación</label>
+          <label style={lbl}>Ubicación *</label>
           <input style={inp} value={form.ubicacion} onChange={e => set("ubicacion", e.target.value)} placeholder="Salón, virtual, etc." />
         </div>
 
@@ -137,36 +128,22 @@ function CreateEventoModal({ cursos, onClose, onSaved }) {
 
 // ─── Modal editar evento (el evento ya tiene cursoId) ────────────────────
 function EditEventoModal({ evento, onClose, onSaved }) {
-  const [form,   setForm]   = useState({
-    titulo:      evento.titulo      ?? "",
-    descripcion: evento.descripcion ?? "",
-    fechaInicio: evento.fechaInicio ? evento.fechaInicio.slice(0, 10) : "",
-    fechaFin:    evento.fechaFin    ? evento.fechaFin.slice(0, 10)    : "",
-    hora:        evento.hora        ?? "",
-    ubicacion:   evento.ubicacion   ?? "",
-    categoria:   evento.categoria   ?? "institucional",
-  });
+  const [original] = useState(() => formDesdeEvento(evento));
+  const [form,   setForm]   = useState(original);
   const [saving, setSaving] = useState(false);
   const [error,  setError]  = useState("");
 
   const set = (k, v) => setForm(p => ({ ...p, [k]: v }));
 
   const handleSave = async () => {
-    if (!form.titulo.trim() || !form.fechaInicio) {
-      setError("El título y la fecha de inicio son requeridos."); return;
-    }
+    const body = cambiosEvento(original, form);
+    if (Object.keys(body).length === 0) { onClose(); return; }
+    const invalido = validarEvento(form, Object.keys(body));
+    if (invalido) { setError(invalido); return; }
     setSaving(true);
     setError("");
     try {
-      await eventosUpdateSimple(evento._id ?? evento.id, {
-        titulo:      form.titulo.trim(),
-        descripcion: form.descripcion.trim(),
-        fechaInicio: form.fechaInicio,
-        fechaFin:    form.fechaFin || form.fechaInicio,
-        hora:        form.hora,
-        ubicacion:   form.ubicacion.trim(),
-        categoria:   form.categoria,
-      });
+      await eventosUpdateSimple(evento._id ?? evento.id, body);
       onSaved();
     } catch (err) {
       setError(err.message || "No se pudo guardar el evento.");
@@ -188,7 +165,7 @@ function EditEventoModal({ evento, onClose, onSaved }) {
           <input style={inp} value={form.titulo} onChange={e => set("titulo", e.target.value)} />
         </div>
         <div>
-          <label style={lbl}>Descripción</label>
+          <label style={lbl}>Descripción *</label>
           <textarea style={{ ...inp, resize: "vertical", minHeight: 72 }} value={form.descripcion} onChange={e => set("descripcion", e.target.value)} />
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
@@ -203,7 +180,7 @@ function EditEventoModal({ evento, onClose, onSaved }) {
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
           <div>
-            <label style={lbl}>Hora</label>
+            <label style={lbl}>Hora *</label>
             <input style={inp} type="time" value={form.hora} onChange={e => set("hora", e.target.value)} />
           </div>
           <div>
@@ -214,7 +191,7 @@ function EditEventoModal({ evento, onClose, onSaved }) {
           </div>
         </div>
         <div>
-          <label style={lbl}>Ubicación</label>
+          <label style={lbl}>Ubicación *</label>
           <input style={inp} value={form.ubicacion} onChange={e => set("ubicacion", e.target.value)} placeholder="Salón, virtual, etc." />
         </div>
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
