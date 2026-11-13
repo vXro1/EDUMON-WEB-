@@ -42,17 +42,19 @@ export const useForumMessages = (foroId, currentUserId = null) =>
     refetchInterval: 60_000,
   });
 
-export const useForumsByCourse = (cursoId) =>
-  useQuery({
-    queryKey:  queryKeys.foros.byCurso(cursoId),
-    queryFn:   async () => {
-      const res = await forosGetByCurso(cursoId);
-      const raw = res?.foros ?? (Array.isArray(res) ? res : []);
-      return raw.map(normalizeForo).filter(Boolean);
-    },
-    enabled:   !!cursoId,
-    staleTime: 60_000,
-  });
+// Opciones reutilizables (también con useQueries para varios cursos a la vez)
+export const forosPorCursoQuery = (cursoId) => ({
+  queryKey:  queryKeys.foros.byCurso(cursoId),
+  queryFn:   async () => {
+    const res = await forosGetByCurso(cursoId);
+    const raw = res?.foros ?? (Array.isArray(res) ? res : []);
+    return raw.map(normalizeForo).filter(Boolean);
+  },
+  enabled:   !!cursoId,
+  staleTime: 60_000,
+});
+
+export const useForumsByCourse = (cursoId) => useQuery(forosPorCursoQuery(cursoId));
 
 // Dashboard: degradación elegante si el endpoint del backend aún no existe.
 export const useForumDashboard = (foroId) =>

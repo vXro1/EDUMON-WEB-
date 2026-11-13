@@ -11,6 +11,11 @@ vi.mock("@/features/auth/context/AuthContext", () => ({
 }));
 
 const tareasGetAll = vi.fn();
+const forosGetByCurso = vi.fn();
+vi.mock("@/features/foros/services/forosService", async (orig) => ({
+  ...(await orig()),
+  forosGetByCurso: (...a) => forosGetByCurso(...a),
+}));
 const cursosGetMine = vi.fn();
 vi.mock("@/features/cursos/services/tareasService", async (orig) => ({
   ...(await orig()),
@@ -24,6 +29,7 @@ vi.mock("@/features/cursos/services/cursosService", async (orig) => ({
 const { default: FamiliaTareasPage } = await import("./FamiliaTareasPage");
 const { default: FamiliaEntregasPage } = await import("./FamiliaEntregasPage");
 const { default: FamiliaCursosPage } = await import("./FamiliaCursosPage");
+const { default: FamiliaForosPage } = await import("./FamiliaForosPage");
 
 const futura = new Date(Date.now() + 7 * 864e5).toISOString();
 
@@ -53,5 +59,19 @@ describe("listados de la familia", () => {
     renderPagina(<FamiliaCursosPage />);
     expect(await screen.findByText("Lectura")).toBeTruthy();
     expect(cursosGetMine).toHaveBeenCalledWith({ limit: 50 });
+  });
+
+  it("Foros pide los foros de cada curso en paralelo y los agrupa", async () => {
+    cursosGetMine.mockResolvedValue({ cursos: [
+      { _id: "c1", nombre: "Lectura", descripcion: "Curso de lectura" },
+      { _id: "c2", nombre: "Ciencias", descripcion: "Curso de ciencias" },
+    ] });
+    forosGetByCurso.mockImplementation((id) => Promise.resolve({
+      foros: [{ _id: `f-${id}`, titulo: id === "c1" ? "Libros favoritos" : "Experimentos en casa", cursoId: id }],
+    }));
+    renderPagina(<FamiliaForosPage />);
+    expect(await screen.findByText("Libros favoritos")).toBeTruthy();
+    expect(await screen.findByText("Experimentos en casa")).toBeTruthy();
+    expect(forosGetByCurso).toHaveBeenCalledTimes(2);
   });
 });
