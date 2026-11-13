@@ -1,4 +1,5 @@
 // orquestador de tabs; toda la lógica de datos y permisos viene de CursoProvider
+import { lazy, Suspense } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft, BookOpen, ClipboardList, MessageSquare, Users, Calendar, AlertCircle } from "lucide-react";
 
@@ -11,10 +12,20 @@ import { humanizeError } from "@/utils/humanizeError";
 import HubHeader        from "../components/hub/HubHeader";
 import HubTabs          from "../components/hub/HubTabs";
 import ModulosTab       from "../components/modules/ModulosTab";
-import TareasTab        from "../components/tareas/TareasTab";
-import ForosTab         from "../components/foros/ForosTab";
-import ParticipantesTab from "../components/participantes/ParticipantesTab";
-import CalendarioTab    from "../components/calendario/CalendarioTab";
+import { Sk }           from "../components/shared/ui";
+
+// Módulos es la pestaña inicial y va en el chunk de la página; las demás se
+// descargan solo al abrirlas
+const TareasTab        = lazy(() => import("../components/tareas/TareasTab"));
+const ForosTab         = lazy(() => import("../components/foros/ForosTab"));
+const ParticipantesTab = lazy(() => import("../components/participantes/ParticipantesTab"));
+const CalendarioTab    = lazy(() => import("../components/calendario/CalendarioTab"));
+
+const TabCargando = () => (
+  <div style={{ display: "flex", flexDirection: "column", gap: 10, paddingTop: 8 }}>
+    <Sk h={64} r={12} /><Sk h={64} r={12} /><Sk h={64} r={12} />
+  </div>
+);
 
 // ─── Definición de tabs ───────────────────────────────────────────────────────
 const TAB_CONFIG = [
@@ -98,7 +109,7 @@ function CursoHubContent() {
       </Button>
       <HubHeader curso={curso} loading={loading} esPadre={esPadre} esEstudiante={esEstudiante} />
       <HubTabs   tabs={tabs} activeTab={activeTab} onTabChange={setTab} color={cursoColor} />
-      <div>{renderTab()}</div>
+      <div><Suspense fallback={<TabCargando />}>{renderTab()}</Suspense></div>
     </div>
   );
 }
