@@ -401,17 +401,28 @@ export default function CursosPage() {
     const nombre = editForm.nombre.trim();
     const descripcion = editForm.descripcion.trim();
 
-    if (!nombre) { notify("El nombre es requerido", "error"); return; }
-    if (descripcion && (descripcion.length < 10 || descripcion.length > 500)) {
+    // Solo se envía lo que cambió: la descripción vacía o un dato antiguo que ya
+    // no pasa el validador (10–500 caracteres) bloqueaba con 400 cualquier edición
+    const cambioNombre = nombre !== (selected.nombre ?? "").trim();
+    const cambioDescripcion = descripcion !== (selected.descripcion ?? "").trim();
+    const cambioColor = Boolean(editForm.color) && editForm.color !== selected.color;
+
+    if (cambioNombre && (nombre.length < 2 || nombre.length > 100)) {
+      notify("El nombre debe tener entre 2 y 100 caracteres", "error"); return;
+    }
+    if (cambioDescripcion && (descripcion.length < 10 || descripcion.length > 500)) {
       notify("La descripción debe tener entre 10 y 500 caracteres", "error"); return;
+    }
+    if (!cambioNombre && !cambioDescripcion && !cambioColor && !editCoverFile) {
+      setEditOpen(false); return;
     }
 
     setSaving(true);
     try {
       const fd = new FormData();
-      fd.append("nombre", nombre);
-      fd.append("descripcion", descripcion);
-      if (editForm.color) fd.append("color", editForm.color);
+      if (cambioNombre) fd.append("nombre", nombre);
+      if (cambioDescripcion) fd.append("descripcion", descripcion);
+      if (cambioColor) fd.append("color", editForm.color);
       if (editCoverFile) fd.append("fotoPortada", editCoverFile);
       await cursosUpdate(selected._id, fd);
       notify("Curso actualizado");
