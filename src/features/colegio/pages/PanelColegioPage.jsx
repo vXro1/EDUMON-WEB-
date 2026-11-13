@@ -262,7 +262,8 @@ export default function PanelColegioPage() {
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 12 }}>
           <Link to="/eventos" className="btn btn-outline btn-sm" style={{ textDecoration: "none" }}><CalendarDays size={14} aria-hidden="true" /> Eventos</Link>
           <Link to="/usuarios" className="btn btn-outline btn-sm" style={{ textDecoration: "none" }}><Users size={14} aria-hidden="true" /> Usuarios y contraseñas</Link>
-          <Link to="/cursos" className="btn btn-outline btn-sm" style={{ textDecoration: "none" }}><Layers size={14} aria-hidden="true" /> Crear o editar cursos</Link>
+          {/* GET /cursos es solo de administrador/docente: el superadmin gestiona cada curso desde este panel */}
+          {!esSuperadmin && <Link to="/cursos" className="btn btn-outline btn-sm" style={{ textDecoration: "none" }}><Layers size={14} aria-hidden="true" /> Crear o editar cursos</Link>}
         </div>
       </header>
 
