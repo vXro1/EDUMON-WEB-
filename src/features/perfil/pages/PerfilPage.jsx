@@ -326,13 +326,23 @@ export default function PerfilPage() {
     }
     setSavingProfile(true);
     try {
+      // Solo los campos que cambiaron: si se reenviaba todo, un dato guardado
+      // que ya no pasa el validador (p. ej. un apellido antiguo) bloqueaba con
+      // 400 cualquier cambio, incluso solo el correo
+      const actual = {
+        nombre:   profile?.nombre   ?? "",
+        apellido: profile?.apellido ?? "",
+        telefono: profile?.telefono ?? "",
+        correo:   profile?.correo ?? profile?.email ?? "",
+      };
       const body = Object.fromEntries(
         Object.entries({
           ...editForm,
           // El backend siempre recibe "+57XXXXXXXXXX"
           telefono: normalizePhone(editForm.telefono) ?? "",
-        }).filter(([, v]) => v !== "")
+        }).filter(([k, v]) => v !== "" && v !== actual[k])
       );
+      if (Object.keys(body).length === 0) { setEditing(false); return; }
       // /users/me/profile identifica al usuario por el token, no por :id — así
       // cualquier rol edita su propio perfil sin el endpoint admin-only
       const data   = await usersUpdateMyProfile(body);
@@ -342,7 +352,7 @@ export default function PerfilPage() {
       notify("Perfil actualizado correctamente");
       setEditing(false);
     } catch (err) {
-      notify(humanizeError(err, "Error al actualizar perfil"), "error");
+      notify(err?.validationErrors?.[0]?.msg ?? humanizeError(err, "Error al actualizar perfil"), "error");
     } finally {
       setSavingProfile(false);
     }
