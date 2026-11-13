@@ -40,6 +40,9 @@ export const usersUpdate = (id, body) =>
 export const usersCambiarContrasena = (id, body) =>
   apiFetch(`/users/${id}/contrasena`, { method: 'PATCH', body: JSON.stringify(body) });
 
+export const usersReactivate = (id) =>
+  apiFetch(`/users/${id}/reactivar`, { method: 'PATCH' });
+
 export const usersDelete = (id) =>
   apiFetch(`/users/${id}`, { method: 'DELETE' });
 
