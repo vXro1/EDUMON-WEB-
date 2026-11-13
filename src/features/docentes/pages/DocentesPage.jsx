@@ -5,7 +5,7 @@ import {
   User, Hash, Mail, Filter, Eye, Edit2, UserX, UserCheck, Phone, Calendar, Clock,
 } from "lucide-react";
 
-import { usersGetAll, usersGetById, usersUpdate, usersDelete } from "@/services/usersService";
+import { usersGetAll, usersGetById, usersUpdate, usersDelete, usersReactivate } from "@/services/usersService";
 import { institucionesCreateDocente, institucionesCreateDocentesCsv } from "@/services/institucionesService";
 import { Modal, UserAvatar, Toast, Button, Badge, Input, PhoneInput } from "@/components";
 import { Sk, EmptyState } from "@/features/cursos/components/shared/ui";
@@ -348,12 +348,19 @@ export default function DocentesPage() {
 
     setSaving(true);
     try {
-      const body = {
+      // Solo los campos que cambiaron: reenviar un dato guardado que ya no pasa
+      // el validador (p. ej. un apellido antiguo) bloqueaba con 400 cualquier
+      // cambio, incluso solo el correo
+      const nuevos = {
         nombre: editForm.nombre.trim(), apellido: editForm.apellido.trim(),
         cedula, correo: editForm.correo.trim(),
       };
       const telefono = normalizePhone(editForm.telefono);
-      if (telefono) body.telefono = telefono;
+      if (telefono) nuevos.telefono = telefono;
+      const body = Object.fromEntries(
+        Object.entries(nuevos).filter(([k, v]) => v !== (editTarget[k] ?? ""))
+      );
+      if (Object.keys(body).length === 0) { setEditTarget(null); return; }
       await usersUpdate(editTarget._id, body);
       notify("Docente actualizado");
       setEditTarget(null);
@@ -392,7 +399,8 @@ export default function DocentesPage() {
     if (!activTarget) return;
     setSaving(true);
     try {
-      await usersUpdate(activTarget._id, { estado: "activo" });
+      // el backend rechaza "estado" en PUT /users/:id; reactivar tiene su propia ruta
+      await usersReactivate(activTarget._id);
       setDocentes(prev => prev.map(d => d._id === activTarget._id ? { ...d, estado: "activo" } : d));
       notify("Docente activado");
       setActivTarget(null);
