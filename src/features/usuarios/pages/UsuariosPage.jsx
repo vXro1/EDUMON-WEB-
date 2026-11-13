@@ -11,7 +11,7 @@ import {
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { normalizeUser }from "@/lib/normalizers";
 
-import { usersGetAll, usersGetById, usersCreate, usersUpdate, usersDelete } from "@/services/usersService";
+import { usersGetAll, usersGetById, usersCreate, usersUpdate, usersDelete, usersReactivate } from "@/services/usersService";
 import CambiarContrasenaSeccion from "../components/CambiarContrasenaSeccion";
 import { institucionesGetMine, institucionesGetAll } from "@/services/institucionesService";
 
@@ -348,12 +348,27 @@ export default function UsuariosPage() {
 
     setSaving(true);
     try {
-      const body = { nombre: form.nombre.trim(), apellido: form.apellido.trim(), cedula: form.cedula.trim(), correo: form.correo.trim(), rol: rolApi };
+      // Solo se envían los campos que cambiaron: si se mandaba todo, un dato viejo
+      // que ya no pasa el validador (p. ej. un apellido con un carácter raro)
+      // tumbaba con 400 cualquier edición, aunque solo se cambiara el correo.
+      const body = {};
+      const setSiCambio = (campo, nuevo, anterior) => {
+        if (nuevo !== (anterior ?? "")) body[campo] = nuevo;
+      };
+      setSiCambio("nombre",   form.nombre.trim(),   editTarget.nombre);
+      setSiCambio("apellido", form.apellido.trim(), editTarget.apellido);
+      setSiCambio("cedula",   form.cedula.trim(),   editTarget.cedula);
+      setSiCambio("correo",   form.correo.trim(),   editTarget.correo);
+      setSiCambio("rol",      rolApi,               toApiRol(editTarget.rol));
       // Solo se manda el teléfono si quedó en el formato del sistema (+57XXXXXXXXXX)
       const telefono = normalizePhone(form.telefono);
-      if (telefono) body.telefono = telefono;
+      if (telefono) setSiCambio("telefono", telefono, editTarget.telefono);
       if (isSuperadmin && ["docente", "administrador"].includes(rolApi)) {
-        body.institucionId = form.institucionIdSA;
+        setSiCambio("institucionId", form.institucionIdSA, editTarget.institucionId);
+      }
+      if (Object.keys(body).length === 0) {
+        setEditTarget(null);
+        return;
       }
       await usersUpdate(editTarget._id, body);
       notify("Usuario actualizado");
@@ -362,7 +377,8 @@ export default function UsuariosPage() {
       if (viewTarget?._id === editTarget._id) setViewDetail((d) => d ? { ...d, ...body } : d);
       load();
     } catch (err) {
-      notify(humanizeError(err, "Error al actualizar"), "error");
+      // muestra el mensaje concreto del validador en vez de un genérico
+      notify(err?.validationErrors?.[0]?.msg ?? humanizeError(err, "Error al actualizar"), "error");
     } finally {
       setSaving(false);
     }
@@ -393,7 +409,8 @@ export default function UsuariosPage() {
     if (!activTarget) return;
     setSaving(true);
     try {
-      await usersUpdate(activTarget._id, { estado: "activo" });
+      // el backend rechaza "estado" en PUT /users/:id; reactivar tiene su propia ruta
+      await usersReactivate(activTarget._id);
       setUsers((prev) =>
         prev.map((u) =>
           u._id === activTarget._id ? { ...u, estado: "activo" } : u
