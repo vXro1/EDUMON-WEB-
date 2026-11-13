@@ -14,7 +14,7 @@ import { normalizeUser }from "@/lib/normalizers";
 import { usersGetById, usersCreate, usersUpdate, usersDelete, usersReactivate } from "@/services/usersService";
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/services/queryKeys";
-import { useUsuariosListado } from "@/features/usuarios/hooks/useUsuariosListado";
+import { useUsuariosListado, useMarcarEstadoUsuario } from "@/features/usuarios/hooks/useUsuariosListado";
 import { usePaginaPorFiltros } from "@/hooks/usePaginaPorFiltros";
 import CambiarContrasenaSeccion from "../components/CambiarContrasenaSeccion";
 import { institucionesGetMine, institucionesGetAll } from "@/services/institucionesService";
@@ -216,11 +216,7 @@ export default function UsuariosPage() {
   );
 
   // suspender/activar: refleja el estado al instante en los listados en caché
-  const marcarEstado = (id, estado) => {
-    queryClient.setQueriesData({ queryKey: [...queryKeys.usuarios.all(), "list"] }, (old) =>
-      old ? { ...old, users: old.users.map((u) => (u._id === id ? { ...u, estado } : u)) } : old
-    );
-  };
+  const marcarEstado = useMarcarEstadoUsuario();
 
   const filtered = users.filter((u) => {
     const q = search.toLowerCase();
