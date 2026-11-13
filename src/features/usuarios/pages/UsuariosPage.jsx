@@ -15,9 +15,10 @@ import { usersGetById, usersCreate, usersUpdate, usersDelete, usersReactivate } 
 import { useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "@/services/queryKeys";
 import { useUsuariosListado, useMarcarEstadoUsuario } from "@/features/usuarios/hooks/useUsuariosListado";
+import { useInstituciones } from "@/features/instituciones/hooks/useInstituciones";
 import { usePaginaPorFiltros } from "@/hooks/usePaginaPorFiltros";
 import CambiarContrasenaSeccion from "../components/CambiarContrasenaSeccion";
-import { institucionesGetMine, institucionesGetAll } from "@/services/institucionesService";
+import { institucionesGetMine } from "@/services/institucionesService";
 
 import { Modal, Toast, UserAvatar, Badge, PhoneInput } from "@/components";
 
@@ -122,6 +123,7 @@ const INIT = { nombre: "", apellido: "", cedula: "", correo: "", telefono: "", r
 const toApiRol = (rol) => rol === "padre/tutor" ? "padre" : rol;
 const LIMIT = 15;
 const SIN_USUARIOS = [];
+const SIN_INSTITUCIONES = [];
 const PAGINACION_VACIA = { currentPage: 1, totalPages: 1, totalUsers: 0 };
 
 
@@ -141,7 +143,6 @@ export default function UsuariosPage() {
   const [saving,       setSaving]     = useState(false);
   const [form,         setForm]       = useState(INIT);
   const [institucionId, setInstitucionId] = useState(() => me?.institucionId ?? null);
-  const [institutions, setInstitutions]  = useState([]);
 
   // Validation errors for create form
   const [createErrors, setCreateErrors] = useState({});
@@ -176,17 +177,9 @@ export default function UsuariosPage() {
     }
   }, [me, isSuperadmin]);
 
-  // Superadmin: fetch all institutions to populate the institution selector
-  useEffect(() => {
-    if (isSuperadmin) {
-      institucionesGetAll()
-        .then((res) => {
-          const list = res.instituciones ?? res ?? [];
-          setInstitutions(Array.isArray(list) ? list : []);
-        })
-        .catch(() => {});
-    }
-  }, [isSuperadmin]);
+  // Superadmin: instituciones para el selector (misma caché que la gestión de instituciones)
+  const { data: institutionsData } = useInstituciones({ enabled: isSuperadmin });
+  const institutions = institutionsData ?? SIN_INSTITUCIONES;
 
   // Debounce search so API is only hit after the user pauses typing
   useEffect(() => {
