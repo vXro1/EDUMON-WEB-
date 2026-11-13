@@ -10,8 +10,4 @@ npm-debug.log*
 .env
 .env.*
 README.md
-CHANGELOG.md
-DEBUG.md
-QUICK_FIX.md
-VALIDATION_ERRORS.md
 docs

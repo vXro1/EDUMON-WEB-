@@ -1,54 +1,68 @@
-# Edumon — Frontend
+# Edumon Frontend
 
-SPA de **Edumon**, plataforma de gestión escolar que conecta instituciones, docentes y padres/acudientes: cursos, módulos, tareas ("retos"), entregas con calificación, foros, calendario/eventos y notificaciones.
+Aplicación web de Edumon, plataforma de gestión escolar: paneles para superadmin, administrador del colegio, docentes y familias, con cursos, módulos, retos y entregas, foros, calendario, eventos y notificaciones. Consume la API del repositorio `Backend`.
 
 ## Stack
 
-- React 19 + Vite 7 (no Next.js — el proyecto se inició con `create-next-app` pero se migró; algunos archivos de scaffolding de Next quedaron sin uso, ver más abajo)
-- React Router DOM 7, Zustand 5, TanStack Query 5
-- Tailwind CSS v4 + un sistema de diseño propio (tokens en `src/styles/tokens/`)
-- Firebase (solo el SDK de Cloud Messaging)
+- React 19 y Vite 7
+- React Router 7, TanStack Query 5 (datos del servidor), Zustand 5 (estado local)
+- Tailwind CSS 4 y un sistema de diseño propio (`src/styles`)
+- Socket.IO (notificaciones en tiempo real)
+- Vitest y Testing Library; ESLint y Prettier
+- Producción: nginx (imagen Docker)
 
-## Desarrollo local
+## Requisitos
+
+- Node.js 22 o superior
+- El backend corriendo en local (`http://localhost:4000` por defecto)
+
+## Instalación
 
 ```bash
 npm install
-npm run dev       # http://localhost:5174 — hace proxy de /api al backend de Render
-npm run build      # build de producción a dist/
-npm run preview    # sirve el build anterior localmente
-npm run lint
+cp .env.example .env.local   # opcional
+npm run dev                  # http://localhost:5174
 ```
 
-No hay `.env` versionado; las variables están documentadas en `.env.example`. En desarrollo el proxy de `vite.config.js` apunta por defecto al backend local (`http://localhost:4000`); para otro destino, definir `VITE_API_PROXY_TARGET` en un `.env.local`.
+En desarrollo, Vite reenvía `/api`, `/uploads`, `/static` y `/socket.io` al backend local.
 
-## Docker
+## Variables de entorno
 
-Hay **dos** archivos relacionados con Docker y sirven para cosas distintas:
+Documentadas en [`.env.example`](.env.example):
 
-| Archivo | Para qué |
-|---|---|
-| **`docker-compose.yml`** (este repo) | El de **despliegue conjunto**: levanta frontend + backend juntos en una misma red de Docker, el que se usa en la VM real. El frontend (nginx) sirve el build estático y reenvía `/api/` y `/socket.io/` al contenedor del backend por su nombre de servicio interno. |
-| `Backend Edumon/docker-compose.yml` (repo del backend) | Solo para desarrollar/probar el backend por separado, sin el frontend. |
+- `VITE_API_PROXY_TARGET`: destino del proxy de desarrollo (por defecto `http://localhost:4000`)
+- `VITE_API_URL`: base de la API para el navegador (por defecto `/api`). En Docker se puede fijar en el build o al arrancar el contenedor (ver `Dockerfile`).
 
-Para levantar todo (requiere tener también el repo del backend como carpeta hermana — ver comentario al inicio de `docker-compose.yml`):
+## Scripts
 
-```bash
-docker compose up --build
-# Frontend: http://localhost:8080
-# Backend directo (debug): http://localhost:4000
-```
-
-Detalle de la imagen del frontend (`Dockerfile` + `nginx.conf.template` + `docker-entrypoint.sh`):
-
-- Build multi-etapa: `node:22-slim` compila el SPA, la imagen final es `nginx:1.27-alpine` — sin Node en producción.
-- Corre como el usuario sin privilegios `nginx` (no root), igual que el backend corre como `node`.
-- `VITE_API_URL` se puede fijar en build (`--build-arg`) o dejar que se resuelva **en el arranque del contenedor** (por defecto `/api`, ver comentarios en el `Dockerfile`) — la misma imagen sirve para cualquier entorno sin reconstruir.
-- HTTPS queda preparado pero apagado en `nginx.conf.template` (bloque `server` comentado) — falta que infraestructura defina dominio y certificado; no se generó ningún certificado falso.
+| Comando | Descripción |
+| --- | --- |
+| `npm run dev` | Servidor de desarrollo |
+| `npm run build` | Build de producción en `dist/` |
+| `npm run preview` | Sirve el build localmente |
+| `npm test` | Pruebas (Vitest) |
+| `npm run lint` | ESLint |
+| `npm run format` / `npm run format:check` | Prettier |
 
 ## Estructura
 
-Ver el audit completo de pantallas, componentes, estado, rutas y deuda técnica en la documentación generada para el equipo (o `docs/flutter-migration/BLUEPRINT.md` para el contexto de una eventual migración a Flutter — desactualizado en algunos puntos, ver comentarios en ese mismo archivo).
+```
+src/
+  main.jsx, App.jsx   arranque y proveedores
+  routes/             rutas y protección por rol
+  features/           módulos por dominio (cursos, tareas, foros, usuarios, familia...)
+  components/         componentes compartidos (layout, formularios, UI)
+  services/           cliente HTTP, servicios y claves de React Query
+  hooks/, context/, store/, lib/, utils/, security/, config/
+  pages/              landing, tutoriales y páginas públicas
+  styles/             tokens y estilos del sistema de diseño
+docs/                 manuales de usuario y documentación técnica
+```
 
-## Autor
+## Docker
+
+`Dockerfile`, `nginx.conf.template` y `docker-entrypoint.sh` construyen la imagen (build con Node, servida con nginx sin privilegios). El despliegue completo está en el repositorio raíz `Edumon`.
+
+## Autora
 
 Karen Verónica Mancilla Solarte
