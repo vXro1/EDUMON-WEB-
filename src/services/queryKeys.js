@@ -55,6 +55,11 @@ export const queryKeys = {
     detail: (id)     => ["usuarios", id],
   },
 
+  // ─── Perfiles familiares ──────────────────────────────────────────────────
+  perfiles: {
+    all: () => ["perfiles"],
+  },
+
   // ─── Sesiones ─────────────────────────────────────────────────────────────
   sesiones: {
     list: (page) => ["sesiones", page ?? 1],

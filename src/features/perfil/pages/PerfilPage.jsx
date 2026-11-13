@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { queryKeys } from "@/services/queryKeys";
+import { useUser } from "@/features/auth/hooks/useAuth";
 
 import {
   User, Camera, Mail, Phone, CreditCard, Building2, Shield,
@@ -224,6 +227,7 @@ function RoleSection({ profile, cursos, loadingCursos, perfiles, loadingPerf }) 
 }
 
 // ─── Constants ─────────────────────────────────────────────────────────────
+const SIN_DATOS = [];
 const EMPTY_EDIT = { nombre: "", apellido: "", telefono: "", correo: "" };
 const EMPTY_PASS = { actual: "", nueva: "", confirmar: "" };
 
@@ -245,10 +249,31 @@ export default function PerfilPage() {
   const [editForm,      setEditForm]      = useState(EMPTY_EDIT);
   const [savingProfile, setSavingProfile] = useState(false);
 
-  const [cursos,        setCursos]        = useState([]);
-  const [loadingCursos, setLoadingCursos] = useState(false);
-  const [perfiles,      setPerfiles]      = useState([]);
-  const [loadingPerf,   setLoadingPerf]   = useState(false);
+  // El rol se conoce por la sesión: cursos y perfiles familiares se piden en
+  // paralelo con el perfil, no después de él y uno tras otro como antes
+  const { user: sesion } = useUser();
+  const rol = profile?.rol ?? sesion?.rol;
+  const esPadre = rol === "padre" || rol === "familia" || rol === "padre/tutor";
+  const esDocente = rol === "docente";
+
+  const { data: cursosData, isLoading: loadingCursos } = useQuery({
+    queryKey: queryKeys.cursos.list({ alcance: esDocente ? "todos" : "mios", formato: "perfil" }),
+    queryFn: async () => {
+      const data = esDocente ? await cursosGetAll() : await cursosGetMine();
+      return data.cursos ?? data.data ?? (Array.isArray(data) ? data : []);
+    },
+    enabled: esPadre || esDocente,
+    staleTime: 30_000,
+  });
+  const cursos = cursosData ?? SIN_DATOS;
+
+  const { data: perfilesData, isLoading: loadingPerf } = useQuery({
+    queryKey: queryKeys.perfiles.all(),
+    queryFn: async () => (await perfilesGetAll()).perfiles ?? [],
+    enabled: esPadre,
+    staleTime: 30_000,
+  });
+  const perfiles = perfilesData ?? SIN_DATOS;
 
   const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [defaultPhotos,   setDefaultPhotos]   = useState([]);
@@ -273,37 +298,10 @@ export default function PerfilPage() {
         const u = d.usuario ?? d.user ?? d;
         setProfile(u);
         setUser(u);
-        loadRoleData(u.rol);
       })
       .catch(() => notify("Error al cargar perfil", "error"))
       .finally(() => setLoading(false));
   }, [setUser]);
-
-  const loadRoleData = async (rol) => {
-    const esPadre = rol === "padre" || rol === "familia" || rol === "padre/tutor";
-    const esDocente = rol === "docente";
-
-    if (!esPadre && !esDocente) return;
-
-    // Cursos
-    setLoadingCursos(true);
-    try {
-      const data  = esDocente ? await cursosGetAll() : await cursosGetMine();
-      const lista = data.cursos ?? data.data ?? (Array.isArray(data) ? data : []);
-      setCursos(lista);
-    } catch { /* silencioso */ }
-    finally { setLoadingCursos(false); }
-
-    // Perfiles (hijos) — solo para padre
-    if (esPadre) {
-      setLoadingPerf(true);
-      try {
-        const data = await perfilesGetAll();
-        setPerfiles(data.perfiles ?? []);
-      } catch { /* silencioso */ }
-      finally { setLoadingPerf(false); }
-    }
-  };
 
   // ── Edit personal data ─────────────────────────────────────────────────
   const startEdit = () => {
