@@ -1,4 +1,6 @@
-import { useState, useEffect, useCallback, useContext } from "react";
+import { useState, useCallback, useContext } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/services/queryKeys";
 import CursoContext from "../../context/CursoContext";
 import {
   Users, UserMinus, Upload, UserPlus, Mail, Phone, Hash,
@@ -26,6 +28,7 @@ import {
 } from "@/utils/credenciales";
 
 const EMPTY_FORM = { nombre: "", apellido: "", cedula: "", telefono: "" };
+const SIN_PARTICIPANTES = [];
 
 const ROL_META = {
   superadmin: { label: "Super Admin", color: "#F87171" },
@@ -77,8 +80,6 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
   const { user } = useAuth();
   // GET /api/users/:id está restringido a admin/superadmin — para otros roles ni se intenta
   const puedeVerDetalleCompleto = user?.rol === "administrador" || user?.rol === "superadmin";
-  const [parts, setParts] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [addOpen, setAddOpen] = useState(false);
   const [csvOpen, setCsvOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_FORM);
@@ -96,21 +97,26 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
   const [viewLoading, setViewLoading] = useState(false);
 
   // ── Carga ─────────────────────────────────────────────────────────────────
-  const load = useCallback(async () => {
-    setLoading(true);
-    try {
+  const queryClient = useQueryClient();
+  const { data: partsData, isLoading: loading } = useQuery({
+    queryKey: queryKeys.cursos.participantes(cursoId),
+    queryFn: async () => {
       const res = await cursosGetAllParticipantes(cursoId);
-      setParts(
-        (res.participantes ?? res.data ?? []).map((p) => ({
-          ...p,
-          usuario: normalizeUser(p.usuario ?? p),
-        }))
-      );
-    } catch { setParts([]); }
-    finally { setLoading(false); }
-  }, [cursoId]);
+      return (res.participantes ?? res.data ?? []).map((p) => ({
+        ...p,
+        usuario: normalizeUser(p.usuario ?? p),
+      }));
+    },
+    enabled: Boolean(cursoId),
+    staleTime: 30_000,
+  });
+  const parts = partsData ?? SIN_PARTICIPANTES;
 
-  useEffect(() => { load(); }, [load]);
+  // tras agregar/importar/quitar: participantes y datos del curso (conteos)
+  const load = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: queryKeys.cursos.detail(cursoId) }),
+    [queryClient, cursoId]
+  );
 
   const closeAddModal = () => {
     setAddOpen(false);
