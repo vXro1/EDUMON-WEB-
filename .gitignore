@@ -36,3 +36,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 dist/
+
+# Logs, artefactos de pruebas y editores
+*.log
+.playwright-mcp/
+test-results/
+playwright-report/
+.vscode/
+.idea/
+Thumbs.db
