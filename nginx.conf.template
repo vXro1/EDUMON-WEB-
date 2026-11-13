@@ -24,6 +24,13 @@ gzip on;
 gzip_vary on;
 gzip_min_length 1024;
 gzip_types text/css application/javascript application/json image/svg+xml font/woff2 font/woff text/plain;
+# Sirve el .gz precomprimido (gzip -9) que genera docker-entrypoint.sh cuando
+# existe; si no, comprime al vuelo como siempre.
+gzip_static on;
+# Brotli: la imagen oficial nginx:alpine no trae el módulo, y el paquete
+# nginx-mod-http-brotli de Alpine se compila para el nginx de Alpine, no para
+# el de esta imagen. Activarlo exige compilar el módulo para esta versión de
+# nginx (o cambiar de imagen base); por ahora se usa gzip -9 precomprimido.
 
 server {
     listen 8080;
@@ -49,6 +56,12 @@ server {
     location /assets/ {
         expires 1y;
         add_header Cache-Control "public, immutable";
+    }
+
+    # index.html: siempre se revalida (ETag) para que un deploy nuevo se vea al
+    # recargar. Las rutas del SPA llegan aquí por el try_files de "location /".
+    location = /index.html {
+        add_header Cache-Control "no-cache";
     }
 
     location = /health {
@@ -186,6 +199,8 @@ server {
 #     ssl_certificate     /etc/nginx/certs/fullchain.pem;
 #     ssl_certificate_key /etc/nginx/certs/privkey.pem;
 #
+#     # A partir de aquí, idéntico al server{} del puerto 8080 de arriba
+#     # (misma política de caché: assets con hash immutable, index.html no-cache).
 #     root /usr/share/nginx/html;
 #     index index.html;
 #     set $backend_upstream "${BACKEND_INTERNAL_URL}";
@@ -193,6 +208,10 @@ server {
 #     location /assets/ {
 #         expires 1y;
 #         add_header Cache-Control "public, immutable";
+#     }
+#
+#     location = /index.html {
+#         add_header Cache-Control "no-cache";
 #     }
 #
 #     location = /health {
@@ -209,6 +228,24 @@ server {
 #         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 #         proxy_set_header X-Forwarded-Proto $scheme;
 #         proxy_cookie_path / /;
+#         client_max_body_size 210m;
+#     }
+#
+#     location /uploads/ {
+#         proxy_pass $backend_upstream$request_uri;
+#         proxy_http_version 1.1;
+#         proxy_set_header Host $host;
+#         proxy_set_header X-Real-IP $remote_addr;
+#         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#         proxy_set_header X-Forwarded-Proto $scheme;
+#         proxy_cookie_path / /;
+#     }
+#
+#     location /static/ {
+#         proxy_pass $backend_upstream$request_uri;
+#         proxy_http_version 1.1;
+#         proxy_set_header Host $host;
+#         proxy_set_header X-Forwarded-Proto $scheme;
 #     }
 #
 #     location /socket.io/ {
