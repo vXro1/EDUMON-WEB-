@@ -1,9 +1,7 @@
-/* ════════════════════════════════════════════════════════════════════
-   EDUMON DESIGN SYSTEM — modals.css
-   Modal responsivo: pantalla completa en móvil, panel centrado en ≥480px
-   ════════════════════════════════════════════════════════════════════ */
+/* EDUMON DESIGN SYSTEM — modals.css
+   Modal responsivo: pantalla completa en móvil, panel centrado en ≥480px */
 
-/* ── Overlay / backdrop ──────────────────────────────────────────── */
+/* Overlay / backdrop */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -26,7 +24,7 @@
   }
 }
 
-/* ── Panel ───────────────────────────────────────────────────────── */
+/* Panel */
 .modal-panel {
   position: relative;
   width: 100%;
@@ -97,7 +95,7 @@
   }
 }
 
-/* ── Franja de color (acento de marca) ──────────────────────────────────── */
+/* Franja de color (acento de marca) */
 .modal-strip {
   height: 4px;
   flex-shrink: 0;
@@ -120,7 +118,7 @@
   }
 }
 
-/* ── Header ──────────────────────────────────────────────────────── */
+/* Encabezado */
 .modal-header {
   display: flex;
   align-items: flex-start;
@@ -172,7 +170,7 @@
   outline-offset: 2px;
 }
 
-/* ── Body ────────────────────────────────────────────────────────── */
+/* Cuerpo */
 .modal-body {
   flex: 1;
   overflow-y: auto;
@@ -195,7 +193,7 @@
   border-radius: var(--radius-full);
 }
 
-/* ── Footer ──────────────────────────────────────────────────────── */
+/* Pie */
 .modal-footer {
   display: flex;
   align-items: center;
@@ -228,7 +226,7 @@
   }
 }
 
-/* ── In-form footer (stays in scroll flow, visually consistent) ── */
+/* In-form footer (stays in scroll flow, visually consistent) */
 .modal-form-footer {
   display: flex;
   align-items: center;

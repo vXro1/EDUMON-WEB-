@@ -11,8 +11,7 @@ const TOOLBAR_BTNS = [
   { cmd: 'insertHorizontalRule', icon: Minus, label: 'Separador' },
 ];
 
-/* ══════════════════════════════════════════════════════════════
-   EDITOR DE TEXTO ENRIQUECIDO
+/* Editor de texto enriquecido
    contentEditable + document.execCommand — sin dependencias externas,
    ya que solo se necesita negrita/cursiva/subrayado/listas.
 
@@ -22,8 +21,7 @@ const TOOLBAR_BTNS = [
    Nota sobre sincronización: el DOM del contentEditable solo se
    reescribe cuando `value` cambia desde AFUERA (ej. al cargar datos
    existentes). Si lo reescribiéramos en cada onInput perderíamos la
-   posición del cursor apenas el usuario tecleara.
-   ══════════════════════════════════════════════════════════════ */
+   posición del cursor apenas el usuario tecleara. */
 export default function RichTextEditor({
   value = '',
   onChange,

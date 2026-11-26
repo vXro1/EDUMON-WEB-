@@ -140,7 +140,6 @@ function CursoForosGroup({ curso, foros, onOpenForo }) {
   );
 }
 
-// ════════════════════════════════════════════════════════════
 export default function FamiliaForosPage() {
   const navigate = useNavigate();
 

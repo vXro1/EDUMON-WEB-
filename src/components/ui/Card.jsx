@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-/* ─── BADGE ─── */
+/* Badge */
 function EdumonBadge({ children, className = '' }) {
   return (
     <span
@@ -15,7 +15,7 @@ function EdumonBadge({ children, className = '' }) {
   );
 }
 
-/* ─── AVATAR ─── */
+/* Avatar */
 export function EdumonAvatar({ initials }) {
   return (
     <div
@@ -31,7 +31,7 @@ export function EdumonAvatar({ initials }) {
   );
 }
 
-/* ─── CARD ─── */
+/* Tarjeta */
 export default function EdumonCard({
   title,
   description,
@@ -129,7 +129,7 @@ export default function EdumonCard({
   );
 }
 
-/* ─── STAT CARD ─── */
+/* Tarjeta de estadística */
 export function EdumonStatCard({ value, label, icon }) {
   return (
     <div

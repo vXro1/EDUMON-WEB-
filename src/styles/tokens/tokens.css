@@ -1,18 +1,8 @@
-/* ════════════════════════════════════════════════════════════════════
-   EDUMON DESIGN SYSTEM — tokens.css
-   Fuente única de verdad para todos los tokens de diseño.
-   Importar primero en cada hoja de estilos.
-   ════════════════════════════════════════════════════════════════════ */
+/* Tokens de diseño de Edumon. Se importa antes que cualquier otra hoja de estilos. */
 
-/* ════════════════════════════════════════════════════════════════════
-   EDUMON DESIGN SYSTEM — tokens.css
-   Fuente única de verdad para todos los tokens de diseño.
-   ════════════════════════════════════════════════════════════════════ */
 
 :root {
-  /* ──────────────────────────────────────────────────────────────────
-     PALETA DE MARCA EN BRUTO
-     ────────────────────────────────────────────────────────────────── */
+  /* Paleta de marca en bruto */
   --edu-purple: #8c38f0;
   --edu-pink: #f23d7f;
   --edu-cyan: #05c7f2;
@@ -22,7 +12,7 @@
   --edu-dark: #0d0d0d;
   --edu-white: #ffffff;
 
-  /* ── Escala de azul (primario del dashboard) ─────────────────────────
+  /* Escala de azul (primario del dashboard)
      Se usa vía el bloque .app-shell más abajo — login/landing NO la ven,
      siguen resolviendo --color-primary desde el morado de :root. */
   --edu-blue-50: #eff8fe;
@@ -36,7 +26,7 @@
   --edu-blue-800: #063a70;
   --edu-blue-900: #042a54;
 
-  /* ── Escala de morado (primario de login/landing — legado) ───────────
+  /* Escala de morado (primario de login/landing — legado)
      Se conserva intacta: el login y la página de aterrizaje siguen
      usándola tal cual, sin ningún cambio. */
   --edu-purple-50: #f7f0fe;
@@ -50,7 +40,7 @@
   --edu-purple-800: #4d1392;
   --edu-purple-900: #360b6b;
 
-  /* ── Escala de rosa (secundario) ────────────────────────────────────── */
+  /* Escala de rosa (secundario) */
   --edu-pink-50: #fef0f5;
   --edu-pink-100: #fdd9e9;
   --edu-pink-200: #faa8cc;
@@ -60,7 +50,7 @@
   --edu-pink-600: #d42b68;
   --edu-pink-700: #b01b52;
 
-  /* ── Escala de cian (acento / info) ─────────────────────────────────── */
+  /* Escala de cian (acento / info) */
   --edu-cyan-50: #f0fbfe;
   --edu-cyan-100: #d4f4fd;
   --edu-cyan-200: #a0e8fb;
@@ -71,7 +61,7 @@
   --edu-cyan-700: #0392b4;
   --edu-cyan-800: #0a6e80;
 
-  /* ── Escala de verde (éxito) ─────────────────────────────────────────── */
+  /* Escala de verde (éxito) */
   --edu-green-50: #f0fdf4;
   --edu-green-100: #d5f7dc;
   --edu-green-200: #a7eeb5;
@@ -82,7 +72,7 @@
   --edu-green-700: #229d35;
   --edu-green-800: #1c7a2d;
 
-  /* ── Escala de amarillo (advertencia / XP) ───────────────────────────── */
+  /* Escala de amarillo (advertencia / XP) */
   --edu-yellow-50: #fffbeb;
   --edu-yellow-100: #fef5c7;
   --edu-yellow-200: #fde88a;
@@ -92,7 +82,7 @@
   --edu-yellow-600: #dfa300;
   --edu-yellow-700: #b88600;
 
-  /* ── Escala de neutros ───────────────────────────────────────────── */
+  /* Escala de neutros */
   --edu-neutral-0: #ffffff;
   --edu-neutral-50: #fafafa;
   --edu-neutral-100: #f5f5f5;
@@ -106,9 +96,7 @@
   --edu-neutral-800: #262626;
   --edu-neutral-900: #171717;
 
-  /* ──────────────────────────────────────────────────────────────────
-     TOKENS DE COLOR SEMÁNTICO
-     ────────────────────────────────────────────────────────────────── */
+  /* Tokens de color semántico */
 
   /* Primario → Morado */
   --color-primary: var(--edu-blue-500);
@@ -176,9 +164,7 @@
   --color-sidebar-hover: rgba(12, 106, 196, 0.14);
   --color-sidebar-border: rgba(255, 255, 255, 0.07);
 
-  /* ──────────────────────────────────────────────────────────────────
-     GRADIENTES
-     ────────────────────────────────────────────────────────────────── */
+  /* Gradientes */
   --gradient-brand: linear-gradient(135deg, var(--edu-blue-600) 0%, var(--edu-blue-500) 50%, var(--edu-blue-400) 100%);
   --gradient-brand-full: linear-gradient(
     135deg,
@@ -208,9 +194,7 @@
   --gradient-cream: linear-gradient(180deg, #ffffff 0%, var(--edu-cream) 100%);
   --gradient-mesh: linear-gradient(180deg, #ffffff 0%, var(--edu-blue-50) 100%);
 
-  /* ──────────────────────────────────────────────────────────────────
-     ESCALA DE RADIO
-     ────────────────────────────────────────────────────────────────── */
+  /* Escala de radio */
   --radius-xs: 0.25rem;
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
@@ -220,9 +204,7 @@
   --radius-3xl: 2.5rem;
   --radius-full: 9999px;
 
-  /* ──────────────────────────────────────────────────────────────────
-     SOMBRAS
-     ────────────────────────────────────────────────────────────────── */
+  /* Sombras */
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 1px 6px rgba(0, 0, 0, 0.07);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -256,9 +238,7 @@
   --shadow-btn-danger: 0 5px 0 #b91c1c, 0 1px 3px rgba(239, 68, 68, 0.2);
   --shadow-btn-warning: 0 5px 0 var(--edu-yellow-600), 0 1px 3px rgba(252, 189, 0, 0.2);
 
-  /* ──────────────────────────────────────────────────────────────────
-     ESPACIADO (escala base de 4px)
-     ────────────────────────────────────────────────────────────────── */
+  /* ESPACIADO (escala base de 4px) */
   --space-px: 1px;
   --space-0: 0;
   --space-1: 0.25rem;
@@ -277,17 +257,13 @@
   --space-24: 6rem;
   --space-32: 8rem;
 
-  /* ──────────────────────────────────────────────────────────────────
-     DIMENSIONES DE LAYOUT
-     ────────────────────────────────────────────────────────────────── */
+  /* Dimensiones de layout */
   --sidebar-width: 248px;
   --sidebar-width-collapsed: 64px;
   --navbar-height: 64px;
   --content-max-width: 1240px;
 
-  /* ──────────────────────────────────────────────────────────────────
-     TIPOGRAFÍA
-     ────────────────────────────────────────────────────────────────── */
+  /* Tipografía */
   --font-heading: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-display: var(--font-heading);
   --font-sans: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -340,18 +316,14 @@
   --hero-title-size: clamp(2.75rem, 5vw, 4.75rem);
   --hero-subtitle-size: clamp(1rem, 2vw, 1.35rem);
 
-  /* ──────────────────────────────────────────────────────────────────
-     TRANSICIONES
-     ────────────────────────────────────────────────────────────────── */
+  /* Transiciones */
   --transition-fast: 120ms ease;
   --transition-base: 200ms ease;
   --transition-slow: 300ms ease;
   --transition-spring: 280ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  /* ──────────────────────────────────────────────────────────────────
-     TOKENS DE CLAYMORFISMO / SOFT UI
-     Sombras suaves apiladas + reflejos interiores para profundidad táctil
-     ────────────────────────────────────────────────────────────────── */
+  /* Tokens de claymorfismo / soft ui
+     Sombras suaves apiladas + reflejos interiores para profundidad táctil */
 
   /* Base clay: sombra exterior + sutil reflejo interior */
   --clay-shadow-sm:
@@ -383,9 +355,7 @@
   /* Clay para botones (reemplaza el press con fondo duro en elementos más suaves) */
   --clay-btn: 0 4px 0 rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 
-  /* ──────────────────────────────────────────────────────────────────
-     ESCALA DE Z-INDEX
-     ────────────────────────────────────────────────────────────────── */
+  /* Escala de z-index */
   --z-base: 0;
   --z-raised: 10;
   --z-sidebar: 20;
@@ -397,11 +367,9 @@
   --z-backdrop: 39;
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   ACENTOS SEMÁNTICOS POR SECCIÓN
+/* Acentos semánticos por sección
    Sobreescrituras con scope para que cualquier hijo pueda usar --section,
-   --section-50, --section-100, --section-700 sin codificar valores de tono.
-   ────────────────────────────────────────────────────────────────────── */
+   --section-50, --section-100, --section-700 sin codificar valores de tono. */
 .section-inicio {
   --section: var(--edu-blue-500);
   --section-50: var(--edu-blue-50);

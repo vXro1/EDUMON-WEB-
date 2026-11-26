@@ -33,7 +33,7 @@ const card = {
 
 const fechaCorta = (f) => (f ? new Date(f).toLocaleDateString('es-CO', { day: 'numeric', month: 'short' }) : '');
 
-// ─── Enviar aviso ───────────────────────────────────────────────────────────
+// Enviar aviso
 function EnviarAviso({ cursos, esSuperadmin, instituciones, notify }) {
   const [alcance, setAlcance] = useState('curso');
   const [cursoId, setCursoId] = useState('');
@@ -261,7 +261,7 @@ function EnviarAviso({ cursos, esSuperadmin, instituciones, notify }) {
   );
 }
 
-// ─── Cursos: accesos directos para gestionarlos ──────────────────────────────
+// Cursos: accesos directos para gestionarlos
 const ACCESOS = [
   { tab: 'tareas', label: 'Retos', icon: ClipboardList },
   { tab: 'modulos', label: 'Módulos', icon: BookOpen },

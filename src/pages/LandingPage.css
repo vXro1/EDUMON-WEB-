@@ -1,11 +1,9 @@
 .landing {
-  /* ================================================================
-     PALETA DE COLOR EDUMON
+  /* Paleta de color edumon
      Azul como color principal de marca.
-     Los demás colores se reservan para estados y significado.
-     ================================================================ */
+     Los demás colores se reservan para estados y significado. */
 
-  /* ── Azul de marca ─────────────────────────────────────────────── */
+  /* Azul de marca */
 
   --edumon-blue-900: #042a54;
   --edumon-blue-800: #063a70;
@@ -21,7 +19,7 @@
   /* Alias retrocompatible */
   --edumon-blue: var(--edumon-blue-500);
 
-  /* ── Cian: información / interacción secundaria ───────────────── */
+  /* Cian: información / interacción secundaria */
 
   --edumon-cyan-700: #0392b4;
   --edumon-cyan-600: #04aed6;
@@ -32,27 +30,27 @@
   --edumon-cyan-100: #d4f4fd;
   --edumon-cyan-50: #f0fbfe;
 
-  /* ── Verde: éxito / estado positivo ───────────────────────────── */
+  /* Verde: éxito / estado positivo */
 
   --edumon-success: #41d958;
   --edumon-success-hover: #2fbd45;
   --edumon-success-dark: #229d35;
   --edumon-success-bg: #f0fdf4;
 
-  /* ── Amarillo: advertencia / XP / logros ───────────────────────── */
+  /* Amarillo: advertencia / XP / logros */
 
   --edumon-warning: #fcbd00;
   --edumon-warning-hover: #dfa300;
   --edumon-warning-dark: #b88600;
   --edumon-warning-bg: #fffbeb;
 
-  /* ── Rojo: error / acciones destructivas ───────────────────────── */
+  /* Rojo: error / acciones destructivas */
 
   --edumon-danger: #ef4444;
   --edumon-danger-hover: #dc2626;
   --edumon-danger-bg: #fef2f2;
 
-  /* ── Neutros ───────────────────────────────────────────────────── */
+  /* Neutros */
 
   --edumon-white: #ffffff;
 
@@ -68,7 +66,7 @@
   --edumon-neutral-800: #262626;
   --edumon-neutral-900: #171717;
 
-  /* ── Texto ────────────────────────────────────────────────────── */
+  /* Texto */
 
   --edumon-ink: #0d0d0d;
   --edumon-muted: #737373;
@@ -79,7 +77,7 @@
   --edumon-text-subtle: var(--edumon-subtle);
   --edumon-text-inverse: #ffffff;
 
-  /* ── Fondos ───────────────────────────────────────────────────── */
+  /* Fondos */
 
   --edumon-bg: #ffffff;
   --edumon-bg-soft: #fcf7ed;
@@ -89,14 +87,14 @@
   --edumon-surface-2: #fafafa;
   --edumon-surface-3: #f5f5f5;
 
-  /* ── Bordes ───────────────────────────────────────────────────── */
+  /* Bordes */
 
   --edumon-border: #e8e8e8;
   --edumon-border-strong: #d4d4d4;
 
   --edumon-border-brand: rgba(12, 106, 196, 0.18);
 
-  /* ── Sidebar / superficies oscuras ────────────────────────────── */
+  /* Sidebar / superficies oscuras */
 
   --edumon-footer-bg: #0d0d0d;
 
@@ -107,9 +105,7 @@
   --edumon-sidebar-hover: rgba(12, 106, 196, 0.14);
   --edumon-sidebar-border: rgba(255, 255, 255, 0.07);
 
-  /* ================================================================
-     TOKENS SEMÁNTICOS
-     ================================================================ */
+  /* Tokens semánticos */
 
   --color-primary: var(--edumon-blue-500);
   --color-primary-hover: var(--edumon-blue-600);
@@ -143,9 +139,7 @@
 
   --glow-brand: 0 10px 22px rgba(5, 199, 242, 0.22), 0 6px 14px rgba(10, 90, 168, 0.35);
 
-  /* ================================================================
-     GRADIENTES
-     ================================================================ */
+  /* Gradientes */
 
   /* Principal: profundo → vivo → luminoso */
   --gradient-brand: linear-gradient(
@@ -196,13 +190,11 @@
 
   --shadow-pop: 0 18px 36px rgba(15, 23, 42, 0.12), 0 6px 14px rgba(15, 23, 42, 0.07);
 
-  /* ================================================================
-     ACENTOS MULTICOLOR
+  /* Acentos multicolor
      Los 5 colores ya usados por los MÓDULOS del carrusel, promovidos a
      tokens para usarlos con moderación como acento por sección. El azul
      sigue siendo el color estructural; esto solo aporta el guiño lúdico
-     que conecta con la ilustración de mascotas.
-     ================================================================ */
+     que conecta con la ilustración de mascotas. */
   --edu-violet: #7c3aed;
   --edu-pink: #db2777;
   --edu-accent-cyan: #06b6d4;
@@ -283,7 +275,7 @@
   font-family: inherit;
 }
 
-/* ── Foco visible consistente y accesible en todo interactivo ── */
+/* Foco visible consistente y accesible en todo interactivo */
 :where(.landing) a:focus-visible,
 :where(.landing) button:focus-visible,
 :where(.landing) input:focus-visible,
@@ -293,7 +285,7 @@
   border-radius: 8px;
 }
 
-/* ── Utilidad de contenedor global ── */
+/* Utilidad de contenedor global */
 .landing-header__inner,
 .landing-hero__content-row,
 .landing-quienes,
@@ -312,13 +304,11 @@
   box-sizing: border-box;
 }
 
-/* ══════════════════════════════════════════════════════
-   BURBUJAS DECORATIVAS
+/* Burbujas decorativas
    Antes: 3 animaciones simultáneas por burbuja (traslación +
    rotación), muy notorias. Ahora: una sola animación suave,
    menor amplitud, y las burbujas se atenúan para no competir
-   con el contenido ni con el nuevo acento azul.
-   ══════════════════════════════════════════════════════ */
+   con el contenido ni con el nuevo acento azul. */
 .deco-bubbles {
   position: absolute;
   inset: 0;
@@ -358,9 +348,7 @@
   }
 }
 
-/* ══════════════════════════════════════════════════════
-   NAVBAR
-   ══════════════════════════════════════════════════════ */
+/* Navbar */
 .landing-header {
   position: sticky;
   top: 0;
@@ -538,9 +526,7 @@
   }
 }
 
-/* ══════════════════════════════════════════════════════
-   HERO
-   ══════════════════════════════════════════════════════ */
+/* HERO */
 .landing-hero {
   position: relative;
   display: flex;
@@ -803,9 +789,7 @@
   }
 }
 
-/* ══════════════════════════════════════════════════════
-   SECCIONES — ritmo vertical consistente
-   ══════════════════════════════════════════════════════ */
+/* SECCIONES — ritmo vertical consistente */
 .landing-pilares,
 .landing-aprende,
 .landing-section--alt,
@@ -837,9 +821,7 @@
     padding-block: var(--space-section-mobile);
   }
 }
-/* ─────────────────────────────────────────
-   PILARES
-───────────────────────────────────────── */
+/* Pilares */
 
 .landing-pilares {
   text-align: center;
@@ -850,9 +832,7 @@
   z-index: 1;
 }
 
-/* ─────────────────────────────────────────
-   ETIQUETA
-───────────────────────────────────────── */
+/* Etiqueta */
 
 .pilares-label,
 .pilares-inner .section-label,
@@ -870,9 +850,7 @@
   letter-spacing: 0.04em;
 }
 
-/* ─────────────────────────────────────────
-   TÍTULO
-───────────────────────────────────────── */
+/* Título */
 
 .pilares-title {
   font-family: var(--font-heading);
@@ -890,9 +868,7 @@
   color: var(--lp-blue);
 }
 
-/* ─────────────────────────────────────────
-   DIVISOR
-───────────────────────────────────────── */
+/* Divisor */
 
 .pilares-divider {
   width: min(240px, 80%);
@@ -913,9 +889,7 @@
   );
 }
 
-/* ─────────────────────────────────────────
-   SUBTÍTULO
-───────────────────────────────────────── */
+/* Subtítulo */
 
 .pilares-subtitle {
   max-width: 560px;
@@ -929,9 +903,7 @@
   line-height: 1.6;
 }
 
-/* ─────────────────────────────────────────
-   GRID
-───────────────────────────────────────── */
+/* GRID */
 
 .pilares-grid {
   width: 100%;
@@ -951,9 +923,7 @@
   align-items: stretch;
 }
 
-/* ─────────────────────────────────────────
-   CARD
-───────────────────────────────────────── */
+/* Tarjeta */
 
 .pilar-card {
   background: #ffffff;
@@ -1042,9 +1012,7 @@
   stroke-width: 2;
 }
 
-/* ─────────────────────────────────────────
-   TÍTULO CARD
-───────────────────────────────────────── */
+/* Título de la tarjeta */
 
 .pilar-card__title {
   font-family: var(--font-heading);
@@ -1058,9 +1026,7 @@
   color: var(--edumon-ink);
 }
 
-/* ─────────────────────────────────────────
-   DESCRIPCIÓN
-───────────────────────────────────────── */
+/* Descripción */
 
 .pilar-card__desc {
   font-size: 0.95rem;
@@ -1074,9 +1040,7 @@
   flex: 1;
 }
 
-/* ─────────────────────────────────────────
-   BARRA
-───────────────────────────────────────── */
+/* Barra */
 
 .pilar-card__bar {
   width: 100%;
@@ -1120,9 +1084,7 @@
   transform: scale(1.08) rotate(-4deg);
 }
 
-/* ─────────────────────────────────────────
-   RESPONSIVE
-───────────────────────────────────────── */
+/* Responsive */
 
 @media (max-width: 900px) {
   .pilares-grid {
@@ -1143,10 +1105,8 @@
     padding: 28px 24px;
   }
 }
-/* ══════════════════════════════════════════════════════
-   CARRUSEL DE MÓDULOS — EDUMON
-   Diseño limpio, amigable y con jerarquía visual
-══════════════════════════════════════════════════════ */
+/* Carrusel de módulos — edumon
+   Diseño limpio, amigable y con jerarquía visual */
 
 .aprende-content {
   position: relative;
@@ -1184,9 +1144,7 @@
   margin: 0;
 }
 
-/* ══════════════════════════════════════════════════════
-   CONTENEDOR DEL CARRUSEL
-══════════════════════════════════════════════════════ */
+/* Contenedor del carrusel */
 
 .modulo-embla {
   position: relative;
@@ -1204,9 +1162,7 @@
   padding: 8px 48px 32px;
 }
 
-/* ══════════════════════════════════════════════════════
-   VIEWPORT
-══════════════════════════════════════════════════════ */
+/* Viewport */
 
 .modulo-embla__viewport {
   overflow: hidden;
@@ -1222,9 +1178,7 @@
   outline-offset: 6px;
 }
 
-/* ══════════════════════════════════════════════════════
-   CONTAINER
-══════════════════════════════════════════════════════ */
+/* Container */
 
 .modulo-embla__container {
   display: flex;
@@ -1234,9 +1188,7 @@
   touch-action: pan-y;
 }
 
-/* ══════════════════════════════════════════════════════
-   SLIDE
-══════════════════════════════════════════════════════ */
+/* Slide */
 
 .modulo-embla__slide {
   /*
@@ -1250,9 +1202,7 @@
   padding: 20px 12px 24px;
 }
 
-/* ══════════════════════════════════════════════════════
-   INNER
-══════════════════════════════════════════════════════ */
+/* Inner */
 
 .modulo-embla__slide__inner {
   height: 100%;
@@ -1276,7 +1226,7 @@
     opacity 0.35s ease;
 }
 
-/* CARD ACTIVA */
+/* Tarjeta activa */
 
 .modulo-embla__slide__inner.is-active {
   cursor: default;
@@ -1307,9 +1257,7 @@
   }
 }
 
-/* ══════════════════════════════════════════════════════
-   CARD
-══════════════════════════════════════════════════════ */
+/* Tarjeta */
 
 .modulo-card {
   height: 100%;
@@ -1342,9 +1290,7 @@
     0 0 0 2px var(--m-color, var(--edumon-blue-200));
 }
 
-/* ══════════════════════════════════════════════════════
-   BARRA SUPERIOR
-══════════════════════════════════════════════════════ */
+/* Barra superior */
 
 .modulo-card__bar {
   height: 4px;
@@ -1354,9 +1300,7 @@
   background: var(--edumon-blue-600);
 }
 
-/* ══════════════════════════════════════════════════════
-   CUERPO
-══════════════════════════════════════════════════════ */
+/* Cuerpo */
 
 .modulo-card__body {
   padding: 26px 28px 28px;
@@ -1375,9 +1319,7 @@
   flex: 1;
 }
 
-/* ══════════════════════════════════════════════════════
-   ICONO
-══════════════════════════════════════════════════════ */
+/* Icono */
 
 .modulo-card__icon {
   width: 72px;
@@ -1427,9 +1369,7 @@
   stroke-width: 2;
 }
 
-/* ══════════════════════════════════════════════════════
-   TÍTULO
-══════════════════════════════════════════════════════ */
+/* Título */
 
 .modulo-card__title {
   margin: 0 0 10px;
@@ -1445,9 +1385,7 @@
   color: var(--edumon-ink);
 }
 
-/* ══════════════════════════════════════════════════════
-   DESCRIPCIÓN
-══════════════════════════════════════════════════════ */
+/* Descripción */
 
 .modulo-card__desc {
   max-width: 500px;
@@ -1469,9 +1407,7 @@
   overflow: hidden;
 }
 
-/* ══════════════════════════════════════════════════════
-   FLECHAS
-══════════════════════════════════════════════════════ */
+/* Flechas */
 
 .modulo-embla__arrow {
   position: absolute;
@@ -1529,7 +1465,7 @@
   transform: translateY(-50%) scale(0.94);
 }
 
-/* Disabled */
+/* Deshabilitado */
 
 .modulo-embla__arrow:disabled {
   opacity: 0.3;
@@ -1547,9 +1483,7 @@
   right: 4px;
 }
 
-/* ══════════════════════════════════════════════════════
-   RESPONSIVE
-══════════════════════════════════════════════════════ */
+/* Responsive */
 
 @media (max-width: 1024px) {
   .modulo-embla {
@@ -1612,7 +1546,7 @@
     height: 38px;
   }
 }
-/* ── Indicadores: círculos reales, sin "píldora" ──*/
+/* Indicadores: círculos reales, sin "píldora" */
 .modulo-embla__dots {
   display: flex;
   align-items: center;
@@ -1817,9 +1751,7 @@
   }
 }
 
-/* ══════════════════════════════════════════════════════
-   CONTACTO
-   ══════════════════════════════════════════════════════ */
+/* Contacto */
 
 .landing-contacto {
   position: relative;
@@ -1868,7 +1800,7 @@
   margin-bottom: 32px;
 }
 
-/* ── Beneficios: el verde aquí es semántico (check = éxito), se conserva ── */
+/* Beneficios: el verde aquí es semántico (check = éxito), se conserva */
 .contacto-beneficios {
   display: flex;
   flex-direction: column;
@@ -1895,13 +1827,11 @@
   font-size: 0.9rem;
 }
 
-/* ══════════════════════════════════════════════════════
-   BUZÓN DE SOPORTE — "escena" alrededor de la ilustración
+/* BUZÓN DE SOPORTE — "escena" alrededor de la ilustración
    Se pidió que "parezca de verdad un buzón": pedestal que lo
    clava en el piso, sombra proyectada, banderita que se levanta
    al pasar el mouse, contador de mensajes y una carta que entra
-   en bucle.
-   ══════════════════════════════════════════════════════ */
+   en bucle. */
 .contacto-left__img-wrap {
   position: relative;
   width: 100%;
@@ -2066,7 +1996,7 @@
   }
 }
 
-/* ── Tarjeta flotante: verde = estado "en línea", se conserva ── */
+/* Tarjeta flotante: verde = estado "en línea", se conserva */
 .contacto-support-card {
   position: absolute;
   right: 30px;
@@ -2106,7 +2036,7 @@
   }
 }
 
-/* ── Formulario ── */
+/* Formulario */
 .contacto-form-card {
   position: relative;
   overflow: hidden;
@@ -2253,7 +2183,7 @@
   }
 }
 
-/* ── Tablet ── */
+/* Tablet */
 @media (max-width: 1024px) {
   .landing-contacto {
     grid-template-columns: 1fr;
@@ -2274,7 +2204,7 @@
   }
 }
 
-/* ── Móvil ── */
+/* Móvil */
 @media (max-width: 768px) {
   .contacto-left__title {
     font-size: 2rem;
@@ -2295,7 +2225,7 @@
   }
 }
 
-/* ── Móvil pequeño ── */
+/* Móvil pequeño */
 @media (max-width: 480px) {
   .contacto-left__title {
     font-size: 1.8rem;
@@ -2326,9 +2256,7 @@
   }
 }
 
-/* ══════════════════════════════════════════════════════
-   SECCIÓN "APP MÓVIL" — descarga del APK (solo Android)
-   ══════════════════════════════════════════════════════ */
+/* SECCIÓN "APP MÓVIL" — descarga del APK (solo Android) */
 .landing-app {
   position: relative;
   overflow: hidden;
@@ -2975,9 +2903,7 @@ a.landing-app__icon:focus-visible .landing-app__icon-tile {
   filter: drop-shadow(0 4px 8px rgba(4, 42, 84, 0.16));
 }
 
-/* ══════════════════════════════════════════════════════
-   FOOTER
-   ══════════════════════════════════════════════════════ */
+/* Pie de página */
 .landing-footer {
   background: var(--edumon-bg);
   color: var(--edumon-ink);
@@ -3155,9 +3081,7 @@ a.landing-app__icon:focus-visible .landing-app__icon-tile {
   }
 }
 
-/* ══════════════════════════════════════════════════════
-   Ajuste de burbujas en pantallas pequeñas
-   ══════════════════════════════════════════════════════ */
+/* Ajuste de burbujas en pantallas pequeñas */
 @media (max-width: 640px) {
   .deco-bubbles {
     transform: scale(0.75);
@@ -3165,9 +3089,7 @@ a.landing-app__icon:focus-visible .landing-app__icon-tile {
   }
 }
 
-/* ══════════════════════════════════════════════════════
-   Salvaguarda global anti-overflow
-   ══════════════════════════════════════════════════════ */
+/* Salvaguarda global anti-overflow */
 @media (max-width: 380px) {
   .landing {
     --container-pad: 16px;

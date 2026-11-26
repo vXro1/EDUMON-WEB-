@@ -30,10 +30,10 @@ import { useQueryClient } from '@tanstack/react-query';
 import { queryKeys } from '@/services/queryKeys';
 import { useCursosListado, useTareasListado } from '@/features/cursos/hooks/useListados';
 
-// Hooks & Context
+// Hooks y contexto
 import { useSearch } from '@/context/SearchContext';
 
-// Utils
+// Utilidades
 import { normalizeTarea } from '@/lib/normalizers/tarea';
 import { humanizeError } from '@/utils/humanizeError';
 import { sanitizeRichText, isRichTextEmpty } from '@/utils/richText';
@@ -43,7 +43,7 @@ import { Toast, AppModal, Modal, Button, Badge, Input, Select, RichTextEditor, u
 import { Sk, EmptyState, Field } from '../../cursos/components/shared/ui';
 import { makeNotify } from '@/features/cursos/components/shared/helpers';
 
-/* ── Preview de archivo adjunto (nuevo, aún no subido) ──────────────── */
+/* Preview de archivo adjunto (nuevo, aún no subido) */
 const SIN_DATOS = [];
 
 function FileChip({ file, onRemove }) {
@@ -137,7 +137,7 @@ function FileChip({ file, onRemove }) {
   );
 }
 
-/* ── Adjunto ya existente en el servidor — el borrado real solo ocurre al guardar */
+/* Adjunto ya existente en el servidor — el borrado real solo ocurre al guardar */
 function ExistingFileRow({ archivo, marcado, onToggle }) {
   return (
     <div
@@ -211,7 +211,7 @@ function ExistingFileRow({ archivo, marcado, onToggle }) {
   );
 }
 
-// ─── Constantes ───────────────────────────────────────────────────────────────
+// Constantes
 
 const TIPO_ENTREGA_OPTS = [
   { value: 'archivo', label: 'Archivo / Documento' },
@@ -244,7 +244,7 @@ function toDatetimeLocalValue(iso) {
   return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// Página
 
 export default function TareasPage() {
   const confirmar = useConfirm();
@@ -259,7 +259,7 @@ export default function TareasPage() {
   const [toast, setToast] = useState({ msg: '', type: 'success' });
   const [saving, setSaving] = useState(false);
 
-  // ── Crear ──
+  // Crear
   const [showCreate, setShowCreate] = useState(false);
   const [form, setForm] = useState(INIT_FORM);
   const [participantesSeleccionados, setParticipantesSeleccionados] = useState([]);
@@ -267,7 +267,7 @@ export default function TareasPage() {
   const [enlaces, setEnlaces] = useState([]); // enlaces de referencia
   const fileRef = useRef(null);
 
-  // ── Editar ──
+  // Editar
   const [showEdit, setShowEdit] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState(INIT_FORM);
@@ -294,11 +294,11 @@ export default function TareasPage() {
     [],
   );
 
-  // ── Cursos del usuario (misma caché que el resto de listados de cursos) ───
+  // Cursos del usuario (misma caché que el resto de listados de cursos)
   const { data: cursosData } = useCursosListado({ alcance: 'mios', params: { limit: 50 } });
   const cursos = cursosData?.cursos ?? SIN_DATOS;
 
-  // ── Módulos y participantes al cambiar curso en el form de CREAR ──────────
+  // Módulos y participantes al cambiar curso en el form de CREAR
   useEffect(() => {
     if (!form.cursoId) {
       setModulos([]);
@@ -314,7 +314,7 @@ export default function TareasPage() {
       .catch(() => setParticipantes([]));
   }, [form.cursoId]);
 
-  // ── Módulos y participantes al cambiar curso en el form de EDITAR ─────────
+  // Módulos y participantes al cambiar curso en el form de EDITAR
   useEffect(() => {
     if (!editForm.cursoId) {
       setEditModulos([]);
@@ -329,7 +329,7 @@ export default function TareasPage() {
       .catch(() => setEditParticipantesList([]));
   }, [editForm.cursoId]);
 
-  // ── Carga de tareas ───────────────────────────────────────────────────────
+  // Carga de tareas
   const queryClient = useQueryClient();
   const { data: tareasData, isLoading: loading, isError: tareasError } = useTareasListado({ limit: 200 });
   const tareas = tareasData ?? SIN_DATOS;
@@ -341,7 +341,7 @@ export default function TareasPage() {
   // tras crear/editar/cerrar/eliminar: invalida todos los listados de retos en caché
   const load = useCallback(() => queryClient.invalidateQueries({ queryKey: queryKeys.tareas.all() }), [queryClient]);
 
-  // ── Búsqueda global ───────────────────────────────────────────────────────
+  // Búsqueda global
   useEffect(() => {
     const unregister = registerSearchHandler('tareas', (q) => {
       const query = q.toLowerCase();
@@ -354,7 +354,7 @@ export default function TareasPage() {
     return unregister;
   }, [tareas, registerSearchHandler]);
 
-  // ── Filtro local ──────────────────────────────────────────────────────────
+  // Filtro local
   const filtered = tareas.filter((t) => {
     const q = search.toLowerCase();
     const matchSearch = !q || t.titulo?.toLowerCase().includes(q) || t.descripcion?.toLowerCase().includes(q);
@@ -363,14 +363,14 @@ export default function TareasPage() {
     return matchSearch && matchEstado && matchCurso;
   });
 
-  // ── Helpers de campo ──────────────────────────────────────────────────────
+  // Helpers de campo
   const f = (key) => (e) => setForm((p) => ({ ...p, [key]: e.target.value }));
   const ef = (key) => (e) => setEditForm((p) => ({ ...p, [key]: e.target.value }));
   // RichTextEditor entrega el HTML directo (no un evento) en su onChange
   const fRich = (key) => (html) => setForm((p) => ({ ...p, [key]: html }));
   const efRich = (key) => (html) => setEditForm((p) => ({ ...p, [key]: html }));
 
-  // ── Helpers de enlaces de referencia (crear) ──────────────────────────────
+  // Helpers de enlaces de referencia (crear)
   const addEnlace = () => setEnlaces((prev) => [...prev, { ...EMPTY_ENLACE }]);
   const removeEnlace = (i) => setEnlaces((prev) => prev.filter((_, j) => j !== i));
   const updateEnlace = (i, key, value) =>
@@ -380,7 +380,7 @@ export default function TareasPage() {
       return arr;
     });
 
-  // ── Helpers de enlaces nuevos (editar) ────────────────────────────────────
+  // Helpers de enlaces nuevos (editar)
   const addEditEnlace = () => setEditEnlacesNuevos((prev) => [...prev, { ...EMPTY_ENLACE }]);
   const removeEditEnlace = (i) => setEditEnlacesNuevos((prev) => prev.filter((_, j) => j !== i));
   const updateEditEnlace = (i, key, value) =>
@@ -395,7 +395,7 @@ export default function TareasPage() {
       prev.includes(publicId) ? prev.filter((id) => id !== publicId) : [...prev, publicId],
     );
 
-  // ── Crear tarea ───────────────────────────────────────────────────────────
+  // Crear tarea
   const handleCreate = async (e) => {
     e.preventDefault();
 
@@ -518,7 +518,7 @@ export default function TareasPage() {
     }
   };
 
-  // ── Guardar edición ───────────────────────────────────────────────────────
+  // Guardar edición
   const handleEditSubmit = async (e) => {
     e.preventDefault();
 
@@ -585,7 +585,7 @@ export default function TareasPage() {
     }
   };
 
-  // ── Cerrar tarea ──────────────────────────────────────────────────────────
+  // Cerrar tarea
   const handleCerrar = async (id) => {
     const ok = await confirmar({
       title: '¿Cerrar este reto?',
@@ -618,12 +618,11 @@ export default function TareasPage() {
     }
   };
 
-  // ─────────────────────────────────────────────────────────────────────────
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
       <Toast msg={toast.msg} type={toast.type} />
 
-      {/* ── Header ── */}
+      {/* Encabezado */}
       <div
         style={{
           display: 'flex',
@@ -676,7 +675,7 @@ export default function TareasPage() {
         </div>
       </div>
 
-      {/* ── Filtros ── */}
+      {/* Filtros */}
       <div
         style={{
           background: 'var(--color-surface)',
@@ -769,7 +768,7 @@ export default function TareasPage() {
         </select>
       </div>
 
-      {/* ── Lista ── */}
+      {/* Lista */}
       {loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {[0, 1, 2, 3].map((i) => (
@@ -800,9 +799,7 @@ export default function TareasPage() {
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════
-          Modal — Crear tarea
-      ══════════════════════════════════════════════ */}
+      {/* Modal — Crear tarea */}
       <AppModal
         isOpen={showCreate}
         onClose={() => {
@@ -1101,9 +1098,7 @@ export default function TareasPage() {
         </AppModal.Footer>
       </AppModal>
 
-      {/* ══════════════════════════════════════════════
-          Modal — Editar tarea
-      ══════════════════════════════════════════════ */}
+      {/* Modal — Editar tarea */}
       <AppModal isOpen={showEdit} onClose={() => setShowEdit(false)} size="lg">
         <AppModal.Header
           title="Editar reto"
@@ -1444,9 +1439,7 @@ export default function TareasPage() {
         </AppModal.Footer>
       </AppModal>
 
-      {/* ══════════════════════════════════════════════
-          Modal — Confirmar cierre (con limpieza de archivos)
-      ══════════════════════════════════════════════ */}
+      {/* Modal — Confirmar cierre (con limpieza de archivos) */}
       <Modal isOpen={showDelete} onClose={() => setShowDelete(false)} title="Cerrar reto" size="sm">
         <p style={{ fontSize: 13.5, color: 'var(--color-text-secondary)', marginBottom: 20 }}>
           Esta acción cerrará el reto (no se podrá reabrir) y eliminará todos sus archivos adjuntos. ¿Deseas continuar?
@@ -1465,7 +1458,7 @@ export default function TareasPage() {
   );
 }
 
-// ─── TareaCard ────────────────────────────────────────────────────────────────
+// TareaCard
 
 const ESTADO_BADGE = { activa: 'success', cerrada: 'neutral', vencida: 'error' };
 const ASIG_BADGE = { todos: 'info', seleccionados: 'purple' };

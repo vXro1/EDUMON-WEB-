@@ -1,4 +1,3 @@
-// src/components/ui/DocentesCsvTemplate.js
 import { descargarXlsx } from '@/utils/xlsxWriter';
 
 // El orden de estas columnas DEBE coincidir exactamente con el array

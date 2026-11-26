@@ -1,4 +1,3 @@
-// src/components/forms/ResetPasswordForm.jsx
 //
 // Restablecer contraseña con el código recibido por CORREO. El backend retiró
 // la recuperación por teléfono/WhatsApp, así que esta pantalla es solo email.

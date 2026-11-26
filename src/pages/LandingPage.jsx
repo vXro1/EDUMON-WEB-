@@ -14,7 +14,7 @@ import mascota from '@/assets/img/edumon-mascota.svg';
 import soporte from '@/assets/img/edumon-mascota-buzon-soporte.svg';
 import mascotasEquipo from '@/assets/img/edumon-mascotas-jugando.webp';
 
-/* ─── Burbujas decorativas (assets reales) ─── */
+/* Burbujas decorativas (assets reales) */
 import circulo1 from '@/assets/img/circulos/circulo1.svg';
 import circulo2 from '@/assets/img/circulos/circulo2.svg';
 import circulo3 from '@/assets/img/circulos/circulo3.svg';
@@ -70,7 +70,7 @@ const CIRCULOS = [
   circulo12,
 ];
 
-/* ─── Iconos SVG inline ─── */
+/* Iconos SVG inline */
 const IconSparkles = ({ size = 14, className }) => (
   <svg
     width={size}
@@ -293,7 +293,7 @@ const IconStar = ({ size = 16, className }) => (
   </svg>
 );
 
-/* ─── Iconos de los módulos de aprendizaje ─── */
+/* Iconos de los módulos de aprendizaje */
 const IconSmartphone = ({ size = 24 }) => (
   <svg
     width={size}
@@ -333,7 +333,7 @@ const IconDownload = ({ size = 16 }) => (
   </svg>
 );
 
-/* ── Datos ── */
+/* Datos */
 const CONTACTO = {
   correo: 'edumonsoporte@gmail.com',
   youtube: 'https://www.youtube.com/@EDUMONEduca',
@@ -376,7 +376,7 @@ const PILARES = [
   },
 ];
 
-/* ── Config de burbujas decorativas por sección ──
+/* Config de burbujas decorativas por sección
    circulo: índice 1-12 del asset (src/assets/img/circulos/circuloN.svg)
    anim: variante de animación flotante (a | b | c)
    Todas usan position absolute dentro de un contenedor .deco-bubbles */
@@ -432,7 +432,7 @@ const FOOTER_BUBBLES = [
   { circulo: 8, bottom: '6%', right: '18%', size: '44px', opacity: 0.18, anim: 'a', delay: '1.9s' },
 ];
 
-/* ── Componente de burbujas decorativas reutilizable ── */
+/* Componente de burbujas decorativas reutilizable */
 function DecoBubbles({ items, className = '' }) {
   return (
     <div className={`deco-bubbles ${className}`} aria-hidden="true">
@@ -474,7 +474,7 @@ function useIntersect(ref, threshold = 0.15) {
   return visible;
 }
 
-/* ── Tarjeta individual del carrusel ── */
+/* Tarjeta individual del carrusel */
 export default function LandingPage() {
   usePageMeta({
     title: 'EDUMON | Plataforma educativa para docentes y familias',

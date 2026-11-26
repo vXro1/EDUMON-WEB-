@@ -1,8 +1,6 @@
-/* ════════════════════════════════════════════════════════════════════
-   EDUMON — AVATARS
-   ════════════════════════════════════════════════════════════════════ */
+/* Edumon — avatars */
 
-/* ── Base ─────────────────────────────────────────────────────────────── */
+/* Base */
 .avatar {
   display: inline-flex;
   align-items: center;
@@ -30,7 +28,7 @@
   display: block;
 }
 
-/* ── Tamaños ────────────────────────────────────────────────────────────── */
+/* Tamaños */
 .avatar-2xs {
   width: 1.5rem;
   height: 1.5rem;
@@ -67,7 +65,7 @@
   font-size: var(--text-3xl);
 }
 
-/* ── Forma cuadrada (instituciones / cursos) ────────────────────────────── */
+/* Forma cuadrada (instituciones / cursos) */
 .avatar-square {
   border-radius: var(--radius-lg);
 }
@@ -75,7 +73,7 @@
   border-radius: var(--radius-md);
 }
 
-/* ── Punto de estado ───────────────────────────────────────────────────────── */
+/* Punto de estado */
 .avatar-status {
   position: absolute;
   bottom: 1px;
@@ -117,7 +115,7 @@
   border-color: var(--color-warning);
 }
 
-/* ── Paleta de colores (avatares sin foto) ────────────────────────────────── */
+/* Paleta de colores (avatares sin foto) */
 .avatar-color-0 {
   background: var(--edu-purple-50);
   color: var(--edu-purple-600);
@@ -143,7 +141,7 @@
   color: var(--color-primary);
 }
 
-/* ── Bordes por rol ─────────────────────────────────────────────────────── */
+/* Bordes por rol */
 .avatar-role-superadmin {
   border-color: var(--edu-pink-500);
 }
@@ -157,7 +155,7 @@
   border-color: var(--edu-green-500);
 }
 
-/* ── Interactivo ──────────────────────────────────────────────────────── */
+/* Interactivo */
 .avatar-interactive {
   cursor: pointer;
 }
@@ -173,7 +171,7 @@
   box-shadow: var(--shadow-focus);
 }
 
-/* ── Grupo / apilado ────────────────────────────────────────────────────── */
+/* Grupo / apilado */
 .avatar-group {
   display: inline-flex;
   flex-direction: row-reverse;
@@ -203,7 +201,7 @@
   border: 2.5px solid var(--color-surface);
 }
 
-/* ── Avatar con insignia ────────────────────────────────────────────────── */
+/* Avatar con insignia */
 .avatar-badge {
   position: absolute;
   top: -2px;

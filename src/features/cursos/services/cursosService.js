@@ -1,7 +1,7 @@
 import { apiFetch, apiFetchFormData } from '@/services/core/apiClient';
 import { normalizeRole, ROLES } from '@/security/roleMatrix';
 
-// ── Cursos ────────────────────────────────────────────────────────────────────
+// Cursos
 
 export const cursosCreate = (formData) => apiFetchFormData('/cursos', { method: 'POST', body: formData });
 
@@ -54,7 +54,7 @@ export const cursosRemoveParticipante = (cursoId, usuarioId) =>
 export const cursosAddParticipantesCsv = (id, formData) =>
   apiFetchFormData(`/cursos/${id}/usuarios-masivo`, { method: 'POST', body: formData });
 
-// ── Módulos ───────────────────────────────────────────────────────────────────
+// Módulos
 
 export const modulosCreate = (body) => apiFetch('/modulos', { method: 'POST', body: JSON.stringify(body) });
 

@@ -1,6 +1,4 @@
-// ─────────────────────────────────────────────────────────────────────────────
 // Helpers de formato y normalización compartidos entre tabs
-// ─────────────────────────────────────────────────────────────────────────────
 
 export function fmt(date) {
   if (!date) return '—';

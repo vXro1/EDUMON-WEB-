@@ -76,12 +76,12 @@ export default function TareasTab({
   const [toast, setToast] = useState({ msg: '', type: 'success' });
   const notify = makeNotify(setToast);
 
-  // ── CARGAR TAREAS ──────────────────────────────────────────────────
+  // Cargar tareas
   // tras crear/editar/eliminar: invalida todos los listados de retos en caché
   // (este curso, la página de Retos y los de la familia)
   const load = useCallback(() => queryClient.invalidateQueries({ queryKey: queryKeys.tareas.all() }), [queryClient]);
 
-  // ── PARTICIPANTES ──────────────────────────────────────────────────
+  // Participantes
   const loadParticipantes = useCallback(async () => {
     setLoadingParts(true);
     try {
@@ -107,7 +107,7 @@ export default function TareasTab({
     }
   }, [cursoId]);
 
-  // ── MÓDULOS ────────────────────────────────────────────────────────
+  // Módulos
   const loadModulos = useCallback(async () => {
     setLoadingModulos(true);
     try {
@@ -120,7 +120,7 @@ export default function TareasTab({
     }
   }, [cursoId]);
 
-  // ── MODALES ────────────────────────────────────────────────────────
+  // Modales
   const openCreate = async () => {
     setCreating(true);
     setEditTarget(null);
@@ -197,7 +197,7 @@ export default function TareasTab({
     setErrors({});
   };
 
-  // ── GUARDAR ────────────────────────────────────────────────────────
+  // Guardar
   const handleSave = async (e) => {
     e.preventDefault();
 
@@ -311,7 +311,7 @@ export default function TareasTab({
     }
   };
 
-  // ── Título del modal ───────────────────────────────────────────────
+  // Título del modal
   const modalTitle = creating ? 'Nuevo reto' : editTarget ? 'Editar reto' : (viewTarget?.titulo ?? 'Detalle del reto');
 
   const isForm = editTarget || creating;
@@ -430,7 +430,7 @@ export default function TareasTab({
         </div>
       )}
 
-      {/* MODAL */}
+      {/* Modal */}
       <AppModal isOpen={modalOpen} onClose={handleClose} size="md">
         <AppModal.Header title={modalTitle} onClose={handleClose} />
 

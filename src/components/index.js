@@ -3,7 +3,7 @@ export { default as ForgotPasswordForm } from './forms/ForgotPasswordForm';
 export { default as LoginForm } from './forms/LoginForm';
 export { default as ResetPasswordForm } from './forms/ResetPasswordForm';
 
-/* ── LAYOUT ── */
+/* Layout */
 export { default as AuthLayout } from './forms/AuthLayout';
 export { default as MainLayout } from './layout/MainLayout';
 

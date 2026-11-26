@@ -1,4 +1,3 @@
-// src/features/auth/pages/ForgotPasswordPage.jsx
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '@/services/authService';

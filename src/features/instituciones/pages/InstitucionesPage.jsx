@@ -39,7 +39,7 @@ import {
   toCedula,
 } from '@/utils/credenciales';
 
-// ── Fila esqueleto ────────────────────────────────────────────
+// Fila esqueleto
 const SIN_INSTITUCIONES = [];
 
 function SkRow() {
@@ -57,7 +57,7 @@ function SkRow() {
   );
 }
 
-// ── Estado vacío ──────────────────────────────────────────────
+// Estado vacío
 function Empty({ search, onClear }) {
   return (
     <tr>
@@ -78,7 +78,7 @@ function Empty({ search, onClear }) {
   );
 }
 
-// ── Auxiliares de detalle ─────────────────────────────────────
+// Auxiliares de detalle
 function InfoRow({ icon: Icon, label, value, isLink = false }) {
   if (!value) return null;
   return (
@@ -242,7 +242,6 @@ const INIT_FORM = {
 };
 const INIT_EDIT = { nombre: '', direccion: '', telefono: '', correo: '' };
 
-// ─────────────────────────────────────────────────────────────
 export default function InstitucionesPage() {
   const [search, setSearch] = useState('');
   const [toast, setToast] = useState({ msg: '', type: 'success' });
@@ -760,7 +759,7 @@ export default function InstitucionesPage() {
             </p>
           </div>
 
-          {/* Acciones del modal create */}
+          {/* Acciones del modal de creación */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
             <Button variant="ghost" type="button" onClick={() => setShowCreate(false)}>
               Cancelar
@@ -807,7 +806,7 @@ export default function InstitucionesPage() {
             />
           </div>
 
-          {/* Acciones del modal edit */}
+          {/* Acciones del modal de edición */}
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
             <Button variant="ghost" type="button" onClick={() => setEditTarget(null)}>
               Cancelar
@@ -820,7 +819,7 @@ export default function InstitucionesPage() {
         </form>
       </Modal>
 
-      {/* ══ DELETE CONFIRM ══ */}
+      {/* Confirmación de borrado */}
       <Modal
         isOpen={Boolean(deleteTarget)}
         onClose={() => setDeleteTarget(null)}
@@ -892,7 +891,7 @@ export default function InstitucionesPage() {
   );
 }
 
-// ── Fila de tabla ─────────────────────────────────────────────
+// Fila de tabla
 function InstitRow({ inst, onView, onEdit, onDelete }) {
   return (
     <tr

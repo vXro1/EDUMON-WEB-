@@ -14,7 +14,7 @@ import { getSocket } from '@/lib/socket';
 import { Toast, Button, Badge, useConfirm } from '@/components';
 import { IconBtn } from '@/features/cursos/components/shared/ui';
 
-/* ───────────────────────── CONFIG ───────────────────────── */
+/* Config */
 
 const LIMIT = 15;
 const DIAS_LIMPIEZA = 30;
@@ -35,7 +35,7 @@ const FILTERS = [
   { key: 'read', label: 'Leídas' },
 ];
 
-/* ───────────────────────── HELPERS ───────────────────────── */
+/* Funciones auxiliares */
 
 function formatDate(iso) {
   if (!iso) return '';
@@ -67,7 +67,7 @@ const Sk = ({ h = 16, w = '100%', r = 7 }) => (
   />
 );
 
-/* ───────────────────────── COMPONENTE ───────────────────────── */
+/* Componente */
 
 export default function NotificacionesPage() {
   const confirmar = useConfirm();
@@ -100,7 +100,7 @@ export default function NotificacionesPage() {
       .catch(() => {});
   }, []);
 
-  /* cargar datos */
+  /* Carga de datos */
   const load = useCallback(async () => {
     setLoading(true);
 
@@ -152,7 +152,7 @@ export default function NotificacionesPage() {
     };
   }, [load]);
 
-  /* ───────── acciones ───────── */
+  /* acciones */
 
   const handleMarkRead = async (id) => {
     try {
@@ -220,7 +220,7 @@ export default function NotificacionesPage() {
 
   const totalPages = Math.max(1, Math.ceil(total / LIMIT));
 
-  /* ───────────────────────── UI ───────────────────────── */
+  /* UI */
 
   return (
     <div style={{ maxWidth: 860, margin: '0 auto' }}>

@@ -153,7 +153,7 @@ export default function EdumonDropdown({
           onKeyDown={handleMenuKey}
           className={`absolute mt-2 min-w-[200px] z-50 ${align === 'right' ? 'right-0' : 'left-0'}`}
         >
-          {/* HEADER */}
+          {/* Encabezado */}
           <div className="flex items-center gap-2 mb-1">
             <img src={logo} alt="" aria-hidden="true" className="w-4 h-4" />
             <span>

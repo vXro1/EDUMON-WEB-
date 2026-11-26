@@ -29,13 +29,13 @@ const TIPO_ENTREGA_OPTS = [
   { value: 'grupal', label: 'Grupal' },
 ];
 
-/* ── Texto de error inline (no depende de que Input soporte prop error) ── */
+/* Texto de error inline (no depende de que Input soporte prop error) */
 function FieldError({ message }) {
   if (!message) return null;
   return <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--color-error)', fontWeight: 600 }}>{message}</p>;
 }
 
-/* ── Helpers de formato ───────────────────────────────────────────── */
+/* Helpers de formato */
 const IMAGE_EXTS = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'];
 function isImageName(name = '') {
   const ext = name.split('.').pop()?.toLowerCase();
@@ -99,7 +99,7 @@ function getDomain(url = '') {
   }
 }
 
-/* ── Estilo compartido de botones de ícono dentro del modal de preview ── */
+/* Estilo compartido de botones de ícono dentro del modal de preview */
 const iconBtnStyle = {
   width: 28,
   height: 28,
@@ -115,7 +115,7 @@ const iconBtnStyle = {
   flexShrink: 0,
 };
 
-/* ── Modal de vista previa con zoom — imagen o iframe (PDF), o insignia + link para el resto ── */
+/* Modal de vista previa con zoom — imagen o iframe (PDF), o insignia + link para el resto */
 function PreviewModal({ item, onClose }) {
   const [zoom, setZoom] = useState(1);
   const panelRef = useRef(null);
@@ -165,7 +165,7 @@ function PreviewModal({ item, onClose }) {
           boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
         }}
       >
-        {/* Header */}
+        {/* Encabezado */}
         <div
           style={{
             display: 'flex',
@@ -323,7 +323,7 @@ function PreviewModal({ item, onClose }) {
   );
 }
 
-/* ── Tarjeta de archivo — sirve tanto para archivos nuevos como ya subidos ── */
+/* Tarjeta de archivo — sirve tanto para archivos nuevos como ya subidos */
 function FileCard({
   name,
   sizeLabel,
@@ -494,7 +494,7 @@ function NewFilePreview({ file, onRemove, onPreview }) {
   );
 }
 
-/* ── Editor de etiquetas tipo "chips" ─────────────────────────────────
+/* Editor de etiquetas tipo "chips"
    El viejo <Input> de texto separado por comas re-derivaba su value de
    etiquetas.join(", ") en cada render, y el filter de vacíos borraba la
    coma recién tecleada antes de que el usuario pudiera seguir escribiendo.
@@ -605,8 +605,8 @@ function TagsInput({ tags, onChange, placeholder }) {
   );
 }
 
-/* ── Editor de enlaces con confirmación explícita (✓) en vez de filas draft editables —
-   mismo patrón que TagsInput ── */
+/* Editor de enlaces con confirmación explícita (✓) en vez de filas draft editables
+   mismo patrón que TagsInput */
 function EnlacesInput({ enlaces, onChange }) {
   const [urlDraft, setUrlDraft] = useState('');
   const [nombreDraft, setNombreDraft] = useState('');
@@ -794,7 +794,7 @@ function EnlacesInput({ enlaces, onChange }) {
   );
 }
 
-/* ── Formulario principal ─────────────────────────────────────────── */
+/* Formulario principal */
 /*
   Forma esperada de `form` (alineada con tareaSchema del backend):
   { titulo, descripcion, criterios, etiquetas: [], moduloId, fechaEntrega,

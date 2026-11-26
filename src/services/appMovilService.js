@@ -1,4 +1,3 @@
-// src/services/appMovilService.js
 // Capa de red para la app móvil (APK de Android).
 //
 // Contrato real confirmado 2026-09-02 (colección `Apk` en el backend, rutas
@@ -20,7 +19,7 @@ import { assetUrl } from '@/utils/assetUrl';
 const normalizeApk = (apk) =>
   apk ? { ...apk, url: assetUrl(apk.url), urlDescarga: assetUrl(apk.urlDescarga || apk.url) } : apk;
 
-// ── Público (consumido por la landing, sin sesión) ──────────────
+// Público (consumido por la landing, sin sesión)
 // GET /apk/actual → 200 { apk } | 404 si no hay ninguna versión activa.
 // silentAuth: un 401 aquí no debe disparar el logout global (endpoint
 // público, la landing se ve sin sesión).
@@ -29,7 +28,7 @@ export const appMovilGetActual = async () => {
   return { ...res, apk: normalizeApk(res?.apk) };
 };
 
-// ── Superadmin ─────────────────────────────────────────────────
+// Superadmin
 // GET /apk → { apks: [...] } (incluye subidaPor)
 export const appMovilGetAll = async () => {
   const res = await apiFetch('/apk');
