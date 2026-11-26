@@ -25,7 +25,7 @@ const EMPTY_FORM = {
   categoria: 'institucional',
 };
 
-/* ── Texto de error inline debajo de cada campo ────────────────────── */
+/* Texto de error inline debajo de cada campo */
 function FieldError({ message }) {
   if (!message) return null;
   return (
@@ -33,7 +33,7 @@ function FieldError({ message }) {
   );
 }
 
-// ─── Modal crear / editar evento ─────────────────────────────────────────
+// Modal crear / editar evento
 function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
   const isEdit = !!evento;
   const [original] = useState(() => (isEdit ? formDesdeEvento(evento) : EMPTY_FORM));
@@ -197,9 +197,7 @@ function EventoFormModal({ cursoId, evento, onClose, onSaved }) {
   );
 }
 
-// ══════════════════════════════════════════════════════════════════════════
 // CalendarioTab — gestiona fetch + CRUD; delega visual a CalendarWidget
-// ══════════════════════════════════════════════════════════════════════════
 export default function CalendarioTab({ cursoId, canManage }) {
   const [formEvt, setFormEvt] = useState(null); // null | "new" | elemento
   const queryClient = useQueryClient();

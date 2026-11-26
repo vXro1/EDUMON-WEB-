@@ -1,6 +1,6 @@
 import { apiFetch, apiFetchFormData } from '@/services/core/apiClient';
 
-// ── Foros ─────────────────────────────────────────────────────────────────────
+// Foros
 
 export const forosCreate = (formData) => apiFetchFormData('/foros', { method: 'POST', body: formData });
 
@@ -13,7 +13,7 @@ export const forosCambiarEstado = (id, body) =>
 
 export const forosDelete = (id) => apiFetch(`/foros/${id}`, { method: 'DELETE' });
 
-// ── Mensajes de foro ──────────────────────────────────────────────────────────
+// Mensajes de foro
 
 export const mensajesForoCreate = (formData) => apiFetchFormData('/mensajes-foro', { method: 'POST', body: formData });
 

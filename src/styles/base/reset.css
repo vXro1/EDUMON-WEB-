@@ -1,7 +1,5 @@
-/* ─── RESET & BASE ───────────────────────────────────────────────
-   Mobile-first. Previene desbordamiento horizontal, garantiza
-   tamaños táctiles mínimos y establece la tipografía base fluida.
-   ─────────────────────────────────────────────────────────────── */
+/* Reset y estilos base, pensados primero para móvil: sin scroll horizontal,
+   áreas táctiles de tamaño mínimo y tipografía fluida. */
 
 *,
 *::before,
@@ -49,7 +47,7 @@ body {
   min-width: 0;
 }
 
-/* ── Encabezados ─────────────────────────────────────────────── */
+/* Encabezados */
 h1,
 h2,
 h3,
@@ -62,7 +60,7 @@ h6 {
   color: inherit;
 }
 
-/* ── Multimedia ──────────────────────────────────────────────── */
+/* Multimedia */
 img,
 video,
 svg,
@@ -72,7 +70,7 @@ canvas {
   height: auto;
 }
 
-/* ── Interactivos ────────────────────────────────────────────── */
+/* Interactivos */
 button,
 [role='button'] {
   cursor: pointer;
@@ -114,19 +112,19 @@ select {
   color: inherit;
 }
 
-/* ── Listas ──────────────────────────────────────────────────── */
+/* Listas */
 ul,
 ol {
   list-style: none;
 }
 
-/* ── Tabla ───────────────────────────────────────────────────── */
+/* Tabla */
 table {
   border-collapse: collapse;
   border-spacing: 0;
 }
 
-/* ── Barra de desplazamiento (delgada, global) ───────────────── */
+/* Barra de desplazamiento (delgada, global) */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;
@@ -143,7 +141,7 @@ table {
   border-radius: var(--radius-full);
 }
 
-/* ── Capa de compatibilidad con Tailwind ─────────────────────── */
+/* Capa de compatibilidad con Tailwind */
 @layer base {
   * {
     border-color: var(--color-border);

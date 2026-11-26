@@ -34,7 +34,7 @@ export default function ModulosTab({ cursoId: cursoIdProp, canManage: canManageP
   const [toast, setToast] = useState({ msg: '', type: 'success' });
   const notify = makeNotify(setToast);
 
-  // ── Carga ─────────────────────────────────────────────────────────────────
+  // Carga
   const load = useCallback(async () => {
     setLoading(true);
     try {
@@ -51,7 +51,7 @@ export default function ModulosTab({ cursoId: cursoIdProp, canManage: canManageP
     load();
   }, [load]);
 
-  // ── CRUD individual ──────────────────────────────────────────────────────
+  // CRUD individual
   const openCreate = () => {
     setEditTarget(null);
     setForm({ titulo: '', descripcion: '' });
@@ -147,12 +147,11 @@ export default function ModulosTab({ cursoId: cursoIdProp, canManage: canManageP
     };
   };
 
-  // ─────────────────────────────────────────────────────────────────────────
   return (
     <div>
       <Toast {...toast} />
 
-      {/* ── Encabezado ── */}
+      {/* Encabezado */}
       <div
         style={{
           display: 'flex',
@@ -178,7 +177,7 @@ export default function ModulosTab({ cursoId: cursoIdProp, canManage: canManageP
         )}
       </div>
 
-      {/* ── Lista / skeleton / vacío ── */}
+      {/* Lista / skeleton / vacío */}
       {loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {[0, 1, 2].map((i) => (
@@ -263,9 +262,7 @@ export default function ModulosTab({ cursoId: cursoIdProp, canManage: canManageP
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════
-          Modal — Crear / Editar módulo
-      ══════════════════════════════════════════════ */}
+      {/* Modal — Crear / Editar módulo */}
       <AppModal isOpen={modalOpen} onClose={() => setModalOpen(false)} size="sm">
         <AppModal.Header title={editTarget ? 'Editar módulo' : 'Nuevo módulo'} onClose={() => setModalOpen(false)} />
         <AppModal.Body>
@@ -298,9 +295,7 @@ export default function ModulosTab({ cursoId: cursoIdProp, canManage: canManageP
         </AppModal.Footer>
       </AppModal>
 
-      {/* ══════════════════════════════════════════════
-          Modal — Detalle módulo
-      ══════════════════════════════════════════════ */}
+      {/* Modal — Detalle módulo */}
       <AppModal isOpen={detailOpen} onClose={() => setDetailOpen(false)} size="sm">
         <AppModal.Header title={viewTarget?.titulo ?? 'Módulo'} onClose={() => setDetailOpen(false)} />
         <AppModal.Body>
@@ -379,9 +374,7 @@ export default function ModulosTab({ cursoId: cursoIdProp, canManage: canManageP
         </AppModal.Footer>
       </AppModal>
 
-      {/* ══════════════════════════════════════════════
-          Modal — Carga masiva CSV (reutilizable)
-      ══════════════════════════════════════════════ */}
+      {/* Modal — Carga masiva CSV (reutilizable) */}
       <style>{`
         .modulo-desc-rich p { margin: 0 0 6px; }
         .modulo-desc-rich p:last-child { margin-bottom: 0; }

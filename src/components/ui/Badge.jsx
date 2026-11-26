@@ -1,14 +1,12 @@
 import { X } from 'lucide-react';
 
-/* ─────────────────────────────────────────────────────────────────────────
-   Badges — Soft UI:
+/* Badges — Soft UI:
    • Relleno de color suave (10-15%) + borde fino del mismo tono
    • box-shadow: var(--clay-pill) — una sombra suave fija, no una "base" 3D
    • Sin bounce de entrada ni sombra que se hunde al presionar
-   • Todo sale de tokens (--color-..., --edu-...), nada hardcodeado
-───────────────────────────────────────────────────────────────────────── */
+   • Todo sale de tokens (--color-..., --edu-...), nada hardcodeado */
 
-/* ── KEYFRAMES inyectados una sola vez ─────────────────────────────────── */
+/* KEYFRAMES inyectados una sola vez */
 const CSS = `
 @keyframes badge-in {
   from { opacity: 0; transform: translateY(2px); }
@@ -52,7 +50,7 @@ const CSS = `
 .ui-badge-lg  { font-size: 13px; padding: 7px 16px; }
 `;
 
-/* ── PALETA — todo referencia tokens semánticos, nada hardcodeado ──────── */
+/* PALETA — todo referencia tokens semánticos, nada hardcodeado */
 const PALETTE = {
   success: { bg: 'var(--color-success-light)', text: 'var(--edu-green-700)', ring: 'var(--color-success)' },
   error: { bg: 'var(--color-error-light)', text: 'var(--color-error-hover)', ring: 'var(--color-error)' },
@@ -63,10 +61,10 @@ const PALETTE = {
   dark: { bg: 'var(--edu-neutral-800)', text: '#fff', ring: 'var(--edu-neutral-900)' },
 };
 
-/* ── TAMAÑOS ────────────────────────────────────────────────────────────── */
+/* Tamaños */
 const SIZE_CLASS = { sm: 'ui-badge-sm', md: 'ui-badge-md', lg: 'ui-badge-lg' };
 
-/* ── CSS ya inyectado? ──────────────────────────────────────────────────── */
+/* CSS ya inyectado? */
 let injected = false;
 function injectOnce() {
   if (injected) return;
@@ -76,8 +74,7 @@ function injectOnce() {
   injected = true;
 }
 
-/* ════════════════════════════════════════════════════════════════════════
-   Badge principal
+/* Badge principal
    Props:
      variant    : "success" | "error" | "warning" | "info" | "purple" | "neutral" | "dark"
      size       : "sm" | "md" | "lg"
@@ -86,8 +83,7 @@ function injectOnce() {
      interactive: bool  — hover + press effect
      icon       : node  — ícono a la izquierda
      onClose    : fn    — muestra X para chip removible
-     className  : string
-════════════════════════════════════════════════════════════════════════ */
+     className  : string */
 export default function Badge({
   variant = 'info',
   size = 'md',

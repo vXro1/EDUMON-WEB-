@@ -136,7 +136,6 @@ function TareaRow({ tarea, onClick }) {
   );
 }
 
-// ════════════════════════════════════════════════════════════
 export default function FamiliaTareasPage() {
   const navigate = useNavigate();
 

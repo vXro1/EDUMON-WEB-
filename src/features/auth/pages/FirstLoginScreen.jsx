@@ -43,7 +43,7 @@ const ROLE_REDIRECTS = {
   'padre/tutor': '/padre',
 };
 
-/* ── Validación ─────────────────────────────────────────────── */
+/* Validación */
 function validateDataForm(form) {
   const e = {};
   if (!form.nombre.trim()) e.nombre = 'Este campo es requerido';
@@ -61,10 +61,8 @@ function validateDataForm(form) {
   return e;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   Estilos y animaciones inyectados una única vez — puramente
-   presentacionales, no tocan lógica ni estado.
-   ══════════════════════════════════════════════════════════════ */
+/* Estilos y animaciones inyectados una única vez — puramente
+   presentacionales, no tocan lógica ni estado. */
 const FLS_CSS = `
 @keyframes fls-pop-in {
   from { opacity: 0; transform: scale(0.4); }
@@ -229,7 +227,7 @@ function BackgroundDecor() {
   );
 }
 
-/* ── Micro-componentes ──────────────────────────────────────── */
+/* Micro-componentes */
 function Stepper({ step, maxStep, onStepClick }) {
   const steps = ['Foto', 'Datos', 'Listo'];
   return (
@@ -600,9 +598,7 @@ function PrimaryButton({ onClick, disabled, loading, children }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════
-   Paso 1 — Selección de avatar
-   ══════════════════════════════════════════════════════════════ */
+/* Paso 1 — Selección de avatar */
 const SIN_FOTOS = [];
 
 function StepAvatar({ currentPhotoUrl, onComplete }) {
@@ -854,9 +850,7 @@ function StepAvatar({ currentPhotoUrl, onComplete }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════
-   Paso 2 — Actualización de datos (correo + contraseña)
-   ══════════════════════════════════════════════════════════════ */
+/* Paso 2 — Actualización de datos (correo + contraseña) */
 function StepData({ user, loginPassword, onComplete, onBack }) {
   const [form, setForm] = useState({
     nombre: user?.nombre ?? '',
@@ -1051,9 +1045,7 @@ function StepData({ user, loginPassword, onComplete, onBack }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════
-   Paso 3 — Confirmación y redirección
-   ══════════════════════════════════════════════════════════════ */
+/* Paso 3 — Confirmación y redirección */
 function StepDone({ userRol }) {
   const navigate = useNavigate();
   const [countdown, setCountdown] = useState(3);
@@ -1098,9 +1090,7 @@ function StepDone({ userRol }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════
-   Pantalla principal
-   ══════════════════════════════════════════════════════════════ */
+/* Pantalla principal */
 const STEP_TITLES = [
   { title: 'Elige tu foto de perfil', subtitle: 'Esta imagen te representará en la plataforma.' },
   { title: 'Actualiza tus datos', subtitle: 'Completa tu correo y crea tu contraseña de acceso.' },
@@ -1214,7 +1204,7 @@ export default function FirstLoginScreen() {
         }}
       >
         <div style={{ width: '100%', maxWidth: 540 }}>
-          {/* ── Logo / Cabecera ── */}
+          {/* Logo / Cabecera */}
           <div style={{ textAlign: 'center', marginBottom: 32 }}>
             <div
               style={{
@@ -1250,7 +1240,7 @@ export default function FirstLoginScreen() {
             </p>
           </div>
 
-          {/* ── Tarjeta única: pasos + título + contenido del paso ── */}
+          {/* Tarjeta única: pasos + título + contenido del paso */}
           <div
             className="fls-panel"
             style={{

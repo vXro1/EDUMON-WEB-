@@ -25,7 +25,7 @@ import { Modal, Toast, Button, Input, Badge, UserAvatar } from '@/components';
 import { Sk, EmptyState, Field, StarRating, StarRatingInput } from '../../cursos/components/shared/ui';
 import { humanizeError } from '@/utils/humanizeError';
 
-// ─── Constantes ──────────────────────────────────────────────────────────────
+// Constantes
 
 const ESTADO_CFG = {
   enviada: { label: 'Enviada' },
@@ -36,7 +36,7 @@ const ESTADO_CFG = {
 
 const ESTADO_BADGE = { enviada: 'info', tarde: 'error', calificada: 'success', borrador: 'neutral' };
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// Página
 
 export default function EntregasPage() {
   const { id } = useParams();
@@ -99,7 +99,7 @@ export default function EntregasPage() {
     load();
   }, [load]);
 
-  // ── Filtro local ─────────────────────────────────────────────────────────
+  // Filtro local
   const filtered = entregas.filter((e) => {
     const q = search.toLowerCase();
     const nombre = `${e.padre?.nombre ?? ''} ${e.padre?.apellido ?? ''}`.toLowerCase();
@@ -172,7 +172,7 @@ export default function EntregasPage() {
     <div style={{ maxWidth: 960, margin: '0 auto' }}>
       <Toast msg={toast.msg} type={toast.type} />
 
-      {/* ── Header ─────────────────────────────────────────────── */}
+      {/* Encabezado */}
       <div
         style={{
           display: 'flex',
@@ -216,7 +216,7 @@ export default function EntregasPage() {
         </Button>
       </div>
 
-      {/* ── Error ──────────────────────────────────────────────── */}
+      {/* Error */}
       {error && (
         <div
           style={{
@@ -231,7 +231,7 @@ export default function EntregasPage() {
         </div>
       )}
 
-      {/* ── Stats ──────────────────────────────────────────────── */}
+      {/* Stats */}
       <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
         {[
           { value: stats.total ?? entregas.length, label: 'Total', color: 'var(--color-text)' },
@@ -257,7 +257,7 @@ export default function EntregasPage() {
         ))}
       </div>
 
-      {/* ── Filtros ────────────────────────────────────────────── */}
+      {/* Filtros */}
       <div
         style={{
           background: 'var(--color-surface)',
@@ -325,7 +325,7 @@ export default function EntregasPage() {
         </select>
       </div>
 
-      {/* ── Lista de entregas ──────────────────────────────────── */}
+      {/* Lista de entregas */}
       {filtered.length === 0 ? (
         <EmptyState
           icon={FileText}
@@ -340,7 +340,7 @@ export default function EntregasPage() {
         </div>
       )}
 
-      {/* ══ Modal — Calificar ════════════════════════════════════ */}
+      {/* Modal: calificar */}
       <Modal
         isOpen={showCal}
         onClose={() => setShowCal(false)}
@@ -535,7 +535,7 @@ export default function EntregasPage() {
   );
 }
 
-// ─── EntregaCard ──────────────────────────────────────────────────────────────
+// EntregaCard
 
 function EntregaCard({ entrega: e, onCalificar }) {
   const [expanded, setExpanded] = useState(false);

@@ -1,14 +1,12 @@
-/* ════════════════════════════════════════════════════════════════════
-   EDUMON — DROPDOWN MENU
-   ════════════════════════════════════════════════════════════════════ */
+/* Edumon — dropdown menu */
 
-/* ── Wrapper ──────────────────────────────────────────────────────────── */
+/* Contenedor */
 .dropdown-wrapper {
   position: relative;
   display: inline-flex;
 }
 
-/* ── Panel del menú ───────────────────────────────────────────────────────── */
+/* Panel del menú */
 .dropdown-menu {
   position: absolute;
   z-index: 150;
@@ -24,7 +22,7 @@
   animation: edu-dropdown-in 0.18s ease both;
 }
 
-/* ── Posicionamiento ──────────────────────────────────────────────────────── */
+/* Posicionamiento */
 .dropdown-menu--bottom-left {
   top: calc(100% + var(--space-2));
   left: 0;
@@ -45,7 +43,7 @@
   transform-origin: bottom right;
 }
 
-/* ── Keyframes ────────────────────────────────────────────────────────── */
+/* Animaciones */
 @keyframes edu-dropdown-in {
   from {
     opacity: 0;
@@ -89,7 +87,7 @@
   animation: edu-dropdown-out 0.14s ease forwards;
 }
 
-/* ── Section ──────────────────────────────────────────────────────────── */
+/* Sección */
 .dropdown-section {
   margin-bottom: var(--space-1);
 }
@@ -108,7 +106,7 @@
   padding: var(--space-2) var(--space-3) var(--space-1);
 }
 
-/* ── Ítem base ────────────────────────────────────────────────────────── */
+/* Ítem base */
 .dropdown-item {
   display: flex;
   align-items: center;
@@ -192,7 +190,7 @@
   background: var(--color-primary-light);
 }
 
-/* ── Ícono del ítem ────────────────────────────────────────────────────────── */
+/* Ícono del ítem */
 .dropdown-item-icon {
   width: 1.125rem;
   height: 1.125rem;
@@ -219,7 +217,7 @@
   color: var(--color-primary);
 }
 
-/* ── Contenido del ítem ─────────────────────────────────────────────────────── */
+/* Contenido del ítem */
 .dropdown-item-content {
   flex: 1;
   min-width: 0;
@@ -237,7 +235,7 @@
   line-height: var(--leading-snug);
 }
 
-/* ── Atajo de teclado ────────────────────────────────────────────────── */
+/* Atajo de teclado */
 .dropdown-item-kbd {
   margin-left: auto;
   padding-left: var(--space-3);
@@ -255,14 +253,14 @@
   box-shadow: 0 1px 0 var(--color-border);
 }
 
-/* ── Separator ────────────────────────────────────────────────────────── */
+/* Separator */
 .dropdown-separator {
   height: 1px;
   background: var(--color-border);
   margin: var(--space-1) calc(-1 * var(--space-2));
 }
 
-/* ── Búsqueda interna ──────────────────────────────────────────────────── */
+/* Búsqueda interna */
 .dropdown-search {
   padding: var(--space-2);
   border-bottom: 1px solid var(--color-border);
@@ -292,7 +290,7 @@
   background: var(--color-surface);
 }
 
-/* ── Estado vacío ──────────────────────────────────────────────────────── */
+/* Estado vacío */
 .dropdown-empty {
   padding: var(--space-5) var(--space-3);
   text-align: center;
@@ -300,7 +298,7 @@
   color: var(--color-text-subtle);
 }
 
-/* ── Avatar en ítem ───────────────────────────────────────────────────── */
+/* Avatar en ítem */
 .dropdown-item-avatar {
   width: 1.75rem;
   height: 1.75rem;

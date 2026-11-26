@@ -1,9 +1,7 @@
 /* RUTA  CARDS SRC /STYLES/COMPONENTS */
-/* ═══════════════════════════════════════════════════════════════
-   EDUMON DESIGN SYSTEM — Cards
-   ═════════════════════════════════════════════════════════════*/
+/* EDUMON DESIGN SYSTEM — Cards */
 
-/* ── Base card ───────────────────────────────────────────────── */
+/* Tarjeta base */
 .card {
   background: var(--color-surface);
   border: 1.5px solid var(--color-border);
@@ -27,7 +25,7 @@
   transform: translateY(0);
 }
 
-/* ── Anatomía ─────────────────────────────────────────────────── */
+/* Anatomía */
 .card-cover {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -70,7 +68,7 @@
   margin: 0 var(--space-5);
 }
 
-/* ── Título / Descripción ─────────────────────────────────────── */
+/* Título / Descripción */
 .card-title {
   font-family: var(--font-display);
   font-size: var(--text-lg);
@@ -93,7 +91,7 @@
   margin: 0;
 }
 
-/* ── Variantes ────────────────────────────────────────────────── */
+/* Variantes */
 .card-flat {
   border-color: transparent;
   box-shadow: none;
@@ -171,7 +169,7 @@
   opacity: 0.7;
 }
 
-/* ── Tarjeta de estadística ───────────────────────────────────────────────── */
+/* Tarjeta de estadística */
 .card-stat {
   display: flex;
   flex-direction: column;
@@ -240,7 +238,7 @@
   color: var(--color-error);
 }
 
-/* ── Tarjeta de curso — Soft UI/Claymorphism ──────────────────────── */
+/* Tarjeta de curso — Soft UI/Claymorphism */
 .card-course {
   display: flex;
   flex-direction: column;
@@ -274,7 +272,7 @@
   transition: width var(--transition-slow);
 }
 
-/* ── CursoCard (componente principal) ──────────────────────────── */
+/* CursoCard (componente principal) */
 .curso-card {
   background: var(--color-surface);
   border-radius: var(--radius-xl);
@@ -403,7 +401,7 @@
   border-top: 1px solid var(--color-border);
 }
 
-/* ── Tarjeta horizontal ─────────────────────────────────────────── */
+/* Tarjeta horizontal */
 .card-horizontal {
   display: flex;
   align-items: stretch;
@@ -420,7 +418,7 @@
   padding: var(--space-4);
 }
 
-/* ── Ajustes de radio de borde ────────────────────────────────────────── */
+/* Ajustes de radio de borde */
 .card-sm {
   border-radius: var(--radius-lg);
 }

@@ -1,4 +1,3 @@
-// src/features/cursos/components/hub/HubHeader.jsx
 import { Users, Archive } from 'lucide-react';
 import { Sk } from '../shared/ui';
 // Mismo fallback que ya usan CursoCard.jsx/CursosPage.jsx/FamiliaCursosPage.jsx

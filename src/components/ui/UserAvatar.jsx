@@ -54,12 +54,12 @@ const UserAvatar = memo(function UserAvatar({
   // If provided, overrides the store-based online status
   status,
   style,
-  // When provided the avatar becomes an interactive element (e.g. navigate to profile)
+  // si llega, el avatar se vuelve clicable (por ejemplo, para ir al perfil)
   onClick,
 }) {
   const [error, setError] = useState(false);
 
-  // Read from global store only when showStatus is requested
+  // solo se lee el estado de conexión si se pide showStatus
   const storeOnline = useUserStore((s) => (showStatus && user?._id ? s.onlineUsers[user._id] : undefined));
 
   const hasPhoto = !!user?.fotoPerfilUrl && !error;

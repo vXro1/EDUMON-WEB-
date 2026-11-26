@@ -105,7 +105,6 @@ function TareaCard({ tarea }) {
   );
 }
 
-// ════════════════════════════════════════════════════════════
 export default function FamiliaEntregasPage() {
   const { data: tareasData, isLoading: loading, isError: apiError, refetch } = useTareasListado({ limit: 100 });
   const tareas = tareasData ?? SIN_DATOS;

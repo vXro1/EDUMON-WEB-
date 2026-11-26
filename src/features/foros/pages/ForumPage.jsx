@@ -29,7 +29,7 @@ import { Field } from '../../cursos/components/shared/ui';
 import { humanizeError } from '@/utils/humanizeError';
 import { sanitizeRichText, stripHtml } from '@/utils/richText';
 
-// ─── Esqueletos de carga ──────────────────────────────────────────────────────
+// Esqueletos de carga
 
 const MsgSkeleton = () => (
   <div style={{ display: 'flex', gap: 12, padding: '10px 12px' }}>
@@ -87,7 +87,7 @@ const EmptyState = ({ canPost }) => (
   </div>
 );
 
-// ─── Modal de creación de foro ────────────────────────────────────────────────
+// Modal de creación de foro
 
 const MAX_MATERIALES = 5;
 
@@ -290,7 +290,7 @@ const CreateForumModal = ({ cursoId, onCreated, onClose }) => {
   );
 };
 
-// ─── Página del foro ──────────────────────────────────────────────────────────
+// Página del foro
 
 const ForumPage = () => {
   const { cursoId, foroId } = useParams();
@@ -351,7 +351,7 @@ const ForumPage = () => {
   const editMutation = useEditMessage(foroId);
   const estadoMutation = useToggleEstado(foroId);
 
-  // ─── Manejadores ─────────────────────────────────────────────────────────
+  // Manejadores
   const handlePost = (contenido, files, respuestaA) => {
     const fd = new FormData();
     fd.append('foroId', foroId);
@@ -503,7 +503,6 @@ const ForumPage = () => {
 
 export default ForumPage;
 
-// ─── Estilos CSS ──────────────────────────────────────────────────────────────
 // El encabezado es una tarjeta normal (mismo lenguaje visual que las columnas
 // de abajo), no una barra sticky. .fm-body hereda ancho/padding de .page.
 const FORUM_CSS = `

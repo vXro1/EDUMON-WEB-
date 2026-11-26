@@ -10,12 +10,12 @@ import { notificacionesGetConteoNoLeidas } from '@/features/notificaciones/servi
 import { normalizeCurso, normalizeTarea } from '@/lib/normalizers';
 import CursoCard from '@/features/cursos/components/CursoCard';
 
-/* ── Esqueleto de carga ────────────────────────────────────────── */
+/* Esqueleto de carga */
 function Sk({ h = 14, w = '100%', r = 'var(--radius-sm)' }) {
   return <span className="skeleton" style={{ height: h, width: w, borderRadius: r, display: 'block' }} />;
 }
 
-/* ── Encabezado de sección ─────────────────────────────────────── */
+/* Encabezado de sección */
 function SectionHeader({ title, onAction, actionLabel }) {
   return (
     <div className="section-header">
@@ -29,7 +29,7 @@ function SectionHeader({ title, onAction, actionLabel }) {
   );
 }
 
-/* ── Tarjeta de estadística ────────────────────────────────────── */
+/* Tarjeta de estadística */
 function StatCard({ value, label, icon: Icon, colorClass, loading }) {
   return (
     <div className="stat-card">
@@ -55,7 +55,7 @@ function StatCard({ value, label, icon: Icon, colorClass, loading }) {
   );
 }
 
-/* ── Ítem de evento ────────────────────────────────────────────── */
+/* Ítem de evento */
 function EventItem({ evento }) {
   return (
     <div className="list-card-item">
@@ -73,7 +73,7 @@ function EventItem({ evento }) {
   );
 }
 
-/* ── Tarjeta de acción rápida ──────────────────────────────────── */
+/* Tarjeta de acción rápida */
 function QuickActionCard({ icon: Icon, label, desc, colorClass, onClick }) {
   return (
     <button
@@ -112,7 +112,7 @@ function QuickActionCard({ icon: Icon, label, desc, colorClass, onClick }) {
   );
 }
 
-/* ── Esqueletos de cuadrícula de cursos ────────────────────────── */
+/* Esqueletos de cuadrícula de cursos */
 function CourseSkeletons() {
   return (
     <div className="grid-auto-sm">
@@ -130,9 +130,7 @@ function CourseSkeletons() {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   PÁGINA PRINCIPAL
-   ══════════════════════════════════════════════════════════════════ */
+/* Página principal */
 export default function PadreHomePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -177,7 +175,7 @@ export default function PadreHomePage() {
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-      {/* ── Banner de bienvenida ── */}
+      {/* Banner de bienvenida */}
       <div className="welcome-banner edu-fade-in" style={{ background: 'var(--gradient-berry)' }} role="banner">
         <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
           <span className="welcome-badge">
@@ -205,7 +203,7 @@ export default function PadreHomePage() {
         </div>
       </div>
 
-      {/* ── Estadísticas ── */}
+      {/* Estadísticas */}
       <section aria-label="Resumen familiar" style={{ marginBottom: 'var(--space-6)' }}>
         <SectionHeader title="Resumen" />
         <div className="grid-stats">
@@ -240,7 +238,7 @@ export default function PadreHomePage() {
         </div>
       </section>
 
-      {/* ── Acciones rápidas ── */}
+      {/* Acciones rápidas */}
       <section aria-label="Acciones rápidas" style={{ marginBottom: 'var(--space-6)' }}>
         <SectionHeader title="Acciones rápidas" />
         <div className="grid-2-auto">
@@ -275,7 +273,7 @@ export default function PadreHomePage() {
         </div>
       </section>
 
-      {/* ── Cursos ── */}
+      {/* Cursos */}
       <section aria-label="Cursos de mis hijos" style={{ marginBottom: 'var(--space-6)' }}>
         <SectionHeader
           title="Cursos de mis hijos"

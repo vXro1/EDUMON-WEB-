@@ -1,4 +1,3 @@
-// src/features/appMovil/pages/AppMovilPage.jsx
 // Panel de Super Admin para publicar el APK de la app móvil de Edumon.
 // La app es SOLO para Android — no hay flujo iOS en ningún lado.
 //
@@ -47,7 +46,7 @@ function fmtDate(str) {
   return d.toLocaleDateString('es-CO', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-// ── Icono estilo "launcher" de Android (NO un archivo) ────────────
+// Icono estilo "launcher" de Android (NO un archivo)
 function AppIcon({ size = 88 }) {
   return (
     <div

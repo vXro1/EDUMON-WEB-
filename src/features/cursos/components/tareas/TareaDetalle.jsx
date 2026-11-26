@@ -16,9 +16,7 @@ import { Badge, Button } from '@/components';
 import { InfoBlock } from '../shared/ui';
 import { sanitizeRichText, isRichTextEmpty } from '@/utils/richText';
 
-/* ─────────────────────────────────────────────
-   HELPERS
-───────────────────────────────────────────── */
+/* Funciones auxiliares */
 
 export const fmt = (fecha) => {
   if (!fecha) return '';
@@ -104,9 +102,7 @@ function safeText(value) {
   return String(value).trim();
 }
 
-/* ─────────────────────────────────────────────
-   SUBCOMPONENTES DE PRESENTACIÓN
-───────────────────────────────────────────── */
+/* Subcomponentes de presentación */
 
 // Fila de metadato en el panel lateral: ícono + etiqueta + valor.
 // Se salta el render si no hay valor, así el panel nunca deja huecos.
@@ -185,9 +181,7 @@ function AdjuntoLink({ href, iconNode, titulo, subtitulo, trailing }) {
   );
 }
 
-/* ─────────────────────────────────────────────
-   COMPONENTE PRINCIPAL
-───────────────────────────────────────────── */
+/* Componente principal */
 
 export default function TareaDetalle({ tarea: t, canManage, canGrade, esPadre, onEdit, onDelete, onViewEntregas }) {
   const todosAdjuntos = t.adjuntos ?? t.archivosAdjuntos ?? [];
@@ -233,7 +227,7 @@ export default function TareaDetalle({ tarea: t, canManage, canGrade, esPadre, o
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-      {/* ── Encabezado: título + badges ─────────────────────────── */}
+      {/* Encabezado: título + badges */}
       <div>
         <h2 style={{ margin: '0 0 10px', fontSize: 22, fontWeight: 700, color: '#222', lineHeight: 1.3 }}>{titulo}</h2>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
@@ -251,7 +245,7 @@ export default function TareaDetalle({ tarea: t, canManage, canGrade, esPadre, o
         </div>
       </div>
 
-      {/* ── Cuerpo: contenido principal + panel lateral ─────────── */}
+      {/* Cuerpo: contenido principal + panel lateral */}
       <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'flex-start' }}>
         {/* Columna principal */}
         <div style={{ flex: '2 1 380px', minWidth: 280, display: 'flex', flexDirection: 'column', gap: 18 }}>
@@ -497,7 +491,7 @@ export default function TareaDetalle({ tarea: t, canManage, canGrade, esPadre, o
         </div>
       </div>
 
-      {/* ── Acciones ─────────────────────────────────────────────── */}
+      {/* Acciones */}
       <div
         style={{
           display: 'flex',

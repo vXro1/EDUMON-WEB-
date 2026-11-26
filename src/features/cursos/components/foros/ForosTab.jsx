@@ -10,7 +10,7 @@ import { makeNotify } from '../shared/helpers';
 import { Input } from '@/components';
 import { sanitizeRichText, stripHtml } from '@/utils/richText';
 
-// ─── ForoCrearForm ────────────────────────────────────────────────────────────
+// ForoCrearForm
 
 function ForoCrearForm({ onSubmit, onCancel }) {
   const [titulo, setTitulo] = useState('');
@@ -106,7 +106,7 @@ function ForoCrearForm({ onSubmit, onCancel }) {
   );
 }
 
-// ─── ForoCard ─────────────────────────────────────────────────────────────────
+// ForoCard
 
 function ForoCard({ foro, cursoId, cursoNombre }) {
   const navigate = useNavigate();
@@ -214,7 +214,7 @@ function ForoCard({ foro, cursoId, cursoNombre }) {
   );
 }
 
-// ─── ForosTab ─────────────────────────────────────────────────────────────────
+// ForosTab
 
 export default function ForosTab({
   cursoId: cursoIdProp,

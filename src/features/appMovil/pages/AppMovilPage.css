@@ -1,5 +1,4 @@
-/* src/features/appMovil/pages/AppMovilPage.css
-   Responsividad del panel de Super Admin para el APK. El resto de la
+/* Responsividad del panel de Super Admin para el APK. El resto de la
    página usa estilos inline (colores/tokens), pero eso no puede expresar
    media queries — así que los puntos que de verdad rompían en móvil
    (la tabla de 5 columnas y la cabecera) viven aquí. */

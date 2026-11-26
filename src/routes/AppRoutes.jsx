@@ -7,13 +7,13 @@ import { LoadingScreen } from '@/components';
 import { ProtectedRoute, PublicOnlyRoute, RoleRedirect } from './ProtectedRoute';
 import MainLayout from '../components/layout/MainLayout';
 
-// ── Páginas públicas ──────────────────────────────────────────────
+// Páginas públicas
 const LandingPage = lazy(() => import('../pages/LandingPage'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 const DemoPage = lazy(() => import('../pages/DemoPage'));
 const TutorialesPage = lazy(() => import('../pages/TutorialesPage'));
 
-// ── Autenticación ─────────────────────────────────────────────────
+// Autenticación
 const LoginPage = lazy(() => import('../features/auth/pages/LoginPage').then((m) => ({ default: m.LoginPage })));
 const ForgotPasswordPage = lazy(() =>
   import('../features/auth/pages/ForgotPasswordPage').then((m) => ({ default: m.ForgotPasswordPage })),
@@ -23,12 +23,12 @@ const ResetPasswordPage = lazy(() =>
 );
 const FirstLoginScreen = lazy(() => import('../features/auth/pages/FirstLoginScreen'));
 
-// ── Dashboards ────────────────────────────────────────────────────
+// Dashboards
 const AdminHomePage = lazy(() => import('../features/dashboard/admin/pages/AdminHomePage'));
 const DocenteHomePage = lazy(() => import('../features/dashboard/docente/pages/DocenteHomePage'));
 const PadreHomePage = lazy(() => import('../features/dashboard/padre/pages/PadreHomePage'));
 
-// ── Administración ────────────────────────────────────────────────
+// Administración
 const InstitucionesPage = lazy(() => import('../features/instituciones/pages/InstitucionesPage'));
 const MiInstitucionPage = lazy(() => import('../features/instituciones/pages/MiInstitucionPage'));
 const UsuariosPage = lazy(() => import('../features/usuarios/pages/UsuariosPage'));
@@ -36,24 +36,24 @@ const PanelColegioPage = lazy(() => import('../features/colegio/pages/PanelColeg
 const DocentesPage = lazy(() => import('../features/docentes/pages/DocentesPage'));
 const AppMovilPage = lazy(() => import('../features/appMovil/pages/AppMovilPage'));
 
-// ── Cursos ────────────────────────────────────────────────────────
+// Cursos
 const CursosPage = lazy(() => import('../features/cursos/pages/CursosPage'));
 const CursoHubPage = lazy(() => import('../features/cursos/pages/CursoHubPage'));
 
-// ── Docente ───────────────────────────────────────────────────────
+// Docente
 const TareasPage = lazy(() => import('../features/tareas/pages/TareasPage'));
 const EntregasPage = lazy(() => import('../features/tareas/pages/EntregasPage'));
 const EventosPage = lazy(() => import('../features/eventos/pages/EventosPage'));
 const CalendarioPage = lazy(() => import('../features/calendario/pages/CalendarioPage'));
 
-// ── Foros ─────────────────────────────────────────────────────────
+// Foros
 const ForosPage = lazy(() => import('../features/foros/pages/ForosPage'));
 // /foros/:id → redirige a la URL canónica /curso/:cursoId/foro/:foroId
 const ForoRedirect = lazy(() => import('../features/foros/pages/ForoRedirect'));
 // Vista canónica del foro con TanStack Query
 const ForumPage = lazy(() => import('../features/foros/pages/ForumPage'));
 
-// ── Familia ───────────────────────────────────────────────────────
+// Familia
 const FamiliaPerfilesPage = lazy(() => import('../features/familia/pages/FamiliaPerfilesPage'));
 const FamiliaCursosPage = lazy(() => import('../features/familia/pages/FamiliaCursosPage'));
 const FamiliaTareasPage = lazy(() => import('../features/familia/pages/FamiliaTareasPage'));
@@ -61,12 +61,12 @@ const FamiliaEntregasPage = lazy(() => import('../features/familia/pages/Familia
 const FamiliaEntregaDetallePage = lazy(() => import('../features/familia/pages/FamiliaEntregaDetallePage'));
 const FamiliaForosPage = lazy(() => import('../features/familia/pages/FamiliaForosPage'));
 
-// ── Universal ─────────────────────────────────────────────────────
+// Universal
 const PerfilPage = lazy(() => import('../features/perfil/pages/PerfilPage'));
 const NotificacionesPage = lazy(() => import('../features/notificaciones/pages/NotificacionesPage'));
 const BuzonPage = lazy(() => import('../features/buzon/pages/BuzonPage'));
 
-// ── Sesiones ──────────────────────────────────────────────────────
+// Sesiones
 const SesionesPage = lazy(() => import('../features/auth/pages/SesionesPage'));
 
 const ALL_ROLES = ['administrador', 'superadmin', 'docente', 'padre', 'padre/tutor', 'estudiante'];
@@ -78,15 +78,15 @@ export default function AppRoutes() {
     <BrowserRouter>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          {/* ── RAÍZ PÚBLICA ── */}
+          {/* Raíz pública */}
           <Route path="/" element={<LandingPage />} />
 
-          {/* ── DEMO — vista previa del dashboard sin iniciar sesión ── */}
+          {/* DEMO — vista previa del dashboard sin iniciar sesión */}
           <Route path="/demo" element={<DemoPage />} />
 
           <Route path="/tutoriales" element={<TutorialesPage />} />
 
-          {/* ── AUTENTICACIÓN (solo sin sesión) ── */}
+          {/* AUTENTICACIÓN (solo sin sesión) */}
           <Route
             path="/login"
             element={
@@ -112,7 +112,7 @@ export default function AppRoutes() {
             }
           />
 
-          {/* ── RUTAS PROTEGIDAS (dentro de MainLayout) ── */}
+          {/* RUTAS PROTEGIDAS (dentro de MainLayout) */}
           <Route
             element={
               <ProtectedRoute>
