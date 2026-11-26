@@ -1,4 +1,3 @@
-// src/components/ui/CsvUploadModal.jsx
 //
 // Modal reutilizable para carga masiva de archivos CSV.
 // Diseñado para ser agnóstico al dominio: recibe onUpload (async fn que
@@ -476,7 +475,7 @@ export default function CsvUploadModal({
   );
 }
 
-// ─── Panel de resultado exitoso ───────────────────────────────────────────────
+// Panel de resultado exitoso
 function SuccessPanel({ result }) {
   const total = result?.total ?? result?.procesados ?? '—';
   const exitosos = result?.exitosos ?? result?.creados ?? '—';

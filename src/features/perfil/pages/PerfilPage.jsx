@@ -39,12 +39,12 @@ import { assetUrl } from '@/utils/assetUrl';
 import { normalizePhone, isValidPhone, PHONE_ERROR } from '@/utils/normalizePhone';
 import { validarContrasenaNueva, TEXTO_REQUISITOS_CONTRASENA } from '@/utils/credenciales';
 
-// ─── Skeleton ─────────────────────────────────────────────────────────────
+// Skeleton
 function Sk({ h = 14, r = 6 }) {
   return <div className="animate-pulse" style={{ height: h, borderRadius: r, background: 'var(--color-border)' }} />;
 }
 
-// ─── Section card wrapper ──────────────────────────────────────────────────
+// Tarjeta de sección
 function SectionCard({ icon, iconBg = 'rgba(12,106,196,0.10)', title, action, children }) {
   return (
     <div
@@ -95,7 +95,7 @@ function SectionCard({ icon, iconBg = 'rgba(12,106,196,0.10)', title, action, ch
   );
 }
 
-// ─── Read-only field ───────────────────────────────────────────────────────
+// Read-only field
 function ReadField({ label, value, icon }) {
   if (!value) return null;
   return (
@@ -121,7 +121,7 @@ function ReadField({ label, value, icon }) {
   );
 }
 
-// ─── Role badge ────────────────────────────────────────────────────────────
+// Role badge
 function InfoBadge({ label, color, bg }) {
   return (
     <span
@@ -140,7 +140,7 @@ function InfoBadge({ label, color, bg }) {
   );
 }
 
-// ─── Grid helper ──────────────────────────────────────────────────────────
+// Rejilla de datos
 function Grid2({ children }) {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
@@ -149,7 +149,7 @@ function Grid2({ children }) {
   );
 }
 
-// ─── Role-specific sections ────────────────────────────────────────────────
+// Secciones según el rol
 function HijosSection({ perfiles, loading }) {
   if (loading) {
     return (
@@ -378,7 +378,7 @@ function RoleSection({ profile, cursos, loadingCursos, perfiles, loadingPerf }) 
   return null;
 }
 
-// ─── Constants ─────────────────────────────────────────────────────────────
+// Constantes
 const SIN_DATOS = [];
 const EMPTY_EDIT = { nombre: '', apellido: '', telefono: '', correo: '' };
 const EMPTY_PASS = { actual: '', nueva: '', confirmar: '' };
@@ -392,7 +392,7 @@ const fmtDate = (iso) => {
   }
 };
 
-// ─── Main component ────────────────────────────────────────────────────────
+// Componente principal
 export default function PerfilPage() {
   const setUser = useUserStore((s) => s.setUser);
 
@@ -447,7 +447,7 @@ export default function PerfilPage() {
     setTimeout(() => setToast({ msg: '', type: 'success' }), 3500);
   };
 
-  // ── Load profile + cursos ──────────────────────────────────────────────
+  // Load profile + cursos
   useEffect(() => {
     usersGetMyProfile()
       .then((d) => {
@@ -459,7 +459,7 @@ export default function PerfilPage() {
       .finally(() => setLoading(false));
   }, [setUser]);
 
-  // ── Edit personal data ─────────────────────────────────────────────────
+  // Edición de datos personales
   const startEdit = () => {
     setEditForm({
       nombre: profile?.nombre ?? '',
@@ -522,7 +522,7 @@ export default function PerfilPage() {
 
   const setField = (key) => (e) => setEditForm((f) => ({ ...f, [key]: e.target.value }));
 
-  // ── Avatar modal (avatares 100% desde backend/Cloudinary) ──────────────
+  // Avatar modal (avatares 100% desde backend/Cloudinary)
   const openAvatarModal = async () => {
     setShowAvatarModal(true);
     setAvatarError('');
@@ -570,7 +570,7 @@ export default function PerfilPage() {
     }
   };
 
-  // ── Password modal ─────────────────────────────────────────────────────
+  // Modal de contraseña
   const openPassModal = () => {
     setPassForm(EMPTY_PASS);
     setShowPassModal(true);
@@ -603,12 +603,12 @@ export default function PerfilPage() {
 
   const rolCfg = profile ? getRoleStyle(profile.rol) : null;
 
-  // ── Render ─────────────────────────────────────────────────────────────
+  // Render
   return (
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
       <Toast msg={toast.msg} type={toast.type} />
 
-      {/* Title */}
+      {/* Título */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 28 }}>
         <div
           style={{
@@ -634,7 +634,7 @@ export default function PerfilPage() {
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-          {/* ── HEADER ── */}
+          {/* Encabezado */}
           <div
             style={{
               background: 'var(--color-surface)',
@@ -739,7 +739,7 @@ export default function PerfilPage() {
             </div>
           </div>
 
-          {/* ── DATOS PERSONALES ── */}
+          {/* Datos personales */}
           <SectionCard
             icon={<Edit3 size={15} color="var(--color-primary)" />}
             title="Datos personales"
@@ -819,7 +819,7 @@ export default function PerfilPage() {
             )}
           </SectionCard>
 
-          {/* ── INFORMACIÓN DE LA CUENTA (solo lectura) ── */}
+          {/* INFORMACIÓN DE LA CUENTA (solo lectura) */}
           <SectionCard
             icon={<Info size={15} color="#6366F1" />}
             title="Información de la cuenta"
@@ -865,7 +865,7 @@ export default function PerfilPage() {
             </div>
           </SectionCard>
 
-          {/* ── INFO POR ROL ── */}
+          {/* Info por rol */}
           <RoleSection
             profile={profile}
             cursos={cursos}
@@ -874,7 +874,7 @@ export default function PerfilPage() {
             loadingPerf={loadingPerf}
           />
 
-          {/* ── SEGURIDAD ── */}
+          {/* Seguridad */}
           <SectionCard icon={<Shield size={15} color="#6366F1" />} title="Seguridad" iconBg="rgba(99,102,241,0.10)">
             <div
               style={{
@@ -899,7 +899,7 @@ export default function PerfilPage() {
         </div>
       )}
 
-      {/* ══ AVATAR MODAL — selección con vista previa y confirmación ═════════ */}
+      {/* AVATAR MODAL — selección con vista previa y confirmación */}
       <Modal
         isOpen={showAvatarModal}
         onClose={closeAvatarModal}
@@ -1070,7 +1070,7 @@ export default function PerfilPage() {
         </div>
       </Modal>
 
-      {/* ══ PASSWORD MODAL ════════════════════════════════════════════════════ */}
+      {/* Modal de contraseña */}
       <Modal
         isOpen={showPassModal}
         onClose={() => !savingPass && setShowPassModal(false)}

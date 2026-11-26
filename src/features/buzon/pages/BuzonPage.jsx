@@ -15,7 +15,7 @@ import { AppModal, Button, Badge } from '@/components';
 import { buzonGetAll, buzonMarcarLeido } from '@/features/buzon/services/buzonService';
 import { normalizePhone } from '@/utils/normalizePhone';
 
-/* ── Funciones auxiliares ────────────────────────────────────── */
+/* Funciones auxiliares */
 function formatDate(raw) {
   if (!raw) return '—';
   const d = new Date(raw);
@@ -42,7 +42,7 @@ function Skeleton({ h = 16, w = '100%', r = 6 }) {
   );
 }
 
-/* ── Modal de detalle ────────────────────────────────────────── */
+/* Modal de detalle */
 function MensajeModal({ msg, onClose, onMarcarLeido, marking }) {
   return (
     <AppModal isOpen={!!msg} onClose={onClose} size="sm">
@@ -130,7 +130,7 @@ function Row({ icon, label, value }) {
   );
 }
 
-/* ── Fila de mensaje ─────────────────────────────────────────── */
+/* Fila de mensaje */
 function MensajeRow({ msg, onClick }) {
   return (
     <button
@@ -240,9 +240,7 @@ function MensajeRow({ msg, onClick }) {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════
-   PÁGINA PRINCIPAL
-══════════════════════════════════════════════════════════════ */
+/* Página principal */
 export default function BuzonPage() {
   const [mensajes, setMensajes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -294,7 +292,7 @@ export default function BuzonPage() {
 
   return (
     <div style={{ maxWidth: 800, margin: '0 auto' }}>
-      {/* ── Encabezado ── */}
+      {/* Encabezado */}
       <div
         style={{
           display: 'flex',
@@ -350,7 +348,7 @@ export default function BuzonPage() {
         </button>
       </div>
 
-      {/* ── Filtros ── */}
+      {/* Filtros */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
         {[
           { key: 'todos', label: `Todos (${mensajes.length})` },
@@ -377,7 +375,7 @@ export default function BuzonPage() {
         ))}
       </div>
 
-      {/* ── Lista ── */}
+      {/* Lista */}
       <div
         style={{
           background: 'var(--color-surface)',
@@ -425,7 +423,7 @@ export default function BuzonPage() {
         )}
       </div>
 
-      {/* ── Modal de detalle ── */}
+      {/* Modal de detalle */}
       <MensajeModal
         msg={selected}
         onClose={() => setSelected(null)}

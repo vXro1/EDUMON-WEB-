@@ -3,7 +3,7 @@ import { Heart, MessageSquare, Pencil, Trash2, Check, X, FileText } from 'lucide
 import { UserAvatar, Button, RichTextEditor } from '@/components';
 import { sanitizeRichText } from '@/utils/richText';
 
-// ─── Utilidades ──────────────────────────────────────────────────────────────
+// Utilidades
 
 const timeAgo = (iso) => {
   if (!iso) return '';
@@ -176,7 +176,7 @@ const LikeButton = ({ liked, count, size = 14, onLike }) => {
   );
 };
 
-// ─── Respuesta del foro ───────────────────────────────────────────────────────
+// Respuesta del foro
 
 const ForumReply = ({ reply, userId: _userId, canDelete, canEdit, onLike, onDelete, onEdit }) => {
   const [editing, setEditing] = useState(false);
@@ -289,7 +289,7 @@ const ForumReply = ({ reply, userId: _userId, canDelete, canEdit, onLike, onDele
   );
 };
 
-// ─── Mensaje del foro ─────────────────────────────────────────────────────────
+// Mensaje del foro
 
 const ForumMessage = ({ msg, userId, canEdit, canDelete, canReply = true, onReply, onLike, onDelete, onEdit }) => {
   const [editing, setEditing] = useState(false);

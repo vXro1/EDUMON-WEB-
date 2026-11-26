@@ -1,15 +1,12 @@
-/* ════════════════════════════════════════════════════════════════════
-   EDUMON — INPUTS (Soft UI)
-   ════════════════════════════════════════════════════════════════════
+/* EDUMON — INPUTS (Soft UI)
    Concepto visual:
    • Borde fino en reposo + sombra suave (--clay-shadow-sm), sin "base" 3D
    • Al focus: borde de color + anillo suave (--shadow-focus-soft), sin
      que el campo se mueva — un formulario no debe "saltar"
    • Error/success: borde de color + anillo a juego, sin shake
-   • Labels legibles, sin mayúsculas grises ni animación de entrada
-   ════════════════════════════════════════════════════════════════════ */
+   • Labels legibles, sin mayúsculas grises ni animación de entrada */
 
-/* ── Keyframes ────────────────────────────────────────────────────────── */
+/* Animaciones */
 @keyframes check-pop {
   0% {
     transform: scale(0) rotate(-10deg);
@@ -25,14 +22,14 @@
   }
 }
 
-/* ── Field wrapper ────────────────────────────────────────────────────── */
+/* Contenedor del campo */
 .field {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 
-/* ── Label ────────────────────────────────────────────────────────────── */
+/* Etiqueta */
 .field-label {
   font-family: var(--font-sans);
   font-size: 13px;
@@ -50,14 +47,14 @@
   margin-left: 2px;
 }
 
-/* ── Input wrapper ────────────────────────────────────────────────────── */
+/* Contenedor del input */
 .input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-/* ── Base input ───────────────────────────────────────────────────────── */
+/* Base input */
 .input {
   width: 100%;
   font-family: var(--font-sans);
@@ -107,7 +104,7 @@
   padding-right: 44px;
 }
 
-/* ── Tamaños ────────────────────────────────────────────────────────────── */
+/* Tamaños */
 .input-sm {
   min-height: 40px;
   font-size: 13px;
@@ -134,7 +131,7 @@
   padding-right: 52px;
 }
 
-/* ── Adornment (íconos) ───────────────────────────────────────────────── */
+/* Íconos del campo */
 .input-adornment {
   position: absolute;
   display: flex;
@@ -178,7 +175,7 @@
   color: var(--color-primary);
 }
 
-/* ── Campo de teléfono: ícono + "+57" fijo + input, en un solo flexbox ──
+/* Campo de teléfono: ícono + "+57" fijo + input, en un solo flexbox
    A propósito NO usa position:absolute con padding-left calculado a mano
    (así era antes: dos reglas de padding competían por el mismo elemento
    y el "+57" terminaba pegado al texto, a veces encima). Con flexbox cada
@@ -258,7 +255,7 @@
   gap: 10px;
 }
 
-/* ── Adornment clickeable (eye password) ──────────────────────────────── */
+/* Adornment clickeable (eye password) */
 .input-adornment-btn {
   pointer-events: all;
   cursor: pointer;
@@ -286,7 +283,7 @@
   color: var(--color-text);
 }
 
-/* ── Estado: error ────────────────────────────────────────────────────── */
+/* Estado: error */
 .input-error {
   border-color: var(--color-error) !important;
   box-shadow: var(--clay-shadow-sm) !important;
@@ -300,7 +297,7 @@
   color: var(--color-error);
 }
 
-/* ── Estado: success ──────────────────────────────────────────────────── */
+/* Estado: éxito */
 .input-success {
   border-color: var(--color-success) !important;
   box-shadow: var(--clay-shadow-sm) !important;
@@ -313,7 +310,7 @@
   color: var(--color-success);
 }
 
-/* ── Estado: disabled ─────────────────────────────────────────────────── */
+/* Estado: deshabilitado */
 .input:disabled {
   background: var(--color-surface-3);
   color: var(--color-text-subtle);
@@ -323,7 +320,7 @@
   opacity: 0.7;
 }
 
-/* ── Hint ─────────────────────────────────────────────────────────────── */
+/* Hint */
 .field-hint {
   font-family: var(--font-sans);
   font-size: 12px;
@@ -333,7 +330,7 @@
   padding-left: 4px;
 }
 
-/* ── Error message ────────────────────────────────────────────────────── */
+/* Mensaje de error */
 .field-error {
   font-family: var(--font-sans);
   font-size: 12px;
@@ -346,7 +343,7 @@
   line-height: 1.4;
 }
 
-/* ── Success message ──────────────────────────────────────────────────── */
+/* Success message */
 .field-success-msg {
   font-family: var(--font-sans);
   font-size: 12px;
@@ -365,9 +362,7 @@
   animation: check-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   TEXTAREA
-   ════════════════════════════════════════════════════════════════════ */
+/* Textarea */
 .textarea {
   width: 100%;
   font-family: var(--font-sans);
@@ -432,11 +427,9 @@
   padding: 18px 20px;
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   RICH TEXT EDITOR — mismo lenguaje visual que .textarea (borde fino +
+/* RICH TEXT EDITOR — mismo lenguaje visual que .textarea (borde fino +
    clay-shadow-sm, anillo de foco al enfocar), con una barra de
-   herramientas fija arriba en vez de placeholder-only.
-   ════════════════════════════════════════════════════════════════════ */
+   herramientas fija arriba en vez de placeholder-only. */
 .rte {
   width: 100%;
   background: var(--color-surface);
@@ -536,9 +529,9 @@
   margin: 10px 0;
 }
 
-/* ── Salida de solo-lectura del HTML que produce RichTextEditor (negrita/
+/* Salida de solo-lectura del HTML que produce RichTextEditor (negrita/
    listas/separadores) — mismas reglas que .rte-editable, para usar con
-   dangerouslySetInnerHTML donde sea que se muestre esa descripción. ──── */
+   dangerouslySetInnerHTML donde sea que se muestre esa descripción. */
 .rich-content p {
   margin: 0 0 8px;
 }
@@ -599,9 +592,7 @@
   font-size: 14px;
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   SELECT
-   ════════════════════════════════════════════════════════════════════ */
+/* Select */
 .select {
   width: 100%;
   font-family: var(--font-sans);
@@ -658,9 +649,7 @@
   padding-left: 20px;
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   CHECKBOX & RADIO
-   ════════════════════════════════════════════════════════════════════ */
+/* Checkbox & radio */
 .check-group {
   display: flex;
   flex-direction: column;
@@ -807,9 +796,7 @@
   box-shadow: var(--shadow-focus-soft);
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   TOGGLE / SWITCH
-   ════════════════════════════════════════════════════════════════════ */
+/* Interruptor */
 .toggle {
   display: inline-flex;
   align-items: center;
@@ -878,11 +865,9 @@
   color: var(--color-text);
 }
 
-/* ════════════════════════════════════════════════════════════════════
-   CONTEXTO MODAL — versión compacta (tamaño reducido).
+/* CONTEXTO MODAL — versión compacta (tamaño reducido).
    El look ya coincide con el default de arriba, así que solo quedan las
-   reglas de tamaño/padding — el resto ya no hace falta duplicarlo.
-   ════════════════════════════════════════════════════════════════════ */
+   reglas de tamaño/padding — el resto ya no hace falta duplicarlo. */
 
 .modal-body .field {
   gap: 5px;

@@ -35,7 +35,7 @@ export function descargarPlantillaPadresCSV(filename = 'plantilla_padres.xlsx') 
   descargarXlsx([COLUMNAS, ...EJEMPLOS], filename, 'Padres');
 }
 
-// ─── Componente botón (uso opcional) ─────────────────────────────────────────
+// Componente botón (uso opcional)
 const DOWNLOAD_ICON = (
   <svg
     width="14"
@@ -103,5 +103,5 @@ export default function PadresCsvTemplateButton({
   );
 }
 
-// ─── Constantes exportadas por si otros módulos las necesitan ────────────────
+// Constantes exportadas por si otros módulos las necesitan
 export { COLUMNAS as CSV_COLUMNAS_PADRES };

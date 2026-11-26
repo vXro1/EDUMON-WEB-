@@ -46,7 +46,7 @@ import {
   CEDULA_ERROR,
   toCedula,
 } from '@/utils/credenciales';
-/* ── Roles config ─────────────────────────────────────────────── */
+/* Configuración de roles */
 const ROL_META = {
   superadmin: { label: 'Super Admin', variant: 'error' },
   administrador: { label: 'Administrador', variant: 'info' },
@@ -63,7 +63,7 @@ const ROL_LABELS = [
   { value: 'padre', label: 'Padre/Tutor' },
 ];
 
-/* ── Micro-components ─────────────────────────────────────────── */
+/* Micro-components */
 function RolBadge({ rol }) {
   const m = ROL_META[rol] ?? { label: rol, variant: 'neutral' };
   return (
@@ -246,18 +246,16 @@ function formatDate(iso) {
   return new Date(iso).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-/* ── Constants ────────────────────────────────────────────────── */
+/* Constantes */
 const INIT = { nombre: '', apellido: '', cedula: '', correo: '', telefono: '', rol: 'docente', institucionIdSA: '' };
-// Maps frontend display role to the value the backend validator accepts
+// el backend espera "padre", no "padre/tutor"
 const toApiRol = (rol) => (rol === 'padre/tutor' ? 'padre' : rol);
 const LIMIT = 15;
 const SIN_USUARIOS = [];
 const SIN_INSTITUCIONES = [];
 const PAGINACION_VACIA = { currentPage: 1, totalPages: 1, totalUsers: 0 };
 
-/* ══════════════════════════════════════════════════════════════
-   Main page
-   ══════════════════════════════════════════════════════════════ */
+/* Página principal */
 export default function UsuariosPage() {
   const { user: me } = useAuth();
   const isSuperadmin = me?.rol === 'superadmin';
@@ -272,24 +270,24 @@ export default function UsuariosPage() {
   const [form, setForm] = useState(INIT);
   const [institucionId, setInstitucionId] = useState(() => me?.institucionId ?? null);
 
-  // Validation errors for create form
+  // errores de validación del formulario de creación
   const [createErrors, setCreateErrors] = useState({});
 
-  // Modal states
+  // Estado de los modales
   const [showCreate, setShowCreate] = useState(false);
   const [editTarget, setEditTarget] = useState(null);
-  const [delTarget, setDelTarget] = useState(null); // suspend
-  const [activTarget, setActivTarget] = useState(null); // activate
-  const [viewTarget, setViewTarget] = useState(null); // detail view
+  const [delTarget, setDelTarget] = useState(null); // suspender
+  const [activTarget, setActivTarget] = useState(null); // reactivar
+  const [viewTarget, setViewTarget] = useState(null); // detalle
   const [viewLoading, setViewLoading] = useState(false);
-  const [viewDetail, setViewDetail] = useState(null); // full user data
+  const [viewDetail, setViewDetail] = useState(null); // datos completos del usuario
 
   const notify = (msg, type = 'success') => {
     setToast({ msg, type });
     setTimeout(() => setToast({ msg: '', type: 'success' }), 3500);
   };
 
-  // Fetch institution ID for the current admin (needed to create users via POST /users)
+  // POST /users necesita la institución del administrador
   useEffect(() => {
     if (me?.institucionId) {
       setInstitucionId(me.institucionId);
@@ -360,7 +358,7 @@ export default function UsuariosPage() {
     if (createErrors.cedula) setCreateErrors((p) => ({ ...p, cedula: '' }));
   };
 
-  /* ── View detail ── */
+  /* Detalle */
   const openView = async (u) => {
     setViewTarget(u);
     setViewDetail(null);
@@ -369,13 +367,13 @@ export default function UsuariosPage() {
       const res = await usersGetById(u._id);
       setViewDetail(normalizeUser(res.user ?? res));
     } catch {
-      setViewDetail(normalizeUser(u)); // fallback to list data
+      setViewDetail(normalizeUser(u)); // si falla, se muestran los datos de la lista
     } finally {
       setViewLoading(false);
     }
   };
 
-  /* ── Create ── */
+  /* Creación */
   const handleCreate = async (e) => {
     e.preventDefault();
 
@@ -447,7 +445,7 @@ export default function UsuariosPage() {
     }
   };
 
-  /* ── Edit ── */
+  /* Edición */
   const openEdit = (u) => {
     setEditTarget(u);
     setForm({
@@ -512,7 +510,7 @@ export default function UsuariosPage() {
       await usersUpdate(editTarget._id, body);
       notify('Usuario actualizado');
       setEditTarget(null);
-      // Update view detail if open
+      // si el detalle está abierto, se actualiza
       if (viewTarget?._id === editTarget._id) setViewDetail((d) => (d ? { ...d, ...body } : d));
       load();
     } catch (err) {
@@ -523,7 +521,7 @@ export default function UsuariosPage() {
     }
   };
 
-  /* ── Suspend ── */
+  /* Suspend */
   const handleSuspend = async () => {
     if (!delTarget) return;
     setSaving(true);
@@ -539,7 +537,7 @@ export default function UsuariosPage() {
     }
   };
 
-  /* ── Activate (revert suspend) ── */
+  /* Activate (revert suspend) */
   const handleActivate = async () => {
     if (!activTarget) return;
     setSaving(true);
@@ -558,12 +556,12 @@ export default function UsuariosPage() {
 
   const d = viewDetail ?? viewTarget;
 
-  /* ── Render ── */
+  /* Render */
   return (
     <div style={{ maxWidth: 1200, margin: '0 auto' }}>
       <Toast msg={toast.msg} type={toast.type} />
 
-      {/* Header */}
+      {/* Encabezado */}
       <div
         style={{
           display: 'flex',
@@ -642,7 +640,7 @@ export default function UsuariosPage() {
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Filtros */}
       <div
         style={{
           background: 'var(--color-surface)',
@@ -738,7 +736,7 @@ export default function UsuariosPage() {
         )}
       </div>
 
-      {/* Table */}
+      {/* Tabla */}
       <div
         style={{
           background: 'var(--color-surface)',
@@ -836,7 +834,7 @@ export default function UsuariosPage() {
         )}
       </div>
 
-      {/* ══ CREATE MODAL ══ */}
+      {/* Modal de creación */}
       <Modal
         isOpen={showCreate}
         onClose={() => {
@@ -913,7 +911,7 @@ export default function UsuariosPage() {
                 </StyledSelect>
               </FieldGroup>
             </div>
-            {/* Superadmin: pick institution for the new user (not needed for superadmin role) */}
+            {/* El superadmin elige la institución del usuario nuevo (salvo para otro superadmin) */}
             {isSuperadmin && toApiRol(form.rol) !== 'superadmin' && (
               <div style={{ gridColumn: '1 / -1' }}>
                 <FieldGroup label="Institución *">
@@ -973,7 +971,7 @@ export default function UsuariosPage() {
         </form>
       </Modal>
 
-      {/* ══ EDIT MODAL ══ */}
+      {/* Modal de edición */}
       <Modal
         isOpen={Boolean(editTarget)}
         onClose={() => setEditTarget(null)}
@@ -1045,7 +1043,7 @@ export default function UsuariosPage() {
         )}
       </Modal>
 
-      {/* ══ VIEW DETAIL MODAL ══ */}
+      {/* Modal de detalle */}
       <Modal
         isOpen={Boolean(viewTarget)}
         onClose={() => {
@@ -1135,7 +1133,7 @@ export default function UsuariosPage() {
               </div>
             )}
 
-            {/* Info rows */}
+            {/* Filas de información */}
             <InfoRow icon={Mail} label="Correo" value={d.correo} />
             <InfoRow icon={Phone} label="Teléfono" value={d.telefono} />
             <InfoRow icon={Hash} label="Cédula" value={d.cedula} />
@@ -1143,7 +1141,7 @@ export default function UsuariosPage() {
             <InfoRow icon={Calendar} label="Registro" value={formatDate(d.fechaRegistro ?? d.createdAt)} />
             <InfoRow icon={Clock} label="Último acceso" value={formatDate(d.ultimoAcceso)} />
 
-            {/* Actions */}
+            {/* Acciones */}
             <div style={{ display: 'flex', gap: 10, marginTop: 18, justifyContent: 'flex-end' }}>
               <button
                 onClick={() => {
@@ -1216,7 +1214,7 @@ export default function UsuariosPage() {
         ) : null}
       </Modal>
 
-      {/* ══ SUSPEND CONFIRM ══ */}
+      {/* Suspend confirm */}
       <Modal isOpen={Boolean(delTarget)} onClose={() => setDelTarget(null)} title="Suspender usuario" size="sm">
         <div
           style={{
@@ -1267,7 +1265,7 @@ export default function UsuariosPage() {
         </div>
       </Modal>
 
-      {/* ══ ACTIVATE CONFIRM ══ */}
+      {/* Activate confirm */}
       <Modal isOpen={Boolean(activTarget)} onClose={() => setActivTarget(null)} title="Activar usuario" size="sm">
         <div
           style={{
@@ -1320,7 +1318,7 @@ export default function UsuariosPage() {
   );
 }
 
-/* ── Sub-components ───────────────────────────────────────────── */
+/* Subcomponentes */
 function UserRow({ user: u, onView, onEdit, onSuspend, onActivate }) {
   const [hov, setHov] = useState(false);
   const suspended = u.estado !== 'activo';

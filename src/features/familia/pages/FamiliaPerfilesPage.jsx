@@ -28,7 +28,7 @@ import av8 from '@/assets/img/avatars/avatar8.svg';
 
 const LOCAL_AVATARS = [av1, av2, av3, av4, av5, av6, av7, av8];
 
-// ─── Selector de avatar ────────────────────────────────────────────────────
+// Selector de avatar
 // solo los 8 locales — la lista "adicionales" del backend duplica las mismas imágenes
 function AvatarPicker({ value, onChange }) {
   return (
@@ -139,7 +139,7 @@ function AvatarPicker({ value, onChange }) {
   );
 }
 
-// ─── Tarjeta de perfil ─────────────────────────────────────────────────────
+// Tarjeta de perfil
 function ProfileCard({ perfil, isTitular, isSelected, onSelect, onEdit, onDelete, switching }) {
   const name = perfil.nombre ?? 'Perfil';
   const initial = name?.[0]?.toUpperCase() ?? '?';
@@ -263,7 +263,6 @@ function ProfileCard({ perfil, isTitular, isSelected, onSelect, onEdit, onDelete
   );
 }
 
-// ════════════════════════════════════════════════════════════════════════════
 export default function FamiliaPerfilesPage() {
   const { user, switchProfile } = useAuth();
 
@@ -327,7 +326,7 @@ export default function FamiliaPerfilesPage() {
     setEditOpen(true);
   };
 
-  // ── Seleccionar perfil ────────────────────────────────────────────────────
+  // Seleccionar perfil
   // seleccionarPerfil() solo reemplaza la cookie httpOnly, no devuelve token —
   // switchProfile() vuelve a preguntar "¿quién soy?" para refrescar el user real
   const handleSelect = async (perfil, esTitular = false) => {
@@ -361,7 +360,7 @@ export default function FamiliaPerfilesPage() {
     }
   };
 
-  // ── CRUD (crear, leer, actualizar, eliminar) ──────────────────────────────
+  // CRUD (crear, leer, actualizar, eliminar)
   const handleCreate = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -408,7 +407,7 @@ export default function FamiliaPerfilesPage() {
 
   const canCreate = perfiles.length < 5;
 
-  // ── Renderizado ────────────────────────────────────────────────────────────
+  // Renderizado
   return (
     <div style={{ maxWidth: 860, margin: '0 auto' }}>
       <Toast msg={toast.msg} type={toast.type} />
@@ -562,7 +561,7 @@ export default function FamiliaPerfilesPage() {
         </div>
       )}
 
-      {/* ── MODAL: Crear ── */}
+      {/* Modal: crear */}
       <Modal
         isOpen={createOpen}
         onClose={() => {
@@ -613,7 +612,7 @@ export default function FamiliaPerfilesPage() {
         </form>
       </Modal>
 
-      {/* ── MODAL: Editar ── */}
+      {/* Modal: editar */}
       <Modal
         isOpen={editOpen}
         onClose={() => {
@@ -664,7 +663,7 @@ export default function FamiliaPerfilesPage() {
         </form>
       </Modal>
 
-      {/* ── MODAL: Eliminar ── */}
+      {/* Modal: eliminar */}
       <Modal isOpen={deleteOpen} onClose={() => setDeleteOpen(false)} title="Eliminar perfil" size="sm">
         <p style={{ color: 'var(--color-text-muted)', marginBottom: 20, fontSize: 13.5 }}>
           ¿Seguro que deseas eliminar el perfil <strong>"{target?.nombre}"</strong>?

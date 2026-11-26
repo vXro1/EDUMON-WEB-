@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 
 const SIZE_MAP = { sm: 'modal-sm', md: 'modal-md', lg: 'modal-lg', xl: 'modal-xl' };
 
-/* ─── Main component ──────────────────────────────────────────────────── */
+/* Componente principal */
 function AppModal({ isOpen, onClose, size = 'md', closeOnOverlay = true, labelledBy, describedBy, children }) {
   const panelRef = useRef(null);
   const mouseDownTarget = useRef(null);
@@ -89,7 +89,7 @@ function AppModal({ isOpen, onClose, size = 'md', closeOnOverlay = true, labelle
   );
 }
 
-/* ─── Sub-components ──────────────────────────────────────────────────── */
+/* Subcomponentes */
 AppModal.Header = function ModalHeader({ title, description, onClose, titleId }) {
   return (
     <div className="modal-header">

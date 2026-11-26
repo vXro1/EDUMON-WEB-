@@ -1,4 +1,3 @@
-// src/features/familia/pages/FamiliaEntregaDetallePage.jsx
 // ROL: Padre / Tutor — vista única de "hacer entrega" para UNA tarea puntual.
 // URL propia (/familia/entregas/:tareaId) en vez de un modal con varios pasos
 // internos: el padre llega directo al formulario de esa entrega, sin tener
@@ -310,7 +309,7 @@ export default function FamiliaEntregaDetallePage() {
     <div style={{ maxWidth: 720, margin: '0 auto' }}>
       <Toast msg={toast.msg} type={toast.type} />
 
-      {/* Header */}
+      {/* Encabezado */}
       <Button variant="ghost" size="sm" onClick={() => navigate('/familia/tareas')} style={{ marginBottom: 16 }}>
         <ArrowLeft style={{ width: 15, height: 15 }} /> Volver a retos
       </Button>

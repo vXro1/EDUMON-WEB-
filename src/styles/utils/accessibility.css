@@ -1,4 +1,4 @@
-/* ─── ACCESIBILIDAD ─── */
+/* Accesibilidad */
 .edu-focus:focus-visible {
   outline: none;
   box-shadow: var(--shadow-focus);
@@ -16,7 +16,7 @@
   border: 0;
 }
 
-/* ─── SELECCIÓN DE TEXTO ─── */
+/* Selección de texto */
 ::selection {
   background: var(--color-selection);
   color: var(--color-text);

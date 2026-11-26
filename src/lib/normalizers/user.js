@@ -1,4 +1,3 @@
-// src/lib/normalizers/user.js
 
 import { assetUrl } from '@/utils/assetUrl';
 

@@ -1,4 +1,3 @@
-// src/features/auth/components/shared/AuthLayout.jsx
 // Contenedor compartido para todas las páginas de autenticación: LoginForm, ForgotPasswordForm, ResetPasswordForm.
 // Tarjeta de dos paneles: panel de marca (degradado azul + logo con halo) y
 // panel de formulario (blanco). El corte diagonal entre ambos es el
@@ -43,10 +42,8 @@ function AuthBubbles() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   Panel de marca — degradado azul + logo con halo.
-   Mismo bloque en las 3 pantallas; solo cambia brandTitle / brandTagline.
-───────────────────────────────────────────── */
+/* Panel de marca — degradado azul + logo con halo.
+   Mismo bloque en las 3 pantallas; solo cambia brandTitle / brandTagline. */
 const Star = ({ className, size = 16 }) => (
   <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
     <path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14 2 9.27l7.1-1.01z" />
@@ -75,12 +72,10 @@ function AuthBrandPanel({ brandTitle, brandTagline }) {
   );
 }
 
-/* ─────────────────────────────────────────────
-   Contenedor principal — tarjeta de dos paneles, centrada.
+/* Contenedor principal — tarjeta de dos paneles, centrada.
    brandTitle / brandTagline: copy del panel de marca. Traen defaults
    pensados para la pantalla de login.
-   children: contenido del formulario, dentro del panel blanco.
-───────────────────────────────────────────── */
+   children: contenido del formulario, dentro del panel blanco. */
 const AuthLayout = ({
   children,
   brandTitle = (
@@ -108,13 +103,11 @@ const AuthLayout = ({
 );
 export default AuthLayout;
 
-/* ─────────────────────────────────────────────
-   CSS compartido (todas las clases llevan prefijo `auth-`)
+/* CSS compartido (todas las clases llevan prefijo `auth-`)
    Colores tomados de los tokens del proyecto. Estas pantallas viven
    fuera de .app-shell, así que el azul de marca se toma del token
    crudo --edu-blue-500/700/900 (var(--color-primary) resolvería al
-   morado de :root, no al azul del dashboard).
-───────────────────────────────────────────── */
+   morado de :root, no al azul del dashboard). */
 const AUTH_CSS = `
 .auth-root {
   position: relative;

@@ -44,7 +44,7 @@ function formatDate(iso) {
   return new Date(iso).toLocaleDateString('es-CO', { day: '2-digit', month: 'short', year: 'numeric' });
 }
 
-/* ── Fila de información dentro del modal de detalle ─────────────── */
+/* Fila de información dentro del modal de detalle */
 function InfoRow({ icon: Icon, label, value, color = 'var(--color-primary)' }) {
   if (!value) return null;
   return (
@@ -108,12 +108,12 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
   const [removeTarget, setRemoveTarget] = useState(null); // { id, nombre } | null
   const [removing, setRemoving] = useState(false);
 
-  // ── Detalle de usuario (modal de perfil completo) ───────────────────────
+  // Detalle de usuario (modal de perfil completo)
   const [viewTarget, setViewTarget] = useState(null); // usuario básico de la lista, para mostrar algo mientras carga
   const [viewDetail, setViewDetail] = useState(null); // usuario enriquecido desde el backend
   const [viewLoading, setViewLoading] = useState(false);
 
-  // ── Carga ─────────────────────────────────────────────────────────────────
+  // Carga
   const queryClient = useQueryClient();
   const { data: partsData, isLoading: loading } = useQuery({
     queryKey: queryKeys.cursos.participantes(cursoId),
@@ -140,7 +140,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
     setForm(EMPTY_FORM);
   };
 
-  // ── Agregar individual ────────────────────────────────────────────────────
+  // Agregar individual
   const handleAdd = async (e) => {
     e.preventDefault();
     const nombre = form.nombre.trim();
@@ -183,7 +183,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
     }
   };
 
-  // ── Carga masiva CSV ──────────────────────────────────────────────────────
+  // Carga masiva CSV
   // el backend responde con { resumen, detalles } anidados; se adapta a la
   // forma plana que espera SuccessPanel: { total, exitosos, fallidos, detalle[] }
   const handleCsvUpload = async (file) => {
@@ -213,7 +213,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
     };
   };
 
-  // ── Eliminar ──────────────────────────────────────────────────────────────
+  // Eliminar
   const askRemove = (userId, nombre) => setRemoveTarget({ id: userId, nombre });
 
   const confirmRemove = async () => {
@@ -231,7 +231,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
     }
   };
 
-  // ── Ver detalle completo del usuario ────────────────────────────────────
+  // Ver detalle completo del usuario
   const openView = async (u) => {
     setViewTarget(u);
     setViewDetail(null);
@@ -265,7 +265,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
     <div>
       <Toast {...toast} />
 
-      {/* ── Encabezado con los dos botones de acción ── */}
+      {/* Encabezado con los dos botones de acción */}
       <div
         style={{
           display: 'flex',
@@ -313,7 +313,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
         )}
       </div>
 
-      {/* ── Lista / skeleton / estado vacío ── */}
+      {/* Lista / skeleton / estado vacío */}
       {loading ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {[0, 1, 2, 3].map((i) => (
@@ -402,9 +402,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
         </div>
       )}
 
-      {/* ══════════════════════════════════════════════
-          Modal 1 — Agregar participante individual
-      ══════════════════════════════════════════════ */}
+      {/* Modal 1 — Agregar participante individual */}
       <AppModal isOpen={addOpen} onClose={closeAddModal} size="md">
         <AppModal.Header title="Agregar participante" onClose={closeAddModal} />
         <AppModal.Body>
@@ -459,9 +457,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
         </AppModal.Footer>
       </AppModal>
 
-      {/* ══════════════════════════════════════════════
-          Modal 2 — Carga masiva CSV
-      ══════════════════════════════════════════════ */}
+      {/* Modal 2 — Carga masiva CSV */}
       <CsvUploadModal
         isOpen={csvOpen}
         onClose={() => setCsvOpen(false)}
@@ -477,9 +473,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
         maxFileSizeMB={5}
       />
 
-      {/* ══════════════════════════════════════════════
-          Modal 3 — Confirmar eliminación (reemplaza confirm() nativo)
-      ══════════════════════════════════════════════ */}
+      {/* Modal 3 — Confirmar eliminación (reemplaza confirm() nativo) */}
       <AppModal isOpen={!!removeTarget} onClose={() => setRemoveTarget(null)} size="sm">
         <AppModal.Header title="Eliminar participante" onClose={() => setRemoveTarget(null)} />
         <AppModal.Body>
@@ -497,9 +491,7 @@ export default function ParticipantesTab({ cursoId: cursoIdProp, canManage: canM
         </AppModal.Footer>
       </AppModal>
 
-      {/* ══════════════════════════════════════════════
-          Modal 4 — Detalle completo del usuario
-      ══════════════════════════════════════════════ */}
+      {/* Modal 4 — Detalle completo del usuario */}
       <AppModal isOpen={!!viewTarget} onClose={closeView} size="md">
         <AppModal.Header title="Detalle del participante" onClose={closeView} />
         <AppModal.Body>

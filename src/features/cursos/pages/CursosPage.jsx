@@ -86,7 +86,7 @@ const COLOR_PALETTE = [
 ];
 const DEFAULT_COLOR = COLOR_PALETTE[6]; // #0C6AC4 — azul Edumon
 
-/* ── Esqueleto de carga ────────────────────────────────────────── */
+/* Esqueleto de carga */
 function Sk({ h = 16, w = '100%', r = 7 }) {
   return (
     <div
@@ -112,7 +112,7 @@ function SkCard() {
   );
 }
 
-/* ── EstadoBadge ──────────────────────────────────────────────── */
+/* EstadoBadge */
 const ESTADO_VARIANT = { activo: 'success', archivado: 'warning' };
 function EstadoBadge({ estado }) {
   const label = ESTADO_META[estado]?.label ?? estado;
@@ -123,7 +123,7 @@ function EstadoBadge({ estado }) {
   );
 }
 
-/* ── Field wrapper ────────────────────────────────────────────── */
+/* Contenedor del campo */
 function Field({ label, children, hint }) {
   return (
     <div style={{ marginBottom: 14 }}>
@@ -146,7 +146,7 @@ function Field({ label, children, hint }) {
   );
 }
 
-/* ── Selector de color: paleta + gotero personalizado ──────────── */
+/* Selector de color: paleta + gotero personalizado */
 function ColorPickerField({ value, onChange }) {
   const isCustom = !COLOR_PALETTE.includes(value);
   return (
@@ -229,7 +229,7 @@ function ColorPickerField({ value, onChange }) {
   );
 }
 
-/* ── Helper: nombre del docente (cubre todos los shapes del backend) ── */
+/* Helper: nombre del docente (cubre todos los shapes del backend) */
 function getDocenteNombre(curso) {
   if (curso?.docente && typeof curso.docente === 'object') {
     const full = [curso.docente.nombre, curso.docente.apellido].filter(Boolean).join(' ').trim();
@@ -239,7 +239,6 @@ function getDocenteNombre(curso) {
   return 'Sin docente';
 }
 
-/* ══════════════════════════════════════════════════════════════ */
 export default function CursosPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -248,7 +247,7 @@ export default function CursosPage() {
   const rol = normalizeRole(user?.rol);
   const isDocente = rol === ROLES.DOCENTE;
 
-  /* ── State ─────────────────────────────────────────────────── */
+  /* Estado */
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [debSearch, setDebSearch] = useState('');
@@ -286,7 +285,7 @@ export default function CursosPage() {
 
   const [addForm, setAddForm] = useState({ nombre: '', apellido: '', cedula: '', telefono: '' });
 
-  /* ── Helpers ───────────────────────────────────────────────── */
+  /* Funciones auxiliares */
   const notify = (msg, type = 'success') => {
     setToast({ msg, type });
     setTimeout(() => setToast({ msg: '', type: 'success' }), 3500);
@@ -294,7 +293,7 @@ export default function CursosPage() {
 
   const goToCurso = (c) => navigate(`/cursos/${c._id}`);
 
-  /* ── Debounce ──────────────────────────────────────────────── */
+  /* Retardo de búsqueda */
   useEffect(() => {
     const t = setTimeout(() => setDebSearch(search), 350);
     return () => clearTimeout(t);
@@ -305,7 +304,7 @@ export default function CursosPage() {
     if (!debSearch) setPage(1);
   }, [debSearch]);
 
-  /* ── Carga de cursos ───────────────────────────────────────── */
+  /* Carga de cursos */
   // Los listados ya traen el docente poblado; antes se pedía GET /cursos/:id
   // por cada curso sin docente (hasta 1000 peticiones al buscar) y esa
   // respuesta tampoco lo traía.
@@ -331,7 +330,7 @@ export default function CursosPage() {
   // tras crear/editar/eliminar: refresca listados y detalle del curso en caché
   const load = useCallback(() => queryClient.invalidateQueries({ queryKey: queryKeys.cursos.all() }), [queryClient]);
 
-  /* ── Búsqueda global ───────────────────────────────────────── */
+  /* Búsqueda global */
   useEffect(() => {
     const unregister = registerSearchHandler('cursos', (q) => {
       const query = q.toLowerCase();
@@ -344,7 +343,7 @@ export default function CursosPage() {
     return unregister;
   }, [cursos, registerSearchHandler]);
 
-  /* ── Cargar docentes para selector ────────────────────────── */
+  /* Cargar docentes para selector */
   useEffect(() => {
     if (!user || isDocente) return;
     usersGetAll({ rol: 'docente', limit: 100 })
@@ -352,7 +351,7 @@ export default function CursosPage() {
       .catch(() => {});
   }, [user, isDocente]);
 
-  /* ── Participantes ─────────────────────────────────────────── */
+  /* Participantes */
   const loadParts = useCallback(async (id) => {
     setPartsLoading(true);
     try {
@@ -370,7 +369,7 @@ export default function CursosPage() {
     }
   }, []);
 
-  /* ── Filtro local ──────────────────────────────────────────── */
+  /* Filtro local */
   const filtered = debSearch
     ? cursos.filter(
         (c) =>
@@ -382,7 +381,7 @@ export default function CursosPage() {
   // La paginación no aplica mientras hay búsqueda activa (todos los datos cargados en cliente)
   const totalPages = debSearch ? 1 : Math.max(1, Math.ceil(total / LIMIT));
 
-  /* ── CRUD ──────────────────────────────────────────────────── */
+  /* CRUD */
   const handleCreate = async (e) => {
     e.preventDefault();
     const nombre = createForm.nombre.trim();
@@ -567,14 +566,12 @@ export default function CursosPage() {
     }
   };
 
-  /* ══════════════════════════════════════════════════════════════
-     RENDER
-  ══════════════════════════════════════════════════════════════ */
+  /* Render */
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
       <Toast {...toast} />
 
-      {/* ── Encabezado ── */}
+      {/* Encabezado */}
       <div
         style={{
           display: 'flex',
@@ -613,7 +610,7 @@ export default function CursosPage() {
         </Button>
       </div>
 
-      {/* ── Búsqueda — Input reutilizable ── */}
+      {/* Búsqueda — Input reutilizable */}
       <div style={{ marginBottom: 18, maxWidth: 340 }}>
         <Input
           name="buscar"
@@ -624,7 +621,7 @@ export default function CursosPage() {
         />
       </div>
 
-      {/* ── Grid de cursos — mismo estilo de card que /familia/cursos, en modo compact ── */}
+      {/* Grid de cursos — mismo estilo de card que /familia/cursos, en modo compact */}
       {loading ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 16 }}>
           {[0, 1, 2, 3, 4, 5].map((i) => (
@@ -741,7 +738,7 @@ export default function CursosPage() {
         </>
       )}
 
-      {/* ══ MODAL CREAR ═══════════════════════════════════════════ */}
+      {/* Modal crear */}
       <Modal isOpen={createOpen} onClose={() => setCreateOpen(false)} title="Nuevo curso" size="md">
         <form onSubmit={handleCreate}>
           <Field label="Nombre del curso *">
@@ -826,7 +823,7 @@ export default function CursosPage() {
         </form>
       </Modal>
 
-      {/* ══ MODAL EDITAR ══════════════════════════════════════════ */}
+      {/* Modal editar */}
       <Modal isOpen={editOpen} onClose={() => setEditOpen(false)} title="Editar curso" size="md">
         <form onSubmit={handleEdit}>
           {/* Vista previa del curso actual */}
@@ -932,7 +929,7 @@ export default function CursosPage() {
         </form>
       </Modal>
 
-      {/* ══ CONFIRMAR ARCHIVO ════════════════════════════════════ */}
+      {/* Confirmar archivo */}
       <Modal isOpen={archiveOpen} onClose={() => setArchiveOpen(false)} title="Archivar curso" size="sm">
         <p style={{ fontSize: 13.5, color: 'var(--color-text-muted)', marginBottom: 20 }}>
           ¿Archivar el curso <strong style={{ color: 'var(--color-text)' }}>{selected?.nombre}</strong>? El curso
@@ -948,7 +945,7 @@ export default function CursosPage() {
         </div>
       </Modal>
 
-      {/* ══ PANEL DE PARTICIPANTES ═══════════════════════════════ */}
+      {/* Panel de participantes */}
       <Modal
         isOpen={participOpen}
         onClose={() => setParticipOpen(false)}
@@ -1052,7 +1049,7 @@ export default function CursosPage() {
         )}
       </Modal>
 
-      {/* ══ MODAL AGREGAR PARTICIPANTE ════════════════════════════ */}
+      {/* Modal agregar participante */}
       <Modal isOpen={addPartOpen} onClose={() => setAddPartOpen(false)} title="Agregar participante" size="md">
         <form onSubmit={handleAddPart}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>

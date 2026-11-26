@@ -74,7 +74,7 @@ export async function parsearCsvModulos(file) {
   });
 }
 
-// ─── Componente botón ─────────────────────────────────────────────────────────
+// Componente botón
 const DOWNLOAD_ICON = (
   <svg
     width="14"

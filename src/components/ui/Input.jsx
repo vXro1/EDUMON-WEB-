@@ -1,8 +1,7 @@
 import { useState, useId, forwardRef } from 'react';
 import { AlertCircle, Eye, EyeOff, CheckCircle } from 'lucide-react';
 
-/* ══════════════════════════════════════════════════════════════
-   INPUT
+/* Input
    Props nuevos vs versión anterior:
    - successMsg : string — mensaje de éxito con checkmark animado
    - success    : bool   — solo borde verde sin mensaje
@@ -10,8 +9,7 @@ import { AlertCircle, Eye, EyeOff, CheckCircle } from 'lucide-react';
    Nota: el campo de teléfono con prefijo "+57" NO se resuelve aquí — ver
    src/components/ui/PhoneInput.jsx, que usa un layout de flexbox propio
    en vez de padding-left calculado a mano (esa versión anterior hacía que
-   el prefijo y el placeholder terminaran pegados o superpuestos).
-   ══════════════════════════════════════════════════════════════ */
+   el prefijo y el placeholder terminaran pegados o superpuestos). */
 export const Input = forwardRef(function Input(
   {
     label,
@@ -112,9 +110,7 @@ export const Input = forwardRef(function Input(
   );
 });
 
-/* ══════════════════════════════════════════════════════════════
-   ÁREA DE TEXTO
-   ══════════════════════════════════════════════════════════════ */
+/* Área de texto */
 export const Textarea = forwardRef(function Textarea(
   { label, hint, error, size = 'md', required = false, disabled = false, className = '', id, ...rest },
   ref,
@@ -158,9 +154,7 @@ export const Textarea = forwardRef(function Textarea(
   );
 });
 
-/* ══════════════════════════════════════════════════════════════
-   SELECTOR
-   ══════════════════════════════════════════════════════════════ */
+/* Selector */
 export const Select = forwardRef(function Select(
   { label, hint, error, size = 'md', required = false, disabled = false, className = '', children, id, ...rest },
   ref,
@@ -206,9 +200,7 @@ export const Select = forwardRef(function Select(
   );
 });
 
-/* ══════════════════════════════════════════════════════════════
-   INTERRUPTOR
-   ══════════════════════════════════════════════════════════════ */
+/* Interruptor */
 export const Toggle = forwardRef(function Toggle({ label, disabled = false, className = '', id, ...rest }, ref) {
   const autoId = useId();
   const toggleId = id ?? autoId;
@@ -222,9 +214,7 @@ export const Toggle = forwardRef(function Toggle({ label, disabled = false, clas
   );
 });
 
-/* ══════════════════════════════════════════════════════════════
-   CASILLA DE VERIFICACIÓN
-   ══════════════════════════════════════════════════════════════ */
+/* Casilla de verificación */
 export const Checkbox = forwardRef(function Checkbox(
   { label, disabled = false, className = '', size = 'md', ...rest },
   ref,

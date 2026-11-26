@@ -1,9 +1,7 @@
 # syntax=docker/dockerfile:1
 
-# ============================================================================
 # Etapa 1 — build: compila el SPA (Vite + React) a estáticos.
 # Esta etapa NO viaja a producción — el runtime final no tiene Node.
-# ============================================================================
 #
 # node:22-slim (Debian/glibc) en vez de node:22-alpine a propósito: el
 # package-lock.json de este repo se genera en Windows, y `npm ci` bajo
@@ -48,10 +46,8 @@ ENV VITE_API_URL=$VITE_API_URL
 
 RUN npm run build
 
-# ============================================================================
 # Etapa 2 — runtime: nginx sirviendo los estáticos. Sin Node, sin npm,
 # sin node_modules — imagen final liviana (~30-40MB sobre nginx:alpine).
-# ============================================================================
 FROM nginx:1.27-alpine AS runtime
 
 # envsubst (paquete gettext) inyecta BACKEND_INTERNAL_URL en nginx.conf al

@@ -27,12 +27,12 @@ import CursoCard from '@/features/cursos/components/CursoCard';
 import { Button } from '@/components';
 import { normalizeRole, ROLES } from '@/security/roleMatrix';
 
-/* ── Esqueleto de carga ────────────────────────────────────────── */
+/* Esqueleto de carga */
 function Sk({ h = 14, w = '100%', r = 'var(--radius-sm)' }) {
   return <span className="skeleton" style={{ height: h, width: w, borderRadius: r, display: 'block' }} />;
 }
 
-/* ── Compartido: Tarjeta de estadística ────────────────────────── */
+/* Compartido: Tarjeta de estadística */
 function StatCard({ label, value, icon: Icon, colorClass, loading, sub }) {
   return (
     <div className="stat-card">
@@ -61,7 +61,7 @@ function StatCard({ label, value, icon: Icon, colorClass, loading, sub }) {
   );
 }
 
-/* ── Compartido: Tarjeta de acción rápida ──────────────────────── */
+/* Compartido: Tarjeta de acción rápida */
 function ActionCard({ icon: Icon, label, desc, colorClass, onClick }) {
   return (
     <button
@@ -100,7 +100,7 @@ function ActionCard({ icon: Icon, label, desc, colorClass, onClick }) {
   );
 }
 
-/* ── Compartido: Encabezado de sección ─────────────────────────── */
+/* Compartido: Encabezado de sección */
 function SectionHeader({ title, onAction, actionLabel }) {
   return (
     <div className="section-header">
@@ -114,7 +114,7 @@ function SectionHeader({ title, onAction, actionLabel }) {
   );
 }
 
-/* ── Compartido: Banner de bienvenida ──────────────────────────── */
+/* Compartido: Banner de bienvenida */
 function WelcomeBanner({ roleLabel, gradient, chips }) {
   const hora = new Date().getHours();
   const saludo = hora < 12 ? 'Buenos días' : hora < 19 ? 'Buenas tardes' : 'Buenas noches';
@@ -144,7 +144,7 @@ function WelcomeBanner({ roleLabel, gradient, chips }) {
   );
 }
 
-/* ── Compartido: Fila de lista (institución) ───────────────────── */
+/* Compartido: Fila de lista (institución) */
 const PALETTE = [
   'var(--edu-blue-500)',
   'var(--edu-cyan-600)',
@@ -196,9 +196,7 @@ function ListRow({ index, icon: Icon, title, meta, badge, badgeBg, badgeColor, o
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   PANEL DE SUPERADMINISTRADOR
-   ══════════════════════════════════════════════════════════════════ */
+/* Panel de superadministrador */
 function SuperadminDashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -516,9 +514,7 @@ function SuperadminDashboard() {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   PANEL DE ADMINISTRADOR
-   ══════════════════════════════════════════════════════════════════ */
+/* Panel de administrador */
 function AdminDashboard() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -725,7 +721,7 @@ function AdminDashboard() {
   );
 }
 
-/* ── Punto de entrada ──────────────────────────────────────────── */
+/* Punto de entrada */
 export default function AdminHomePage() {
   const { user } = useAuth();
   const rol = normalizeRole(user?.rol);

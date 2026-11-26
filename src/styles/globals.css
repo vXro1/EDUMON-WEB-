@@ -1,16 +1,14 @@
-/* ════════════════════════════════════════════════════════════════════
-   EDUMON DESIGN SYSTEM — globals.css
-   Orden de cascada: TOKENS → BASE → COMPONENTS → LAYOUT → UTILS
-   ════════════════════════════════════════════════════════════════════ */
+/* EDUMON DESIGN SYSTEM — globals.css
+   Orden de cascada: TOKENS → BASE → COMPONENTS → LAYOUT → UTILS */
 
-/* ── 1. TOKENS ── */
+/* 1. tokens */
 @import './tokens/tokens.css';
 
-/* ── 2. BASE ── */
+/* 2. base */
 @import './base/reset.css';
 @import './base/theme.css';
 
-/* ── 3. COMPONENTS ── */
+/* 3. components */
 @import './components/buttons.css';
 @import './components/forms.css';
 @import './components/cards.css';
@@ -23,7 +21,7 @@
 @import './components/footer.css';
 @import './components/skeleton.css';
 
-/* ── 4. PAGES ── */
+/* 4. pages */
 /* NOTA: rediseño de landing (paleta azul minimalista) vive en
    src/pages/LandingPage.css, importado por el propio componente.
    El landing.css legacy (paleta morada/rosa "capturas Figma") se
@@ -31,15 +29,15 @@
    (.landing-hero, .pilares-grid, .landing-nav, etc.), rompiendo
    la responsividad. No importar ambos a la vez. */
 
-/* ── 5. LAYOUT ── */
+/* 5. layout */
 @import './layout/Layout.css';
 
-/* ── 6. UTILITIES ── */
+/* 6. utilities */
 @import './utils/animations.css';
 @import './utils/scrollbar.css';
 @import './utils/accessibility.css';
 
-/* ── 7. TAILWIND ── */
+/* 7. tailwind */
 @custom-variant dark (&:is(.dark *));
 
 @tailwind base;

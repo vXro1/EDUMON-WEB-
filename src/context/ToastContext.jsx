@@ -41,7 +41,7 @@ const VARIANTS = {
   },
 };
 
-// ─── Elemento Toast individual ───────────────────────────────────────────────
+// Elemento Toast individual
 const ToastItem = ({ id, msg, type = 'success', onDismiss }) => {
   const v = VARIANTS[type] ?? VARIANTS.info;
 
@@ -108,7 +108,7 @@ const ToastItem = ({ id, msg, type = 'success', onDismiss }) => {
   );
 };
 
-// ─── Contenedor de Toasts ────────────────────────────────────────────────────
+// Contenedor de Toasts
 const ToastContainer = ({ toasts, onDismiss }) => {
   if (!toasts.length) return null;
   return createPortal(
@@ -144,7 +144,7 @@ const ToastContainer = ({ toasts, onDismiss }) => {
   );
 };
 
-// ─── Provider ─────────────────────────────────────────────────────────────────
+// Provider
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
   const timers = useRef({});
@@ -176,7 +176,7 @@ export const ToastProvider = ({ children }) => {
   );
 };
 
-// ─── Hook ─────────────────────────────────────────────────────────────────────
+// Hook
 export const useToast = () => {
   const ctx = useContext(ToastContext);
   if (!ctx) throw new Error('useToast debe usarse dentro de <ToastProvider>');

@@ -22,7 +22,7 @@ import {
 import { Modal, Button, Badge } from '@/components';
 import { fmt, fmtHour, esPasada } from '@/features/cursos/components/shared/helpers';
 
-// ─── Constantes ────────────────────────────────────────────────────────────
+// Constantes
 const DIAS = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 const MESES = [
   'Enero',
@@ -49,7 +49,7 @@ const CATEGORIA_COLOR = {
   institucional: '#00BCD4',
 };
 
-// ─── Utilidades ────────────────────────────────────────────────────────────
+// Utilidades
 function daysInMonth(y, m) {
   return new Date(y, m + 1, 0).getDate();
 }
@@ -87,7 +87,7 @@ function itemBadgeVariant(item) {
   return 'info';
 }
 
-// ─── Skeleton ──────────────────────────────────────────────────────────────
+// Skeleton
 function Sk({ h = 16, w = '100%', r = 6 }) {
   return (
     <div
@@ -97,7 +97,7 @@ function Sk({ h = 16, w = '100%', r = 6 }) {
   );
 }
 
-// ─── Ícono por tipo / categoría ────────────────────────────────────────────
+// Ícono por tipo / categoría
 function TipoIcon({ item, size = 14 }) {
   const s = { width: size, height: size, flexShrink: 0 };
   if (item.tipo === 'tarea') return <ClipboardList style={s} />;
@@ -106,7 +106,7 @@ function TipoIcon({ item, size = 14 }) {
   return <CalendarDays style={s} />;
 }
 
-// ─── Fila de item en panel lateral ─────────────────────────────────────────
+// Fila de item en panel lateral
 function ItemRow({ item, idx, onClick }) {
   const color = itemColor(item);
   const vencida = item.tipo === 'tarea' && esPasada(item.fecha);
@@ -229,7 +229,7 @@ function ItemRow({ item, idx, onClick }) {
   );
 }
 
-// ─── Modal de detalle ──────────────────────────────────────────────────────
+// Modal de detalle
 function DetalleModal({ item, onClose, canManage, onEdit, onDelete, deleting }) {
   if (!item) return null;
   const esTarea = item.tipo === 'tarea';
@@ -424,7 +424,7 @@ export default function CalendarWidget({
 
   return (
     <div>
-      {/* ── Barra superior ──────────────────────────────────────────── */}
+      {/* Barra superior */}
       <div
         style={{
           display: 'flex',
@@ -478,10 +478,10 @@ export default function CalendarWidget({
         </div>
       </div>
 
-      {/* ── Layout de dos columnas (grid: nunca deja espacio vacío al
-           envolver, a diferencia de un flex con ancho fijo) ──────────── */}
+      {/* Layout de dos columnas (grid: nunca deja espacio vacío al
+           envolver, a diferencia de un flex con ancho fijo) */}
       <div className="calendar-layout">
-        {/* ── CALENDARIO ────────────────────────────────────────────── */}
+        {/* Calendario */}
         <div
           style={{
             background: 'var(--color-surface)',
@@ -743,7 +743,7 @@ export default function CalendarWidget({
           </div>
         </div>
 
-        {/* ── PANEL DERECHO ─────────────────────────────────────────── */}
+        {/* Panel derecho */}
         <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
           {!selected && !loading && (
             <div
@@ -996,7 +996,7 @@ export default function CalendarWidget({
         </div>
       </div>
 
-      {/* ── Modal de detalle ──────────────────────────────────────────── */}
+      {/* Modal de detalle */}
       {detail && (
         <DetalleModal
           item={detail}

@@ -336,7 +336,7 @@ function getPerView() {
   return 3;
 }
 
-/* ── Carrusel de módulos ("Featured Cards") ──
+/* Carrusel de módulos ("Featured Cards")
    En móvil: una tarjeta centrada a escala completa, las vecinas se
    asoman más pequeñas y atenuadas (efecto scroll con Embla).
    En PC/tablet: rejilla de 3 (o 2) tarjetas que avanza por grupos,
@@ -364,9 +364,7 @@ export default function ModuloCarousel() {
     }),
   );
 
-  /* ─────────────────────────────────────────
-     EMBLA — CARRUSEL INFINITO
-  ───────────────────────────────────────── */
+  /* Embla — carrusel infinito */
 
   const emblaOptions = {
     align: singleView ? 'center' : 'start',
@@ -402,9 +400,7 @@ export default function ModuloCarousel() {
     return () => emblaApi.off('reInit', update);
   }, [emblaApi]);
 
-  /* ─────────────────────────────────────────
-     ACTUALIZAR CARD ACTIVA
-  ───────────────────────────────────────── */
+  /* Actualizar card activa */
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
@@ -426,9 +422,7 @@ export default function ModuloCarousel() {
     };
   }, [emblaApi, onSelect]);
 
-  /* ─────────────────────────────────────────
-     NAVEGACIÓN
-  ───────────────────────────────────────── */
+  /* Navegación */
 
   const scrollPrev = useCallback(() => {
     emblaApi?.scrollPrev();
@@ -445,9 +439,7 @@ export default function ModuloCarousel() {
     [emblaApi],
   );
 
-  /* ─────────────────────────────────────────
-     TECLADO
-  ───────────────────────────────────────── */
+  /* Teclado */
 
   const onViewportKeyDown = (e) => {
     if (e.key === 'ArrowLeft') {
@@ -463,7 +455,7 @@ export default function ModuloCarousel() {
 
   return (
     <div className="modulo-embla">
-      {/* ───────────────── VIEWPORT ───────────────── */}
+      {/* Viewport */}
 
       <div
         className="modulo-embla__viewport"
@@ -536,7 +528,7 @@ export default function ModuloCarousel() {
         </div>
       </div>
 
-      {/* ───────────────── FLECHA ANTERIOR ───────────────── */}
+      {/* Flecha anterior */}
 
       <button
         type="button"
@@ -547,7 +539,7 @@ export default function ModuloCarousel() {
         <IconChevronLeft size={20} />
       </button>
 
-      {/* ───────────────── FLECHA SIGUIENTE ───────────────── */}
+      {/* Flecha siguiente */}
 
       <button
         type="button"
@@ -558,7 +550,7 @@ export default function ModuloCarousel() {
         <IconChevronRight size={20} />
       </button>
 
-      {/* ───────────────── DOTS ───────────────── */}
+      {/* Puntos */}
 
       <div className="modulo-embla__dots" role="tablist" aria-label="Selecciona un grupo de módulos">
         {scrollSnaps.map((_, i) => (

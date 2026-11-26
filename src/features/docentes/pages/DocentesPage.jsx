@@ -46,7 +46,7 @@ import {
 import { descargarPlantillaDocentesCSV, CSV_COLUMNAS_DOCENTES } from '@/components/ui/DocentesCsvTemplate';
 import { HEADER_PALETTE } from '@/utils/xlsxWriter';
 
-/* ── Fila esqueleto ─────────────────────────────────────────────────── */
+/* Fila esqueleto */
 function SkRow() {
   return (
     <tr>
@@ -99,7 +99,7 @@ function ActionIconBtn({ icon: Icon, title, color, bg, onClick }) {
   );
 }
 
-/* ── Fila de docente ────────────────────────────────────────────────── */
+/* Fila de docente */
 function DocenteRow({ docente: d, onView, onEdit, onSuspend, onActivate }) {
   const suspendido = d.estado && d.estado !== 'activo';
   return (
@@ -157,7 +157,7 @@ function DocenteRow({ docente: d, onView, onEdit, onSuspend, onActivate }) {
   );
 }
 
-/* ── Tabla de referencia del formato CSV ───────────────────────────── */
+/* Tabla de referencia del formato CSV */
 function CsvFormatoTable() {
   return (
     <div
@@ -214,14 +214,12 @@ function CsvFormatoTable() {
   );
 }
 
-/* ── Constantes ─────────────────────────────────────────────────────── */
+/* Constantes */
 const INIT = { nombre: '', apellido: '', cedula: '', telefono: '', correo: '' };
 const LIMIT = 15;
 const SIN_DOCENTES = [];
 
-/* ══════════════════════════════════════════════════════════════════════
-   PÁGINA
-   ══════════════════════════════════════════════════════════════════════ */
+/* Página */
 export default function DocentesPage() {
   const setUsers = useUserStore((s) => s.setUsers);
 
@@ -248,7 +246,7 @@ export default function DocentesPage() {
   const [csvLoading, setCsvLoading] = useState(false);
   const [csvResult, setCsvResult] = useState(null);
 
-  /* ── Auxiliares ── */
+  /* Auxiliares */
   const notify = (msg, type = 'success') => {
     setToast({ msg, type });
     setTimeout(() => setToast({ msg: '', type: 'success' }), 3500);
@@ -283,7 +281,7 @@ export default function DocentesPage() {
   // tras crear/editar/importar: vuelve a pedir los listados de usuarios
   const load = useCallback(() => queryClient.invalidateQueries({ queryKey: queryKeys.usuarios.all() }), [queryClient]);
 
-  /* ── Filtro ── */
+  /* Filtro */
   const filtered = docentes.filter((d) => {
     const q = search.toLowerCase();
     return (
@@ -295,7 +293,7 @@ export default function DocentesPage() {
     );
   });
 
-  /* ── Crear ── */
+  /* Crear */
   const f = (key) => (e) => {
     setForm((p) => ({ ...p, [key]: e.target.value }));
     if (createErrors[key]) setCreateErrors((p) => ({ ...p, [key]: '' }));
@@ -348,7 +346,7 @@ export default function DocentesPage() {
     }
   };
 
-  /* ── Ver detalle ── */
+  /* Ver detalle */
   const openView = async (d) => {
     setViewTarget(d);
     setViewDetail(null);
@@ -363,7 +361,7 @@ export default function DocentesPage() {
     }
   };
 
-  /* ── Editar ── */
+  /* Editar */
   const [editForm, setEditForm] = useState(INIT);
   const [editErrors, setEditErrors] = useState({});
   const ef = (key) => (e) => {
@@ -441,7 +439,7 @@ export default function DocentesPage() {
     }
   };
 
-  /* ── Suspender ── */
+  /* Suspender */
   const handleSuspend = async () => {
     if (!delTarget) return;
     setSaving(true);
@@ -457,7 +455,7 @@ export default function DocentesPage() {
     }
   };
 
-  /* ── Activar (revertir suspensión) ── */
+  /* Activar (revertir suspensión) */
   const handleActivate = async () => {
     if (!activTarget) return;
     setSaving(true);
@@ -474,7 +472,7 @@ export default function DocentesPage() {
     }
   };
 
-  /* ── Importación CSV ──
+  /* Importación CSV
      El backend (preregistrarDocentesCSV) responde con los conteos anidados
      bajo "resumen" ({ resumen: {total, exitosos, duplicados, errores},
      detalles: {...} }) — guardar esa respuesta tal cual dejaba a este
@@ -530,14 +528,12 @@ export default function DocentesPage() {
 
   const totalPages = debSearch ? 0 : Math.ceil(total / LIMIT);
 
-  /* ══════════════════════════════════════════════════════════════════
-     RENDERIZADO
-     ══════════════════════════════════════════════════════════════════ */
+  /* Renderizado */
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
       <Toast msg={toast.msg} type={toast.type} />
 
-      {/* ── Header ── */}
+      {/* Encabezado */}
       <div className="page-head">
         <div>
           <h1 className="page-title">Docentes</h1>
@@ -570,7 +566,7 @@ export default function DocentesPage() {
         </div>
       </div>
 
-      {/* ── Search + filtro de estado ── */}
+      {/* Search + filtro de estado */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 'var(--space-5)' }}>
         <div style={{ position: 'relative', maxWidth: 360, flex: 1, minWidth: 220 }}>
           <Search
@@ -650,7 +646,7 @@ export default function DocentesPage() {
         </div>
       </div>
 
-      {/* ── Table ── */}
+      {/* Tabla */}
       <div
         style={{
           background: 'var(--color-surface)',
@@ -721,7 +717,7 @@ export default function DocentesPage() {
         )}
       </div>
 
-      {/* ── Pagination ── */}
+      {/* Pagination */}
       {totalPages > 1 && (
         <div style={{ display: 'flex', justifyContent: 'center', gap: 'var(--space-2)', marginTop: 'var(--space-5)' }}>
           <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage((p) => p - 1)}>
@@ -736,7 +732,7 @@ export default function DocentesPage() {
         </div>
       )}
 
-      {/* ══ MODAL: Crear docente ══ */}
+      {/* MODAL: Crear docente */}
       <Modal
         isOpen={showCreate}
         onClose={() => setShowCreate(false)}
@@ -830,7 +826,7 @@ export default function DocentesPage() {
         </form>
       </Modal>
 
-      {/* ══ MODAL: Importar CSV ══ */}
+      {/* MODAL: Importar CSV */}
       <Modal
         isOpen={showCsv}
         onClose={() => {
@@ -1015,7 +1011,7 @@ export default function DocentesPage() {
         )}
       </Modal>
 
-      {/* ══ MODAL: Editar docente ══ */}
+      {/* MODAL: Editar docente */}
       <Modal
         isOpen={Boolean(editTarget)}
         onClose={() => setEditTarget(null)}
@@ -1090,7 +1086,7 @@ export default function DocentesPage() {
         </form>
       </Modal>
 
-      {/* ══ MODAL: Ver detalle ══ */}
+      {/* MODAL: Ver detalle */}
       <Modal
         isOpen={Boolean(viewTarget)}
         onClose={() => {
@@ -1244,7 +1240,7 @@ export default function DocentesPage() {
         ) : null}
       </Modal>
 
-      {/* ══ MODAL: Confirmar suspensión ══ */}
+      {/* MODAL: Confirmar suspensión */}
       <Modal isOpen={Boolean(delTarget)} onClose={() => setDelTarget(null)} title="Suspender docente" size="sm">
         <div
           style={{
@@ -1286,7 +1282,7 @@ export default function DocentesPage() {
         </div>
       </Modal>
 
-      {/* ══ MODAL: Confirmar activación ══ */}
+      {/* MODAL: Confirmar activación */}
       <Modal isOpen={Boolean(activTarget)} onClose={() => setActivTarget(null)} title="Activar docente" size="sm">
         <div
           style={{

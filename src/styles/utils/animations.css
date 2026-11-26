@@ -1,4 +1,4 @@
-/* ─── KEYFRAMES ─── */
+/* Animaciones */
 @keyframes edu-fade-in {
   from {
     opacity: 0;
@@ -84,7 +84,7 @@
   }
 }
 
-/* ─── UTILIDADES DE ANIMACIÓN ─── */
+/* Utilidades de animación */
 .edu-fade-in {
   animation: edu-fade-in 0.2s ease both;
 }

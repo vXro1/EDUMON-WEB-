@@ -1,4 +1,3 @@
-// src/utils/formatBytes.js
 // Formatea un número de bytes en un texto legible ("12,4 MB").
 // Misma lógica que el thumbnail de FileUpload.jsx, extraída para reuso
 // (panel de superadmin App móvil + sección de descarga de la landing).

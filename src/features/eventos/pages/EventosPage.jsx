@@ -47,7 +47,7 @@ function Sk({ h = 14, w = '100%', r = 6 }) {
   );
 }
 
-/* ── Texto de error inline debajo de cada campo ────────────────────── */
+/* Texto de error inline debajo de cada campo */
 function FieldError({ message }) {
   if (!message) return null;
   return (
@@ -249,7 +249,7 @@ export default function EventosPage() {
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
       <Toast msg={toast.msg} type={toast.type} />
 
-      {/* HEADER */}
+      {/* Encabezado */}
       <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
         <div>
           <h1 style={{ fontSize: 20, fontWeight: 800 }}>Eventos</h1>
@@ -416,7 +416,7 @@ export default function EventosPage() {
         </div>
       )}
 
-      {/* FORM MODAL */}
+      {/* Modal del formulario */}
       <Modal isOpen={showForm} onClose={() => setShowForm(false)} title="Evento">
         <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div>
@@ -687,7 +687,7 @@ export default function EventosPage() {
         </form>
       </Modal>
 
-      {/* DELETE MODAL */}
+      {/* Modal de borrado */}
       <Modal isOpen={showDelete} onClose={() => setShowDelete(false)} title="Eliminar">
         <Button variant="outline" onClick={() => setShowDelete(false)}>
           Cancelar

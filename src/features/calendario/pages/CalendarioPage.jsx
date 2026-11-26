@@ -49,7 +49,7 @@ const lbl = {
   display: 'block',
 };
 
-// ─── Modal crear evento (requiere seleccionar curso) ─────────────────────
+// Modal crear evento (requiere seleccionar curso)
 function CreateEventoModal({ cursos, onClose, onSaved }) {
   const [form, setForm] = useState(EMPTY_FORM);
   const [cursoId, setCursoId] = useState(cursos.length === 1 ? cursos[0]._id : '');
@@ -192,7 +192,7 @@ function CreateEventoModal({ cursos, onClose, onSaved }) {
   );
 }
 
-// ─── Modal editar evento (el evento ya tiene cursoId) ────────────────────
+// Modal editar evento (el evento ya tiene cursoId)
 function EditEventoModal({ evento, onClose, onSaved }) {
   const [original] = useState(() => formDesdeEvento(evento));
   const [form, setForm] = useState(original);
@@ -312,9 +312,7 @@ function EditEventoModal({ evento, onClose, onSaved }) {
   );
 }
 
-// ══════════════════════════════════════════════════════════════════════════
 // PÁGINA PRINCIPAL
-// ══════════════════════════════════════════════════════════════════════════
 export default function CalendarioPage() {
   const canManage = usePermission(PERMISSIONS.CREATE_EVENTS);
   const { user } = useAuth();

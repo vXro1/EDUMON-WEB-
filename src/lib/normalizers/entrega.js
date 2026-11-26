@@ -1,4 +1,3 @@
-// src/lib/normalizers/entrega.js
 
 import { assetUrl } from '@/utils/assetUrl';
 

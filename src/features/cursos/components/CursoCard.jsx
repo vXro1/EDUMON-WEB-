@@ -10,7 +10,7 @@ const DEFAULT_COLOR = 'var(--color-primary)'; // mismo fallback usado en CursosP
 
 const ICON_MAP = { BookOpen, ClipboardList, CheckSquare, TrendingUp, Users };
 
-/* ── Botón de acción rápida ─────────────────────────────────────── */
+/* Botón de acción rápida */
 function ActionBtn({ action, onNavigate }) {
   const Icon = ICON_MAP[action.icon] ?? BookOpen;
   const variantMap = { primary: 'primary', outline: 'outline-neutral', ghost: 'ghost' };
@@ -30,7 +30,7 @@ function ActionBtn({ action, onNavigate }) {
   );
 }
 
-/* ── CursoCard ──────────────────────────────────────────────────── */
+/* CursoCard */
 export default memo(function CursoCard({ curso, role = 'docente', onClick = null, compact = false }) {
   const navigate = useNavigate();
 

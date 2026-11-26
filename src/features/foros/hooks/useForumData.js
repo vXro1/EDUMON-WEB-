@@ -12,7 +12,7 @@ import {
 import { normalizeForo, normalizeMensajes } from '@/lib/normalizers/foro';
 import { queryKeys } from '@/services/queryKeys';
 
-// ─── Consultas ────────────────────────────────────────────────────────────────
+// Consultas
 
 export const useForumDetail = (foroId) =>
   useQuery({
@@ -55,7 +55,7 @@ export const forosPorCursoQuery = (cursoId) => ({
 
 export const useForumsByCourse = (cursoId) => useQuery(forosPorCursoQuery(cursoId));
 
-// ─── Mutaciones ───────────────────────────────────────────────────────────────
+// Mutaciones
 
 export const usePostMessage = (foroId) => {
   const qc = useQueryClient();

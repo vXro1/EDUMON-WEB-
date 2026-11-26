@@ -191,7 +191,7 @@ export default function ForosPage() {
     <div style={{ maxWidth: 1000, margin: '0 auto' }}>
       <Toast msg={toast.msg} type={toast.type} />
 
-      {/* ── Cabecera ─────────────────────────────────────────────── */}
+      {/* Cabecera */}
       <div
         style={{
           display: 'flex',
@@ -244,7 +244,7 @@ export default function ForosPage() {
         </div>
       </div>
 
-      {/* ── Selector de curso ────────────────────────────────────── */}
+      {/* Selector de curso */}
       <div
         style={{
           background: 'var(--color-surface)',
@@ -282,7 +282,7 @@ export default function ForosPage() {
         </select>
       </div>
 
-      {/* ── Lista de foros ─────────────────────────────────────────── */}
+      {/* Lista de foros */}
       {!cursoSel ? (
         <div
           style={{
@@ -337,7 +337,7 @@ export default function ForosPage() {
         </div>
       )}
 
-      {/* ══ MODAL DE CREACIÓN ═══════════════════════════════════════ */}
+      {/* Modal de creación */}
       <Modal
         isOpen={showCreate}
         onClose={() => setShowCreate(false)}
@@ -429,7 +429,7 @@ export default function ForosPage() {
         </form>
       </Modal>
 
-      {/* ══ CONFIRMACIÓN DE ELIMINACIÓN ══════════════════════════════════════ */}
+      {/* Confirmación de eliminación */}
       <Modal isOpen={showDelete} onClose={() => setShowDelete(false)} title="Eliminar foro" size="sm">
         <p style={{ fontSize: 13.5, color: 'var(--color-text-secondary)', marginBottom: 20 }}>
           Se eliminarán permanentemente el foro y todos sus mensajes. ¿Continuar?

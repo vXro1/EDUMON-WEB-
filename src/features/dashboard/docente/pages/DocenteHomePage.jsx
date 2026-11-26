@@ -20,12 +20,12 @@ import { normalizeCurso, normalizeTarea } from '@/lib/normalizers';
 import CursoCard from '@/features/cursos/components/CursoCard';
 import { Button } from '@/components';
 
-/* ── Esqueleto de carga ────────────────────────────────────────── */
+/* Esqueleto de carga */
 function Sk({ h = 14, w = '100%', r = 'var(--radius-sm)' }) {
   return <span className="skeleton" style={{ height: h, width: w, borderRadius: r, display: 'block' }} />;
 }
 
-/* ── Tarjeta de estadística ────────────────────────────────────── */
+/* Tarjeta de estadística */
 function StatCard({ value, label, icon: Icon, colorClass, loading }) {
   return (
     <div className="stat-card">
@@ -51,7 +51,7 @@ function StatCard({ value, label, icon: Icon, colorClass, loading }) {
   );
 }
 
-/* ── Ítem de lista de tareas ───────────────────────────────────── */
+/* Ítem de lista de tareas */
 function TaskItem({ tarea }) {
   return (
     <div className="list-card-item">
@@ -74,7 +74,7 @@ function TaskItem({ tarea }) {
   );
 }
 
-/* ── Ítem de lista de eventos ──────────────────────────────────── */
+/* Ítem de lista de eventos */
 function EventItem({ evento }) {
   return (
     <div className="list-card-item">
@@ -92,7 +92,7 @@ function EventItem({ evento }) {
   );
 }
 
-/* ── Tarjeta de acción rápida — mismo patrón que admin/padre ──── */
+/* Tarjeta de acción rápida — mismo patrón que admin/padre */
 function ActionCard({ icon: Icon, label, desc, colorClass, onClick }) {
   return (
     <button
@@ -131,7 +131,7 @@ function ActionCard({ icon: Icon, label, desc, colorClass, onClick }) {
   );
 }
 
-/* ── Encabezado de sección ─────────────────────────────────────── */
+/* Encabezado de sección */
 function SectionHeader({ title, onAction, actionLabel }) {
   return (
     <div className="section-header">
@@ -145,7 +145,7 @@ function SectionHeader({ title, onAction, actionLabel }) {
   );
 }
 
-/* ── Estado vacío ──────────────────────────────────────────────── */
+/* Estado vacío */
 function EmptyState({ icon: Icon, text, actionLabel, onAction }) {
   return (
     <div className="empty-state">
@@ -162,7 +162,7 @@ function EmptyState({ icon: Icon, text, actionLabel, onAction }) {
   );
 }
 
-/* ── Esqueletos de cuadrícula de cursos ────────────────────────── */
+/* Esqueletos de cuadrícula de cursos */
 function CourseSkeletons() {
   return (
     <div className="grid-auto-sm">
@@ -180,9 +180,7 @@ function CourseSkeletons() {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   PÁGINA PRINCIPAL
-   ══════════════════════════════════════════════════════════════════ */
+/* Página principal */
 export default function DocenteHomePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -219,7 +217,7 @@ export default function DocenteHomePage() {
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto' }}>
-      {/* ── Banner de bienvenida ── */}
+      {/* Banner de bienvenida */}
       <div className="welcome-banner edu-fade-in" role="banner">
         <div style={{ position: 'relative', zIndex: 1, width: '100%' }}>
           <span className="welcome-badge">
@@ -257,7 +255,7 @@ export default function DocenteHomePage() {
         </div>
       </div>
 
-      {/* ── Estadísticas ── */}
+      {/* Estadísticas */}
       <section aria-label="Estadísticas de actividad" style={{ marginBottom: 'var(--space-6)' }}>
         <SectionHeader title="Tu actividad" />
         <div className="grid-stats">
@@ -327,7 +325,7 @@ export default function DocenteHomePage() {
         </div>
       </section>
 
-      {/* ── Cursos + Retos ── */}
+      {/* Cursos + Retos */}
       <div className="layout-split" style={{ marginBottom: 'var(--space-6)' }}>
         {/* Cursos */}
         <section aria-label="Mis cursos">

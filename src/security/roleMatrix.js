@@ -1,6 +1,6 @@
 import { PERMISSIONS } from './permissions.js';
 
-// ─── Constantes de rol ────────────────────────────────────────────────────────
+// Constantes de rol
 // no existe rol "estudiante" — los perfiles familiares usan rol 'padre', solo varía esTitular
 export const ROLES = {
   ADMIN: 'administrador',
@@ -9,7 +9,7 @@ export const ROLES = {
   SUPERADMIN: 'superadmin',
 };
 
-// ─── Matriz de permisos ───────────────────────────────────────────────────────
+// Matriz de permisos
 const ALL = Object.values(PERMISSIONS);
 
 const rolePermissions = {
@@ -79,7 +79,7 @@ const rolePermissions = {
   ],
 };
 
-// ─── Normalización de rol ─────────────────────────────────────────────────────
+// Normalización de rol
 export function normalizeRole(role) {
   if (!role) return null;
   const r = String(role).toLowerCase().trim();
@@ -92,7 +92,7 @@ export function normalizeRole(role) {
   return r;
 }
 
-// ─── Getters ──────────────────────────────────────────────────────────────────
+// Consultas
 export function getPermissionsForRole(role) {
   const normalized = normalizeRole(role);
   return rolePermissions[normalized] ?? [];

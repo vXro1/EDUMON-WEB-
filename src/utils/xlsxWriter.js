@@ -1,4 +1,3 @@
-// src/utils/xlsxWriter.js
 //
 // Generador mínimo de archivos .xlsx en el navegador, sin dependencias
 // externas. El backend dejó de aceptar CSV en las cargas masivas y ahora
@@ -122,7 +121,7 @@ function esc(s) {
     .replace(/'/g, '&apos;');
 }
 
-// ─── Estilo visual ────────────────────────────────────────────────────────
+// Estilo visual
 // Un color de encabezado distinto por columna (se repite en ciclo si hay
 // más columnas que colores) — más fácil de leer/rellenar que un encabezado
 // de un solo color plano.

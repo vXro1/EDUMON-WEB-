@@ -1,5 +1,5 @@
 export const queryKeys = {
-  // ─── Cursos ───────────────────────────────────────────────────────────────
+  // Cursos
   cursos: {
     all: () => ['cursos'],
     list: (params) => ['cursos', 'list', params ?? {}],
@@ -9,7 +9,7 @@ export const queryKeys = {
     modulos: (id) => ['cursos', id, 'modulos'],
   },
 
-  // ─── Tareas ───────────────────────────────────────────────────────────────
+  // Tareas
   tareas: {
     all: () => ['tareas'],
     list: (params) => ['tareas', 'list', params ?? {}],
@@ -17,14 +17,14 @@ export const queryKeys = {
     detail: (id) => ['tareas', id],
   },
 
-  // ─── Entregas ─────────────────────────────────────────────────────────────
+  // Entregas
   entregas: {
     all: () => ['entregas'],
     byTarea: (tareaId) => ['entregas', 'tarea', tareaId],
     mine: (tareaId) => ['entregas', 'mine', tareaId],
   },
 
-  // ─── Foros ────────────────────────────────────────────────────────────────
+  // Foros
   foros: {
     all: () => ['foros'],
     byCurso: (cursoId) => ['foros', 'curso', cursoId],
@@ -33,7 +33,7 @@ export const queryKeys = {
     dashboard: (foroId) => ['foros', foroId, 'dashboard'],
   },
 
-  // ─── Eventos ──────────────────────────────────────────────────────────────
+  // Eventos
   eventos: {
     all: () => ['eventos'],
     byCurso: (cursoId) => ['eventos', 'curso', cursoId],
@@ -41,42 +41,42 @@ export const queryKeys = {
     detail: (id) => ['eventos', id],
   },
 
-  // ─── Calendario ───────────────────────────────────────────────────────────
+  // Calendario
   calendario: {
     all: () => ['calendario'],
     byCurso: (cursoId) => ['calendario', 'curso', cursoId],
   },
 
-  // ─── Usuarios ─────────────────────────────────────────────────────────────
+  // Usuarios
   usuarios: {
     all: () => ['usuarios'],
     list: (params) => ['usuarios', 'list', params ?? {}],
     detail: (id) => ['usuarios', id],
   },
 
-  // ─── Perfiles familiares ──────────────────────────────────────────────────
+  // Perfiles familiares
   perfiles: {
     all: () => ['perfiles'],
   },
 
-  // ─── Sesiones ─────────────────────────────────────────────────────────────
+  // Sesiones
   sesiones: {
     list: (page) => ['sesiones', page ?? 1],
   },
 
-  // ─── Notificaciones ───────────────────────────────────────────────────────
+  // Notificaciones
   notificaciones: {
     all: () => ['notificaciones'],
     unread: () => ['notificaciones', 'unread'],
   },
 
-  // ─── Instituciones ────────────────────────────────────────────────────────
+  // Instituciones
   instituciones: {
     all: () => ['instituciones'],
     detail: (id) => ['instituciones', id],
   },
 
-  // ─── Buzon ────────────────────────────────────────────────────────────────
+  // Buzon
   buzon: {
     mensajes: (params) => ['buzon', 'mensajes', params ?? {}],
   },

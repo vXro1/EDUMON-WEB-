@@ -2,9 +2,7 @@ import { forwardRef, useId } from 'react';
 import { AlertCircle, Phone } from 'lucide-react';
 import { toLocalPhone, PHONE_PREFIX, PHONE_PLACEHOLDER, PHONE_HINT } from '@/utils/normalizePhone';
 
-/* ══════════════════════════════════════════════════════════════
-   PHONE INPUT — campo de teléfono ÚNICO de toda la app
-   ══════════════════════════════════════════════════════════════
+/* PHONE INPUT — campo de teléfono ÚNICO de toda la app
    Un solo comportamiento en login, registro de docentes, usuarios,
    participantes, instituciones, perfil y recuperación de contraseña:
 
@@ -20,8 +18,7 @@ import { toLocalPhone, PHONE_PREFIX, PHONE_PLACEHOLDER, PHONE_HINT } from '@/uti
    los dos apenas se llevaban entre 6 y 10px de aire): con flexbox cada
    segmento reserva su propio espacio, así que "+57" nunca puede pisar
    el placeholder ni lo que el usuario escribe, sea cual sea la fuente,
-   el ancho de la columna o el navegador.
-   ══════════════════════════════════════════════════════════════ */
+   el ancho de la columna o el navegador. */
 export const PhoneInput = forwardRef(function PhoneInput(
   {
     value = '',

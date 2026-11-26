@@ -1,12 +1,12 @@
 export const PERMISSIONS = {
-  // ─── Permisos base (existentes — compatibilidad mantenida) ────────────────
+  // Permisos base (existentes — compatibilidad mantenida)
   MANAGE_USERS: 'MANAGE_USERS',
   VIEW_COURSES: 'VIEW_COURSES',
   CREATE_COURSES: 'CREATE_COURSES',
   GRADE_TASKS: 'GRADE_TASKS',
   VIEW_REPORTS: 'VIEW_REPORTS',
 
-  // ─── Secciones internas de curso ──────────────────────────────────────────
+  // Secciones internas de curso
   VIEW_COURSE_PARTICIPANTS: 'VIEW_COURSE_PARTICIPANTS',
   MANAGE_COURSE_PARTICIPANTS: 'MANAGE_COURSE_PARTICIPANTS',
 
@@ -26,16 +26,16 @@ export const PERMISSIONS = {
   POST_MENSAJE_FORO: 'POST_MENSAJE_FORO',
   REPLY_MENSAJE_FORO: 'REPLY_MENSAJE_FORO',
 
-  // ─── Eventos ──────────────────────────────────────────────────────────────
+  // Eventos
   VIEW_EVENTS: 'VIEW_EVENTS',
   CREATE_EVENTS: 'CREATE_EVENTS',
 
-  // ─── Instituciones ────────────────────────────────────────────────────────
+  // Instituciones
   MANAGE_INSTITUTIONS: 'MANAGE_INSTITUTIONS',
 
-  // ─── Notificaciones ───────────────────────────────────────────────────────
+  // Notificaciones
   VIEW_NOTIFICATIONS: 'VIEW_NOTIFICATIONS',
 
-  // ─── Perfiles familiares ──────────────────────────────────────────────────
+  // Perfiles familiares
   MANAGE_FAMILY_PROFILES: 'MANAGE_FAMILY_PROFILES',
 };

@@ -3,7 +3,7 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { Paperclip, X, FileText, Film, File } from 'lucide-react';
 import { Button } from '@/components';
 
-// ── Thumbnail for a single pending file ───────────────────────────────────────
+// Thumbnail for a single pending file
 function FileThumb({ file, onRemove }) {
   const [preview, setPreview] = useState(null);
   const isImage = file.type.startsWith('image/');
@@ -36,7 +36,7 @@ function FileThumb({ file, onRemove }) {
         justifyContent: 'center',
       }}
     >
-      {/* ── Remove button ── */}
+      {/* Botón para quitar */}
       <Button
         type="button"
         variant="ghost"
@@ -135,7 +135,7 @@ function FileThumb({ file, onRemove }) {
   );
 }
 
-// ── Main FileUpload component ─────────────────────────────────────────────────
+// Componente FileUpload
 export default function FileUpload({
   files = [],
   onChange,
@@ -184,7 +184,7 @@ export default function FileUpload({
     />
   );
 
-  // ── Compact: attach-button + thumbnail strip ───────────────────────────────
+  // Compact: attach-button + thumbnail strip
   if (compact) {
     return (
       <div>
@@ -213,7 +213,7 @@ export default function FileUpload({
     );
   }
 
-  // ── Full: drag-and-drop zone + thumbnails ─────────────────────────────────
+  // Full: drag-and-drop zone + thumbnails
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
       {hiddenInput}

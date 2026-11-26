@@ -1,12 +1,8 @@
-/* ════════════════════════════════════════════════════════════════════
-   EDUMON DESIGN SYSTEM — Layout.css
+/* EDUMON DESIGN SYSTEM — Layout.css
    Mobile-first. Breakpoints: 480 | 768 | 1024 | 1280 | 1440+
-   Soft UI + Claymorphism + Microinteractions
-   ════════════════════════════════════════════════════════════════════ */
+   Soft UI + Claymorphism + Microinteractions */
 
-/* ──────────────────────────────────────────────────────────────────────
-   CAPA DE FONDO DEL SIDEBAR (drawer móvil)
-   ────────────────────────────────────────────────────────────────────── */
+/* CAPA DE FONDO DEL SIDEBAR (drawer móvil) */
 .sidebar-backdrop {
   display: none;
   position: fixed;
@@ -21,22 +17,18 @@
   display: block;
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   APP SHELL — contenedor raíz sin overflow propio
-   El sidebar es siempre position:fixed; .main usa margin-left como offset
-   ────────────────────────────────────────────────────────────────────── */
+/* APP SHELL — contenedor raíz sin overflow propio
+   El sidebar es siempre position:fixed; .main usa margin-left como offset */
 .app-shell {
   display: flex;
   min-height: 100dvh;
   background: var(--color-bg-muted, #fafafa);
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   SIDEBAR
+/* Sidebar
    Móvil: drawer fijo (fuera del canvas por la izquierda)
    Tablet (768): riel estrecho fijo solo con iconos
-   Escritorio (1024+): sidebar completo fijo
-   ────────────────────────────────────────────────────────────────────── */
+   Escritorio (1024+): sidebar completo fijo */
 .sidebar {
   background: #ffffff;
   color: var(--color-text);
@@ -167,13 +159,13 @@
   border-radius: var(--radius-full);
 }
 
-/* ── Brand logo ─────────────────────────────────────────────────────────
+/* Brand logo
    Grid de 3 columnas (en vez de flex + margin-left:auto) para que el logo
    quede realmente centrado en la cabecera sin importar el ancho del botón
    de colapso a su derecha — con flex, "centrar" solo funciona si ambos
    lados pesan igual, y aquí nunca fue el caso. El borde inferior cierra
    la cabecera como una banda propia en vez de dejar el logo suelto sobre
-   la lista de navegación. ── */
+   la lista de navegación. */
 .sidebar-brand {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
@@ -199,7 +191,7 @@
   justify-self: end;
 }
 
-/* ── Section label ─────────────────────────────────────────────── */
+/* Etiqueta de sección */
 .sidebar-section {
   font-size: 9.5px;
   text-transform: uppercase;
@@ -212,7 +204,7 @@
   flex-shrink: 0;
 }
 
-/* ── Variante de peligro para el item logout ────────────────────── */
+/* Variante de peligro para el item logout */
 .sidebar-item--danger {
   color: var(--color-error-text) !important;
 }
@@ -230,7 +222,7 @@
   color: var(--color-error-hover);
 }
 
-/* ── Elemento de nav — Soft UI con badges de icono ─────────────── */
+/* Elemento de nav — Soft UI con badges de icono */
 .sidebar-item {
   display: flex;
   align-items: center;
@@ -333,7 +325,7 @@
   transition: opacity var(--transition-fast);
 }
 
-/* ── Tarjeta de usuario inferior — glassmorfismo Soft UI ────────── */
+/* Tarjeta de usuario inferior — glassmorfismo Soft UI */
 .sidebar-card {
   margin-top: auto;
   flex-shrink: 0;
@@ -378,10 +370,8 @@
   margin-top: 1px;
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   MAIN COLUMN — columna derecha junto al sidebar fixed
-   height: 100dvh + overflow: hidden → el scroll ocurre en .page
-   ────────────────────────────────────────────────────────────────────── */
+/* MAIN COLUMN — columna derecha junto al sidebar fixed
+   height: 100dvh + overflow: hidden → el scroll ocurre en .page */
 .main {
   flex: 1;
   display: flex;
@@ -408,9 +398,7 @@
   }
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   NAVBAR — vidrio esmerilado, sticky
-   ────────────────────────────────────────────────────────────────────── */
+/* NAVBAR — vidrio esmerilado, sticky */
 .navbar {
   /* flex-shrink: 0 = altura fija en la columna flex de .main */
   flex-shrink: 0;
@@ -651,10 +639,8 @@
   border: 2px solid var(--color-bg);
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   PAGE — área de contenido dentro de .main
-   Padding mobile-first, ancho máximo responsive
-   ────────────────────────────────────────────────────────────────────── */
+/* PAGE — área de contenido dentro de .main
+   Padding mobile-first, ancho máximo responsive */
 .page {
   /* flex: 1 + overflow-y: auto = scroll independiente del sidebar y navbar */
   flex: 1;
@@ -693,7 +679,7 @@
   }
 }
 
-/* ── Cabecera de página ─────────────────────────────────────────── */
+/* Cabecera de página */
 .page-head {
   display: flex;
   align-items: flex-start;
@@ -734,9 +720,7 @@
   line-height: var(--leading-relaxed);
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   RESPONSIVE GRID HELPERS
-   ────────────────────────────────────────────────────────────────────── */
+/* Responsive grid helpers */
 
 /* Grilla responsive de relleno automático */
 .grid-auto {
@@ -804,11 +788,11 @@
   }
 }
 
-/* ── Calendario: mes + lista de eventos — grid en vez de flex con ancho
+/* Calendario: mes + lista de eventos — grid en vez de flex con ancho
    fijo: con flex-wrap, si la tarjeta del mes (ancho fijo) no cabe junto a
    la lista, queda sola en su fila pegada a la izquierda con todo el resto
    vacío ("no centrado"); con grid, cada columna siempre llena su fracción
-   del ancho disponible, apilada en 1 columna en pantallas angostas. ──── */
+   del ancho disponible, apilada en 1 columna en pantallas angostas. */
 .calendar-layout {
   display: grid;
   grid-template-columns: 1fr;
@@ -821,9 +805,7 @@
   }
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   SECTION HELPERS
-   ────────────────────────────────────────────────────────────────────── */
+/* Utilidades de sección */
 .section-header {
   display: flex;
   align-items: center;
@@ -865,9 +847,7 @@
   color: var(--color-primary-hover);
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   BANNER DE BIENVENIDA — franja hero con gradiente Soft UI
-   ────────────────────────────────────────────────────────────────────── */
+/* BANNER DE BIENVENIDA — franja hero con gradiente Soft UI */
 .welcome-banner {
   border-radius: var(--radius-2xl);
   background: var(--gradient-brand);
@@ -952,9 +932,7 @@
   line-height: var(--leading-relaxed);
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   TARJETA DE ESTADÍSTICA — píldora elevada Soft UI
-   ────────────────────────────────────────────────────────────────────── */
+/* TARJETA DE ESTADÍSTICA — píldora elevada Soft UI */
 .stat-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -1027,9 +1005,7 @@
   color: var(--edu-yellow-700);
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   EMPTY STATE
-   ────────────────────────────────────────────────────────────────────── */
+/* Estado vacío */
 .empty-state {
   background: var(--color-surface);
   border: 1.5px dashed var(--color-border);
@@ -1067,9 +1043,7 @@
   line-height: var(--leading-relaxed);
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   TARJETA DE LISTA — contenedor unificado para listas de tareas/eventos
-   ────────────────────────────────────────────────────────────────────── */
+/* TARJETA DE LISTA — contenedor unificado para listas de tareas/eventos */
 .list-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -1138,9 +1112,7 @@
   white-space: nowrap;
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   QUICK ACTIONS BAR
-   ────────────────────────────────────────────────────────────────────── */
+/* Quick actions bar */
 .quick-actions {
   display: flex;
   flex-wrap: wrap;
@@ -1148,9 +1120,7 @@
   /* El margen inferior lo maneja la <section> contenedora para evitar doble espaciado */
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   SECTION ACCENT SCOPES
-   ────────────────────────────────────────────────────────────────────── */
+/* Section accent scopes */
 .section-inicio {
   --section: var(--edu-blue-500);
   --section-50: var(--edu-blue-50);
@@ -1182,9 +1152,7 @@
   --section-700: var(--edu-yellow-700);
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   TABLA DE CONTENIDO — envoltorio con scroll responsive
-   ────────────────────────────────────────────────────────────────────── */
+/* TABLA DE CONTENIDO — envoltorio con scroll responsive */
 .table-wrap {
   width: 100%;
   overflow-x: auto;
@@ -1236,9 +1204,7 @@
   background: var(--edu-neutral-50);
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   TABS
-   ────────────────────────────────────────────────────────────────────── */
+/* TABS */
 .tab-bar {
   display: flex;
   gap: 2px;
@@ -1280,11 +1246,9 @@
   border-bottom-color: var(--section, var(--color-primary));
 }
 
-/* ══════════════════════════════════════════════════════════════════════
-   COMPLEMENTO — clases usadas por MainLayout.jsx que no estaban definidas
-   ══════════════════════════════════════════════════════════════════════ */
+/* COMPLEMENTO — clases usadas por MainLayout.jsx que no estaban definidas */
 
-/* ── Keyframes (fallback si utils/animations.css no los define) ──── */
+/* Keyframes (fallback si utils/animations.css no los define) */
 @keyframes edu-slide-down {
   from {
     opacity: 0;
@@ -1304,7 +1268,7 @@
   }
 }
 
-/* ── Sidebar: envoltorio de grupo ───────────────────────────────── */
+/* Sidebar: envoltorio de grupo */
 .sidebar-group {
   display: flex;
   flex-direction: column;
@@ -1312,9 +1276,9 @@
   padding-bottom: var(--space-3);
 }
 
-/* ── Sidebar: botón de colapso — mismo lenguaje "ghost" que .nav-icon-btn,
+/* Sidebar: botón de colapso — mismo lenguaje "ghost" que .nav-icon-btn,
    sin borde propio (el borde fijo se veía como una píldora suelta y
-   descoordinada junto al logo) ───────────────────────────────────── */
+   descoordinada junto al logo) */
 .sidebar-collapse-btn {
   width: 30px;
   height: 30px;
@@ -1375,7 +1339,7 @@ button.sidebar-card:focus-visible,
   outline-offset: 2px;
 }
 
-/* ── Escritorio colapsado — replica el comportamiento solo-iconos del tablet ── */
+/* Escritorio colapsado — replica el comportamiento solo-iconos del tablet */
 @media (min-width: 1024px) {
   .app-shell.collapsed .sidebar-brand {
     display: flex;
@@ -1413,14 +1377,14 @@ button.sidebar-card:focus-visible,
   }
 }
 
-/* ── Resultados de búsqueda: permite scroll cuando hay muchos resultados ─ */
+/* Resultados de búsqueda: permite scroll cuando hay muchos resultados ─ */
 .nav-search-results {
   max-height: 300px;
   overflow-x: hidden;
   overflow-y: auto;
 }
 
-/* ── Navbar: divisor vertical entre campana y perfil ────────────── */
+/* Navbar: divisor vertical entre campana y perfil */
 .nav-divider {
   width: 1px;
   height: 24px;
@@ -1429,12 +1393,12 @@ button.sidebar-card:focus-visible,
   align-self: center;
 }
 
-/* ── Navbar: envoltorio de perfil (relative para anclar el dropdown) ── */
+/* Navbar: envoltorio de perfil (relative para anclar el dropdown) */
 .nav-profile {
   position: relative;
 }
 
-/* ── Navbar: botón disparador del avatar ─────────────────────────── */
+/* Navbar: botón disparador del avatar */
 .nav-avatar-trigger {
   display: flex;
   align-items: center;
@@ -1460,7 +1424,7 @@ button.sidebar-card:focus-visible,
   outline-offset: 2px;
 }
 
-/* ── Navbar: bloque de texto con info del avatar ─────────────────── */
+/* Navbar: bloque de texto con info del avatar */
 .nav-avatar-info {
   display: flex;
   flex-direction: column;
@@ -1495,7 +1459,7 @@ button.sidebar-card:focus-visible,
   text-overflow: ellipsis;
 }
 
-/* ── Navbar: icono de chevron ────────────────────────────────────── */
+/* Navbar: icono de chevron */
 .nav-avatar-chevron {
   color: var(--color-text-subtle);
   flex-shrink: 0;
@@ -1510,7 +1474,7 @@ button.sidebar-card:focus-visible,
   }
 }
 
-/* ── Navbar: tarjeta desplegable de perfil ───────────────────────── */
+/* Navbar: tarjeta desplegable de perfil */
 .nav-dropdown {
   position: absolute;
   top: calc(100% + 10px);
@@ -1626,9 +1590,7 @@ button.sidebar-card:focus-visible,
   margin: var(--space-1) var(--space-1);
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   PAGE TRANSITION — animación de entrada al cambiar de ruta
-   ────────────────────────────────────────────────────────────────────── */
+/* PAGE TRANSITION — animación de entrada al cambiar de ruta */
 @keyframes page-fade-in {
   from {
     opacity: 0;
@@ -1640,9 +1602,7 @@ button.sidebar-card:focus-visible,
   }
 }
 
-/* ──────────────────────────────────────────────────────────────────────
-   RESPONSIVE TABLE — utility para tablas en mobile
-   ────────────────────────────────────────────────────────────────────── */
+/* RESPONSIVE TABLE — utility para tablas en mobile */
 .table-scroll {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;

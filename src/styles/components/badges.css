@@ -1,6 +1,4 @@
-/* ════════════════════════════════════════════════════════════════════
-   EDUMON — BADGES (Soft UI)
-   ════════════════════════════════════════════════════════════════════
+/* EDUMON — BADGES (Soft UI)
    NOTA: estas clases standalone no tienen consumidores hoy — Badge.jsx
    arma sus propios estilos inline con tokens (mismo criterio que aquí).
    Se mantienen coherentes por si algún día se usan directamente.
@@ -8,10 +6,9 @@
    Concepto visual:
    • Relleno de color suave + borde fino del mismo tono
    • box-shadow: var(--clay-pill) — sombra suave fija, no una "base" 3D
-   • Sin bounce de entrada
-   ════════════════════════════════════════════════════════════════════ */
+   • Sin bounce de entrada */
 
-/* ── Keyframes ────────────────────────────────────────────────────────── */
+/* Animaciones */
 @keyframes badge-in {
   from {
     opacity: 0;
@@ -35,7 +32,7 @@
   }
 }
 
-/* ── Base ─────────────────────────────────────────────────────────────── */
+/* Base */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -54,7 +51,7 @@
     box-shadow 120ms ease;
 }
 
-/* ── Tamaños ──────────────────────────────────────────────────────────── */
+/* Tamaños */
 .badge-sm {
   font-size: 10px;
   padding: 3px 9px;
@@ -68,7 +65,7 @@
   padding: 7px 16px;
 }
 
-/* ── Variantes de color — relleno suave + borde + texto del tono fuerte ── */
+/* Variantes de color — relleno suave + borde + texto del tono fuerte */
 .badge-success {
   background: var(--color-success-light);
   border: 1px solid color-mix(in srgb, var(--color-success) 22%, transparent);
@@ -108,14 +105,14 @@
   color: #fff;
 }
 
-/* ── Gradiente especial ───────────────────────────────────────────────── */
+/* Gradiente especial */
 .badge-gradient {
   background: linear-gradient(135deg, var(--color-success) 0%, var(--color-info) 100%);
   border: none;
   color: #fff;
 }
 
-/* ── Dot de estado ────────────────────────────────────────────────────── */
+/* Dot de estado */
 .badge-dot::before {
   content: '';
   display: inline-block;
@@ -127,12 +124,12 @@
   flex-shrink: 0;
 }
 
-/* ── Dot pulsante (en vivo) ───────────────────────────────────────────── */
+/* Dot pulsante (en vivo) */
 .badge-pulse::before {
   animation: badge-pulse-dot 1.5s ease-in-out infinite;
 }
 
-/* ── Interactivo (clicable) ─────────────────────────────────────────── */
+/* Interactivo (clicable) */
 .badge-interactive {
   cursor: pointer;
   user-select: none;
@@ -144,7 +141,7 @@
   transform: scale(0.97);
 }
 
-/* ── Botón de cierre (chip removible) ───────────────────────────────────── */
+/* Botón de cierre (chip removible) */
 .badge-close {
   display: inline-flex;
   align-items: center;
@@ -168,7 +165,7 @@
   background: color-mix(in srgb, currentColor 28%, transparent);
 }
 
-/* ── Contador de notificaciones ───────────────────────────────────────── */
+/* Contador de notificaciones */
 .badge-count {
   min-width: 18px;
   height: 18px;

@@ -29,7 +29,7 @@ const TabCargando = () => (
   </div>
 );
 
-// ─── Definición de tabs ───────────────────────────────────────────────────────
+// Definición de tabs
 const TAB_CONFIG = [
   { key: 'modulos', label: 'Módulos', icon: BookOpen, always: true },
   { key: 'tareas', label: 'Retos', icon: ClipboardList, perm: PERMISSIONS.VIEW_TASKS },
@@ -38,7 +38,7 @@ const TAB_CONFIG = [
   { key: 'participantes', label: 'Participantes', icon: Users, perm: PERMISSIONS.VIEW_COURSE_PARTICIPANTS },
 ];
 
-// ─── Contenido ────────────────────────────────────────────────────────────────
+// Contenido
 
 function CursoHubContent() {
   const navigate = useNavigate();
@@ -133,7 +133,7 @@ function CursoHubContent() {
   );
 }
 
-// ─── Page (entry point con Provider) ─────────────────────────────────────────
+// Page (entry point con Provider)
 
 export default function CursoHubPage() {
   return (

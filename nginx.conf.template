@@ -160,7 +160,6 @@ server {
     }
 }
 
-# ============================================================================
 # HTTPS — apagado a propósito, listo para activar cuando infraestructura
 # defina dominio + certificado. NO se genera ni se inventa ningún
 # certificado acá; esto es solo la plantilla de config.
