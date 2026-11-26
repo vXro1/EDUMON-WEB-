@@ -1,0 +1,3 @@
+README.md export-subst
+docs/flutter-migration/ export-ignore
+docs/*.pdf export-ignore

@@ -2,6 +2,16 @@
 
 Aplicación web de Edumon, plataforma de gestión escolar: paneles para superadmin, administrador del colegio, docentes y familias, con cursos, módulos, retos y entregas, foros, calendario, eventos y notificaciones. Consume la API del repositorio `Backend`.
 
+| Dato | Valor |
+| --- | --- |
+| Programa | EDUMON — programa web (aplicación web, parte del registro A junto con la API) |
+| Versión | 1.0.0 |
+| Commit | $Format:%H$ |
+| Fecha del commit | $Format:%cs$ |
+| Autores | Bryan David Yepes Ordóñez y Karen Verónica Mancilla Solarte |
+
+En una copia obtenida con `git archive` el commit y la fecha aparecen completos; en el repositorio se ven como marcadores.
+
 ## Stack
 
 - React 19 y Vite 7
@@ -63,6 +73,15 @@ docs/                 manuales de usuario y documentación técnica
 
 `Dockerfile`, `nginx.conf.template` y `docker-entrypoint.sh` construyen la imagen (build con Node, servida con nginx sin privilegios). El despliegue completo está en el repositorio raíz `Edumon`.
 
-## Autora
+## Licencias de terceros
 
-Karen Verónica Mancilla Solarte
+- Fuentes Baloo 2 (`public/fonts/Baloo2-Variable.woff2`), Quicksand (`public/fonts/Quicksand-Variable.woff2`) y Nunito (paquete `@fontsource/nunito`): SIL Open Font License 1.1, texto en `licencias/OFL-1.1.txt`. Copyright de sus autores (Ek Type; The Quicksand Project Authors; The Nunito Project Authors).
+- Dependencias de npm: licencias permisivas (MIT, ISC, Apache-2.0, BSD); `dompurify` es MPL-2.0 o Apache-2.0 a elección.
+
+## Licencia
+
+Sin licencia de código abierto: todos los derechos reservados.
+
+## Autores
+
+Bryan David Yepes Ordóñez y Karen Verónica Mancilla Solarte
